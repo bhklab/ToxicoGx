@@ -19,13 +19,13 @@ celfn <- list.celfiles("data/CELfiles", full.names = TRUE)
 generated_eset <- just.rma(filenames = celfn, verbose=TRUE, cdfname = "hgu133plus2hsensgcdf")
 ##OR
 #read existing eset
-eset <- readRDS('C:/Users/amytx/OneDrive - UHN/tggates/eset.rds')
+eset <- readRDS("data/eset.rds")
 
 #pdata
-path.sc=file.path("C:/Users/amytx/OneDrive - UHN/tggates")
+path.sc=file.path("data")
 sampleinfo <- read.table(file.path(path.sc, "TGGATEsfeatureInfo.txt"), sep="\t")
 sampleinfo[sampleinfo == "" | sampleinfo == " "] <- NA
-annot <- read.csv("C:/Users/amytx/OneDrive - UHN/tggates/phenoDataCOLNAMES_DONE.csv", stringsAsFactors=FALSE, check.names=FALSE, header=TRUE, row.names=1)
+annot <- read.csv("data/phenoDataCOLNAMES_DONE.csv", stringsAsFactors=FALSE, check.names=FALSE, header=TRUE, row.names=1)
 pData(eset) <- annot
 pData(eset)[,"batchid"] <- NA
 
@@ -35,7 +35,7 @@ pData(eset)[,"batchid"] <- NA
 probes <- eset@assayData$exprs
 
 #map ENSG probes in eset to feature data file of ENSG probes only
-Featuredata <- read.csv("C:/Users/amytx/OneDrive - UHN/tggates/finalFeatureNAs.csv")
+Featuredata <- read.csv("data/finalFeatureNAs.csv")
 rownames(Featuredata) <- Featuredata$X
 Featuredata <- subset(Featuredata, select = -c(X.1, X))
 Featuredata$BEST <- NA
