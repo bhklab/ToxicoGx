@@ -30,7 +30,7 @@ highB <- na.omit(CCL4$expression[select=c(CCL4$dose_level == "High" & CCL4$indiv
 
 #Plotting
 time=c(2,8,24)
-png("results/ccl4_cyp1a1.png", width = 800, height = 600)
+png("results/qc1_plot1.png", width = 800, height = 600)
 
 matplot(x = time, 
         y = matrix(c(ctrlA,ctrlB, lowA, lowB, medA, medB, highA, highB), ncol=8), 
@@ -84,7 +84,7 @@ highB <- na.omit(aspirin$expression[select=c(aspirin$dose_level == "High" & aspi
 
 #Plotting
 time=c(2,8,24)
-png("results/asp_rab3b.png", width = 800, height = 600)
+png("results/qc1_plot2.png", width = 800, height = 600)
 matplot(x = time, 
         y = matrix(c(ctrlA,ctrlB, lowA, lowB, medA, medB, highA, highB), ncol=8), 
         col=c("red","red","green","green","blue","blue","cyan","cyan"), 
