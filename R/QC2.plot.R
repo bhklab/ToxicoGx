@@ -70,5 +70,5 @@ scatterplot(x = tset.pca$x[,1],
             xlab="PC1",
             ylab="PC2",
             main="Principal Component Analysis : High Dose, 24h")
-legend(5.4,-5.5,legend=c("Control","Experiment","Cytokine"),col=c('dark green','light green','red'),pch=c(20,20,20),cex=0.75)
+legend(12,9,legend=c("Control","treated","Cytokine"),col=c('dark green','light green','red'),pch=c(20,20,20),cex=0.95, bty = "n", adj = 0.25, pt.cex = 2)
 dev.off()
