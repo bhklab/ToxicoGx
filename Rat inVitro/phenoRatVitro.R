@@ -53,7 +53,7 @@ ratAttributes <- ratAttributes[,c(2,3,4,5,6,27,15,16,17,14,29,1,20,21,18,19,28,1
 # Rename columns
 colnames(ratAttributes) <- c('samplename','chiptype','exp_id','group_id','individual_id','batchid','concentration','concentration_units','dose_level','duration','cellid','drugid','drugid_abbr','drugid_no','DNA','LDH','UID','species','test_type','sex_type','organ_id','material_id','celfilename','xptype')
 
-# Arrange rows in ascending order of barcode
+# Rearrange rows in ascending order of barcode
 ratAttributes <- arrange(ratAttributes, ratAttributes$samplename)
 # Rename rows to barcode name 
 rownames(ratAttributes) <- ratAttributes$samplename
