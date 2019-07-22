@@ -6,7 +6,7 @@ library(biomaRt)
 #LAB ANNOTATION FILE
 labAnnot<-read.csv("data/annot_ensembl_all_genes.csv",header=TRUE)
 #PROBE NAMES FROM GENE EXPRESSION FILE
-CELgenes<-readRDS("probeNames.rds")
+CELgenes<-readRDS("data/probeNames.rds")
 #Use biomaRt to do preliminary gene annotations
 ensembl<-useMart("ensembl", dataset = "hsapiens_gene_ensembl", host="uswest.ensembl.org",ensemblRedirect = FALSE)
 results <- getBM(attributes=c("external_gene_name","ensembl_gene_id","gene_biotype","entrezgene","external_transcript_name","ensembl_transcript_id"), filters = "ensembl_gene_id",values=CELgenes,mart=ensembl)
