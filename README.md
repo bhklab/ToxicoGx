@@ -4,12 +4,12 @@ A R package in-progress. Goal is to analyze the toxicity of drugs across large-s
 Order to run files:
 1. featureInfo.R
 2. phenoInfo.R
-3. esetFINAL.R, 
-4. cellObject.R, 
-5. drugObject.R, 
-6. curationCellObject.R, 
-7. curationDrugObject.R, 
-8. curationTissueObject.R, 
+3. esetFINAL.R 
+4. cellObject.R 
+5. drugObject.R 
+6. curationCellObject.R 
+7. curationDrugObject.R 
+8. curationTissueObject.R 
 9. sensitivityObjects_DNA.R
 10. sensitivityObjects_LDH.R
 11. createTSet.R
