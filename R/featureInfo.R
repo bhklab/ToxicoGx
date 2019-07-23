@@ -53,4 +53,8 @@ finalFeature<-arrange(finalFeature,finalFeature$gene_id)
 rownames(finalFeature)<-finalFeature$gene_id
 
 #Write into file
+<<<<<<< HEAD
 saveRDS(finalFeature,"data/featureData.rds")
+=======
+saveRDS(finalFeature,"data/featureData.rds")
+>>>>>>> d3e1a831c5b5c97e7362c1600cdd4e9fb40b1923
