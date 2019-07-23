@@ -1,7 +1,7 @@
 #' OPEN TG-GATES Database - Rat (in vitro)
 #' 
 #' Program generates object PhenoInfo that is used to map phenodata during creation of eSet
-#' Inputs include attributes data (.tsv) from LSDB Database
+#' Inputs include attributes data (.tsv) from LSDB Database and supplementary data (.csv) from paper
 
 library(dplyr)
 
@@ -61,4 +61,4 @@ rownames(ratAttributes) <- ratAttributes$samplename
 # RETURN #
 
 # Save as object
-saveRDS(ratAttributes, file = "rds/ratAttributes.rds")
+saveRDS(ratAttributes, file = "rds/phenoData.rds")
