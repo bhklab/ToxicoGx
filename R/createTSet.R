@@ -11,7 +11,7 @@ rna <- readRDS("data/eset.rds")
 
 #DNA
 sensitivityInfo <- readRDS("data/sensitivityInfo_DNA.rds")
-sensitivityProfiles_biorep <- readRDS("data/sensitivityProfiles_DNA.rds")
+sensitivityProfiles <- readRDS("data/sensitivityProfiles_DNA.rds")
 sensitivityRaw <- readRDS("data/sensitivityRaw_DNA.rds")
 
 TGGATES_humanDNA <- PharmacoSet("TGGATES_humanDNA",
@@ -20,7 +20,7 @@ TGGATES_humanDNA <- PharmacoSet("TGGATES_humanDNA",
                                 drug=drug,
                                 sensitivityInfo=sensitivityInfo,
                                 sensitivityRaw=sensitivityRaw,
-                                sensitivityProfiles=sensitivityProfiles_biorep,
+                                sensitivityProfiles=sensitivityProfiles,
                                 curationDrug=curationDrug,
                                 curationCell=curationCell,
                                 curationTissue=curationTissue,
@@ -33,7 +33,7 @@ saveRDS(TGGATES_humanDNA,"TGGATES_humanDNA.rds")
 
 #LDH
 sensitivityInfo <- readRDS("data/sensitivityInfo_LDH.rds")
-sensitivityProfiles_biorep <- readRDS("data/sensitivityProfiles_LDH.rds")
+sensitivityProfiles <- readRDS("data/sensitivityProfiles_LDH.rds")
 sensitivityRaw <- readRDS("data/sensitivityRaw_LDH.rds")
 
 TGGATES_humanLDH <- PharmacoSet("TGGATES_humanLDH",
@@ -42,7 +42,7 @@ TGGATES_humanLDH <- PharmacoSet("TGGATES_humanLDH",
                                 drug=drug,
                                 sensitivityInfo=sensitivityInfo,
                                 sensitivityRaw=sensitivityRaw,
-                                sensitivityProfiles=sensitivityProfiles_biorep,
+                                sensitivityProfiles=sensitivityProfiles,
                                 curationDrug=curationDrug,
                                 curationCell=curationCell,
                                 curationTissue=curationTissue,

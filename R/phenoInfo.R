@@ -2,6 +2,8 @@ library(dplyr)
 
 #Load Open-tggates_AllAttribute.tsv from LSDB database
 all_attribute <- read.delim("data/Open-tggates_AllAttribute.tsv",stringsAsFactors = FALSE)
+#Load curationDrug object
+curationDrug <- readRDS("data/curationDrug.rds")
 
 #Subset out rows with "No ChipData", rat samples, or dosage units are not "ƒÊg/kg" -> should result in 2573 entries
 all_attribute <- subset(all_attribute,all_attribute$BARCODE != "No ChipData" & all_attribute$SPECIES == "Human" & all_attribute$DOSE_UNIT != "ƒÊg/kg")
@@ -36,15 +38,18 @@ all_attribute$RECOMP_DOSE <- all_attribute$DOSE
 all_attribute <- rbind(all_attribute,converted)
 #cellid (barcode)
 all_attribute$cellid <- all_attribute$BARCODE
-#UID
-all_attribute$UID<-paste0("drugid_",all_attribute$COMPOUND.Abbr.,"_",all_attribute$COMPOUND_NAME,"_",all_attribute$BARCODE,"_",all_attribute$DOSE,"_",gsub(" hr","",all_attribute$SACRI_PERIOD),"hr_rep",all_attribute$INDIVIDUAL_ID)
 #CEL file name
 all_attribute$celfilename <- paste0("00",as.character(all_attribute$BARCODE),".CEL")
 #xptype
 all_attribute$xptype <- "both"
+#unique.drugid
+all_attribute<-merge(all_attribute,curationDrug,by.x="COMPOUND_NAME",by.y="tggates.drugid")
+#UID
+all_attribute$UID<-paste0("drugid_",all_attribute$COMPOUND.Abbr.,"_",all_attribute$unique.drugid,"_",all_attribute$BARCODE,"_",all_attribute$DOSE,"_",gsub(" hr","",all_attribute$SACRI_PERIOD),"hr_rep",all_attribute$INDIVIDUAL_ID)
 
 #Rearrange columns
-all_attribute <- all_attribute[,c(1,2,3,4,5,22,17,18,23,19,16,24,8,9,10,20,21,25,11,12,13,6,7,26,27,14,15)]
+all_attribute <- subset(all_attribute,select=-c(COMPOUND_NAME))
+all_attribute <- all_attribute[,c(1,2,3,4,5,21,16,17,22,18,15,23,26,8,9,19,20,27,10,11,12,6,7,24,25,13,14)]
 
 #Rename columns
 colnames(all_attribute) <- c("samplename","chiptype","exp_id","group_id","individual_id","batchid",
