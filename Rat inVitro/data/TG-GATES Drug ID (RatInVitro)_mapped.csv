@@ -1,0 +1,146 @@
+﻿,TG.GATES.Compound.RatInvitro,Lab's unique drugid,Type of Mapping
+1,acarbose,,No Match
+2,acetamidofluorene,,No Match
+3,acetaminophen,,No Match
+4,acetazolamide,acetazolamide,Exact Match
+5,adapin,,No Match
+6,ajmaline,ajmaline,Exact Match
+7,allopurinol,Allopurinol,Exact Match
+8,allyl alcohol,,No Match
+9,alpidem,,No Match
+10,amiodarone,amiodarone,Exact Match
+11,amitriptyline,amitriptyline,Exact Match
+12,aspirin,aspirin,Exact Match
+13,azathioprine,azathioprine,Exact Match
+14,bendazac,,No Match
+15,benzbromarone,benzbromarone,Exact Match
+16,benziodarone,,No Match
+17,bromobenzene,,No Match
+18,bromoethylamine,,No Match
+19,bucetin,,No Match
+20,buspirone,buspirone,Exact Match
+21,buthionine sulfoximine,,No Match
+22,caffeine,,No Match
+23,captopril,captopril,Exact Match
+24,carbamazepine,carbamazepine,Exact Match
+25,carbon tetrachloride,,No Match
+26,carboplatin,Carboplatin,Exact Match
+27,cephalothin,cefalotin,Synonyms
+28,chloramphenicol,chloramphenicol,Exact Match
+29,chlormadinone,,No Match
+30,chlormezanone,chlormezanone,Exact Match
+31,chlorpheniramine,chlorphenamine,Exact Match
+32,chlorpromazine,chlorpromazine,Exact Match
+33,chlorpropamide,chlorpropamide,Exact Match
+34,cimetidine,cimetidine,Exact Match
+35,ciprofloxacin,ciprofloxacin,Exact Match
+36,cisplatin,Cisplatin,Exact Match
+37,clofibrate,clofibrate,Exact Match
+38,clomipramine,clomipramine,Exact Match
+39,clozapine,clozapine,Exact Match
+40,colchicine,,No Match
+41,coumarin,2H-1-Benzopyran-2-one,Synonyms
+42,cycloheximide,cicloheximide,Synonyms
+43,cyclophosphamide,Cyclophosphamide,Exact Match
+44,cyclosporine A,ciclosporin,Synonyms
+45,danazol,danazol,Exact Match
+46,dantrolene,dantrolene,Exact Match
+47,diazepam,,No Match
+48,diclofenac,diclofenac,Exact Match
+49,diethyl maleate,,No Match
+50,diltiazem,diltiazem,Exact Match
+51,disopyramide,disopyramide,Exact Match
+52,disulfiram,Disulfiram,Exact Match
+53,doxorubicin,Doxorubicin,Exact Match
+54,enalapril,enalapril,Exact Match
+55,erythromycin ethylsuccinate,,No Match
+56,ethambutol,ethambutol,Exact Match
+57,ethanol,,No Match
+58,ethinylestradiol,,No Match
+59,ethionamide,ethionamide,Exact Match
+60,ethionine,,No Match
+61,etoposide,etoposide,Exact Match
+62,famotidine,famotidine,Exact Match
+63,fenofibrate,fenofibrate,Exact Match
+64,fluphenazine,fluphenazine,Exact Match
+65,flutamide,flutamide,Exact Match
+66,furosemide,furosemide,Exact Match
+67,galactosamine,,No Match
+68,gemfibrozil,gemfibrozil,Exact Match
+69,gentamicin,gentamicin,Exact Match
+70,glibenclamide,glibenclamide,Exact Match
+71,griseofulvin,griseofulvin,Exact Match
+72,haloperidol,haloperidol,Exact Match
+73,hexachlorobenzene,,No Match
+74,hydroxyzine,hydroxyzine,Exact Match
+75,ibuprofen,2-(4-Isobutylphenyl)propanoic acid,Synonyms
+76,imipramine,imipramine,Exact Match
+77,indomethacin,indometacin,Synonyms
+78,iproniazid,iproniazid,Exact Match
+79,isoniazid,isoniazid,Exact Match
+80,ketoconazole,ketoconazole,Exact Match
+81,labetalol,labetalol,Exact Match
+82,lomustine,lomustine,Exact Match
+83,lornoxicam,,No Match
+84,LPS,,No Match
+85,mefenamic acid,mefenamic acid,Exact Match
+86,meloxicam,,No Match
+87,metformin,metformin,Exact Match
+88,methapyrilene,methapyrilene,Exact Match
+89,methimazole,thiamazole,Synonyms
+90,methyldopa,methyldopa,Exact Match
+91,methyltestosterone,,No Match
+92,mexiletine,mexiletine,Exact Match
+93,monocrotaline,monocrotaline,Exact Match
+94,moxisylyte,moxisylyte,Exact Match
+95,naphthyl isothiocyanate,,No Match
+96,naproxen,naproxen,Exact Match
+97,nefazodone,,No Match
+98,nicotinic acid,nicotinic acid,Exact Match
+99,nifedipine,nifedipine,Exact Match
+100,nimesulide,nimesulide,Exact Match
+101,nitrofurantoin,nitrofurantoin,Exact Match
+102,nitrofurazone,nitrofural,Synonyms
+103,nitrosodiethylamine,,No Match
+104,omeprazole,omeprazole,Exact Match
+105,papaverine,papaverine,Exact Match
+106,pemoline,,No Match
+107,penicillamine,,No Match
+108,perhexiline,perhexiline,Exact Match
+109,phalloidin,,No Match
+110,phenacetin,phenacetin,Exact Match
+111,phenobarbital,,No Match
+112,phenylanthranilic acid,N-phenylanthranilic acid,Synonyms
+113,phenylbutazone,,No Match
+114,phenytoin,,No Match
+115,phorone,,No Match
+116,promethazine,promethazine,Exact Match
+117,propylthiouracil,propylthiouracil,Exact Match
+118,puromycin aminonucleoside,,No Match
+119,quinidine,quinidine,Exact Match
+120,ranitidine,ranitidine,Exact Match
+121,rifampicin,rifampicin,Exact Match
+122,simvastatin,Simvastatin,Exact Match
+123,sulfasalazine,sulfasalazine,Exact Match
+124,sulindac,sulindac,Exact Match
+125,sulpiride,sulpiride,Exact Match
+126,tacrine,tacrine,Exact Match
+127,tamoxifen,Tamoxifen,Exact Match
+128,tannic acid,,No Match
+129,terbinafine,,No Match
+130,tetracycline,tetracycline,Exact Match
+131,theophylline,,No Match
+132,thioacetamide,,No Match
+133,thioridazine,thioridazine,Exact Match
+134,ticlopidine,ticlopidine,Exact Match
+135,tiopronin,,No Match
+136,TNFa,,No Match
+137,tolbutamide,tolbutamide,Exact Match
+138,triamterene,triamterene,Exact Match
+139,triazolam,,No Match
+140,trimethadione,trimethadione,Exact Match
+141,tunicamycin,,No Match
+142,valproic acid,Valproic.acid,Exact Match
+143,venlafaxine,,No Match
+144,vitamin A,,No Match
+145,WY-14643,pirinixic acid,Synonyms
