@@ -45,18 +45,18 @@ finalFeature <- rbind(uniqueB, newLabAnnot)
 remainGenes<-CELgenes[!(CELgenes %in% finalFeature$X)]
 leftoverGenes<-as.data.frame(remainGenes,row.names=NULL)
 
-#create empty columns
+# Create empty columns
 leftoverGenes$A<-NA
 leftoverGenes$B<-NA
 leftoverGenes$C<-leftoverGenes$remainGenes
 leftoverGenes$D<-NA
 leftoverGenes$E<-NA
 leftoverGenes$G<-NA
-#Rename columns
+# Rename columns
 names(leftoverGenes)<-c("X","gene_biotype","gene_id","gene_name","transcript_id","transcript_name", "EntrezGene.ID")
-#Merge
+# Merge
 finalFeature<-rbind(finalFeature,leftoverGenes)
-#reformat finalFeature
+# Reformat finalFeature
 finalFeature<-subset(finalFeature,select=-c(X))
 names(finalFeature)[3] <- "Symbol"
 finalFeature$BEST <- NA
