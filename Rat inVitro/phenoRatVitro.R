@@ -9,6 +9,9 @@ library(dplyr)
 
 # Load Phenodata attributes from LSDB Arhive
 allAttributes <- read.delim("data/Open-tggates_AllAttribute.tsv", stringsAsFactors = F)
+# Load curation durg
+curationDrug <- read.csv("data/curationdrug.csv")
+
 # Subset dataframe for SPECIES 'Rat' with TEST_TYPE 'in vitro'. Eliminate BARCODE 'No ChipData'.
 allAttributes <- subset(allAttributes,allAttributes$SPECIES == "Rat" & allAttributes$TEST_TYPE == "in vitro"  &  allAttributes$BARCODE != "No ChipData")
 # Remove columns from dataframe where entire columns contain unspecified and 'NA' values
@@ -45,8 +48,13 @@ ratAttributes$cellid <- ratAttributes$BARCODE
 ratAttributes$UID <- paste0("drugid_",ratAttributes$COMPOUND.Abbr.,"_",ratAttributes$COMPOUND_NAME,"_",ratAttributes$BARCODE,"_",ratAttributes$DOSE,"_",gsub(" hr","",ratAttributes$SACRI_PERIOD),"hr_rep",ratAttributes$INDIVIDUAL_ID)
 # Copy BARCODE values to CEL file names
 ratAttributes$celfilename <- paste0("00",as.character(ratAttributes$BARCODE),".CEL")
-# Both sensitivity and perturbation info included
-ratAttributes$xptype <- "both"
+# Label control or perturbation xptype
+ratAttributes$xptype <- NA
+ratAttributes$xptype[ratAttributes$DOSE_LEVEL != "Control"] <- "perturbation"
+ratAttributes$xptype[ratAttributes$DOSE_LEVEL == "Control"] <- "control"
+# Unique drug id
+ratAttributes<-merge(ratAttributes,curationDrug,by.x="COMPOUND_NAME",by.y="lab.drugid")
+
 
 # Rearrange order of columns
 ratAttributes <- ratAttributes[,c(2,3,4,5,6,27,15,16,17,14,29,1,20,21,18,19,28,11,12,13,7,8,30,31)]
