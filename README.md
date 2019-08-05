@@ -1,5 +1,5 @@
 # ToxicoGx
-A R package in-progress. Goal is to analyze the toxicity of drugs across large-scale pharmacogenomic datasets.
+A R package in-progress. Goal is to analyze the toxicity of drugs across large-scale toxicogenomic datasets.
 
 Order to run files:
 1. curationDrugObject.R 
