@@ -20,9 +20,9 @@ ensembl = useMart("ensembl", dataset = "rnorvegicus_gene_ensembl", host="uswest.
 eset <- readRDS("rds/eset.rds")
 
 storageMode(eset) <- "environment"
-
-rownames(eset@assayData$exprs) <- substr(rownames(eset@assayData$exprs), 1, nchar(affxrows)-3)
 affxrows <- rownames(eset@assayData$exprs)
+rownames(eset@assayData$exprs) <- substr(rownames(eset@assayData$exprs), 1, nchar(affxrows)-3)
+
 saveRDS(affxrows, file = "rds/probesRatVitro.rds")
 CELgenes <- readRDS("rds/probesRatVitro.rds")
 
@@ -31,35 +31,37 @@ results <- getBM(attributes=c("external_gene_name","ensembl_gene_id","gene_bioty
 # Account for duplicated genes
 uniqueB <- results[!duplicated(results$ensembl_gene_id),]
 # Add column for merging
-uniqueB$X <- unique$ensembl_gene_id
+#uniqueB$X <- unique$ensembl_gene_id
 
 CELnotB <- unique(CELgenes)[!unique(CELgenes) %in% uniqueB$ensembl_gene_id]  #44 not in uniqueB
 
 newLabAnnot<-subset(labAnnot,labAnnot$X %in% CELnotB,select=c(X,gene_biotype, gene_id, gene_name,transcript_id, transcript_name,EntrezGene.ID))
 
-names(uniqueB) <- c("gene_name", "gene_id", "gene_biotype", "EntrezGene.ID", "transcript_name", "transcript_id", "X")
+names(uniqueB) <- c("gene_name", "gene_id", "gene_biotype", "EntrezGene.ID", "transcript_name", "transcript_id")
 
 # Merge time
-finalFeature <- rbind(uniqueB, newLabAnnot)
+finalFeature <- uniqueB
 
-remainGenes<-CELgenes[!(CELgenes %in% finalFeature$X)]
-leftoverGenes<-as.data.frame(remainGenes,row.names=NULL)
+#remainGenes<-CELgenes[!(CELgenes %in% finalFeature$X)]
+#leftoverGenes<-as.data.frame(remainGenes,row.names=NULL)
 
 # Create empty columns
-leftoverGenes$A<-NA
-leftoverGenes$B<-NA
-leftoverGenes$C<-leftoverGenes$remainGenes
-leftoverGenes$D<-NA
-leftoverGenes$E<-NA
-leftoverGenes$G<-NA
+#leftoverGenes$A<-NA
+#leftoverGenes$B<-NA
+#leftoverGenes$C<-leftoverGenes$remainGenes
+#leftoverGenes$D<-NA
+#leftoverGenes$E<-NA
+#leftoverGenes$G<-NA
 # Rename columns
-names(leftoverGenes)<-c("X","gene_biotype","gene_id","gene_name","transcript_id","transcript_name", "EntrezGene.ID")
+#names(leftoverGenes)<-c("X","gene_biotype","gene_id","gene_name","transcript_id","transcript_name", "EntrezGene.ID")
 # Merge
-finalFeature<-rbind(finalFeature,leftoverGenes)
+#finalFeature<-rbind(finalFeature,leftoverGenes)
 # Reformat finalFeature
-finalFeature<-subset(finalFeature,select=-c(X))
-names(finalFeature)[3] <- "Symbol"
+#finalFeature<-subset(finalFeature,select=-c(X))
+#names(finalFeature)[3] <- "Symbol"
 finalFeature$BEST <- NA
+names(finalFeature) <- c("Symbol", "gene_id", "gene_biotype", "EntrezGene.ID", "transcript_name", "transcript_id", "BEST")
+rownames(finalFeature) <- finalFeature$gene_id
 
 #Write into file
 saveRDS(finalFeature,"rds/featureData.rds")

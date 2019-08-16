@@ -8,6 +8,8 @@ curationTissue$organ_id <- "liver"
 curationTissue$tggates.tissueid <- "liver"
 #rename first column
 names(curationTissue)[1] <- "unique.tissueid"
+rownames(curationTissue) <- curationCell$unique.cellid
 
 #save object into rds/
 saveRDS(curationTissue,file="rds/curationTissue.rds")
+
