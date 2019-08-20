@@ -173,21 +173,30 @@ create_featureData <- function(species=c("Human","Rat"), eset){
   library("xml2")
   library(biomaRt)
   
-  if (species == "Human"){ ensembl_data <- "hsapiens_gene_ensembl" }
-  else if (species == "Rat"){ ensembl_data <- "rnorvegicus_gene_ensembl" }
+  if (species == "Human"){ 
+    ensembl_data <- "hsapiens_gene_ensembl" 
+  } else if (species == "Rat"){ 
+    ensembl_data <- "rnorvegicus_gene_ensembl" 
+  }
   CELgenes <- rownames(eset@assayData$exprs)
   
   ensembl<-useMart("ensembl", dataset = ensembl_data, host="uswest.ensembl.org",ensemblRedirect = FALSE)
   results <- getBM(attributes=c("external_gene_name","ensembl_gene_id","gene_biotype","entrezgene_id","external_transcript_name","ensembl_transcript_id"), filters = "ensembl_gene_id",values=CELgenes,mart=ensembl)
   uniqueBiomaRt<-results[!duplicated(results$ensembl_gene_id),]
+  names(uniqueBiomaRt)<-c("gene_name", "gene_id", "gene_biotype", "EntrezGene.ID", "transcript_name", "transcript_id")
   
-  if(species == "Rat"){ return(uniqueBiomaRt) }
+  if(species == "Rat"){ 
+    names(uniqueBiomaRt)[1] <- "Symbol"
+    uniqueBiomaRt$BEST <- NA
+    uniqueBiomaRt<-arrange(uniqueBiomaRt,uniqueBiomaRt$gene_id)
+    rownames(uniqueBiomaRt)<-uniqueBiomaRt$gene_id
+    
+    return(uniqueBiomaRt) 
+  }
   
   labAnnot <- read.csv("data/annot_ensembl_all_genes.csv",header=TRUE)[,-1, drop=F] #read in lab's gene annotation file
   CELnotbiomaRt<-unique(CELgenes)[!(unique(CELgenes) %in% uniqueBiomaRt$ensembl_gene_id)] #in CELgenes but not in biomaRt output (66)
   newLabAnnot<-subset(labAnnot,labAnnot$gene_id %in% CELnotbiomaRt) #in CELgenes but not in biomaRt output but in lab annotation file (51)
-  
-  names(uniqueBiomaRt)<-c("gene_name", "gene_id", "gene_biotype", "EntrezGene.ID", "transcript_name", "transcript_id") #rename biomaRt output columns
   
   #Merge biomaRt output and lab annotations
   finalFeature<-rbind(uniqueBiomaRt,newLabAnnot)
