@@ -50,10 +50,10 @@ create_phenoData <- function(species=c("Human","Rat")){
   ################# BACK TO PHENODATA ####################
   ## Add necessary columns
   ##Batchid & conversions
-  prl<-"C:/Strawberry/perl/bin/perl5.30.0.exe"
+  #prl<-"C:/Strawberry/perl/bin/perl5.30.0.exe"
   #Human
   if (species == "Human"){
-    batch <- read.xls("C:/Users/Owner/Desktop/ToxicoGx - New/data/nar-02356-data-e-2014-File006.xlsx", sheet = 4, header=FALSE, as.is=TRUE, perl=prl)
+    batch <- read.xls("data/nar-02356-data-e-2014-File006.xlsx", sheet = 4, header=FALSE, as.is=TRUE, perl=prl)
     batch <- batch[-c(1,2),]
     batch <- batch[,c(1,4)]
     names(batch) <- c("BARCODE", "CELL_NAME_TYPE_ID")
@@ -62,7 +62,7 @@ create_phenoData <- function(species=c("Human","Rat")){
     
     conv <- readRDS("data/conversions_human.rds")
   } else if (species == "Rat"){ #Rat
-    batch <- read.xls("C:/Users/Owner/Desktop/ToxicoGx - New/data/nar-02356-data-e-2014-File006.xlsx", sheet = 5, header=FALSE, as.is=TRUE, perl=prl)
+    batch <- read.xls("data/nar-02356-data-e-2014-File006.xlsx", sheet = 5, header=FALSE, as.is=TRUE, perl=prl)
     batch <- batch[-c(1:4),]
     batch <- batch[,c(1,9)]
     colnames(batch) <- c("drugid", "batchid")
@@ -137,7 +137,7 @@ create_exprsData <- function(species=c("Human","Rat"), phenoData){
   ########################################################################################################
   
   ########################################  ALREADY NORMALIZED  ##########################################
-  eset <- readRDS("C:/Users/Owner/Desktop/ToxicoGx - New/data/esetNORMALIZED_ONLY.rds")
+  eset <- readRDS("data/esetNORMALIZED_ONLY.rds")
   ########################################################################################################
   
   storageMode(eset)<-"environment"
