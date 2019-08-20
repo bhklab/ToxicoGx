@@ -5,6 +5,7 @@
 create_phenoData <- function(species=c("Human","Rat")){
   library(dplyr)
   library(gdata)
+  library(readxl)
   
   #load master phenoData file from TG-GATEs
   #Master phenoData file from TG-GATEs: #14 from https://dbarchive.biosciencedbc.jp/en/open-tggates/download.html
@@ -50,11 +51,10 @@ create_phenoData <- function(species=c("Human","Rat")){
   ################# BACK TO PHENODATA ####################
   ## Add necessary columns
   ##Batchid & conversions
-  #prl<-"C:/Strawberry/perl/bin/perl5.30.0.exe"
   #Human
   if (species == "Human"){
-    batch <- read.xls("data/nar-02356-data-e-2014-File006.xlsx", sheet = 4, header=FALSE, as.is=TRUE, perl=prl)
-    batch <- batch[-c(1,2),]
+    batch <- read_xlsx("data/nar-02356-data-e-2014-File006.xlsx", sheet = "Sup_table.2")
+    batch <- batch[-1,]
     batch <- batch[,c(1,4)]
     names(batch) <- c("BARCODE", "CELL_NAME_TYPE_ID")
     batch <- subset(batch, batch$BARCODE != "No ChipData")
@@ -62,8 +62,8 @@ create_phenoData <- function(species=c("Human","Rat")){
     
     conv <- readRDS("data/conversions_human.rds")
   } else if (species == "Rat"){ #Rat
-    batch <- read.xls("data/nar-02356-data-e-2014-File006.xlsx", sheet = 5, header=FALSE, as.is=TRUE, perl=prl)
-    batch <- batch[-c(1:4),]
+    batch <- read_xlsx("data/nar-02356-data-e-2014-File006.xlsx", sheet = "Sup_table.3")
+    batch <- batch[-c(1:3),]
     batch <- batch[,c(1,9)]
     colnames(batch) <- c("drugid", "batchid")
     colnames(batch) <- as.factor(colnames(batch))
@@ -137,7 +137,11 @@ create_exprsData <- function(species=c("Human","Rat"), phenoData){
   ########################################################################################################
   
   ########################################  ALREADY NORMALIZED  ##########################################
-  eset <- readRDS("data/esetNORMALIZED_ONLY.rds")
+  if (species == "Human"){
+    eset <- readRDS("data/esetNORMALIZED_ONLY.rds")
+  } else if (species == "Rat"){
+    eset <- readRDS("data/esetNorm.rds")
+  }
   ########################################################################################################
   
   storageMode(eset)<-"environment"
@@ -208,22 +212,33 @@ create_featureData <- function(species=c("Human","Rat"), eset){
 }
 
 create_sensitivityProfiles <- function(phenoData){
-  ## CREATE SENSITIVITY$PROFILES ##
-  #Select only for entries where viability info is present -> viabpresent
-  #For viab-based viability info, all dosages were in uM
-  viabpresent<-subset(phenoData,phenoData$Viability != "NA",select=c(samplename, exp_id, group_id, individual_id, drugid, duration, concentration, dose_level, Viability, UID))
-  #The data.frame finalCombined will start with all the samples that do not have viab data
-  finalCombined<-subset(phenoData,is.na(phenoData$Viability),select=c(samplename, exp_id, group_id, individual_id, drugid, duration, concentration, dose_level, Viability, UID))
-  finalCombined$slope_recomputed<-NA
-  finalCombined$auc_recomputed<-NA
+  viabpresent<-subset(phenoData,phenoData$Viability != "NA",select=c(samplename, exp_id, group_id, individual_id, drugid, duration, concentration, dose_level, Viability,UID))
+  
+  ## Create an empty data frame with all required columns
+  emptyFrame <- data.frame(samplename = character(),
+                           exp_id = integer(),
+                           group_id = integer(),
+                           individual_id = integer(),
+                           drugid = character(),
+                           duration = character(),
+                           concentration = double(),
+                           dose_level = character(),
+                           Viability = double(),
+                           UID = character(),
+                           slope_recomputed = double(),
+                           auc_recomputed = double())
+  
+  if(sum(is.na(phenoData$Viability)) > 0){ #if at least one of the Viability entries in phenoData are NA
+    #The data.frame finalCombined will start with all the samples that do not have DNA data
+    finalCombined<-subset(phenoData,is.na(phenoData$Viability),select=c(samplename, exp_id, group_id, individual_id, drugid, duration, concentration, dose_level, Viability,UID))
+    finalCombined$slope_recomputed<-NA
+    finalCombined$auc_recomputed<-NA
+  } else {
+    finalCombined <- emptyFrame
+  }
+  
   #Get all unique drug names in viabpresent (for the for loop later)
   uniqueDrugNames<-unique(viabpresent$drugid)
-  
-  #Create an empty data frame with all required columns
-  emptyFrame<-subset(phenoData,select=c(samplename, exp_id, group_id, individual_id, drugid, duration, concentration, dose_level, Viability,UID))
-  emptyFrame$slope_recomputed<-NA
-  emptyFrame$auc_recomputed <- NA
-  emptyFrame<-emptyFrame[FALSE,]
   
   #The data.frame combinedSamples will start empty, and accumulate data in the for loop
   combinedSamples<-emptyFrame
@@ -297,7 +312,7 @@ create_sensitivityProfiles <- function(phenoData){
   sensProf<-subset(sensProf,select=-c(samplename,UID))
   sensProf<-as.matrix(sensProf)
   
-  return (sensProf)
+  return(sensProf)
 }
 
 create_sensitivityRaw <- function(phenoData){
@@ -465,21 +480,21 @@ getTGGATEs <- function(species=c("Human","Rat"),
   message("Done!")
   
   message("Putting toxicoSet together...")
-  TGGATES_human <- PharmacoSet(paste("TGGATES_human",type,sep=""),
-                                  molecularProfiles=list("rna"=eset),
-                                  cell=cell,
-                                  drug=drug,
-                                  sensitivityInfo=sensitivityInfo,
-                                  sensitivityRaw=sensitivityRaw,
-                                  sensitivityProfiles=sensitivityProfiles,
-                                  curationDrug=curationDrug,
-                                  curationCell=curationCell,
-                                  curationTissue=curationTissue,
-                                  datasetType=c("both"),
-                                  verify = TRUE)
+  TGGATES <- PharmacoSet("TGGATES",
+                         molecularProfiles=list("rna"=eset),
+                         cell=cell,
+                         drug=drug,
+                         sensitivityInfo=sensitivityInfo,
+                         sensitivityRaw=sensitivityRaw,
+                         sensitivityProfiles=sensitivityProfiles,
+                         curationDrug=curationDrug,
+                         curationCell=curationCell,
+                         curationTissue=curationTissue,
+                         datasetType=c("both"),
+                         verify = TRUE)
   message("Done!")
-  return(TGGATES_human)
+  return(TGGATES)
 }
 
-#Example- creating toxicoSet for Human, DNA data:
+# EXAMPLE - 
 TGGATES_humanDNA <- getTGGATEs(species = "Human", type = "DNA")
