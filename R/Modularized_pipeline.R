@@ -99,7 +99,6 @@ create_phenoData <- function(species=c("Human","Rat")){
   all_attribute$UID<-paste("drugid_",all_attribute$COMPOUND.Abbr.,"_",all_attribute$unique.drugid,"_",all_attribute$BARCODE,"_",all_attribute$DOSE,"_",all_attribute$SACRI_PERIOD,"hr_rep",all_attribute$INDIVIDUAL_ID, sep="")
   
   #reorder columns
-  #all_attribute <- all_attribute[,c(1,2,3,4,5,21,16,17,22,18,15,26,23,8,9,19,20,27,10,11,12,6,7,24,25,13,14)]
   all_attribute <- all_attribute[,c(2,3,4,5,6,22,17,18,23,19,16,27,24,1,9,10,20,21,28,11,12,13,7,8,25,26,14,15)] 
   
   #Rename columns
