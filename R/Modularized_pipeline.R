@@ -192,7 +192,7 @@ create_featureData <- function(species=c("Human","Rat"), eset){
     return(uniqueBiomaRt) 
   }
   
-  labAnnot <- read.csv("data/annot_ensembl_all_genes.csv",header=TRUE)[,-1, drop=F] #read in lab's gene annotation file
+  labAnnot <- read.csv("data/annot_ensembl_all_genes.csv",header=TRUE,stringsAsFactors = F)[,-1, drop=F] #read in lab's gene annotation file
   CELnotbiomaRt<-unique(CELgenes)[!(unique(CELgenes) %in% uniqueBiomaRt$gene_id)] #in CELgenes but not in biomaRt output (66)
   newLabAnnot<-subset(labAnnot,labAnnot$gene_id %in% CELnotbiomaRt) #in CELgenes but not in biomaRt output but in lab annotation file (51)
   
