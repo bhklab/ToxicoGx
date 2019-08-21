@@ -51,6 +51,7 @@ create_phenoData <- function(species=c("Human","Rat")){
   ################# BACK TO PHENODATA ####################
   ## Add necessary columns
   ##Batchid & conversions
+  
   #Human
   if (species == "Human"){
     batch <- read_xlsx("data/nar-02356-data-e-2014-File006.xlsx", sheet = "Sup_table.2")
@@ -123,6 +124,7 @@ create_phenoData <- function(species=c("Human","Rat")){
 create_exprsData <- function(species=c("Human","Rat"), phenoData){
   library(affy)
   library(PharmacoGx)
+  
   if (species == "Human"){
     # install.packages("data/hgu133plus2hsensgcdf_22.0.0.tar.gz", repos = NULL, type = "source")
     library("hgu133plus2hsensgcdf")
@@ -145,22 +147,18 @@ create_exprsData <- function(species=c("Human","Rat"), phenoData){
   ########################################################################################################
   
   storageMode(eset)<-"environment"
-  #rename eset@assayData column names
-  colnames(eset@assayData$exprs)<-substr(colnames(eset@assayData$exprs),3,12)
-  colnames(eset@assayData$se.exprs)<-substr(colnames(eset@assayData$se.exprs),3,12)
-  rownames(eset@protocolData@data)<-substr(rownames(eset@protocolData@data),3,12)
-  #subset eset@assayData : 2605 columns/samples -> 2573
-  #missingCEL is a data.frame containing the info for 2573 samples
-  missingCEL <- phenoData[,c("samplename"), drop=F]
+  #missingCEL is a data.frame containing the barcodes for all present samples
+  missingCEL <- phenoData[,c("celfilename"), drop=F]
   #subsetting samples
-  eset@assayData$exprs<-subset(eset@assayData$exprs,select=missingCEL$samplename)
-  eset@assayData$se.exprs<-subset(eset@assayData$se.exprs,select=missingCEL$samplename)
-  eset@phenoData@data <- subset(eset@phenoData@data, rownames(eset@phenoData@data) %in% paste("00",missingCEL$samplename,".CEL", sep=""))
-  eset@protocolData@data<-subset(eset@protocolData@data,rownames(eset@protocolData@data) %in% missingCEL$samplename)
+  eset <- eset[,sampleNames(eset) %in% missingCEL$celfilename]
   #subsetting probes
   eset<-subset(eset, substr(rownames(eset@assayData$exprs), 0, 4) != "AFFX")
   #replace _at
   rownames(eset)<-gsub("_at","",rownames(eset))
+  #rename??
+  colnames(eset@assayData$exprs)<-substr(colnames(eset@assayData$exprs),3,12)
+  colnames(eset@assayData$se.exprs)<-substr(colnames(eset@assayData$se.exprs),3,12)
+  rownames(eset@protocolData@data)<-substr(rownames(eset@protocolData@data),3,12)
   #lock eset@assayData environment again
   storageMode(eset)<-"lockedEnvironment"
   
@@ -195,7 +193,7 @@ create_featureData <- function(species=c("Human","Rat"), eset){
   }
   
   labAnnot <- read.csv("data/annot_ensembl_all_genes.csv",header=TRUE)[,-1, drop=F] #read in lab's gene annotation file
-  CELnotbiomaRt<-unique(CELgenes)[!(unique(CELgenes) %in% uniqueBiomaRt$ensembl_gene_id)] #in CELgenes but not in biomaRt output (66)
+  CELnotbiomaRt<-unique(CELgenes)[!(unique(CELgenes) %in% uniqueBiomaRt$gene_id)] #in CELgenes but not in biomaRt output (66)
   newLabAnnot<-subset(labAnnot,labAnnot$gene_id %in% CELnotbiomaRt) #in CELgenes but not in biomaRt output but in lab annotation file (51)
   
   #Merge biomaRt output and lab annotations
@@ -454,10 +452,8 @@ getTGGATEs <- function(species=c("Human","Rat"),
   
   message("Putting the eset together...")
   #put the eset together
-  storageMode(eset)<-"environment"
   pData(eset) <- phenoData
   fData(eset) <- featureData
-  storageMode(eset)<-"lockedEnvironment"
   message("Done!")
   
   message(paste("Requested ",type, sep = ""))
@@ -505,5 +501,7 @@ getTGGATEs <- function(species=c("Human","Rat"),
   return(TGGATES)
 }
 
-# EXAMPLE - 
-TGGATES_humanDNA <- getTGGATEs(species = "Human", type = "DNA")
+# EXAMPLE -
+TGGATES_humanLDH <- getTGGATEs(species = "Human", type = "LDH")
+                                        
+## End ##                                
