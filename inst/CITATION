@@ -1,0 +1,34 @@
+citHeader("To cite RadioGx in publication use:")
+
+citEntry(entry="article",
+    title = "Modeling cellular response in large-scale radiogenomic databases to
+      advance precision radiotherapy",
+    author = "Manem, V., Labie, M., Smirnov, P., Kofia, V., Freeman, M.,
+      Koritzinksy, M., Abazeed, M., Haibe-Kains, B., Bratman, S.",
+    journal = "bioRxiv",
+    year = "2018",
+    volume = "",
+    pages = "",
+    textVersion = paste("Manem, V., Labie, M., Smirnov, P., Kofia, V., Freeman, M., Koritzinksy, M.,
+      Abazeed, M., Haibe-Kains, B., Bratman, S.",
+      "Modeling cellular response in large-scale radiogenomic databases to advance precision radiotherapy",
+      "bioRxiv (2018) <doi:10.1101/449793>")
+    )
+
+citFooter("We have invested our time and effort into creating RadioGx,",
+    "we would be grateful if you could cite it when using it in your analysis"
+    )
+
+citHeader("For more details about usage, see our sister package 'PharmacoGx'")
+
+citEntry(entry="article",
+  title  ="PharmacoGx: an R package for analysis of large pharmacogenomic datasets",
+  author = "P Smirnov, Z Safikhani, N El-Hachem , D Wang, A She , C Olsen, M Freeman, H Selby, D Gendoo , P Grossman , A Beck , H Aerts , M Lupien, A Goldenberg ,B Haibe-Kains",
+  journal = "Bioinformatics (Oxford, England)",
+  year = "2016",
+  volume = "",
+  pages = "",
+  textVersion = paste("P Smirnov, Z Safikhani, N El-Hachem , D Wang, A She , C Olsen, M Freeman, H Selby, D Gendoo , P Grossman , A Beck , H Aerts , M Lupien, A Goldenberg ,B Haibe-Kains",
+    "PharmacoGx: an R package for analysis of large pharmacogenomic datasets",
+    "Bioinformatics (2016).")
+    )
