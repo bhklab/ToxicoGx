@@ -1,3 +1,6 @@
+#Only includes samples where dosage of drug was measured in microMolar, OR the drug is gentamicin.
+#ExpressionSet includes 2382 samples for Human, 3276 samples for Rat.
+
 create_phenoData <- function(species=c("Human","Rat")){
   #load master phenoData file from TG-GATEs
   #Master phenoData file from TG-GATEs: #14 from https://dbarchive.biosciencedbc.jp/en/open-tggates/download.html
