@@ -39,7 +39,9 @@
 #' @import PharmacoGx
 #' @export
 
-summarizeToxicoMolecularProfiles1 <- function(tSet,
+#' Output is of SummarizedExperiment class
+
+summarizeToxicoMolecularProfiles3 <- function(tSet,
                                               mDataType,
                                               cell.lines,
                                               drugs,
@@ -62,21 +64,24 @@ summarizeToxicoMolecularProfiles1 <- function(tSet,
   #subset phenoData to include only the experiments requested
   pp2 <- pp[(pp[,"cellid"] %in% unique.cells & pp[,"drugid"] %in% drugs 
              & pp[,"duration"] %in% duration & pp[,"dose_level"] %in% dose), , drop = F] #only the phenoData that is relevant to the request input
-  dd2 <- dd[features,rownames(pp2), drop = F] #only the gene expression data that is relevant to the request input
+  dd2 <- dd[features,rownames(pp2), drop = F] #only the gene expression data that is relevant to the request input\
+  View(dd2)
   
   #vector of experimental conditions requested for each drug
   a <- paste(expand.grid(dose,duration)[,1], expand.grid(dose,duration)[,2], sep = ";")
   #b <- expand.grid(dose,duration)
   
-  ddt <- dd2[,NA][,c(1:length(a)), drop = F]
-  ppt <- pp2[FALSE,]
+  ddt <- dd[,NA][,c(1:length(a)), drop = F]
+  ppt <- pp[FALSE,]
   
   exp.list <- list()
   cnt <- 0
+  blank <- ddt[,1,drop=F]
   
   for (drug in drugs){
     cnt <- cnt + 1
     for (i in a){
+      print(i)
       curr_dose <- sub(';.*$','', i)
       curr_dur <- sub('.*;','',i)
       
@@ -85,7 +90,7 @@ summarizeToxicoMolecularProfiles1 <- function(tSet,
                   & pp2[,"drugid"] == drug), , drop = F]
       dd3 <- dd2[features,rownames(pp3), drop = F]
       
-      if (ncol(dd3) > 1){
+      if (ncol(dd3) > 1){ #if there are replicates
         switch(summary.stat, #ddr, ppr contains gene expression data, phenoData, for replicates
                "mean" = { ddr <- apply(dd3, 1, mean) },
                "median"={ ddr <- apply(dd3, 1, median) }, 
@@ -101,7 +106,11 @@ summarizeToxicoMolecularProfiles1 <- function(tSet,
         
         ddt <- cbind(ddt,ddr)
         ppt <- rbind(ppt,ppr)
-      } else {
+      } else if (ncol(dd3) == 0){ #experiment does not exist
+        ddt <- cbind(ddt,blank)
+        ppt <- rbind(ppt,pp3[NA,])
+      }
+      else { #no replicates
         ddt <- cbind(ddt,dd3)
         ppt <- rbind(ppt,pp3)
       }
