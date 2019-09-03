@@ -6,7 +6,7 @@
 #'
 #' @examples
 #' data(TGGATES_small)
-#' TGGATES_small <- summarizeMolecularProfiles(TGGATES_small,
+#' TGGATES_small <- summarizeMolecularProfiles2(TGGATES_small,
 #'                     mDataType = "rna", cell.lines=cellNames(TGGATES_small),
 #'                     summary.stat = 'median', fill.missing = TRUE, verbose=TRUE)
 #' TGGATES_small
@@ -34,7 +34,7 @@
 #' @importFrom Biobase ExpressionSet exprs pData AnnotatedDataFrame assayDataElement assayDataElement<- fData<-
 #' @export
 
-summarizeToxicoMolecularProfiles1 <- function(tSet, 
+summarizeToxicoMolecularProfiles2 <- function(tSet, 
                                               mDataType, 
                                               cell.lines, # eg. "Hepatocyte"
                                               drugs, # eg. "Valproic.acid"
