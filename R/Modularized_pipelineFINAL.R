@@ -1,7 +1,9 @@
 #Only includes samples where dosage of drug was measured in microMolar, OR the drug is gentamicin.
 #ExpressionSet includes 2382 samples for Human, 3276 samples for Rat.
 
-create_phenoData <- function(species=c("Human","Rat")){
+create_phenoData <- function(species=c("Human","Rat"), verbose = TRUE){
+  if (verbose) {message("Creating phenoData object...")}
+  
   #load master phenoData file from TG-GATEs
   #Master phenoData file from TG-GATEs: #14 from https://dbarchive.biosciencedbc.jp/en/open-tggates/download.html
   all_attribute <- read.delim("data/Open-tggates_AllAttribute.tsv",stringsAsFactors = F)
@@ -119,10 +121,14 @@ create_phenoData <- function(species=c("Human","Rat")){
   #Assign rownames as samplename
   rownames(all_attribute)<-all_attribute$samplename
   
+  if (verbose) {message("phenoData object created!")}
+  
   return(all_attribute)
 }
 
-create_exprsData <- function(species=c("Human","Rat"), phenoData){
+create_exprsData <- function(species=c("Human","Rat"), phenoData, verbose = TRUE){
+  if (verbose) {message("Creating eset object...")}
+  
   if (species == "Human"){
     # install.packages("data/hgu133plus2hsensgcdf_22.0.0.tar.gz", repos = NULL, type = "source")
     library("hgu133plus2hsensgcdf")
@@ -133,13 +139,12 @@ create_exprsData <- function(species=c("Human","Rat"), phenoData){
     cdf <- "rat2302rnensgcdf"
   }
   celfn <- paste("CELfiles - ",species,"/", phenoData[,"celfilename"], sep="")
-  
   ###########################################  NORMALIZATION  ############################################
-  # eset <- just.rma(filenames = celfn, verbose = TRUE, cdfname = cdf)
+  #eset <- just.rma(filenames = celfn, verbose = TRUE, cdfname = cdf)
   ########################################################################################################
   
   ########################################  ALREADY NORMALIZED  ##########################################
-  eset <- readRDS(paste("data/eset_",species,"_",nrow(phenoData),".rds", sep = ""))
+  eset <- readRDS(paste("data/NORMALIZED_ONLY/eset_",species,"_",nrow(phenoData),".rds", sep = ""))
   ########################################################################################################
   
   storageMode(eset)<-"environment"
@@ -155,15 +160,20 @@ create_exprsData <- function(species=c("Human","Rat"), phenoData){
   colnames(eset@assayData$exprs)<-substr(colnames(eset@assayData$exprs),3,12)
   colnames(eset@assayData$se.exprs)<-substr(colnames(eset@assayData$se.exprs),3,12)
   rownames(eset@protocolData@data)<-substr(rownames(eset@protocolData@data),3,12)
+  rownames(eset@phenoData@data)<-substr(rownames(eset@protocolData@data),3,12)
   #lock eset@assayData environment again
   storageMode(eset)<-"lockedEnvironment"
   
   annotation(eset)<-"rna"
   
+  if (verbose) {message("eset object created!")}
+  
   return(eset)
 }
 
-create_featureData <- function(species=c("Human","Rat"), eset){
+create_featureData <- function(species=c("Human","Rat"), eset, verbose = TRUE){
+  if (verbose) {message("Creating featureData object...")}
+  
   if (species == "Human"){
     ensembl_data <- "hsapiens_gene_ensembl"
   } else if (species == "Rat"){
@@ -182,6 +192,8 @@ create_featureData <- function(species=c("Human","Rat"), eset){
     uniqueBiomaRt<-arrange(uniqueBiomaRt,uniqueBiomaRt$gene_id)
     uniqueBiomaRt$gene_id <- paste(uniqueBiomaRt$gene_id,"_at", sep = "")
     rownames(uniqueBiomaRt)<-uniqueBiomaRt$gene_id
+    
+    if (verbose) {message("featureData object created!")}
     
     return(uniqueBiomaRt)
   }
@@ -210,10 +222,13 @@ create_featureData <- function(species=c("Human","Rat"), eset){
   finalFeature$gene_id <- paste(finalFeature$gene_id,"_at", sep = "")
   rownames(finalFeature)<-finalFeature$gene_id
   
+  if (verbose) {message("featureData object created!")}
   return(finalFeature)
 }
 
-create_sensitivityProfiles <- function(phenoData){
+create_sensitivityProfiles <- function(phenoData, verbose = TRUE){
+  if (verbose) {message("Creating Sensitivity Profiles...")}
+  
   # create empty data frame of unique UID's
   sensProf <- data.frame(row.names = unique(phenoData$UID),
                          slope_recomputed = double(length(unique(phenoData$UID))),
@@ -232,10 +247,12 @@ create_sensitivityProfiles <- function(phenoData){
     }
   }
   
+  if (verbose) {message("Sensitivity Profiles object created!")}
   return(sensProf)
 }
 
-create_sensitivityRaw <- function(phenoData){
+create_sensitivityRaw <- function(phenoData, verbose = TRUE){
+  if (verbose) {message("Creating Sensitivity Raw...")}
   conc_tested<-c("Control","Low","Middle","High")
   #Create temportary data.frames to use for processing
   #Dose Info from sensInfo & reformatting
@@ -276,10 +293,14 @@ create_sensitivityRaw <- function(phenoData){
   
   sensRaw <- doseViabilityArray
   
+  if (verbose) {message("Sensitivity Raw object created!")}
+  
   return(sensRaw)
 }
 
-create_sensitivityInfo <- function(phenoData, doseArray){
+create_sensitivityInfo <- function(phenoData, doseArray, verbose = TRUE){
+  if (verbose) {message("Creating Sensitivity Info...")}
+  
   sensInfo <- subset(phenoData,select=c(UID, cellid, drugid, duration, individual_id))
   rownames(sensInfo) <- c()
   sensInfo <- unique(sensInfo)
@@ -309,10 +330,12 @@ create_sensitivityInfo <- function(phenoData, doseArray){
   rownames(sensInfo)<-sensInfo$Row.names
   sensInfo<-subset(sensInfo,select=-c(Row.names))
   
+  if (verbose) {message("Sensitivity Info object created!")}
+  
   return (sensInfo)
 }
 
-create_curationDrug <- function(phenoData){
+create_curationDrug <- function(phenoData, verbose = TRUE){
   curationDrug <- unique(subset(phenoData, select=c(drugid, tggates_drugid)))
   rownames(curationDrug) <- curationDrug$drugid
   names(curationDrug) <- c("unique.drugid", "tggates.drugid")
@@ -320,7 +343,7 @@ create_curationDrug <- function(phenoData){
   return(curationDrug)
 }
 
-create_curationCell <- function(phenoData){
+create_curationCell <- function(phenoData, verbose = TRUE){
   curationCell <- unique(subset(phenoData, select=c(cellid)))
   curationCell$tggates.cellid <- curationCell$cellid
   names(curationCell) <- c("unique.cellid", "tggates.cellid")
@@ -329,7 +352,7 @@ create_curationCell <- function(phenoData){
   return(curationCell)
 }
 
-create_curationTissue <- function(phenoData){
+create_curationTissue <- function(phenoData, verbose = TRUE){
   curationTissue <- unique(subset(phenoData, select=c(organ_id)))
   curationTissue$tggates.tissueid <- "Liver"
   names(curationTissue)[1] <- "unique.tissueid"
@@ -338,14 +361,14 @@ create_curationTissue <- function(phenoData){
   return(curationTissue)
 }
 
-create_drug <- function(phenoData){
+create_drug <- function(phenoData, verbose = TRUE){
   drug <- unique(subset(phenoData, select=c(drugid, drugid_abbr, drugid_no)))
   rownames(drug) <- drug$drugid
   
   return(drug)
 }
 
-create_cell <- function(phenoData){
+create_cell <- function(phenoData, verbose = TRUE){
   cell <- unique(subset(phenoData,select=c(cellid, organ_id, material_id, species, test_type)))
   names(cell)<-c("cellid","tissueid","materialid", "species","testType")
   cell$tissueid<-"Liver"
@@ -355,34 +378,28 @@ create_cell <- function(phenoData){
 }
 
 getTGGATEs <- function(species=c("Human","Rat"),
-                       type=c("DNA", "LDH")){
+                       type=c("DNA", "LDH"),
+                       verbose = TRUE){
   library(dplyr)
-  library(PharmacoGx)
   library(gdata)
   library(readxl)
-  library("xml2")
-  library(biomaRt)
   library(affy)
+  library(PharmacoGx)
+  library(xml2)
+  library(biomaRt)
   library(abind)
   
   #get all elements of eset
-  message("Creating phenoData object...")
-  phenoData <- create_phenoData(species)
-  message("phenoData object created!")
-  message("Creating eset object...")
-  eset <- create_exprsData(species, phenoData)
-  message("eset object created!")
-  message("Creating featureData object...")
-  featureData <- create_featureData(species, eset)
-  message("featureData object created!")
+  phenoData <- create_phenoData(species, verbose)
+  eset <- create_exprsData(species, phenoData, verbose)
+  featureData <- create_featureData(species, eset, verbose)
   
-  message("Putting the eset together...")
-  #put the eset together
+  if (verbose) {message("Putting the eset together...")}
   pData(eset) <- phenoData
   fData(eset) <- featureData
-  message("Done!")
+  if (verbose) {message("Done!")}
   
-  message(paste("Requested ",type, sep = ""))
+  if (verbose) {message(paste("Requested ",type, sep = ""))}
   if (type == "DNA"){
     phenoData <- subset(phenoData, select=-c(LDH))
   } else {
@@ -390,27 +407,21 @@ getTGGATEs <- function(species=c("Human","Rat"),
   }
   names(phenoData)[which(names(phenoData) == type)] <- "Viability"
   
-  message("Creating Sensitivity Profiles...")
   sensitivityProfiles <- create_sensitivityProfiles(phenoData)
-  message("Sensitivity Profiles object created!")
-  message("Creating Sensitivity Raw...")
   sensitivityRaw <- create_sensitivityRaw(phenoData)
-  message("Sensitivity Raw object created!")
-  message("Creating Sensitivity Info...")
   sensitivityInfo <- create_sensitivityInfo(phenoData, doseArray=as.array(sensitivityRaw[,,1]))
-  message("Sensitivity Info object created!")
   
-  message("Creating curation objects...")
+  if (verbose) {message("Creating curation objects...")}
   curationDrug <- create_curationDrug(phenoData)
   curationCell <- create_curationCell(phenoData)
   curationTissue <- create_curationTissue(phenoData)
-  message("Done!")
-  message("Creating cell, drug objects...")
+  if (verbose) {message("Done!")}
+  if (verbose) {message("Creating cell, drug objects...")}
   drug <- create_drug(phenoData)
   cell <- create_cell(phenoData)
-  message("Done!")
+  if(verbose) {message("Done!")}
   
-  message("Putting toxicoSet together...")
+  if (verbose) {message("Putting ToxicoSet together...")}
   TGGATES <- ToxicoSet(paste("TGGATES ",species," ",type, sep = ""),
                        molecularProfiles=list("rna"=eset),
                        cell=cell,
@@ -423,9 +434,9 @@ getTGGATEs <- function(species=c("Human","Rat"),
                        curationTissue=curationTissue,
                        datasetType=c("both"),
                        verify = TRUE)
-  message("Done!")
+  if (verbose) {message("Done!")}
   return(TGGATES)
 }
 
 # EXAMPLE -
-tggates <- getTGGATEs(species = "Human", type = "DNA")
+tggates_human <- getTGGATEs(species = "Human", type = "DNA")
