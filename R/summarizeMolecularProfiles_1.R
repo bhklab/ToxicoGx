@@ -36,6 +36,7 @@
 #' @importFrom utils setTxtProgressBar txtProgressBar
 #' @importFrom Biobase ExpressionSet exprs pData AnnotatedDataFrame assayDataElement assayDataElement<- fData<-
 #' @import SummarizedExperiment
+#' @import PharmacoGx
 #' @export
 
 summarizeToxicoMolecularProfiles1 <- function(tSet,
