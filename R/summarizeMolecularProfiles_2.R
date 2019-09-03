@@ -28,7 +28,7 @@
 #' @param summarize A flag which when set to FALSE (defaults to TRUE) disables summarizing and
 #'   returns the data unchanged as a ExpressionSet
 #' @param verbose \code{boolean} should messages be printed
-#' @return \code{matrix} An ExpressionSet with the molecular data summarized
+#' @return \code{ExpressionSet} An ExpressionSet with the molecular data summarized
 #'   per cell line.
 #' @importFrom utils setTxtProgressBar txtProgressBar
 #' @importFrom Biobase ExpressionSet exprs pData AnnotatedDataFrame assayDataElement assayDataElement<- fData<-
