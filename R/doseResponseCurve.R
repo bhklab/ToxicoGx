@@ -188,8 +188,8 @@ drugDoseResponseCurve <-
           if (summarize.replicates) { #if replicates should be summarized
             if (length(exp_i) == 1) { #if there is only 1 UID that corresponds to the cell line - drug combo
               tSetNames[[i]] <- tSetName(tSets[[i]])
-              drug.responses <- as.data.frame(cbind("Dose"=as.numeric(as.vector(tSets[[i]]@sensitivity$raw[exp_i, -1, "Dose"])),
-                                                    "Viability"=as.numeric(as.vector(tSets[[i]]@sensitivity$raw[exp_i, -1, "Viability"])), stringsAsFactors=FALSE))
+              drug.responses <- as.data.frame(cbind("Dose"=as.numeric(as.vector(tSets[[i]]@sensitivity$raw[exp_i, colnames(tSets[[i]]@sensitivity$raw[,,"Dose"]) != "Control", "Dose"])),
+                                                    "Viability"=as.numeric(as.vector(tSets[[i]]@sensitivity$raw[exp_i, colnames(tSets[[i]]@sensitivity$raw[,,"Viability"]) != "Control", "Viability"])), stringsAsFactors=FALSE))
               drug.responses <- drug.responses[complete.cases(drug.responses), ]
             }else{ #if there are multiple UIDs that correspond to the cell line - drug combo
               drug.responses <- data.frame()
@@ -200,8 +200,8 @@ drugDoseResponseCurve <-
                 exp_j <- which(sensitivityInfo(tSets[[i]])[ ,"cellid"] == cellline & sensitivityInfo(tSets[[i]])[ ,"drugid"] == drug &
                                  sensitivityInfo(tSets[[i]])[ ,"duration_h"] == j)
                 
-                drug.responses <- as.data.frame(cbind("Dose"=apply(tSets[[i]]@sensitivity$raw[exp_j, -1, "Dose"], 2, function(x){median(as.numeric(x), na.rm=TRUE)}),
-                                                      "Viability"=apply(tSets[[i]]@sensitivity$raw[exp_j, -1, "Viability"], 2, function(x){median(as.numeric(x), na.rm=TRUE)}), stringsAsFactors=FALSE))
+                drug.responses <- as.data.frame(cbind("Dose"=apply(tSets[[i]]@sensitivity$raw[exp_j, colnames(tSets[[i]]@sensitivity$raw[,,"Dose"]) != "Control", "Dose"], 2, function(x){median(as.numeric(x), na.rm=TRUE)}),
+                                                      "Viability"=apply(tSets[[i]]@sensitivity$raw[exp_j, colnames(tSets[[i]]@sensitivity$raw[,,"Viability"]) != "Control", "Viability"], 2, function(x){median(as.numeric(x), na.rm=TRUE)}), stringsAsFactors=FALSE))
                 rownames(drug.responses) <- paste(drug.responses,"hr_",rownames(drug.responses), sep = "")
                 drug.responses <- drug.responses[complete.cases(drug.responses), ]
                 doses_temp[[k]] <- drug.responses$Dose
@@ -231,8 +231,8 @@ drugDoseResponseCurve <-
               j <- j + 1
               tSetNames[[j]] <- tSetName(tSets[[i]])
               
-              drug.responses <- as.data.frame(cbind("Dose"=as.numeric(as.vector(tSets[[i]]@sensitivity$raw[exp, -1, "Dose"])),
-                                                    "Viability"=as.numeric(as.vector(tSets[[i]]@sensitivity$raw[exp, -1, "Viability"])), stringsAsFactors=FALSE))
+              drug.responses <- as.data.frame(cbind("Dose"=as.numeric(as.vector(tSets[[i]]@sensitivity$raw[exp, colnames(tSets[[i]]@sensitivity$raw[,,"Dose"]) != "Control", "Dose"])),
+                                                    "Viability"=as.numeric(as.vector(tSets[[i]]@sensitivity$raw[exp, colnames(tSets[[i]]@sensitivity$raw[,,"Viability"]) != "Control", "Viability"])), stringsAsFactors=FALSE))
               drug.responses <- drug.responses[complete.cases(drug.responses), ]
               doses[[j]] <- drug.responses$Dose
               responses[[j]] <- drug.responses$Viability
