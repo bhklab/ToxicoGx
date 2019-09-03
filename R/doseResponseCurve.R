@@ -21,6 +21,7 @@
 #' @param cellline [string] A cell line name for which the drug response curve should be 
 #' plotted. If the plot is desirable for more than one toxico set, A unique cell id
 #' should be provided.
+#' @param durations [numeric] A duration for which the drug response curve should be plotted.
 #' @param tSets [list] a list of ToxicoSet objects, for which the function
 #' should plot the curves.
 #' @param concentrations,viabilities [list] A list of concentrations and viabilities to plot, the function assumes that
@@ -70,7 +71,7 @@
 drugDoseResponseCurve <- 
   function(drug, 
            cellline,
-           durations = c(2,8,24),
+           durations,
            tSets=list(),
            concentrations=list(),
            viabilities=list(), 
@@ -210,14 +211,14 @@ drugDoseResponseCurve <-
                 if (!missing(legends.label)) { #if the user specified a legend label
                   # legend.values_temp contains the values for all sensitivity measurements corresponding to the experiment UIDs
                   if (length(legends.label) > 1) {
-                    legend.values_temp[[i*k]] <- paste(unlist(lapply(legends.label, function(x){
+                    legend.values_temp[[i]] <- paste(unlist(lapply(legends.label, function(x){
                       sprintf("%s = %s", x, round(as.numeric(tSets[[i]]@sensitivity$profiles[exp_j,x]), digits=2))
                     })), collapse = ", ")
                   } else {
-                    legend.values_temp[[i*k]] <- sprintf("%s = %s", legends.label, round(as.numeric(tSets[[i]]@sensitivity$profiles[exp_j, legends.label]), digits=2))
+                    legend.values_temp[[i]] <- sprintf("%s = %s", legends.label, round(as.numeric(tSets[[i]]@sensitivity$profiles[exp_j, legends.label]), digits=2))
                   }
                 } else { #if the user did not specify a legend label
-                  legend.values_temp[[i*k]] <- paste("_",j,"hr", sep = "")
+                  legend.values_temp[[i]] <- paste("_",j,"hr", sep = "")
                 }
               }
               tSetNames <- c(tSetNames, tSetNames_temp)
