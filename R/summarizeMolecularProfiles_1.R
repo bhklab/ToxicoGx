@@ -41,7 +41,7 @@
 
 #' Output is of SummarizedExperiment class
 
-summarizeToxicoMolecularProfiles3 <- function(tSet,
+summarizeToxicoMolecularProfiles1 <- function(tSet,
                                               mDataType,
                                               cell.lines,
                                               drugs,
@@ -65,7 +65,6 @@ summarizeToxicoMolecularProfiles3 <- function(tSet,
   pp2 <- pp[(pp[,"cellid"] %in% unique.cells & pp[,"drugid"] %in% drugs 
              & pp[,"duration"] %in% duration & pp[,"dose_level"] %in% dose), , drop = F] #only the phenoData that is relevant to the request input
   dd2 <- dd[features,rownames(pp2), drop = F] #only the gene expression data that is relevant to the request input\
-  View(dd2)
   
   #vector of experimental conditions requested for each drug
   a <- paste(expand.grid(dose,duration)[,1], expand.grid(dose,duration)[,2], sep = ";")
@@ -108,7 +107,7 @@ summarizeToxicoMolecularProfiles3 <- function(tSet,
         ppt <- rbind(ppt,ppr)
       } else if (ncol(dd3) == 0){ #experiment does not exist
         ddt <- cbind(ddt,blank)
-        ppt <- rbind(ppt,pp3[NA,])
+        # ppt <- rbind(ppt,pp3[NA,])
       }
       else { #no replicates
         ddt <- cbind(ddt,dd3)
@@ -123,9 +122,12 @@ summarizeToxicoMolecularProfiles3 <- function(tSet,
   names(exp.list) <- drugs
   ppf <- pp2[FALSE,]
   for (i in unique(ppt[,"dose_level"])){
+    print(i)
     for (j in unique(ppt[,"duration"])){
+      print(j)
       pp4 <- apply(ppt[ppt[,"dose_level"] == i & ppt[,"duration"] == j,,drop=F], 2, function (x) {
         x <- paste(unique(as.character(x[!is.na(x)])), collapse="///")
+        #if (is.na(x)){x <- paste("Exp ",,sep="")}
         return (x)
       })
       pp4 <- as.data.frame(t(pp4))
@@ -135,7 +137,9 @@ summarizeToxicoMolecularProfiles3 <- function(tSet,
   }
   ppf <- as.data.frame(ppf,stringsAsFactors=FALSE)
   rownames(ppf) <- paste(ppf[,"dose_level"],";",ppf[,"duration"], sep = "")
-  ppf <- ppf[match(rownames(ppf), colnames(exp.list[[1]])),]
+  vec <- as.vector(colnames(exp.list[[1]]))
+  ppf <- ppf[vec,]
+  #ppf <- ppf[match(rownames(ppf), colnames(exp.list[[1]])),]
   
   res <- SummarizedExperiment(assays = exp.list, rowData = ff, colData = ppf)
   
