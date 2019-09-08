@@ -9,7 +9,9 @@ Authors@R: c(
   person("Christopher","Eeles", email = "christopher.eeles@uhnresearch.ca",
     role = c("aut")),
   person("Benjamin","Haibe-Kains", email = "benjamin.haibe.kains@utoronto.ca",
-    role = c("aut","cre"))
+    role = c("aut","cre")),
+  person("Esther","Yoo", email = "yk.yoo@mail.utoronto.ca", 
+    role = c("aut"))
   )  
 Description: Contains a set of functions to perform large-scale analysis of toxicogenomic data.
 License: GPL-3
