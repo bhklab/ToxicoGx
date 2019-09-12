@@ -420,7 +420,7 @@ getTGGATEs <- function(species=c("Human","Rat"),
   if(verbose) {message("Done!")}
   
   if (verbose) {message("Putting ToxicoSet together...")}
-  TGGATES <- PharmacoSet(paste("TGGATES ",species," ",type, sep = ""),
+  TGGATES <- ToxicoSet(paste("TGGATES ",species," ",type, sep = ""),
                        molecularProfiles=list("rna"=eset),
                        cell=cell,
                        drug=drug,
