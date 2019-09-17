@@ -23,7 +23,7 @@ OERmodel <- function(){
   SF1 = exp(-0.3*D*OMF-(0.03*D*D*OMF))
   #RadioGx::computeAUC(D,SF1)
   pdf("HyxpoxiaPlot.pdf")
-  RadioGx::doseResponseCurve(Ds=list("Hypoxia" = D),
+  CoreGx::doseResponseCurve(Ds=list("Hypoxia" = D),
                               SFs=list("Hypoxia" = SF1), plot.type="Actual",
                               legends.label = NULL,title = "Effect of Hypoxia",
                               cex = 1.55,cex.main = 1.75,lwd = 2)

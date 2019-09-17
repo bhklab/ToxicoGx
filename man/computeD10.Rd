@@ -17,4 +17,5 @@ The units of the returned dose are the inverses of the units of the alpha and be
 }
 \examples{
 computeD10(c(0.2, 0.1))
+
 }

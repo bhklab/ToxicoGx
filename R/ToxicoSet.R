@@ -28,20 +28,22 @@
 #' @slot datasetType A \code{character} string of 'sensitivity',
 #'   'perturbation', or both detailing what type of data can be found in the
 #'   ToxicoSet, for proper processing of the data
+#'
 #' @return An object of the ToxicoSet class
+#'
 #' @importClassesFrom CoreGx CoreSet
+#'
+#' @export
+#'
 .ToxicoSet <- setClass("ToxicoSet", slots = list(drug="data.frame"
-                                               # tables="array",
-                                               # table.summary="list",
-                                               # dateCreated="character",
 ),
 contains = "CoreSet")
 
 
 # The default constructor above does a poor job of explaining the required structure of a ToxicoSet.
-# The constructor function defined below guides the user into providing the required components of the curation and senstivity lists
-# and hides the annotation slot which the user does not need to manually fill.
-# This also follows the design of the Expression Set class.
+# The constructor function defined below guides the user into providing the required components of
+# the curation and senstivity lists and hides the annotation slot which the user does not need to
+# manually fill. This also follows the design of the Expression Set class.
 
 #' ToxicoSet constructor
 #'
@@ -53,7 +55,7 @@ contains = "CoreSet")
 #'
 #' @examples
 #' ## For help creating a ToxicoSet object, please see the following vignette:
-#' browseVignettes("PharmacoGx")
+#' #browseVignettes("PharmacoGx")
 #'
 #' @param name A \code{character} string detailing the name of the dataset
 #' @param molecularProfiles A \code{list} of ExpressionSet objects containing
@@ -78,11 +80,15 @@ contains = "CoreSet")
 #'   ToxicoSet, for proper processing of the data
 #' @param verify \code{boolean} Should the function verify the ToxicoSet and
 #'   print out any errors it finds after construction?
+#'
 #' @return An object of class ToxicoSet
-#' @export
+#'
 #' @import methods
 #' @importFrom utils sessionInfo
 #' @importFrom stats na.omit
+#'
+#' @export
+#'
 ToxicoSet <-  function(name,
                       molecularProfiles=list(),
                       cell=data.frame(),
@@ -108,20 +114,13 @@ ToxicoSet <-  function(name,
 
   #molecularProfiles <- list("dna"=dna, "rna"=rna, "snp"=snp, "cnv"=cnv)
   for (i in seq_along(molecularProfiles)){
-    if (class(molecularProfiles[[i]]) != "ExpressionSet"){
+    if (!is(molecularProfiles[[i]], "ExpressionSet")) {
       stop(sprintf("Please provide the %s data as an ExpressionSet", names(molecularProfiles[i])))
     }else{
       Biobase::fData(molecularProfiles[[i]]) <- Biobase::fData(molecularProfiles[[i]])[rownames(Biobase::exprs(molecularProfiles[[i]])), , drop=FALSE]
       Biobase::pData(molecularProfiles[[i]]) <- Biobase::pData(molecularProfiles[[i]])[colnames(Biobase::exprs(molecularProfiles[[i]])), , drop=FALSE]
     }
-
   }
-  #if (class(cell)!="data.frame"){
-  #    stop("Please provide the cell line annotations as a data frame.")
-  #}
-  #if (class(radiation)!="data.frame"){
-  #    stop("Please provide the radiation annotations as a data frame.")
-  #}
 
   sensitivity <- list()
 
@@ -170,9 +169,13 @@ tSet <- NULL
 #' @param cSet Parameter name for parent method inherited from CoreGx
 #'
 #' @return a \code{data.frame} with the cell annotations
+#'
 #' @importFrom CoreGx cellInfo
+#'
 #' @describeIn ToxicoSet Returns the annotations for all the cell lines tested on in the ToxicoSet
+#'
 #' @export
+#'
 setMethod(cellInfo,
           "ToxicoSet",
           function(cSet=tSet){
@@ -243,16 +246,20 @@ setReplaceMethod("drugInfo", signature = signature(object="ToxicoSet",value="dat
 #' Generic for phenoInfo method
 #'
 #' @examples
-
 #' phenoInfo(TGGATES_small, mDataType="rna")
 #'
 #' @inheritParams cellInfo
 #' @param mDataType A \code{character} with the type of molecular data to return/update
+#'
 #' @return a \code{data.frame} with the experiment info
 # setGeneric("phenoInfo", function(tSet, mDataType) standardGeneric("phenoInfo"))
+#'
 #' @importFrom CoreGx phenoInfo
+#'
 #' @describeIn ToxicoSet Return the experiment info from the given type of molecular data in ToxicoSet
+#'
 #' @export
+#'
 setMethod("phenoInfo",
           signature = c("ToxicoSet", "character"),
           function(cSet=tSet, mDataType){
@@ -265,7 +272,6 @@ setMethod("phenoInfo",
 #'
 #' @examples
 #'
-
 #' phenoInfo(TGGATES_small, mDataType="rna") <- phenoInfo(TGGATES_small, mDataType="rna")
 #'
 #' @inheritParams cellInfo<-
@@ -273,9 +279,13 @@ setMethod("phenoInfo",
 #'
 #' @return The updated \code{ToxicoSet}
 # setGeneric("phenoInfo<-", function(object, mDataType, value) standardGeneric("phenoInfo<-"))
+#'
 #' @importMethodsFrom CoreGx phenoInfo<-
+#'
 #' @describeIn ToxicoSet Update the the given type of molecular data experiment info in the ToxicoSet
+#'
 #' @export
+#'
 setReplaceMethod("phenoInfo", signature = signature(object="ToxicoSet", mDataType ="character",value="data.frame"), function(object, mDataType, value){
 
   object <- callNextMethod(object, mDataType, value)
@@ -287,7 +297,6 @@ setReplaceMethod("phenoInfo", signature = signature(object="ToxicoSet", mDataTyp
 #' Generic for molecularProfiles method
 #'
 #' @examples
-
 #' TGGATES_mProf <- molecularProfiles(TGGATES_small, "rna")
 #' TGGATES_mProf[1:10,]
 #'
@@ -295,9 +304,13 @@ setReplaceMethod("phenoInfo", signature = signature(object="ToxicoSet", mDataTyp
 #'
 #' @return a \code{data.frame} with the experiment info
 # setGeneric("molecularProfiles", function(tSet, mDataType) standardGeneric("molecularProfiles"))
+#'
 #' @describeIn ToxicoSet Return the given type of molecular data from the ToxicoSet
+#'
 #' @importMethodsFrom CoreGx molecularProfiles
+#'
 #' @export
+#'
 setMethod(molecularProfiles,
           signature("ToxicoSet", "character"),
           function(cSet=tSet, mDataType){
@@ -309,13 +322,16 @@ setMethod(molecularProfiles,
 #' Generic for molecularProfiles replace method
 #'
 #' @examples
-
 #' molecularProfiles(TGGATES_small, "rna") <- molecularProfiles(TGGATES_small, "rna")
 #'
 #' @inheritParams phenoInfo<-
+#'
 #' @return Updated \code{ToxicoSet}
+#'
 #' @importMethodsFrom CoreGx molecularProfiles<-
+#'
 #' @describeIn ToxicoSet Update the given type of molecular data from the ToxicoSet
+#'
 #' @export
 setReplaceMethod("molecularProfiles", signature = signature(object="ToxicoSet", mDataType ="character",value="matrix"), function(object, mDataType, value){
 
@@ -323,19 +339,19 @@ setReplaceMethod("molecularProfiles", signature = signature(object="ToxicoSet", 
   object
 })
 
-#'
 #' Generic for featureInfo method
 #'
 #' @examples
-
 #' featureInfo(TGGATES_small, "rna")[1:10,]
 #'
 #' @inheritParams phenoInfo
 #'
-#'
 #' @describeIn ToxicoSet Return the feature info for the given molecular data
+#'
 #' @importFrom CoreGx featureInfo
+#'
 #' @export
+#'
 setMethod("featureInfo",
           signature("ToxicoSet", "character"),
           function(cSet=tSet, mDataType){
@@ -347,7 +363,6 @@ setMethod("featureInfo",
 #' Generic for featureInfo replace method
 #'
 #' @examples
-
 #' featureInfo(TGGATES_small, "rna") <- featureInfo(TGGATES_small, "rna")
 #'
 #' @inheritParams phenoInfo<-
@@ -357,9 +372,13 @@ setMethod("featureInfo",
 # @param value A \code{data.frame} with the new feature annotations
 #'
 #' @return Updated \code{ToxicoSet}
+#'
 #' @describeIn ToxicoSet Replace the gene info for the molecular data
+#'
 #' @importMethodsFrom CoreGx featureInfo<-
+#'
 #' @export
+#'
 setReplaceMethod("featureInfo", signature = signature(object="ToxicoSet", mDataType ="character",value="data.frame"), function(object, mDataType, value){
 
   # if(mDataType %in% names(object@molecularProfiles)){Biobase::fData(object@molecularProfiles[[mDataType]]) <- value}
@@ -373,16 +392,19 @@ setReplaceMethod("featureInfo", signature = signature(object="ToxicoSet", mDataT
 #' Generic for sensitivityInfo method
 #'
 #' @examples
-
 #' sensInf<- sensitivityInfo(TGGATES_small)
 #' sensInf[1:10,]
 #'
 #' @inheritParams cellInfo
 #'
 #' @return a \code{data.frame} with the experiment info
+#'
 #' @describeIn ToxicoSet Return the drug dose sensitivity experiment info
+#'
 #' @importMethodsFrom CoreGx sensitivityInfo
+#'
 #' @export
+#'
 setMethod(sensitivityInfo,
           "ToxicoSet",
           function(cSet=tSet){
@@ -395,19 +417,21 @@ setMethod(sensitivityInfo,
 #'
 #'
 #' @examples
-
 #' sensitivityInfo(TGGATES_small) <- sensitivityInfo(TGGATES_small)
 #'
 #' @inheritParams cellInfo<-
 # @param object The \code{ToxicoSet} to update
 # @param value A \code{data.frame} with the new sensitivity annotations
 #'
-#'
 #' @return Updated \code{ToxicoSet}
-# setGeneric("sensitivityInfo<-", function(object, value) standardGeneric("sensitivityInfo<-"))
+#'
+setGeneric("sensitivityInfo<-", function(object, value) standardGeneric("sensitivityInfo<-"))
 #' @importMethodsFrom CoreGx sensitivityInfo<-
+#'
 #' @describeIn ToxicoSet Update the sensitivity experiment info
+#'
 #' @export
+#'
 setReplaceMethod("sensitivityInfo", signature = signature(object="ToxicoSet",value="data.frame"), function(object, value){
   # object@sensitivity$info <- value
   object <- callNextMethod(object, value)
@@ -420,16 +444,19 @@ setReplaceMethod("sensitivityInfo", signature = signature(object="ToxicoSet",val
 #' Generic for sensitivityProfiles method
 #'
 #' @examples
-
 #' sensitivityProfiles(TGGATES_small)
 #'
 #' @inheritParams cellInfo
 #'
 #' @return a \code{data.frame} with the experiment info
 # setGeneric("sensitivityProfiles", function(tSet) standardGeneric("sensitivityProfiles"))
+#'
 #' @describeIn ToxicoSet Return the phenotypic data for the drug dose sensitivity
+#'
 #' @importFrom CoreGx sensitivityProfiles
+#'
 #' @export
+#'
 setMethod(sensitivityProfiles,
           "ToxicoSet",
           function(cSet=tSet){
@@ -443,7 +470,6 @@ setMethod(sensitivityProfiles,
 #' A generic for the sensitivityProfiles replacement method
 #'
 #' @examples
-
 #' sensitivityProfiles(TGGATES_small) <- sensitivityProfiles(TGGATES_small)
 #'
 #' @inheritParams cellInfo<-
@@ -452,7 +478,7 @@ setMethod(sensitivityProfiles,
 # @param value A \code{data.frame} with the new sensitivity profiles. If a matrix object is passed in, converted to data.frame before assignment
 #'
 #' @return Updated \code{ToxicoSet}
-# setGeneric("sensitivityProfiles<-", function(object, value) standardGeneric("sensitivityProfiles<-"))
+#setGeneric("sensitivityProfiles<-", function(object, value) standardGeneric("sensitivityProfiles<-"))
 #' @importFrom CoreGx sensitivityProfiles<-
 #' @describeIn ToxicoSet Update the phenotypic data for the drug dose
 #'   sensitivity
@@ -464,6 +490,7 @@ setReplaceMethod("sensitivityProfiles", signature = signature(object="ToxicoSet"
 })
 #' @describeIn ToxicoSet Update the phenotypic data for the drug dose
 #'   sensitivity
+#'
 #' @export
 setReplaceMethod("sensitivityProfiles", signature = signature(object="ToxicoSet",value="matrix"), function(object, value){
 
@@ -476,16 +503,19 @@ setReplaceMethod("sensitivityProfiles", signature = signature(object="ToxicoSet"
 #' A generic for the sensitivityMeasures  method
 #'
 #' @examples
-
 #' sensitivityMeasures(TGGATES_small)
 #'
-#'
 #' @inheritParams cellInfo
+#'
 #' @return A \code{character} vector of all the available sensitivity measures
+#'
 #' @describeIn ToxicoSet Returns the available sensitivity profile
 #'   summaries, for example, whether there are IC50 values available
+#'
 #' @importFrom CoreGx sensitivityMeasures
+#'
 #' @export
+#'
 setMethod(sensitivityMeasures,
           "ToxicoSet",
           function(cSet=tSet){
@@ -498,7 +528,6 @@ setMethod(sensitivityMeasures,
 #' A generic for the drugNames method
 #'
 #' @examples
-
 #' drugName <- drugNames(TGGATES_small)
 #' drugName[1:10]
 #'
@@ -507,8 +536,11 @@ setMethod(sensitivityMeasures,
 #'
 #' @return A vector of the drug names used in the ToxicoSet
 setGeneric("drugNames", function(tSet) standardGeneric("drugNames"))
+#'
 #' @describeIn ToxicoSet Return the names of the drugs used in the ToxicoSet
+#'
 #' @export
+#'
 setMethod(drugNames,
           "ToxicoSet",
           function(tSet){
@@ -523,7 +555,6 @@ setMethod(drugNames,
 #'
 #'
 #' @examples
-
 #' drugNames(TGGATES_small) <- drugNames(TGGATES_small)
 #'
 #' @inheritParams cellInfo<-
@@ -532,8 +563,11 @@ setMethod(drugNames,
 #'
 #' @return Updated \code{ToxicoSet}
 setGeneric("drugNames<-", function(object, value) standardGeneric("drugNames<-"))
+#'
 #' @describeIn ToxicoSet Update the drug names used in the dataset
+#'
 #' @export
+#'
 setReplaceMethod("drugNames", signature = signature(object="ToxicoSet",value="character"), function(object, value){
 
   object <- updateDrugId(object, value)
@@ -545,16 +579,19 @@ setReplaceMethod("drugNames", signature = signature(object="ToxicoSet",value="ch
 #' A generic for the cellNames method
 #'
 #' @examples
-
 #' cellNames(TGGATES_small)
 #'
 #' @inheritParams cellInfo
 #'
 #' @return A vector of the cell names used in the ToxicoSet
 # setGeneric("cellNames", function(tSet) standardGeneric("cellNames"))
+#'
 #' @describeIn ToxicoSet Return the cell names used in the dataset
+#'
 #' @importFrom CoreGx cellNames
+#'
 #' @export
+#'
 setMethod("cellNames",
           "ToxicoSet",
           function(cSet=tSet){
@@ -566,18 +603,20 @@ setMethod("cellNames",
 #' A generic for the cellNames replacement method
 #'
 #' @examples
-
 #' cellNames(TGGATES_small) <- cellNames(TGGATES_small)
 #'
 #' @inheritParams cellInfo<-
 # @param object The \code{ToxicoSet} to update
 # @param value A \code{character} vector of the new cell names
 #'
-#'
 #' @return Updated \code{ToxicoSet}
+#'
 #' @importMethodsFrom CoreGx cellNames<-
+#'
 #' @describeIn ToxicoSet Update the cell names used in the dataset
+#'
 #' @export
+#'
 setReplaceMethod("cellNames", signature = signature(object="ToxicoSet",value="character"), function(object, value){
   object <- callNextMethod(object, value)
   return(object)
@@ -588,15 +627,18 @@ setReplaceMethod("cellNames", signature = signature(object="ToxicoSet",value="ch
 #' A generic for the fNames method
 #'
 #' @examples
-
 #' fNames(TGGATES_small, "rna")[1:10]
 #'
 #' @inheritParams cellInfo
 #'
 #' @return A \code{character} vector of the feature names
+#'
 #' @describeIn ToxicoSet Return the feature names used in the dataset
+#'
 #' @importFrom CoreGx fNames
+#'
 #' @export
+#'
 setMethod("fNames",
           signature("ToxicoSet", "character"),
           function(cSet=tSet, mDataType){
@@ -626,15 +668,18 @@ setMethod("fNames",
 #' A generic for the dateCreated method
 #'
 #' @examples
-
 #' dateCreated(TGGATES_small)
 #'
 #' @inheritParams cellInfo
 #'
 #' @return The date the ToxicoSet was created
+#'
 #' @describeIn ToxicoSet Return the date the ToxicoSet was created
+#'
 #' @importFrom CoreGx dateCreated
+#'
 #' @export
+#'
 setMethod(dateCreated,
           signature = c("ToxicoSet"),
           function(cSet=tSet) {
@@ -647,16 +692,19 @@ setMethod(dateCreated,
 #' A generic for the tSetName method
 #'
 #' @examples
-
 #' tSetName <- cSetName
 #' tSetName(TGGATES_small)
 #'
 #' @inheritParams cellInfo
 #'
 #' @return The name of the ToxicoSet
+#'
 #' @describeIn ToxicoSet Return the name of the ToxicoSet
+#'
 #' @importFrom CoreGx cSetName
+#'
 #' @export
+#'
 setMethod("cSetName",
           signature = c("ToxicoSet"),
           function(cSet=tSet){
@@ -670,17 +718,20 @@ tSetName <- cSetName
 #' A generic for the pertNumber method
 #'
 #' @examples
-
 #' pertNumber(TGGATES_small)
 #'
 #' @inheritParams cellInfo
 #'
 #' @return A 3D \code{array} with the number of perturbation experiments per radiation type and cell line, and data type
 # setGeneric("pertNumber", function(tSet) standardGeneric("pertNumber"))
+#'
 #' @describeIn ToxicoSet Return the summary of available perturbation
 #'   experiments
+#'
 #' @importMethodsFrom CoreGx pertNumber
+#'
 #' @export
+#'
 setMethod(pertNumber,
           "ToxicoSet",
           function(cSet=tSet){
@@ -693,16 +744,19 @@ setMethod(pertNumber,
 #' A generic for the sensNumber method
 #'
 #' @examples
-
 #' sensNumber(TGGATES_small)
 #'
 #' @inheritParams cellInfo
 #'
 #' @return A \code{data.frame} with the number of sensitivity experiments per drug and cell line
+#'
 #' @describeIn ToxicoSet Return the summary of available sensitivity
 #'   experiments
+#'
 #' @importFrom CoreGx sensNumber
+#'
 #' @export
+#'
 setMethod(sensNumber,
           "ToxicoSet",
           function(cSet=tSet){
@@ -714,7 +768,6 @@ setMethod(sensNumber,
 #' A generic for the pertNumber method
 #'
 #' @examples
-
 #' pertNumber(TGGATES_small) <- pertNumber(TGGATES_small)
 #'
 #' @inheritParams cellInfo<-
@@ -724,10 +777,14 @@ setMethod(sensNumber,
 #'
 #' @return The updated \code{ToxicoSet}
 # setGeneric("pertNumber<-", function(object, value) standardGeneric("pertNumber<-"))
+#'
 #' @importMethodsFrom CoreGx pertNumber<-
+#'
 #' @describeIn ToxicoSet Update the summary of available perturbation
 #'   experiments
+#'
 #' @export
+#'
 setReplaceMethod('pertNumber', signature = signature(object="ToxicoSet",value="array"), function(object, value){
 
   object <- callNextMethod(object, value)
@@ -739,9 +796,7 @@ setReplaceMethod('pertNumber', signature = signature(object="ToxicoSet",value="a
 #'
 #' A generic for the sensNumber method
 #'
-#'
 #' @examples
-
 #' sensNumber(TGGATES_small) <- sensNumber(TGGATES_small)
 #'
 #' @inheritParams cellInfo<-
@@ -750,10 +805,14 @@ setReplaceMethod('pertNumber', signature = signature(object="ToxicoSet",value="a
 #'
 #' @return The updated \code{ToxicoSet}
 # setGeneric("sensNumber<-", function(object, value) standardGeneric("sensNumber<-"))
+#'
 #' @importMethodsFrom CoreGx sensNumber<-
+#'
 #' @describeIn ToxicoSet Update the summary of available sensitivity
 #'   experiments
+#'
 #' @export
+#'
 setReplaceMethod('sensNumber', signature = signature(object="ToxicoSet",value="matrix"), function(object, value){
 
   object <- callNextMethod(object, value)
@@ -766,7 +825,6 @@ setReplaceMethod('sensNumber', signature = signature(object="ToxicoSet",value="m
 #' @param object A \code{ToxicoSet} object
 #'
 #' @examples
-
 #' TGGATES_small
 #'
 #' @return Prints the ToxicoSet object to the output stream, and returns invisible NULL.
@@ -880,7 +938,7 @@ setMethod("dim", signature=signature(x="ToxicoSet"), function(x){
 # subsetTo <- function(tSet, cells=NULL, radiationTypes=NULL, exps=NULL, molecular.data.cells=NULL, keep.controls=TRUE) {
 subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, keep.controls=TRUE, ...) {
   drop=FALSE
-  
+
   adArgs = list(...)
   if ("exps" %in% names(adArgs)) {
     exps <- adArgs[["exps"]]
@@ -897,35 +955,35 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, ke
   if(!missing(cells)){
     cells <- unique(cells)
   }
-  
+
   if(!missing(drugs)){
     drugs <- unique(drugs)
   }
-  
+
   if(!missing(molecular.data.cells)){
     molecular.data.cells <- unique(molecular.data.cells)
   }
-  
+
   ### TODO:: implement strict subsetting at this level!!!!
-  
+
   ### the function missing does not work as expected in the context below, because the arguments are passed to the anonymous
   ### function in lapply, so it does not recognize them as missing
-  
+
   tSet@molecularProfiles <- lapply(tSet@molecularProfiles, function(eset, cells, drugs, molecular.data.cells){
-    
+
     molecular.data.type <- ifelse(length(grep("rna", Biobase::annotation(eset)) > 0), "rna", Biobase::annotation(eset))
     if (length(grep(molecular.data.type, names(molecular.data.cells))) > 0) {
       cells <- molecular.data.cells[[molecular.data.type]]
     }
     column_indices <- NULL
-    
+
     if (length(cells)==0 && length(drugs)==0) {
       column_indices <- 0:ncol(eset)
     }
     if(length(cells)==0 && tSet@datasetType=="sensitivity") {
       column_indices <- 0:ncol(eset)
     }
-    
+
     cell_line_index <- NULL
     if(length(cells)!=0) {
       if (!all(cells %in% cellNames(tSet))) {
@@ -952,7 +1010,7 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, ke
         }
       }
     }
-    
+
     if(length(drugs_index) != 0 && length(cell_line_index) != 0) {
       if(length(intersect(drugs_index, cell_line_index)) == 0) {
         stop("This Drug - Cell Line combination was not tested together.")
@@ -966,14 +1024,14 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, ke
         column_indices <- cell_line_index
       }
     }
-    
+
     row_indices <- 0:nrow(Biobase::exprs(eset))
-    
+
     eset <- eset[row_indices,column_indices]
     return(eset)
-    
-  }, cells=cells, drugs=drugs, molecular.data.cells=molecular.data.cells)  
-  
+
+  }, cells=cells, drugs=drugs, molecular.data.cells=molecular.data.cells)
+
   if ((tSet@datasetType == "sensitivity" | tSet@datasetType == "both") & length(exps) != 0) {
     tSet@sensitivity$info <- tSet@sensitivity$info[exps, , drop=drop]
     rownames(tSet@sensitivity$info) <- names(exps)
@@ -983,11 +1041,11 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, ke
     }
     tSet@sensitivity$profiles <- tSet@sensitivity$profiles[exps, , drop=drop]
     rownames(tSet@sensitivity$profiles) <- names(exps)
-    
+
     tSet@sensitivity$n <- .summarizeSensitivityNumbers(tSet)
   }
   else if ((tSet@datasetType == "sensitivity" | tSet@datasetType == "both") & (length(drugs) != 0 | length(cells) != 0)) {
-    
+
     drugs_index <- which (sensitivityInfo(tSet)[, "drugid"] %in% drugs)
     cell_line_index <- which (sensitivityInfo(tSet)[,"cellid"] %in% cells)
     if (length(drugs_index) !=0 & length(cell_line_index) !=0 ) {
@@ -1016,7 +1074,7 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, ke
       }
     }, i=row_indices, drop=drop)
   }
-  
+
   if (length(drugs)==0) {
     if(tSet@datasetType == "sensitivity" | tSet@datasetType == "both"){
       drugs <- unique(sensitivityInfo(tSet)[["drugid"]])
@@ -1135,7 +1193,7 @@ updateCellId <- function(tSet, new.ids = vector("character")){
   rownames(tSet@curation$cell) <- new.ids[curMatch]
   rownames(tSet@curation$tissue) <- new.ids[curMatch]
   rownames(cellInfo(tSet)) <- new.ids
-  
+
   return(tSet)
 }
 

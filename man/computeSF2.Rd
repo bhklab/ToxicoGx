@@ -14,4 +14,5 @@ This function computes the survival fraction after administering 2 units of radi
 }
 \examples{
 computeSF2(c(0.2, 0.1))
+
 }

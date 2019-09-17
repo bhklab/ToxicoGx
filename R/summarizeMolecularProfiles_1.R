@@ -36,11 +36,10 @@
 #' @importFrom utils setTxtProgressBar txtProgressBar
 #' @importFrom Biobase ExpressionSet exprs pData AnnotatedDataFrame assayDataElement assayDataElement<- fData<-
 #' @import SummarizedExperiment
-#' @import PharmacoGx
+#'
 #' @export
-
-#' Output is of SummarizedExperiment class
-
+#'
+# Output is of SummarizedExperiment class
 summarizeToxicoMolecularProfiles1 <- function(tSet,
                                               mDataType,
                                               cell.lines,
@@ -49,50 +48,50 @@ summarizeToxicoMolecularProfiles1 <- function(tSet,
                                               duration,
                                               dose,
                                               summary.stat = c("mean", "median", "first", "last"),
-                                              fill.missing = TRUE, 
-                                              summarize = TRUE, 
+                                              fill.missing = TRUE,
+                                              summarize = TRUE,
                                               verbose = TRUE
 ) {
-  
+
   ############## ERRORTRAPPING NOT DONE ##############
-  
-  dd <- PharmacoGx::molecularProfiles(tSet, mDataType)[features, , drop = F] #expression matrix of the tSet
-  pp <- PharmacoGx::phenoInfo(tSet, mDataType) #phenoData of the tSet
-  ff <- PharmacoGx::featureInfo(tSet, mDataType)[features,,drop = F]
-  
+
+  dd <- CoreGx::molecularProfiles(tSet, mDataType)[features, , drop = F] #expression matrix of the tSet
+  pp <- CoreGx::phenoInfo(tSet, mDataType) #phenoData of the tSet
+  ff <- CoreGx::featureInfo(tSet, mDataType)[features,,drop = F]
+
   unique.cells <- unique(cell.lines) #unique cell types (row names of the result)
   #subset phenoData to include only the experiments requested
-  pp2 <- pp[(pp[,"cellid"] %in% unique.cells & pp[,"drugid"] %in% drugs 
+  pp2 <- pp[(pp[,"cellid"] %in% unique.cells & pp[,"drugid"] %in% drugs
              & pp[,"duration"] %in% duration & pp[,"dose_level"] %in% dose), , drop = F] #only the phenoData that is relevant to the request input
   dd2 <- dd[features,rownames(pp2), drop = F] #only the gene expression data that is relevant to the request input\
-  
+
   #vector of experimental conditions requested for each drug
   a <- paste(expand.grid(dose,duration)[,1], expand.grid(dose,duration)[,2], sep = ";")
   #b <- expand.grid(dose,duration)
-  
+
   ddt <- dd[,NA][,c(1:length(a)), drop = F]
   ppt <- pp[FALSE,]
-  
+
   exp.list <- list()
   cnt <- 0
   blank <- ddt[,1,drop=F]
-  
+
   for (drug in drugs){
     cnt <- cnt + 1
     for (i in a){
       print(i)
       curr_dose <- sub(';.*$','', i)
       curr_dur <- sub('.*;','',i)
-      
-      pp3 <- pp2[(pp2[,"dose_level"] == curr_dose 
+
+      pp3 <- pp2[(pp2[,"dose_level"] == curr_dose
                   & pp2[,"duration"] == curr_dur
                   & pp2[,"drugid"] == drug), , drop = F]
       dd3 <- dd2[features,rownames(pp3), drop = F]
-      
+
       if (ncol(dd3) > 1){ #if there are replicates
         switch(summary.stat, #ddr, ppr contains gene expression data, phenoData, for replicates
                "mean" = { ddr <- apply(dd3, 1, mean) },
-               "median"={ ddr <- apply(dd3, 1, median) }, 
+               "median"={ ddr <- apply(dd3, 1, median) },
                "first"={ ddr <- dd3[ ,1 , drop=FALSE] },
                "last" = { ddr <- dd3[ , ncol(dd3), drop=FALSE] },
         )
@@ -102,7 +101,7 @@ summarizeToxicoMolecularProfiles1 <- function(tSet,
         })
         ppr <- as.data.frame(t(ppr))
         ppr[!is.na(ppr) & ppr == ""] <- NA
-        
+
         ddt <- cbind(ddt,ddr)
         ppt <- rbind(ppt,ppr)
       } else if (ncol(dd3) == 0){ #experiment does not exist
@@ -116,7 +115,7 @@ summarizeToxicoMolecularProfiles1 <- function(tSet,
     }
     ddt <- ddt[,-(1:length(a)), drop = F] #ddt contains the final expression matrix for a single drug
     colnames(ddt) <- a
-    
+
     exp.list[[cnt]] <- ddt
   }
   names(exp.list) <- drugs
@@ -140,8 +139,8 @@ summarizeToxicoMolecularProfiles1 <- function(tSet,
   vec <- as.vector(colnames(exp.list[[1]]))
   ppf <- ppf[vec,]
   #ppf <- ppf[match(rownames(ppf), colnames(exp.list[[1]])),]
-  
+
   res <- SummarizedExperiment(assays = exp.list, rowData = ff, colData = ppf)
-  
+
   return (res)
 }

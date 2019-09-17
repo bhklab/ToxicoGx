@@ -1,12 +1,12 @@
 #	Get Drug Perturbation Signatures from a ToxicoSet
 ###############################################################################
 ## Drug perturbation analysis
-## create profiles before vs after drug for each drug 
+## create profiles before vs after drug for each drug
 ###############################################################################
 
 #' Creates a signature representing gene expression (or other molecular profile)
 #' change induced by administrating a drug, for use in drug effect analysis.
-#' 
+#'
 #' Given a Toxicoset of the perturbation experiment type, and a list of drugs,
 #' the function will compute a signature for the effect of drug concentration on
 #' the molecular profile of a cell. The algorithm uses a regression model which
@@ -16,18 +16,18 @@
 #' the t-stat, the p-value and the false discovery rate associated with that
 #' coefficient, in a 3 dimensional array, with genes in the first direction,
 #' drugs in the second, and the selected return values in the third.
-#' 
+#'
 #' @examples
 #' data(TGGATES_small)
 #' drug.perturbation <- drugPerturbationSig(TGGATES_small, mDataType="rna", nthread=1)
 #' print(drug.perturbation)
-#' 
+#'
 #' @param tSet [ToxicoSet] a ToxicoSet of the perturbation experiment type
 #' @param mDataType [character] which one of the molecular data types to use
 #'   in the analysis, out of dna, rna, rnaseq, snp, cnv (only rna currently supported)
 #' @param drugs [character] a vector of drug names for which to compute the
 #'   signatures. Should match the names used in the ToxicoSet.
-#' @param cells [character] a vector of cell names to use in computing the 
+#' @param cells [character] a vector of cell names to use in computing the
 #'   signatures. Should match the names used in the ToxicoSet.
 #' @param features [character] a vector of features for which to compute the
 #'   signatures. Should match the names used in correspondant molecular data in ToxicoSet.
@@ -40,8 +40,9 @@
 #' @param verbose [bool] Should diagnostive messages be printed? (default false)
 #' @return [list] a 3D array with genes in the first dimension, drugs in the
 #'   second, and return values in the third.
+#'
 #' @export
-
+#'
 drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duration, nthread=1, returnValues=c("estimate","tstat", "pvalue", "fdr"), verbose=FALSE){
   availcore <- parallel::detectCores()
   if ( nthread > availcore) {
@@ -62,8 +63,8 @@ drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duratio
   } else {
     stop (sprintf("This tSet does not have any molecular data of type %s, choose among: %s", mDataType), paste(names(tSet@molecularProfiles), collapse=", "))
   }
-  
-  
+
+
   if (missing(drugs)) {
     drugn <- drugNames(tSet)
   } else {
@@ -77,7 +78,7 @@ drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duratio
     stop("None of the drugs were found in the dataset")
   }
   drugn <- drugn[dix]
-  
+
   if (missing(features)) {
     features <- rownames(featureInfo(tSet, mDataType))
   } else {
@@ -87,13 +88,13 @@ drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duratio
     }
     features <- features[fix]
   }
-  
+
   samples <- rownames(phenoInfo(tSet, mDataType)[phenoInfo(tSet, mDataType)[,"duration"] %in% duration & phenoInfo(tSet, mDataType)[,"drugid"] %in% drugs,])
   # splitix <- parallel::splitIndices(nx=length(drugn), ncl=nthread)
   # splitix <- splitix[sapply(splitix, length) > 0]
   mcres <- lapply(drugn, function(x, exprs, sampleinfo) {
     res <- NULL
-    i = x 
+    i = x
     ## using a linear model (x ~ concentration + cell + batch + duration)
     res <- rankGeneDrugPerturbation(data=exprs, drug=i, drug.id=as.character(sampleinfo[ , "drugid"]), drug.concentration=as.numeric(sampleinfo[ , "concentration"]), type=as.character(sampleinfo[ , "cellid"]), xp=as.character(sampleinfo[ , "xptype"]), batch=as.character(sampleinfo[ , "batchid"]), duration=as.character(sampleinfo[ , "duration"]) ,single.type=FALSE, nthread=nthread, verbose=FALSE)$all[ , returnValues, drop=FALSE]
     res <- list(res)
@@ -111,8 +112,8 @@ drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duratio
     }, j=j, k=rownames(featureInfo(tSet, mDataType)[features,, drop=FALSE]))
     drug.perturbation[rownames(featureInfo(tSet, mDataType)[features,, drop=FALSE]), names(res), j] <- ttt
   }
-  
+
   drug.perturbation <- ToxicoSig(drug.perturbation, tSetName = tSetName(tSet), Call = as.character(match.call()), SigType='Perturbation')
-  
+
   return(drug.perturbation)
 }
