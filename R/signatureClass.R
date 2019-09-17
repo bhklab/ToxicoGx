@@ -12,17 +12,20 @@ setOldClass('sessionInfo', sessionInfo)
 ToxicoSig <- function(Data=array(NA, dim=c(0,0,0)), TSetName='', DateCreated=date(), SigType='sensitivity', SessionInfo=sessionInfo(), Call='No Call Recorded', Arguments = list()){
   return(.ToxicoSig(Data, Arguments = Arguments, TSetName=TSetName, DateCreated=DateCreated, SigType=SigType, SessionInfo=SessionInfo, Call=Call))}
 
-#' Show ToxicoGx Signatures  
-#' 
+#' Show ToxicoGx Signatures
+#'
 #' @examples
 #' data(TGGATES_small)
 #' drug.perturbation <- drugPerturbationSig(TGGATES_small, mDataType="rna", nthread=1, duration = 2,
 #'      drugs = head(drugNames(TGGATES_small)), features = fNames(TGGATES_small, "rna")[1])
 #' drug.perturbation
-#' 
+#'
 #' @param object \code{ToxicoSig}
-#' @return Prints the ToxicoGx Signatures object to the output stream, and returns invisible NULL. 
+#'
+#' @return Prints the ToxicoGx Signatures object to the output stream, and returns invisible NULL.
+#'
 #' @export
+#'
 setMethod("show", signature=signature(object='ToxicoSig'),
           function(object) {
             cat('ToxicoSet Name: ', attr(object, 'PSetName'), "\n")
@@ -33,23 +36,25 @@ setMethod("show", signature=signature(object='ToxicoSig'),
           })
 
 #' Show the Annotations of a signature object
-#' 
-#' This funtion prints out the information about the call used to compute the drug signatures, and the session info 
-#' for the session in which the computation was done. Useful for determining the exact conditions used to generate signatures. 
-#' 
+#'
+#' This funtion prints out the information about the call used to compute the drug signatures, and the session info
+#' for the session in which the computation was done. Useful for determining the exact conditions used to generate signatures.
+#'
 #' @examples
 #' data(TGGATES_small)
 #' drug.perturbation <- drugPerturbationSig(TGGATES_small, mDataType="rna", nthread=1, duration = 2,
 #'      drugs = head(drugNames(TGGATES_small)), features = fNames(TGGATES_small, "rna")[1])
 #' showSigAnnot(drug.perturbation)
-#' 
-#' @param Sigs An object of the \code{ToxicoSig} Class, as
-#' returned by \code{drugPerturbationSig}
-#' @return Prints the ToxicoGx Signatures annotations to the output stream, and returns invisible NULL. 
+#'
+#' @param Sigs An object of the \code{ToxicoSig} Class, as returned by \code{drugPerturbationSig}
+#'
+#' @return Prints the ToxicoGx Signatures annotations to the output stream, and returns invisible NULL.
+#'
 #' @export
+#'
 showSigAnnot <- function(Sigs){
-  
+
   print(Sigs@Call)
   print(Sigs@SessionInfo)
   return(invisible(NULL))
-} 
+}

@@ -5,6 +5,7 @@
 #' @param SF_as_log Boolen indicating whether survival fraction is logged
 #'
 #' @export
+#'
 .linearQuadratic <- function(D, pars, SF_as_log = TRUE) {
 
   SF <- -(pars[[1]] * D + pars[[2]] * D ^ 2)

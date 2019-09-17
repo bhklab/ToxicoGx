@@ -44,9 +44,11 @@
 #' @param ... additional arguments not currently fully supported by the function
 #' @return [list] a 3D array with genes in the first dimension, radiation.types in the
 #'   second, and return values in the third.
-#' @export
+#'
 #' @import parallel
-
+#'
+#' @export
+#'
 radSensitivitySig <- function(rSet,
  mDataType,
  radiation.types,

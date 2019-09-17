@@ -27,4 +27,5 @@ This function plots doses of radiation against the cancer cell survival fraction
 plotCurve(c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
     c(1.1, 0.8, 0.7, 0.45, 0.15, -0.1, -0.1, -0.4, -0.65, -0.75, -1.1),
         filename = NULL)
+
 }

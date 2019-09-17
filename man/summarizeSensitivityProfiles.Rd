@@ -2,30 +2,33 @@
 % Please edit documentation in R/summarizeSensitivityProfiles.R
 \name{summarizeSensitivityProfiles}
 \alias{summarizeSensitivityProfiles}
-\title{Takes the sensitivity data from a RadioSet, and summarises them into a
+\title{Takes the sensitivity data from a ToxicoSet, and summarises them into a
 drug vs cell line table}
 \usage{
-summarizeSensitivityProfiles(rSet,
-  sensitivity.measure = "AUC_recomputed", cell.lines, radiation.types,
+summarizeSensitivityProfiles(tSet,
+  sensitivity.measure = "auc_recomputed", cell.lines, drugs, duration,
   summary.stat = c("mean", "median", "first", "last", "max", "min"),
   fill.missing = TRUE, verbose = TRUE)
 }
 \arguments{
-\item{rSet}{[RadioSet] The RadioSet from which to extract the data}
+\item{tSet}{[ToxicoSet] The ToxicoSet from which to extract the data}
 
 \item{sensitivity.measure}{[character] which sensitivity sensitivity.measure to use? Use the
-sensitivityMeasures function to find out what measures are available for each PSet.}
+sensitivityMeasures function to find out what measures are available for each TSet.}
 
 \item{cell.lines}{\code{character} The cell lines to be summarized.
  If any cell lines has no data, it will be filled with
 missing values}
 
-\item{radiation.types}{\code{character} The radiation types to be summarized.
-If any radiation type has no data, it will be filled with
+\item{drugs}{\code{character} The drugs to be summarized.
+If any drugs has no data, it will be filled with
 missing values}
 
+\item{duration}{\code{numeric} The duration at which to summarize
+the drug-cell combo.}
+
 \item{summary.stat}{\code{character} which summary method to use if there are repeated
-cell line-drug experiments? Choices are "mean", "median", "first", or "last"}
+cell line-drug experiments? Choices are "mean", "median", "first", "last", "max", or "min"}
 
 \item{fill.missing}{\code{boolean} should the missing cell lines not in the
 molecular data object be filled in with missing values?}
@@ -33,16 +36,16 @@ molecular data object be filled in with missing values?}
 \item{verbose}{Should the function print progress messages?}
 }
 \value{
-[matrix] A matrix with cell lines going down the rows, radiation types across
+[matrix] A matrix with drugs going down the rows, cell lines across
   the columns, with the selected sensitivity statistic for each pair.
 }
 \description{
-This function creates a table with cell lines as rows and radiation types as columns,
-summarising the drug senstitivity data of a RadioSet into drug-cell line
-pairs
+This function creates a table with drug as rows and cell lines as columns,
+summarising the drug senstitivity data of a ToxicoSet into drug-cell line
+pairs for a specified experiment duration.
 }
 \examples{
-data(Cleveland_small)
-GDSCauc <- summarizeSensitivityProfiles(Cleveland_small, sensitivity.measure='AUC_published')
+data(TGGATES_small)
+TGGATESauc <- summarizeSensitivityProfiles(TGGATES_small, sensitivity.measure='auc_recomputed')
 
 }
