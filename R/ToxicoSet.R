@@ -161,9 +161,6 @@ ToxicoSet <-  function(name,
   return(tSet)
 }
 
-# Initialize global variable
-tSet <- NULL
-
 #' cellInfo Generic
 #'
 #' @param tSet A \code{ToxicoSet} object
@@ -176,7 +173,6 @@ tSet <- NULL
 #' @describeIn ToxicoSet Returns the annotations for all the cell lines tested on in the ToxicoSet
 #'
 #' @export
-#'
 setMethod(cellInfo,
           "ToxicoSet",
           function(cSet=tSet){
@@ -195,8 +191,7 @@ setMethod(cellInfo,
 #' @describeIn ToxicoSet Update the cell line annotations
 #'
 #' @export
-#'
-setReplaceMethod("cellInfo<-", signature = signature(object="ToxicoSet",value="data.frame"), function(object, value){
+setReplaceMethod("cellInfo", signature = signature(object="ToxicoSet",value="data.frame"), function(object, value){
   if(is.null(rownames(value))){
     stop("Please provide the cell_id as rownames for the cell line annotations")
   }
@@ -316,7 +311,6 @@ setReplaceMethod("phenoInfo", signature = signature(object="ToxicoSet", mDataTyp
 #' @importMethodsFrom CoreGx molecularProfiles
 #'
 #' @export
-#'
 setMethod(molecularProfiles,
           signature("ToxicoSet", "character"),
           function(cSet=tSet, mDataType){
@@ -357,7 +351,6 @@ setReplaceMethod("molecularProfiles", signature = signature(object="ToxicoSet", 
 #' @importFrom CoreGx featureInfo
 #'
 #' @export
-#'
 setMethod("featureInfo",
           signature("ToxicoSet", "character"),
           function(cSet=tSet, mDataType){
@@ -384,7 +377,6 @@ setMethod("featureInfo",
 #' @importMethodsFrom CoreGx featureInfo<-
 #'
 #' @export
-#'
 setReplaceMethod("featureInfo", signature = signature(object="ToxicoSet", mDataType ="character",value="data.frame"), function(object, mDataType, value){
 
   # if(mDataType %in% names(object@molecularProfiles)){Biobase::fData(object@molecularProfiles[[mDataType]]) <- value}
@@ -410,7 +402,6 @@ setReplaceMethod("featureInfo", signature = signature(object="ToxicoSet", mDataT
 #' @importMethodsFrom CoreGx sensitivityInfo
 #'
 #' @export
-#'
 setMethod(sensitivityInfo,
           "ToxicoSet",
           function(cSet=tSet){
@@ -430,14 +421,12 @@ setMethod(sensitivityInfo,
 # @param value A \code{data.frame} with the new sensitivity annotations
 #'
 #' @return Updated \code{ToxicoSet}
-#'
 setGeneric("sensitivityInfo<-", function(object, value) standardGeneric("sensitivityInfo<-"))
 #' @importMethodsFrom CoreGx sensitivityInfo<-
 #'
 #' @describeIn ToxicoSet Update the sensitivity experiment info
 #'
 #' @export
-#'
 setReplaceMethod("sensitivityInfo", signature = signature(object="ToxicoSet",value="data.frame"), function(object, value){
   # object@sensitivity$info <- value
   object <- callNextMethod(object, value)
@@ -462,7 +451,6 @@ setReplaceMethod("sensitivityInfo", signature = signature(object="ToxicoSet",val
 #' @importFrom CoreGx sensitivityProfiles
 #'
 #' @export
-#'
 setMethod(sensitivityProfiles,
           "ToxicoSet",
           function(cSet=tSet){
@@ -521,7 +509,6 @@ setReplaceMethod("sensitivityProfiles", signature = signature(object="ToxicoSet"
 #' @importFrom CoreGx sensitivityMeasures
 #'
 #' @export
-#'
 setMethod(sensitivityMeasures,
           "ToxicoSet",
           function(cSet=tSet){
@@ -546,7 +533,6 @@ setGeneric("drugNames", function(tSet) standardGeneric("drugNames"))
 #' @describeIn ToxicoSet Return the names of the drugs used in the ToxicoSet
 #'
 #' @export
-#'
 setMethod(drugNames,
           "ToxicoSet",
           function(tSet){
@@ -573,7 +559,6 @@ setGeneric("drugNames<-", function(object, value) standardGeneric("drugNames<-")
 #' @describeIn ToxicoSet Update the drug names used in the dataset
 #'
 #' @export
-#'
 setReplaceMethod("drugNames", signature = signature(object="ToxicoSet",value="character"), function(object, value){
 
   object <- updateDrugId(object, value)
@@ -597,7 +582,6 @@ setReplaceMethod("drugNames", signature = signature(object="ToxicoSet",value="ch
 #' @importFrom CoreGx cellNames
 #'
 #' @export
-#'
 setMethod("cellNames",
           "ToxicoSet",
           function(cSet=tSet){
@@ -622,7 +606,6 @@ setMethod("cellNames",
 #' @describeIn ToxicoSet Update the cell names used in the dataset
 #'
 #' @export
-#'
 setReplaceMethod("cellNames", signature = signature(object="ToxicoSet",value="character"), function(object, value){
   object <- callNextMethod(object, value)
   return(object)
@@ -644,7 +627,6 @@ setReplaceMethod("cellNames", signature = signature(object="ToxicoSet",value="ch
 #' @importFrom CoreGx fNames
 #'
 #' @export
-#'
 setMethod("fNames",
           signature("ToxicoSet", "character"),
           function(cSet=tSet, mDataType){
@@ -685,7 +667,6 @@ setMethod("fNames",
 #' @importFrom CoreGx dateCreated
 #'
 #' @export
-#'
 setMethod(dateCreated,
           signature = c("ToxicoSet"),
           function(cSet=tSet) {
@@ -710,7 +691,6 @@ setMethod(dateCreated,
 #' @importFrom CoreGx cSetName
 #'
 #' @export
-#'
 setMethod("cSetName",
           signature = c("ToxicoSet"),
           function(cSet=tSet){
@@ -737,7 +717,6 @@ tSetName <- cSetName
 #' @importMethodsFrom CoreGx pertNumber
 #'
 #' @export
-#'
 setMethod(pertNumber,
           "ToxicoSet",
           function(cSet=tSet){
@@ -762,7 +741,6 @@ setMethod(pertNumber,
 #' @importFrom CoreGx sensNumber
 #'
 #' @export
-#'
 setMethod(sensNumber,
           "ToxicoSet",
           function(cSet=tSet){
@@ -790,7 +768,6 @@ setMethod(sensNumber,
 #'   experiments
 #'
 #' @export
-#'
 setReplaceMethod('pertNumber', signature = signature(object="ToxicoSet",value="array"), function(object, value){
 
   object <- callNextMethod(object, value)
@@ -818,7 +795,6 @@ setReplaceMethod('pertNumber', signature = signature(object="ToxicoSet",value="a
 #'   experiments
 #'
 #' @export
-#'
 setReplaceMethod('sensNumber', signature = signature(object="ToxicoSet",value="matrix"), function(object, value){
 
   object <- callNextMethod(object, value)
@@ -858,7 +834,6 @@ setMethod("show", signature=signature(object="ToxicoSet"),
 #' Returns the molecular data names for the ToxicoSet.
 #'
 #' @examples
-
 #' mDataNames(TGGATES_small)
 #'
 #' @inheritParams cellInfo
@@ -919,7 +894,6 @@ setMethod("dim", signature=signature(x="ToxicoSet"), function(x){
 #' to keep track of all the metadata conventions between different datasets.
 #'
 #' @examples
-
 #' TGGATESDrugNames  <- drugNames(TGGATES_small)
 #' TGGATESCells <- cellNames(TGGATES_small)
 #' tSet <- subsetTo(TGGATES_small,drugs = TGGATESDrugNames[1],
@@ -1390,7 +1364,6 @@ updateDrugId <- function(tSet, new.ids = vector("character")){
 #' of data and with other studies.
 #'
 #' @examples
-
 #'
 #' checkTSetStructure(TGGATES_small)
 #'
