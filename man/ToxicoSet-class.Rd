@@ -285,6 +285,7 @@ ToxicoSet, for proper processing of the data}
 }}
 
 \examples{
+data(TGGATES_small)
 phenoInfo(TGGATES_small, mDataType="rna")
 
 
@@ -307,7 +308,6 @@ sensitivityProfiles(TGGATES_small)
 sensitivityProfiles(TGGATES_small) <- sensitivityProfiles(TGGATES_small)
 
 sensitivityMeasures(TGGATES_small)
-
 
 cellNames(TGGATES_small)
 

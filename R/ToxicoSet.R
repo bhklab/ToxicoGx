@@ -1,6 +1,7 @@
 #' A Class to Contain ToxicoGenomic datasets together with their curations
 #'
-#' // D E S C R I P T I O N //
+#' A description which has yet to be added to this class. This is just a place
+#' holder
 #'
 #'
 #' @slot annotation A \code{list} of annotation data about the ToxicoSet,
@@ -188,10 +189,14 @@ setMethod(cellInfo,
 #' @param value A replacement value
 #'
 #' @return Updated \code{ToxicoSet}
+#'
 #' @importFrom CoreGx cellInfo<-
+#'
 #' @describeIn ToxicoSet Update the cell line annotations
+#'
 #' @export
-setReplaceMethod("cellInfo", signature = signature(object="ToxicoSet",value="data.frame"), function(object, value){
+#'
+setReplaceMethod("cellInfo<-", signature = signature(object="ToxicoSet",value="data.frame"), function(object, value){
   if(is.null(rownames(value))){
     stop("Please provide the cell_id as rownames for the cell line annotations")
   }
@@ -204,7 +209,7 @@ setReplaceMethod("cellInfo", signature = signature(object="ToxicoSet",value="dat
 #' Generic for drugInfo method
 #'
 #' @examples
-
+#' data(TGGATES_small)
 #' drugInfo(TGGATES_small)
 #'
 #' @inheritParams cellInfo
@@ -246,6 +251,7 @@ setReplaceMethod("drugInfo", signature = signature(object="ToxicoSet",value="dat
 #' Generic for phenoInfo method
 #'
 #' @examples
+#' data(TGGATES_small)
 #' phenoInfo(TGGATES_small, mDataType="rna")
 #'
 #' @inheritParams cellInfo
