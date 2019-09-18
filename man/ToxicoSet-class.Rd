@@ -145,7 +145,8 @@ The updated \code{ToxicoSet}
 The updated \code{ToxicoSet}
 }
 \description{
-// D E S C R I P T I O N //
+A description which has yet to be added to this class. This is just a place
+holder
 
 Generic for phenoInfo method
 

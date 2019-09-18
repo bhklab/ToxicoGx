@@ -18,9 +18,9 @@
 #' drugs in the second, and the selected return values in the third.
 #'
 #' @examples
-#' data(TGGATES_small)
-#' drug.perturbation <- drugPerturbationSig(TGGATES_small, mDataType="rna", nthread=1)
-#' print(drug.perturbation)
+#' #data(TGGATES_small)
+#' #drug.perturbation <- drugPerturbationSig(TGGATES_small, mDataType="rna", nthread=1)
+#' #print(drug.perturbation)
 #'
 #' @param tSet [ToxicoSet] a ToxicoSet of the perturbation experiment type
 #' @param mDataType [character] which one of the molecular data types to use
@@ -44,7 +44,7 @@
 #'
 #' @export
 #'
-drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duration, nthread=1, returnValues=c("estimate","tstat", "pvalue", "fdr"), verbose=FALSE){
+drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duration=NULL, nthread=1, returnValues=c("estimate","tstat", "pvalue", "fdr"), verbose=FALSE){
   availcore <- parallel::detectCores()
   if ( nthread > availcore) {
     nthread <- availcore

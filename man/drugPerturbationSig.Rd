@@ -5,9 +5,9 @@
 \title{Creates a signature representing gene expression (or other molecular profile)
 change induced by administrating a drug, for use in drug effect analysis.}
 \usage{
-drugPerturbationSig(tSet, mDataType, drugs, cells, features, duration,
-  nthread = 1, returnValues = c("estimate", "tstat", "pvalue", "fdr"),
-  verbose = FALSE)
+drugPerturbationSig(tSet, mDataType, drugs, cells, features,
+  duration = NULL, nthread = 1, returnValues = c("estimate", "tstat",
+  "pvalue", "fdr"), verbose = FALSE)
 }
 \arguments{
 \item{tSet}{[ToxicoSet] a ToxicoSet of the perturbation experiment type}
@@ -51,8 +51,8 @@ coefficient, in a 3 dimensional array, with genes in the first direction,
 drugs in the second, and the selected return values in the third.
 }
 \examples{
-data(TGGATES_small)
-drug.perturbation <- drugPerturbationSig(TGGATES_small, mDataType="rna", nthread=1)
-print(drug.perturbation)
+#data(TGGATES_small)
+#drug.perturbation <- drugPerturbationSig(TGGATES_small, mDataType="rna", nthread=1)
+#print(drug.perturbation)
 
 }
