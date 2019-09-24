@@ -42,7 +42,7 @@ computeAUC <- function (concentration,
                         #, ...
 ) {
 
-  if(missing(concentration)){
+  if (missing(concentration)){
 
     stop("The concentration values to integrate over must always be provided.")
 

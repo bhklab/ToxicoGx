@@ -1,7 +1,7 @@
 #' Class to contain Toxicogenomic Data
 #'
 #' A description which has yet to be added to this class. This is just a place
-#' holder. T
+#' holder.
 #'
 #' @inheritParams CoreSet
 #' @slot drug A \code{data.frame} containg the annotations for all the drugs
@@ -11,7 +11,7 @@
 #'
 #' @importClassesFrom CoreGx CoreSet
 #' @export
-.ToxicoSet <- setClass("ToxicoSet", slots = list(drug="data.frame"),
+.ToxicoSet <- setClass("ToxicoSet", slots = list(drug = "data.frame"),
                        contains = "CoreSet")
 
 
@@ -171,7 +171,7 @@ setMethod(cellInfo,
 #' @describeIn ToxicoSet Update the cell line annotations
 #'
 #' @export
-setReplaceMethod("cellInfo", signature = signature(object="ToxicoSet",value="data.frame"), function(object, value){
+setReplaceMethod("cellInfo", signature = signature(object = "ToxicoSet",value = "data.frame"), function(object, value){
   if(is.null(rownames(value))){
     stop("Please provide the cell_id as rownames for the cell line annotations")
   }
@@ -247,7 +247,7 @@ setMethod("phenoInfo",
 #' Generic for phenoInfo replace method
 #'
 #' @examples
-#'
+#' data(TGGATES_small)
 #' phenoInfo(TGGATES_small, mDataType="rna") <- phenoInfo(TGGATES_small, mDataType="rna")
 #'
 #' @inheritParams cellInfo<-
@@ -276,8 +276,8 @@ setReplaceMethod("phenoInfo", signature = signature(object="ToxicoSet", mDataTyp
 #'
 #' @inheritParams phenoInfo
 #'
-#' @return a \code{data.frame} with the experiment info
-# setGeneric("molecularProfiles", function(tSet, mDataType) standardGeneric("molecularProfiles"))
+# @return a \code{data.frame} with the experiment info
+#setGeneric("molecularProfiles", function(tSet, mDataType) standardGeneric("molecularProfiles"))
 #'
 #' @describeIn ToxicoSet Return the given type of molecular data from the ToxicoSet
 #'
@@ -387,7 +387,7 @@ setMethod(sensitivityInfo,
 #' @inheritParams cellInfo<-
 #'
 #' @return Updated \code{ToxicoSet}
-# setGeneric("sensitivityInfo<-", function(object, value) standardGeneric("sensitivityInfo<-"))
+#'setGeneric("sensitivityInfo<-", function(object, value) standardGeneric("sensitivityInfo<-"))
 #' @importMethodsFrom CoreGx sensitivityInfo<-
 #'
 #' @describeIn ToxicoSet Update the sensitivity experiment info
@@ -411,7 +411,7 @@ setReplaceMethod("sensitivityInfo", signature = signature(object="ToxicoSet",val
 #' @inheritParams cellInfo
 #'
 #' @return a \code{data.frame} with the experiment info
-# setGeneric("sensitivityProfiles", function(tSet) standardGeneric("sensitivityProfiles"))
+#'setGeneric("sensitivityProfiles", function(tSet) standardGeneric("sensitivityProfiles"))
 #'
 #' @describeIn ToxicoSet Return the phenotypic data for the drug dose sensitivity
 #'
@@ -434,7 +434,7 @@ setMethod(sensitivityProfiles,
 #' @inheritParams cellInfo<-
 #'
 #' @return Updated \code{ToxicoSet}
-#setGeneric("sensitivityProfiles<-", function(object, value) standardGeneric("sensitivityProfiles<-"))
+#'setGeneric("sensitivityProfiles<-", function(object, value) standardGeneric("sensitivityProfiles<-"))
 #' @importFrom CoreGx sensitivityProfiles<-
 #' @describeIn ToxicoSet Update the phenotypic data for the drug dose
 #'   sensitivity
@@ -485,12 +485,9 @@ setMethod(sensitivityMeasures,
 #' drugName[1:10]
 #'
 #' @inheritParams drugInfo
-#'
 #' @return A vector of the drug names used in the ToxicoSet
 setGeneric("drugNames", function(tSet) standardGeneric("drugNames"))
-#'
 #' @describeIn ToxicoSet Return the names of the drugs used in the ToxicoSet
-#'
 #' @export
 setMethod(drugNames,
           "ToxicoSet",
@@ -499,20 +496,13 @@ setMethod(drugNames,
           })
 
 #' drugNames<- Generic
-#'
 #' A generic for the drugNames replacement method
-#'
-#'
 #' @examples
 #' drugNames(TGGATES_small) <- drugNames(TGGATES_small)
-#'
 #' @inheritParams drugInfo<-
-#'
 #' @return Updated \code{ToxicoSet}
 setGeneric("drugNames<-", function(object, value) standardGeneric("drugNames<-"))
-#'
 #' @describeIn ToxicoSet Update the drug names used in the dataset
-#'
 #' @export
 setReplaceMethod("drugNames", signature = signature(object="ToxicoSet",value="character"), function(object, value){
   object <- updateDrugId(object, value)

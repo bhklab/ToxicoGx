@@ -112,8 +112,6 @@ a \code{data.frame} with the experiment info
 
 The updated \code{ToxicoSet}
 
-a \code{data.frame} with the experiment info
-
 Updated \code{ToxicoSet}
 
 Updated \code{ToxicoSet}
@@ -121,10 +119,13 @@ Updated \code{ToxicoSet}
 a \code{data.frame} with the experiment info
 
 Updated \code{ToxicoSet}
+setGeneric("sensitivityInfo<-", function(object, value) standardGeneric("sensitivityInfo<-"))
 
 a \code{data.frame} with the experiment info
+setGeneric("sensitivityProfiles", function(tSet) standardGeneric("sensitivityProfiles"))
 
 Updated \code{ToxicoSet}
+setGeneric("sensitivityProfiles<-", function(object, value) standardGeneric("sensitivityProfiles<-"))
 
 A \code{character} vector of all the available sensitivity measures
 
@@ -148,7 +149,7 @@ The updated \code{ToxicoSet}
 }
 \description{
 A description which has yet to be added to this class. This is just a place
-holder. T
+holder.
 
 A generic for cellInfo method
 
@@ -267,7 +268,7 @@ profiled in the in the dataset, across all data types}
 data(TGGATES_small)
 phenoInfo <- phenoInfo(TGGATES_small, mDataType="rna")
 
-
+data(TGGATES_small)
 phenoInfo(TGGATES_small, mDataType="rna") <- phenoInfo(TGGATES_small, mDataType="rna")
 
 TGGATES_mProf <- molecularProfiles(TGGATES_small, "rna")
