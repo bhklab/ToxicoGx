@@ -41,8 +41,8 @@ available sensitivity/perturbation data}
 the names for cells, drugs, and tissues used in the data set to universal
 identifiers used between different ToxicoSet objects}
 
-\item{datasetType}{A \code{character} string of 'sensitivity',
-'preturbation', or both detailing what type of data can be found in the
+\item{datasetType}{A \code{character} string of "sensitivity",
+"perturbation", or both detailing what type of data can be found in the
 ToxicoSet, for proper processing of the data}
 
 \item{verify}{\code{boolean} Should the function verify the ToxicoSet and
@@ -57,9 +57,4 @@ as creates empty objects for data not provided to the constructor. Only
 objects returned by this constructor are expected to work with the ToxicoSet
 methods. For a much more detailed instruction on creating ToxicoSets, please
 see the "CreatingToxicoSet" vignette.
-}
-\examples{
-## For help creating a ToxicoSet object, please see the following vignette:
-#browseVignettes("PharmacoGx")
-
 }

@@ -8,10 +8,10 @@ Authors@R: c(
     role = c("aut")),
   person("Christopher","Eeles", email = "christopher.eeles@uhnresearch.ca",
     role = c("aut")),
-  person("Benjamin","Haibe-Kains", email = "benjamin.haibe.kains@utoronto.ca",
-    role = c("aut","cre")),
   person("Esther","Yoo", email = "yk.yoo@mail.utoronto.ca", 
-    role = c("aut"))
+    role = c("aut")),
+  person("Benjamin","Haibe-Kains", email = "benjamin.haibe.kains@utoronto.ca",
+    role = c("aut","cre"))
   )  
 Description: Contains a set of functions to perform large-scale analysis of toxicogenomic data.
 License: GPL-3
@@ -19,7 +19,6 @@ Encoding: UTF-8
 LazyData: true
 Depends: R (>= 3.6.0), CoreGx
 Imports:
-    RadioGx,
     SummarizedExperiment,
     Biobase, 
     RColorBrewer, 

@@ -7,9 +7,9 @@
 drugNames(object) <- value
 }
 \arguments{
-\item{object}{A \code{ToxicoSet} object to update}
+\item{object}{A \code{ToxicoSet} object.}
 
-\item{value}{A \code{character} vector of the new drug names}
+\item{value}{A \code{data.frame} of replacement values.}
 }
 \value{
 Updated \code{ToxicoSet}

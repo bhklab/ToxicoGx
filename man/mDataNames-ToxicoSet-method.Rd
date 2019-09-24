@@ -8,7 +8,7 @@
 \S4method{mDataNames}{ToxicoSet}(cSet = tSet)
 }
 \arguments{
-\item{cSet}{The parameter}
+\item{cSet}{The \code{CoreSet} to retrieve cell info from}
 }
 \value{
 Vector of names of the molecular data types

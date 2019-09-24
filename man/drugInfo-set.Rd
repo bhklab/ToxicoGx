@@ -7,9 +7,9 @@
 drugInfo(object) <- value
 }
 \arguments{
-\item{object}{The \code{ToxicoSet} to replace drug info in}
+\item{object}{A \code{ToxicoSet} object.}
 
-\item{value}{A \code{data.frame} with the new drug annotations}
+\item{value}{A \code{data.frame} of replacement values.}
 }
 \value{
 Updated \code{ToxicoSet}

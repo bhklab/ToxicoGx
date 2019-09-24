@@ -114,7 +114,7 @@ drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duratio
     drug.perturbation[rownames(featureInfo(tSet, mDataType)[features,, drop=FALSE]), names(res), j] <- ttt
   }
 
-  drug.perturbation <- ToxicoSig(drug.perturbation, tSetName = tSetName(tSet), Call = as.character(match.call()), SigType='Perturbation')
+  drug.perturbation <- ToxicoSig(drug.perturbation, tSetName = cSetName(tSet), Call = as.character(match.call()), SigType='Perturbation')
 
   return(drug.perturbation)
 }

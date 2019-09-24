@@ -43,8 +43,6 @@ summarizeSensitivityProfiles <- function(tSet,
                                          summary.stat=c("mean", "median", "first", "last", "max", "min"),
                                          fill.missing=TRUE, verbose=TRUE) {
 
-####################### Errortrapping for duration argument not done #######################
-
   summary.stat <- match.arg(summary.stat)
   # sensitivity.measure <- match.arg(sensitivity.measure)
   if (!(sensitivity.measure %in% c(colnames(sensitivityProfiles(tSet)),"max.conc"))) {
@@ -66,6 +64,12 @@ summarizeSensitivityProfiles <- function(tSet,
       #wtf is this
       drugs <- sensitivityInfo(tSet)[grep("///", sensitivityInfo(tSet)$drugid), "drugid"]
     }
+  }
+  if (missing(duration)) { # Selects the first row's duration if no duration is specified in argument
+    duration <- sensitivityInfo(tSet)$duration_h[1]
+  }
+  if (length(duration) > 1 ) {
+    stop("Please enter only one duration value to be summarized.")
   }
 
   pp <- sensitivityInfo(tSet)

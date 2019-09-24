@@ -11,7 +11,7 @@ checkTSetStructure(tSet, plotDist = FALSE, result.dir = ".")
 
 \item{plotDist}{Should the function also plot the distribution of molecular data?}
 
-\item{result.dir}{The path to the directory for saving the plots as a string, defaults to `tempdir()``}
+\item{result.dir}{The path to the directory for saving the plots as a string, defaults to `tempdir()`}
 }
 \value{
 Prints out messages whenever describing the errors found in the structure of the pset object passed in.

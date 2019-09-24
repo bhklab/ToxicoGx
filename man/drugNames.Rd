@@ -7,7 +7,7 @@
 drugNames(tSet)
 }
 \arguments{
-\item{tSet}{A \code{ToxicoSet}}
+\item{tSet}{A \code{ToxicoSet} object}
 }
 \value{
 A vector of the drug names used in the ToxicoSet
