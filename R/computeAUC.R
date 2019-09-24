@@ -1,127 +1,123 @@
-#' computeAUC: computes AUC
+#' Computes the AUC for a Drug Dose Viability Curve
 #'
-#' @description This function computes the area under a dose-response curve of the form survival fraction SF = exp(-alpha * D - beta * D ^ 2).
+#' Returns the AUC (Area Under the drug response Curve) given concentration and viability as input, normalized by the concentration
+#' range of the experiment. The area returned is the response (1-Viablility) area, i.e. area under the curve when the response curve
+#' is plotted on a log10 concentration scale, with high AUC implying high sensitivity to the drug. The function can calculate both
+#' the area under a fitted Hill Curve to the data, and a trapz numeric integral of the actual data provided. Alternatively, the parameters
+#' of a Hill Slope returned by logLogisticRegression can be passed in if they already known.
 #'
-#' @examples computeAUC(D=c(0.1, 0.5, 0.7, 0.9), pars=c(0.2, 0.1), lower = 0, upper = 1) # Returns 0.7039296
+#' @examples
+#' dose <- c("0.0025","0.008","0.025","0.08","0.25","0.8","2.53","8")
+#' viability <- c("108.67","111","102.16","100.27","90","87","74","57")
+#' computeAUC(dose, viability)
 #'
-#' @param D vector of dosages
-#' @param SF vector of survival fractions
-#' @param pars parameters (alpha, beta) in equation y = exp(-alpha * x - beta * x ^ 2)
-#' @param lower lower bound of dose region to compute AUC over
-#' @param upper upper bound of dose region to compute AUC over
-#' @param trunc should survival fractions be truncated downward to 1 if they exceed 1?
-#' @param SF_as_log A boolean indicating whether survival fraction is displayed on a log axis. Defaults to FALSE
-#' @param area.type should the AUC of the raw (D, SF) points be returned, or should the AUC of a curve fit to said points be returned instead?
-#' @param verbose how detailed should error and warning messages be? See details.
 #'
-#' @details If lower and/or upper are missing, the function assumes their values
-#'   to be the minimum and maximum D-values, respectively. For all warnings to
-#'   be silent, set trunc = FALSE. For warnings to be output, set trunc = TRUE.
-#'   For warnings to be output along with the arguments that triggered them,
-#'   set trunc = 2.
-#'
-#' @importFrom stats pnorm
-#' @importFrom caTools trapz
-#'
+#' @param concentration [vector] is a vector of drug concentrations.
+#' @param viability [vector] is a vector whose entries are the viability values observed in the presence of the
+#' drug concentrations whose logarithms are in the corresponding entries of conc, where viability 0
+#' indicates that all cells died, and viability 1 indicates that the drug had no effect on the cells.
+#' @param Hill_fit [list or vector] In the order: c("Hill Slope", "E_inf", "EC50"), the parameters of a Hill Slope
+#' as returned by logLogisticRegression. If conc_as_log is set then the function assumes logEC50 is passed in, and if
+#' viability_as_pct flag is set, it assumes E_inf is passed in as a percent. Otherwise, E_inf is assumed to be a decimal,
+#' and EC50 as a concentration.
+#' @param conc_as_log [logical], if true, assumes that log10-concentration data has been given rather than concentration data.
+#' @param viability_as_pct [logical], if false, assumes that viability is given as a decimal rather
+#' than a percentage, and returns AUC as a decimal. Otherwise, viability is interpreted as percent, and AUC is returned 0-100.
+#' @param trunc [logical], if true, causes viability data to be truncated to lie between 0 and 1 before
+#' curve-fitting is performed.
+#' @param area.type Should the area be computed using the actual data ("Actual"), or a fitted curve ("Fitted")
+#' @param verbose [logical], if true, causes warnings thrown by the function to be printed.
+#' @return Numeric AUC value
 #' @export
-#'
-# Added SF_as_log arguement with default as false to match condition on line 93
-computeAUC <- function(D, SF, pars, lower, upper, trunc = TRUE, SF_as_log = FALSE, area.type = c("Fitted", "Actual"), verbose = TRUE) {
-  area.type <- match.arg(area.type)
+#' @import caTools
 
-  if (!missing(SF)) {
-    CoreGx::.sanitizeInput(x = D,
-                            y = SF,
-                            x_as_log = FALSE,
-                            y_as_log = FALSE,
-                            y_as_pct = FALSE,
-                            trunc = trunc,
-                            verbose = FALSE)
+computeAUC <- function (concentration,
+                        viability,
+                        Hill_fit,
+                        conc_as_log = FALSE,
+                        viability_as_pct = TRUE,
+                        trunc = TRUE,
+                        area.type = c("Fitted", "Actual"),
+                        verbose = TRUE
+                        #, ...
+) {
 
-    DSF <- CoreGx::.reformatData(x = D,
-                                 y = SF,
-                                 x_to_log = FALSE,
-                                 y_to_log = FALSE,
-                                 y_to_frac = FALSE,
-                                 trunc = trunc)
-    D <- DSF[["x"]]
-    SF <- DSF[["y"]]
-  } else if (!missing(pars)) {
-    CoreGx::.sanitizeInput(pars = pars,
-                            x_as_log = FALSE,
-                            y_as_log = FALSE,
-                            y_as_pct = FALSE,
-                            trunc = trunc,
-                            verbose = FALSE)
-    Dpars <- CoreGx::.reformatData(x = D,
-                                    pars = pars,
-                                    x_to_log = FALSE,
-                                    y_to_log = FALSE,
-                                    y_to_frac = FALSE,
-                                    trunc = trunc)
-    D <- Dpars[["x"]]
-    pars <- Dpars[["pars"]]
+  if(missing(concentration)){
+
+    stop("The concentration values to integrate over must always be provided.")
+
+  }
+  if (missing(area.type)) {
+    area.type <- "Fitted"
   } else {
-    stop("SF and pars can't both be missing.")
+    area.type <- match.arg(area.type)
+  }
+  if (area.type == "Fitted" && missing(Hill_fit)) {
+
+    Hill_fit <- logLogisticRegression(concentration,
+                                      viability,
+                                      conc_as_log = conc_as_log,
+                                      viability_as_pct = viability_as_pct,
+                                      trunc = trunc,
+                                      verbose = verbose)
+    cleanData <- sanitizeInput(conc=concentration,
+                               Hill_fit=Hill_fit,
+                               conc_as_log = conc_as_log,
+                               viability_as_pct = viability_as_pct,
+                               trunc = trunc,
+                               verbose = verbose)
+    pars <- cleanData[["Hill_fit"]]
+    concentration <- cleanData[["log_conc"]]
+  } else if (area.type == "Fitted" && !missing(Hill_fit)){
+
+    cleanData <- sanitizeInput(conc = concentration,
+                               viability = viability,
+                               Hill_fit = Hill_fit,
+                               conc_as_log = conc_as_log,
+                               viability_as_pct = viability_as_pct,
+                               trunc = trunc,
+                               verbose = verbose)
+    pars <- cleanData[["Hill_fit"]]
+    concentration <- cleanData[["log_conc"]]
+  } else if (area.type == "Actual" && !missing(viability)){
+    cleanData <- sanitizeInput(conc = concentration,
+                               viability = viability,
+                               conc_as_log = conc_as_log,
+                               viability_as_pct = viability_as_pct,
+                               trunc = trunc,
+                               verbose = verbose)
+    concentration <- cleanData[["log_conc"]]
+    viability <- cleanData[["viability"]]
+  } else if (area.type == "Actual" && missing(viability)){
+
+    stop("To calculate the actual area using a trapezoid integral, the raw viability values are needed!")
   }
 
-  if (!missing(lower) && !missing(upper)) {
-    ###TODO:: Check if this function still works correctly
-    CoreGx::.sanitizeInput(pars = pars, # Added this line to resolve error returned from CoreGx
-                            lower = lower,
-                            upper = upper,
-                            x_as_log = FALSE,
-                            y_as_log = FALSE,
-                            y_as_pct = FALSE,
-                            trunc = trunc,
-                            verbose = verbose)
+  if (length(concentration) < 2) {
+    return(NA)
   }
 
-  if (area.type == "Fitted") {
-    if (missing(pars)) {
-      pars <- unlist(linearQuadraticModel(D = D,
-                                          SF = SF,
-                                          trunc = trunc,
-                                          verbose = verbose))
-    }
-    if (missing(lower)) {
-      lower <- min(D)
-    }
-    if (missing(upper)) {
-      upper <- max(D)
-    }
-
-    if (SF_as_log == TRUE) { # Modified condition to correct error
-      return(pars[[1]] / 2 * (lower ^ 2 - upper ^ 2) + pars[[2]] / 3 * (lower ^ 3 - upper ^ 3))
+  a <- min(concentration)
+  b <- max(concentration)
+  if (area.type == "Actual") {
+    trapezoid.integral <- caTools::trapz(concentration, viability)
+    AUC <- 1 - trapezoid.integral / (b - a)
+  }
+  else {
+    if(pars[2]==1){
+      AUC <- 0
+    }else if(pars[1]==0){
+      AUC <- (1-pars[2])/2
     } else {
-      if (pars[[2]] == 0) {
-        if (pars[[1]] == 0) {
-          return(upper - lower)
-        } else {
-          return((exp(-pars[[1]] * lower) - exp(-pars[[1]] * upper)) / pars[[1]])
-        }
-      } else {
-        # return(exp(pars[[1]] ^ 2 / 4 / pars[[2]]) *
-        #        sqrt(pi / pars[[2]]) *
-        #        (pnorm(sqrt(2 * pars[[2]]) * (upper + pars[[1]] / 2 / pars[[2]])) -
-        #         pnorm(sqrt(2 * pars[[2]]) * (lower + pars[[1]] / 2 / pars[[2]]))))
-        # return(sqrt(pi / pars[[2]]) *
-        #       (exp(pars[[1]] ^ 2 / 4 / pars[[2]] + pnorm(sqrt(2 * pars[[2]]) * (upper + pars[[1]] / 2 / pars[[2]]), log.p = TRUE))
-        #        -
-        #        exp(pars[[1]] ^ 2 / 4 / pars[[2]] + pnorm(sqrt(2 * pars[[2]]) * (lower + pars[[1]] / 2 / pars[[2]]), log.p = TRUE))))
-        x <- CoreGx::.GetSupportVec(x=D, output_length = 1000)
-        y <- .linearQuadratic(D=x, pars=pars, SF_as_log=FALSE)
-        return(caTools::trapz(x, y))
-
-      }
-    }
-
-  } else if (area.type == "Actual") {
-    #print("Actual")
-    if (missing(SF)) {
-      stop("Please pass in SF-values.")
-    } else {
-      return(caTools::trapz(x = D, y = SF))
+      AUC <- as.numeric((1 - pars[2]) / (pars[1] * (b - a)) * log10((1 + (10 ^ (b - pars[3])) ^ pars[1]) / (1 + (10 ^ (a - pars[3])) ^ pars[1])))
     }
   }
+
+  if(viability_as_pct){
+
+    AUC <- AUC*100
+
+  }
+
+  return(AUC)
 }

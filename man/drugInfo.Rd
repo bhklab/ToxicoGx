@@ -2,7 +2,7 @@
 % Please edit documentation in R/ToxicoSet.R
 \name{drugInfo}
 \alias{drugInfo}
-\title{drugnInfo Generic}
+\title{drugInfo Generic}
 \usage{
 drugInfo(tSet)
 }
@@ -17,6 +17,6 @@ Generic for drugInfo method
 }
 \examples{
 data(TGGATES_small)
-drugInfo(TGGATES_small)
+drugInfo <- drugInfo(TGGATES_small)
 
 }

@@ -1,4 +1,4 @@
-#' Cleaveland_mut RadioSet subsetted
+#' TGGATES_small dataset
 #'
 #' Documentation for this dataset will be added at a later date. For now I just
 #' need this package to pass the CRAN checks! This dataset powers the exampe
@@ -8,9 +8,9 @@
 #' Lamb et al. The Connectivity Map: using gene-expression signatures to connect small molecules, genes, and disease. Science, 2006.
 #'
 #' @docType data
-#' @name Cleveland_small
-#' @usage data(Cleveland_small)
+#' @name TGGATES_small
+#' @usage data(TGGATES_small)
 #' @keywords datasets
-#' @format RadioSet object
+#' @format ToxicoSet object
 #'
 NULL

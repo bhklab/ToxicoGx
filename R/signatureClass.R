@@ -3,14 +3,14 @@ setOldClass('sessionInfo', sessionInfo)
 #' @importFrom utils sessionInfo
 .ToxicoSig <- setClass('ToxicoSig', slots=list(
             Arguments = "list",
-            TSetName='character',
+            tSetName='character',
             DateCreated = 'character',
             SigType = 'character',
             SessionInfo = 'sessionInfo',
             Call = 'character'), contains='array')
 
-ToxicoSig <- function(Data=array(NA, dim=c(0,0,0)), TSetName='', DateCreated=date(), SigType='sensitivity', SessionInfo=sessionInfo(), Call='No Call Recorded', Arguments = list()){
-  return(.ToxicoSig(Data, Arguments = Arguments, TSetName=TSetName, DateCreated=DateCreated, SigType=SigType, SessionInfo=SessionInfo, Call=Call))}
+ToxicoSig <- function(Data=array(NA, dim=c(0,0,0)), tSetName='', DateCreated=date(), SigType='sensitivity', SessionInfo=sessionInfo(), Call='No Call Recorded', Arguments = list()){
+  return(.ToxicoSig(Data, Arguments = Arguments, tSetName=tSetName, DateCreated=DateCreated, SigType=SigType, SessionInfo=SessionInfo, Call=Call))}
 
 #' Show ToxicoGx Signatures
 #'

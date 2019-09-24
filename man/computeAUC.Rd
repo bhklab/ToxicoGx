@@ -2,41 +2,50 @@
 % Please edit documentation in R/computeAUC.R
 \name{computeAUC}
 \alias{computeAUC}
-\title{computeAUC: computes AUC}
+\title{Computes the AUC for a Drug Dose Viability Curve}
 \usage{
-computeAUC(D, SF, pars, lower, upper, trunc = TRUE, SF_as_log = FALSE,
-  area.type = c("Fitted", "Actual"), verbose = TRUE)
+computeAUC(concentration, viability, Hill_fit, conc_as_log = FALSE,
+  viability_as_pct = TRUE, trunc = TRUE, area.type = c("Fitted",
+  "Actual"), verbose = TRUE)
 }
 \arguments{
-\item{D}{vector of dosages}
+\item{concentration}{[vector] is a vector of drug concentrations.}
 
-\item{SF}{vector of survival fractions}
+\item{viability}{[vector] is a vector whose entries are the viability values observed in the presence of the
+drug concentrations whose logarithms are in the corresponding entries of conc, where viability 0
+indicates that all cells died, and viability 1 indicates that the drug had no effect on the cells.}
 
-\item{pars}{parameters (alpha, beta) in equation y = exp(-alpha * x - beta * x ^ 2)}
+\item{Hill_fit}{[list or vector] In the order: c("Hill Slope", "E_inf", "EC50"), the parameters of a Hill Slope
+as returned by logLogisticRegression. If conc_as_log is set then the function assumes logEC50 is passed in, and if
+viability_as_pct flag is set, it assumes E_inf is passed in as a percent. Otherwise, E_inf is assumed to be a decimal,
+and EC50 as a concentration.}
 
-\item{lower}{lower bound of dose region to compute AUC over}
+\item{conc_as_log}{[logical], if true, assumes that log10-concentration data has been given rather than concentration data.}
 
-\item{upper}{upper bound of dose region to compute AUC over}
+\item{viability_as_pct}{[logical], if false, assumes that viability is given as a decimal rather
+than a percentage, and returns AUC as a decimal. Otherwise, viability is interpreted as percent, and AUC is returned 0-100.}
 
-\item{trunc}{should survival fractions be truncated downward to 1 if they exceed 1?}
+\item{trunc}{[logical], if true, causes viability data to be truncated to lie between 0 and 1 before
+curve-fitting is performed.}
 
-\item{SF_as_log}{A boolean indicating whether survival fraction is displayed on a log axis. Defaults to FALSE}
+\item{area.type}{Should the area be computed using the actual data ("Actual"), or a fitted curve ("Fitted")}
 
-\item{area.type}{should the AUC of the raw (D, SF) points be returned, or should the AUC of a curve fit to said points be returned instead?}
-
-\item{verbose}{how detailed should error and warning messages be? See details.}
+\item{verbose}{[logical], if true, causes warnings thrown by the function to be printed.}
+}
+\value{
+Numeric AUC value
 }
 \description{
-This function computes the area under a dose-response curve of the form survival fraction SF = exp(-alpha * D - beta * D ^ 2).
-}
-\details{
-If lower and/or upper are missing, the function assumes their values
-  to be the minimum and maximum D-values, respectively. For all warnings to
-  be silent, set trunc = FALSE. For warnings to be output, set trunc = TRUE.
-  For warnings to be output along with the arguments that triggered them,
-  set trunc = 2.
+Returns the AUC (Area Under the drug response Curve) given concentration and viability as input, normalized by the concentration
+range of the experiment. The area returned is the response (1-Viablility) area, i.e. area under the curve when the response curve
+is plotted on a log10 concentration scale, with high AUC implying high sensitivity to the drug. The function can calculate both
+the area under a fitted Hill Curve to the data, and a trapz numeric integral of the actual data provided. Alternatively, the parameters
+of a Hill Slope returned by logLogisticRegression can be passed in if they already known.
 }
 \examples{
-computeAUC(D=c(0.1, 0.5, 0.7, 0.9), pars=c(0.2, 0.1), lower = 0, upper = 1) # Returns 0.7039296
+dose <- c("0.0025","0.008","0.025","0.08","0.25","0.8","2.53","8")
+viability <- c("108.67","111","102.16","100.27","90","87","74","57")
+computeAUC(dose, viability)
+
 
 }

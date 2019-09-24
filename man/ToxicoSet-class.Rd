@@ -31,7 +31,7 @@
 \alias{sensNumber,ToxicoSet-method}
 \alias{pertNumber<-,ToxicoSet,array-method}
 \alias{sensNumber<-,ToxicoSet,matrix-method}
-\title{A Class to Contain ToxicoGenomic datasets together with their curations}
+\title{Class to contain Toxicogenomic Data}
 \usage{
 \S4method{cellInfo}{ToxicoSet}(cSet = tSet)
 
@@ -95,7 +95,7 @@
 
 \item{object}{A \code{ToxicoSet} object}
 
-\item{value}{A replacement value}
+\item{value}{A \code{data.frame} of replacement values}
 
 \item{tSet}{A \code{ToxicoSet} object}
 
@@ -119,6 +119,8 @@ Updated \code{ToxicoSet}
 Updated \code{ToxicoSet}
 
 a \code{data.frame} with the experiment info
+
+Updated \code{ToxicoSet}
 
 a \code{data.frame} with the experiment info
 
@@ -146,7 +148,11 @@ The updated \code{ToxicoSet}
 }
 \description{
 A description which has yet to be added to this class. This is just a place
-holder
+holder. T
+
+A generic for cellInfo method
+
+Generic for cellInfo replace method
 
 Generic for phenoInfo method
 
@@ -159,6 +165,8 @@ Generic for molecularProfiles replace method
 Generic for featureInfo replace method
 
 Generic for sensitivityInfo method
+
+A generic for the sensitivityInfo replacement method
 
 Generic for sensitivityProfiles method
 
@@ -251,60 +259,34 @@ experiments
 \section{Slots}{
 
 \describe{
-\item{\code{annotation}}{A \code{list} of annotation data about the ToxicoSet,
-including the \code{$name} and the session information for how the object
-was creating, detailing the exact versions of R and all the packages used}
-
-\item{\code{molecularProfiles}}{A \code{list} containing 4 \code{Biobase::ExpressionSet}
-type object for holding data for RNA, DNA, SNP and Copy Number Variation
-measurements respectively, with associated \code{fData} and \code{pData}
-containing the row and column metadata}
-
-\item{\code{cell}}{A \code{data.frame} containg the annotations for all the cell
-lines profiled in the data set, across all data types}
-
 \item{\code{drug}}{A \code{data.frame} containg the annotations for all the drugs
 profiled in the in the dataset, across all data types}
-
-\item{\code{sensitivity}}{A \code{list} containing all the data for the sensitivity
-experiments, including \code{$info}, a \code{data.frame} containing the
-experimental info,\code{$raw} a 3D \code{array} containing raw data,
-\code{$profiles}, a \code{data.frame} containing sensitivity profiles
-statistics, and \code{$n}, a \code{data.frame} detailing the number of
-experiments for each cell-drug type pair}
-
-\item{\code{perturbation}}{A \code{list} containting \code{$n}, a \code{data.frame}
-summarizing the available perturbation data,}
-
-\item{\code{curation}}{A \code{list} containing mappings for
-\code{cell}, \code{drug}, and \code{tissue} names used in the data set to universal
-identifiers used between different ToxicoSet objects}
-
-\item{\code{datasetType}}{A \code{character} string of 'sensitivity',
-'perturbation', or both detailing what type of data can be found in the
-ToxicoSet, for proper processing of the data}
 }}
 
 \examples{
 data(TGGATES_small)
-phenoInfo(TGGATES_small, mDataType="rna")
+phenoInfo <- phenoInfo(TGGATES_small, mDataType="rna")
 
 
 phenoInfo(TGGATES_small, mDataType="rna") <- phenoInfo(TGGATES_small, mDataType="rna")
 
 TGGATES_mProf <- molecularProfiles(TGGATES_small, "rna")
-TGGATES_mProf[1:10,]
+molecularProfiles <- TGGATES_mProf[1:10,]
 
 molecularProfiles(TGGATES_small, "rna") <- molecularProfiles(TGGATES_small, "rna")
 
-featureInfo(TGGATES_small, "rna")[1:10,]
+featureInfo <- featureInfo(TGGATES_small, "rna")[1:10,]
 
 featureInfo(TGGATES_small, "rna") <- featureInfo(TGGATES_small, "rna")
 
 sensInf<- sensitivityInfo(TGGATES_small)
-sensInf[1:10,]
+sensInf1to10 <- sensInf[1:10,]
 
-sensitivityProfiles(TGGATES_small)
+data(TGGATES_small)
+sensitivityInfo(TGGATES_small) <- sensitivityInfo(TGGATES_small)
+
+data(TGGATES_small)
+sensProf <- sensitivityProfiles(TGGATES_small)
 
 sensitivityProfiles(TGGATES_small) <- sensitivityProfiles(TGGATES_small)
 
