@@ -17,6 +17,6 @@ Prints the ToxicoSet object to the output stream, and returns invisible NULL.
 Show a ToxicoSet
 }
 \examples{
-TGGATES_small
+TGGATESsmall
 
 }

@@ -16,7 +16,7 @@ a \code{data.frame} with the drug annotations
 Generic for drugInfo method
 }
 \examples{
-data(TGGATES_small)
-drugInfo <- drugInfo(TGGATES_small)
+data(TGGATESsmall)
+drugInfo <- drugInfo(TGGATESsmall)
 
 }

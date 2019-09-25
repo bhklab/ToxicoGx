@@ -7,17 +7,17 @@
 #' one Assay corresponding to a requested drug.
 #'
 #' @examples
-#' data(TGGATES_small)
+#' data(TGGATESsmall)
 #' summMP <- summarizeMolecularProfiles(
-#'   TGGATES_small, mDataType = "rna",
-#'   cell.lines=cellNames(TGGATES_small), drugs = head(drugNames(TGGATES_small)),
-#'   features = fNames(TGGATES_small,"rna"), duration = 8,
+#'   TGGATESsmall, mDataType = "rna",
+#'   cell.lines=cellNames(TGGATESsmall), drugs = head(drugNames(TGGATESsmall)),
+#'   features = fNames(TGGATESsmall,"rna"), duration = 8,
 #'   dose = c("Control", "High"), summary.stat = 'median',
 #'   fill.missing = TRUE, verbose=TRUE
 #'   )
 #'
 #' #subset into expression matrix for a requested drug
-#' assays <- SummarizedExperiment::assays(summMP)[[drugNames(TGGATES_small)[1]]]
+#' assays <- SummarizedExperiment::assays(summMP)[[drugNames(TGGATESsmall)[1]]]
 #' #summarization of phenoData for requested experiments
 #' phenoData <- SummarizedExperiment::colData(summMP)
 #' #summarization of phenoData for requested experiments
