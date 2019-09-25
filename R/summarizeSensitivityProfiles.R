@@ -6,8 +6,8 @@
 #' pairs for a specified experiment duration.
 #'
 #' @examples
-#' data(TGGATES_small)
-#' TGGATESauc <- summarizeSensitivityProfiles(TGGATES_small, sensitivity.measure='auc_recomputed')
+#' data(TGGATESsmall)
+#' TGGATESauc <- summarizeSensitivityProfiles(TGGATESsmall, sensitivity.measure='auc_recomputed')
 #'
 #' @param tSet [ToxicoSet] The ToxicoSet from which to extract the data
 #' @param sensitivity.measure [character] which sensitivity sensitivity.measure to use? Use the

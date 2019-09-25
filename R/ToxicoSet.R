@@ -184,8 +184,8 @@ setReplaceMethod("cellInfo", signature = signature(object = "ToxicoSet",value = 
 #' Generic for drugInfo method
 #'
 #' @examples
-#' data(TGGATES_small)
-#' drugInfo <- drugInfo(TGGATES_small)
+#' data(TGGATESsmall)
+#' drugInfo <- drugInfo(TGGATESsmall)
 #'
 #' @param tSet A \code{ToxicoSet} object
 #'
@@ -202,7 +202,7 @@ setMethod(drugInfo, "ToxicoSet", function(tSet){
 #' Generic for drugInfo replace method
 #'
 #' @examples
-#' drugInfo(TGGATES_small) <- drugInfo(TGGATES_small)
+#' drugInfo(TGGATESsmall) <- drugInfo(TGGATESsmall)
 #'
 #' @param object A \code{ToxicoSet} object.
 #' @param value A \code{data.frame} of replacement values.
@@ -222,8 +222,8 @@ setReplaceMethod("drugInfo", signature = signature(object="ToxicoSet",value="dat
 #' Generic for phenoInfo method
 #'
 #' @examples
-#' data(TGGATES_small)
-#' phenoInfo <- phenoInfo(TGGATES_small, mDataType="rna")
+#' data(TGGATESsmall)
+#' phenoInfo <- phenoInfo(TGGATESsmall, mDataType="rna")
 #'
 #' @inheritParams cellInfo
 #' @inheritParams phenoInfo
@@ -247,8 +247,8 @@ setMethod("phenoInfo",
 #' Generic for phenoInfo replace method
 #'
 #' @examples
-#' data(TGGATES_small)
-#' phenoInfo(TGGATES_small, mDataType="rna") <- phenoInfo(TGGATES_small, mDataType="rna")
+#' data(TGGATESsmall)
+#' phenoInfo(TGGATESsmall, mDataType="rna") <- phenoInfo(TGGATESsmall, mDataType="rna")
 #'
 #' @inheritParams cellInfo<-
 #' @param mDataType A \code{character} with the type of molecular data to return/update
@@ -271,7 +271,7 @@ setReplaceMethod("phenoInfo", signature = signature(object="ToxicoSet", mDataTyp
 #' Generic for molecularProfiles method
 #'
 #' @examples
-#' TGGATES_mProf <- molecularProfiles(TGGATES_small, "rna")
+#' TGGATES_mProf <- molecularProfiles(TGGATESsmall, "rna")
 #' molecularProfiles <- TGGATES_mProf[1:10,]
 #'
 #' @inheritParams phenoInfo
@@ -284,7 +284,7 @@ setReplaceMethod("phenoInfo", signature = signature(object="ToxicoSet", mDataTyp
 #' @importMethodsFrom CoreGx molecularProfiles
 #'
 #' @export
-setMethod(molecularProfiles,
+setMethod("molecularProfiles",
           signature("ToxicoSet", "character"),
           function(cSet=tSet, mDataType){
             callNextMethod(cSet, mDataType)
@@ -295,7 +295,7 @@ setMethod(molecularProfiles,
 #' Generic for molecularProfiles replace method
 #'
 #' @examples
-#' molecularProfiles(TGGATES_small, "rna") <- molecularProfiles(TGGATES_small, "rna")
+#' molecularProfiles(TGGATESsmall, "rna") <- molecularProfiles(TGGATESsmall, "rna")
 #'
 #' @inheritParams phenoInfo<-
 #'
@@ -306,15 +306,14 @@ setMethod(molecularProfiles,
 #' @describeIn ToxicoSet Update the given type of molecular data from the ToxicoSet
 #'
 #' @export
-setReplaceMethod("molecularProfiles", signature = signature(object="ToxicoSet", mDataType ="character",value="matrix"), function(object, mDataType, value){
-  object <- callNextMethod(object, mDataType, value)
-  object
+setReplaceMethod("molecularProfiles", signature = signature(object = "ToxicoSet", mDataType = "character", value = "matrix"), function(object, mDataType, value) {
+  callNextMethod(object, mDataType, value)
 })
 
 #' Generic for featureInfo method
 #'
 #' @examples
-#' featureInfo <- featureInfo(TGGATES_small, "rna")[1:10,]
+#' featureInfo <- featureInfo(TGGATESsmall, "rna")[1:10,]
 #'
 #' @inheritParams phenoInfo
 #'
@@ -334,7 +333,7 @@ setMethod("featureInfo",
 #' Generic for featureInfo replace method
 #'
 #' @examples
-#' featureInfo(TGGATES_small, "rna") <- featureInfo(TGGATES_small, "rna")
+#' featureInfo(TGGATESsmall, "rna") <- featureInfo(TGGATESsmall, "rna")
 #'
 #' @inheritParams phenoInfo<-
 #'
@@ -357,7 +356,7 @@ setReplaceMethod("featureInfo", signature = signature(object="ToxicoSet", mDataT
 #' Generic for sensitivityInfo method
 #'
 #' @examples
-#' sensInf<- sensitivityInfo(TGGATES_small)
+#' sensInf<- sensitivityInfo(TGGATESsmall)
 #' sensInf1to10 <- sensInf[1:10,]
 #'
 #' @inheritParams cellInfo
@@ -381,8 +380,8 @@ setMethod(sensitivityInfo,
 #'
 #'
 #' @examples
-#' data(TGGATES_small)
-#' sensitivityInfo(TGGATES_small) <- sensitivityInfo(TGGATES_small)
+#' data(TGGATESsmall)
+#' sensitivityInfo(TGGATESsmall) <- sensitivityInfo(TGGATESsmall)
 #'
 #' @inheritParams cellInfo<-
 #'
@@ -405,8 +404,8 @@ setReplaceMethod("sensitivityInfo", signature = signature(object="ToxicoSet",val
 #' Generic for sensitivityProfiles method
 #'
 #' @examples
-#' data(TGGATES_small)
-#' sensProf <- sensitivityProfiles(TGGATES_small)
+#' data(TGGATESsmall)
+#' sensProf <- sensitivityProfiles(TGGATESsmall)
 #'
 #' @inheritParams cellInfo
 #'
@@ -429,7 +428,7 @@ setMethod(sensitivityProfiles,
 #' A generic for the sensitivityProfiles replacement method
 #'
 #' @examples
-#' sensitivityProfiles(TGGATES_small) <- sensitivityProfiles(TGGATES_small)
+#' sensitivityProfiles(TGGATESsmall) <- sensitivityProfiles(TGGATESsmall)
 #'
 #' @inheritParams cellInfo<-
 #'
@@ -458,7 +457,7 @@ setReplaceMethod("sensitivityProfiles", signature = signature(object="ToxicoSet"
 #' A generic for the sensitivityMeasures  method
 #'
 #' @examples
-#' sensitivityMeasures(TGGATES_small)
+#' sensitivityMeasures(TGGATESsmall)
 #'
 #' @inheritParams cellInfo
 #'
@@ -481,7 +480,7 @@ setMethod(sensitivityMeasures,
 #' A generic for the drugNames method
 #'
 #' @examples
-#' drugName <- drugNames(TGGATES_small)
+#' drugName <- drugNames(TGGATESsmall)
 #' drugName[1:10]
 #'
 #' @inheritParams drugInfo
@@ -498,7 +497,7 @@ setMethod(drugNames,
 #' drugNames<- Generic
 #' A generic for the drugNames replacement method
 #' @examples
-#' drugNames(TGGATES_small) <- drugNames(TGGATES_small)
+#' drugNames(TGGATESsmall) <- drugNames(TGGATESsmall)
 #' @inheritParams drugInfo<-
 #' @return Updated \code{ToxicoSet}
 setGeneric("drugNames<-", function(object, value) standardGeneric("drugNames<-"))
@@ -514,7 +513,7 @@ setReplaceMethod("drugNames", signature = signature(object="ToxicoSet",value="ch
 #' A generic for the cellNames method
 #'
 #' @examples
-#' cellNames(TGGATES_small)
+#' cellNames(TGGATESsmall)
 #'
 #' @inheritParams cellInfo
 #'
@@ -537,7 +536,7 @@ setMethod("cellNames",
 #' A generic for the cellNames replacement method
 #'
 #' @examples
-#' cellNames(TGGATES_small) <- cellNames(TGGATES_small)
+#' cellNames(TGGATESsmall) <- cellNames(TGGATESsmall)
 #'
 #' @inheritParams drugInfo<-
 #'
@@ -558,7 +557,7 @@ setReplaceMethod("cellNames", signature = signature(object="ToxicoSet",value="ch
 #' A generic for the fNames method
 #'
 #' @examples
-#' fNames(TGGATES_small, "rna")[1:10]
+#' fNames(TGGATESsmall, "rna")[1:10]
 #'
 #' @inheritParams phenoInfo
 #'
@@ -581,8 +580,8 @@ setMethod("fNames",
 # A generic for the feature name replacement method
 #
 #@examples
-# data(TGGATES_small)
-# cellNames(TGGATES_small) <- cellNames(TGGATES_small)
+# data(TGGATESsmall)
+# cellNames(TGGATESsmall) <- cellNames(TGGATESsmall)
 #
 # @inheritParams phenoInfo<-
 # @param value A \code{character} vector of the new feature names
@@ -598,7 +597,7 @@ setMethod("fNames",
 #' A generic for the dateCreated method
 #'
 #' @examples
-#' dateCreated(TGGATES_small)
+#' dateCreated(TGGATESsmall)
 #'
 #' @inheritParams cellInfo
 #'
@@ -622,7 +621,7 @@ setMethod(dateCreated,
 #'
 #' @examples
 #' tSetName <- cSetName
-#' tSetName(TGGATES_small)
+#' tSetName(TGGATESsmall)
 #'
 #' @inheritParams cellInfo
 #'
@@ -646,7 +645,7 @@ tSetName <- cSetName
 #' A generic for the pertNumber method
 #'
 #' @examples
-#' pertNumber(TGGATES_small)
+#' pertNumber(TGGATESsmall)
 #'
 #' @inheritParams cellInfo
 #'
@@ -671,7 +670,7 @@ setMethod(pertNumber,
 #' A generic for the sensNumber method
 #'
 #' @examples
-#' sensNumber(TGGATES_small)
+#' sensNumber(TGGATESsmall)
 #'
 #' @inheritParams cellInfo
 #'
@@ -694,7 +693,7 @@ setMethod(sensNumber,
 #' A generic for the pertNumber method
 #'
 #' @examples
-#' pertNumber(TGGATES_small) <- pertNumber(TGGATES_small)
+#' pertNumber(TGGATESsmall) <- pertNumber(TGGATESsmall)
 #'
 #' @inheritParams cellInfo<-
 ## TODO:: Remove duplicate param names from CoreGx; this documentation is incorrect as is
@@ -719,7 +718,7 @@ setReplaceMethod('pertNumber', signature = signature(object="ToxicoSet",value="a
 #' A generic for the sensNumber method
 #'
 #' @examples
-#' sensNumber(TGGATES_small) <- sensNumber(TGGATES_small)
+#' sensNumber(TGGATESsmall) <- sensNumber(TGGATESsmall)
 #'
 #' @inheritParams cellInfo<-
 #'
@@ -742,7 +741,7 @@ setReplaceMethod('sensNumber', signature = signature(object="ToxicoSet",value="m
 #' @inheritParams drugInfo<-
 #'
 #' @examples
-#' TGGATES_small
+#' TGGATESsmall
 #'
 #' @return Prints the ToxicoSet object to the output stream, and returns invisible NULL.
 #' @export
@@ -769,7 +768,7 @@ setMethod("show", signature=signature(object="ToxicoSet"),
 #' Returns the molecular data names for the ToxicoSet.
 #'
 #' @examples
-#' mDataNames(TGGATES_small)
+#' mDataNames(TGGATESsmall)
 #'
 #' @inheritParams CoreGx::cellInfo
 #'
@@ -827,9 +826,9 @@ setMethod("dim", signature=signature(x="ToxicoSet"), function(x){
 #' to keep track of all the metadata conventions between different datasets.
 #'
 #' @examples
-#' TGGATESDrugNames  <- drugNames(TGGATES_small)
-#' TGGATESCells <- cellNames(TGGATES_small)
-#' tSet <- subsetTo(TGGATES_small,drugs = TGGATESDrugNames[1],
+#' TGGATESDrugNames  <- drugNames(TGGATESsmall)
+#' TGGATESCells <- cellNames(TGGATESsmall)
+#' tSet <- subsetTo(TGGATESsmall,drugs = TGGATESDrugNames[1],
 #'   cells = TGGATESCells[1])
 #' tSet
 #'
@@ -844,37 +843,51 @@ setMethod("dim", signature=signature(x="ToxicoSet"), function(x){
 #'   molecular data
 #' @param keep.controls If the dataset has perturbation type experiments, should
 #'   the controls be kept in the dataset? Defaults to true.
+#' @param duration A \code{list} or \code{vector} of the experimental durations
+#'   to include in the subset as strings
 #' @param ... Other arguments passed by other function within the package
 #' @return A ToxicoSet with only the selected drugs and cells
 #' @importFrom CoreGx unionList
 #' @export
-# subsetTo <- function(tSet, cells=NULL, radiationTypes=NULL, exps=NULL, molecular.data.cells=NULL, keep.controls=TRUE) {
-subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, keep.controls=TRUE, ...) {
+subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, keep.controls=TRUE, duration=NULL, ...) {
   drop=FALSE
 
   adArgs = list(...)
   if ("exps" %in% names(adArgs)) {
     exps <- adArgs[["exps"]]
     if(class(exps)=="data.frame"){
-      exps2 <- exps[[tSetName(tSet)]]
+      exps2 <- exps[[cSetName(tSet)]]
       names(exps2) <- rownames(exps)
       exps <- exps2
     } else{
-      exps <- exps[[tSetName(tSet)]]
+      exps <- exps[[cSetName(tSet)]]
     }
   }else {
     exps <- NULL
   }
   if(!missing(cells)){
+    ## TODO:: Ensure that cells logic still works without cellid in @cells slot
     cells <- unique(cells)
   }
 
   if(!missing(drugs)){
     drugs <- unique(drugs)
+    ## TODO:: Add logic to deal with the removal of cellids from the @cells slot in tSet
+    ## TODO:: Need a foreach loop here to ensure that subset is correct for multiple molecularProfiles
+    # Is is easier just to add back in the cellids?\
+    # Do I need to add condition that molecular.data.cells is.na?
+    molecular.data.cells <- rownames(Biobase::pData(tSet@molecularProfiles$rna))[
+      which(Biobase::pData(tSet@molecularProfiles$rna)$drugid %in% drugs)
+      ]
   }
 
-  if(!missing(molecular.data.cells)){
+  if (!missing(molecular.data.cells)){
     molecular.data.cells <- unique(molecular.data.cells)
+  }
+
+  ## TODO:: Finish implementing duration arguement of subsetTo function
+  if (!missing(duration)) {
+    duration <- unique(duration)
   }
 
   ### TODO:: implement strict subsetting at this level!!!!
@@ -882,7 +895,7 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, ke
   ### the function missing does not work as expected in the context below, because the arguments are passed to the anonymous
   ### function in lapply, so it does not recognize them as missing
 
-  tSet@molecularProfiles <- lapply(tSet@molecularProfiles, function(eset, cells, drugs, molecular.data.cells){
+  tSet@molecularProfiles <- lapply(tSet@molecularProfiles, function(eset, cells, drugs, molecular.data.cells, duration){
 
     molecular.data.type <- ifelse(length(grep("rna", Biobase::annotation(eset)) > 0), "rna", Biobase::annotation(eset))
     if (length(grep(molecular.data.type, names(molecular.data.cells))) > 0) {
@@ -890,15 +903,15 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, ke
     }
     column_indices <- NULL
 
-    if (length(cells)==0 && length(drugs)==0) {
-      column_indices <- 0:ncol(eset)
+    if (length(cells) == 0 && length(drugs) == 0) {
+      column_indices <- seq_len(ncol(eset))
     }
-    if(length(cells)==0 && tSet@datasetType=="sensitivity") {
-      column_indices <- 0:ncol(eset)
+    if (length(cells) == 0 && tSet@datasetType == "sensitivity") {
+      column_indices <- seq_len(ncol(eset))
     }
 
     cell_line_index <- NULL
-    if(length(cells)!=0) {
+    if (length(cells) != 0) {
       if (!all(cells %in% cellNames(tSet))) {
         stop("Some of the cell names passed to function did not match to names in the PharmacoSet. Please ensure you are using cell names as returned by the cellNames function")
       }
@@ -1032,7 +1045,7 @@ updateCellId <- function(tSet, new.ids = vector("character")){
 
   tSet@molecularProfiles <- lapply(tSet@molecularProfiles, function(eset){
 
-    myx <- match(Biobase::pData(eset)[["cellid"]],rownames(cellInfo(tSet)))
+    myx <- match(Biobase::pData(eset)[["cellid"]], rownames(cellInfo(tSet)))
     Biobase::pData(eset)[["cellid"]]  <- new.ids[myx]
     return(eset)
   })
@@ -1298,7 +1311,7 @@ updateDrugId <- function(tSet, new.ids = vector("character")){
 #'
 #' @examples
 #'
-#' checkTSetStructure(TGGATES_small)
+#' checkTSetStructure(TGGATESsmall)
 #'
 #' @param tSet A \code{ToxicoSet} object
 #' @param plotDist Should the function also plot the distribution of molecular data?

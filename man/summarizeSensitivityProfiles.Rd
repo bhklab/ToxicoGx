@@ -45,7 +45,7 @@ summarising the drug senstitivity data of a ToxicoSet into drug-cell line
 pairs for a specified experiment duration.
 }
 \examples{
-data(TGGATES_small)
-TGGATESauc <- summarizeSensitivityProfiles(TGGATES_small, sensitivity.measure='auc_recomputed')
+data(TGGATESsmall)
+TGGATESauc <- summarizeSensitivityProfiles(TGGATESsmall, sensitivity.measure='auc_recomputed')
 
 }

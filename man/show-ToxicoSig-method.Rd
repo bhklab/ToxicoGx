@@ -17,9 +17,9 @@ Prints the ToxicoGx Signatures object to the output stream, and returns invisibl
 Show ToxicoGx Signatures
 }
 \examples{
-data(TGGATES_small)
-drug.perturbation <- drugPerturbationSig(TGGATES_small, mDataType="rna", nthread=1, duration = 2,
-     drugs = head(drugNames(TGGATES_small)), features = fNames(TGGATES_small, "rna")[1])
+data(TGGATESsmall)
+drug.perturbation <- drugPerturbationSig(TGGATESsmall, mDataType="rna", nthread=1, duration = 2,
+     drugs = head(drugNames(TGGATESsmall)), features = fNames(TGGATESsmall, "rna")[1])
 drug.perturbation
 
 }

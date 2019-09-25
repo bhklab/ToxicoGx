@@ -24,6 +24,6 @@ of data and with other studies.
 }
 \examples{
 
-checkTSetStructure(TGGATES_small)
+checkTSetStructure(TGGATESsmall)
 
 }

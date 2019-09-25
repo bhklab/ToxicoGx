@@ -17,6 +17,6 @@ Vector of names of the molecular data types
 Returns the molecular data names for the ToxicoSet.
 }
 \examples{
-mDataNames(TGGATES_small)
+mDataNames(TGGATESsmall)
 
 }

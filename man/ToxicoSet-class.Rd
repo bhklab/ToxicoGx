@@ -265,51 +265,51 @@ profiled in the in the dataset, across all data types}
 }}
 
 \examples{
-data(TGGATES_small)
-phenoInfo <- phenoInfo(TGGATES_small, mDataType="rna")
+data(TGGATESsmall)
+phenoInfo <- phenoInfo(TGGATESsmall, mDataType="rna")
 
-data(TGGATES_small)
-phenoInfo(TGGATES_small, mDataType="rna") <- phenoInfo(TGGATES_small, mDataType="rna")
+data(TGGATESsmall)
+phenoInfo(TGGATESsmall, mDataType="rna") <- phenoInfo(TGGATESsmall, mDataType="rna")
 
-TGGATES_mProf <- molecularProfiles(TGGATES_small, "rna")
+TGGATES_mProf <- molecularProfiles(TGGATESsmall, "rna")
 molecularProfiles <- TGGATES_mProf[1:10,]
 
-molecularProfiles(TGGATES_small, "rna") <- molecularProfiles(TGGATES_small, "rna")
+molecularProfiles(TGGATESsmall, "rna") <- molecularProfiles(TGGATESsmall, "rna")
 
-featureInfo <- featureInfo(TGGATES_small, "rna")[1:10,]
+featureInfo <- featureInfo(TGGATESsmall, "rna")[1:10,]
 
-featureInfo(TGGATES_small, "rna") <- featureInfo(TGGATES_small, "rna")
+featureInfo(TGGATESsmall, "rna") <- featureInfo(TGGATESsmall, "rna")
 
-sensInf<- sensitivityInfo(TGGATES_small)
+sensInf<- sensitivityInfo(TGGATESsmall)
 sensInf1to10 <- sensInf[1:10,]
 
-data(TGGATES_small)
-sensitivityInfo(TGGATES_small) <- sensitivityInfo(TGGATES_small)
+data(TGGATESsmall)
+sensitivityInfo(TGGATESsmall) <- sensitivityInfo(TGGATESsmall)
 
-data(TGGATES_small)
-sensProf <- sensitivityProfiles(TGGATES_small)
+data(TGGATESsmall)
+sensProf <- sensitivityProfiles(TGGATESsmall)
 
-sensitivityProfiles(TGGATES_small) <- sensitivityProfiles(TGGATES_small)
+sensitivityProfiles(TGGATESsmall) <- sensitivityProfiles(TGGATESsmall)
 
-sensitivityMeasures(TGGATES_small)
+sensitivityMeasures(TGGATESsmall)
 
-cellNames(TGGATES_small)
+cellNames(TGGATESsmall)
 
-cellNames(TGGATES_small) <- cellNames(TGGATES_small)
+cellNames(TGGATESsmall) <- cellNames(TGGATESsmall)
 
-fNames(TGGATES_small, "rna")[1:10]
+fNames(TGGATESsmall, "rna")[1:10]
 
-dateCreated(TGGATES_small)
+dateCreated(TGGATESsmall)
 
 tSetName <- cSetName
-tSetName(TGGATES_small)
+tSetName(TGGATESsmall)
 
-pertNumber(TGGATES_small)
+pertNumber(TGGATESsmall)
 
-sensNumber(TGGATES_small)
+sensNumber(TGGATESsmall)
 
-pertNumber(TGGATES_small) <- pertNumber(TGGATES_small)
+pertNumber(TGGATESsmall) <- pertNumber(TGGATESsmall)
 
-sensNumber(TGGATES_small) <- sensNumber(TGGATES_small)
+sensNumber(TGGATESsmall) <- sensNumber(TGGATESsmall)
 
 }

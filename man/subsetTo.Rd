@@ -5,7 +5,8 @@
 \title{A function to subset a ToxicoSet to data containing only specified drugs, cells and genes}
 \usage{
 subsetTo(tSet, cells = NULL, drugs = NULL,
-  molecular.data.cells = NULL, keep.controls = TRUE, ...)
+  molecular.data.cells = NULL, keep.controls = TRUE, duration = NULL,
+  ...)
 }
 \arguments{
 \item{tSet}{A \code{ToxicoSet} to be subsetted}
@@ -24,6 +25,9 @@ molecular data}
 \item{keep.controls}{If the dataset has perturbation type experiments, should
 the controls be kept in the dataset? Defaults to true.}
 
+\item{duration}{A \code{list} or \code{vector} of the experimental durations
+to include in the subset as strings}
+
 \item{...}{Other arguments passed by other function within the package}
 }
 \value{
@@ -39,9 +43,9 @@ all the experiments for a radiation or cell of interest, as well removes the nee
 to keep track of all the metadata conventions between different datasets.
 }
 \examples{
-TGGATESDrugNames  <- drugNames(TGGATES_small)
-TGGATESCells <- cellNames(TGGATES_small)
-tSet <- subsetTo(TGGATES_small,drugs = TGGATESDrugNames[1],
+TGGATESDrugNames  <- drugNames(TGGATESsmall)
+TGGATESCells <- cellNames(TGGATESsmall)
+tSet <- subsetTo(TGGATESsmall,drugs = TGGATESDrugNames[1],
   cells = TGGATESCells[1])
 tSet
 

@@ -20,5 +20,5 @@ drugNames<- Generic
 A generic for the drugNames replacement method
 }
 \examples{
-drugNames(TGGATES_small) <- drugNames(TGGATES_small)
+drugNames(TGGATESsmall) <- drugNames(TGGATESsmall)
 }
