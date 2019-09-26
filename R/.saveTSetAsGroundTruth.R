@@ -33,11 +33,11 @@
                        # To test molecularProfiles() against
                        saveRDS(tSet@molecularProfiles[[dataType]] , file = paste0(path, dataType, ".molecularProfiles.", name, ".rds"))
                        # To test featureInfo() against
-                       saveRDS(Biobase::pData(tSet@molecularProfiles[[dataType]]) , file = paste0(path, dataType, "phenoInfo", name, ".rds"))
+                       saveRDS(Biobase::pData(tSet@molecularProfiles[[dataType]]) , file = paste0(path, dataType, ".phenoInfo.", name, ".rds"))
                        # To test fNames() against
-                       saveRDS(Biobase::pData(tSet@molecularProfiles[[dataType]]) , file = paste0(path, dataType, "phenoInfo", name, ".rds"))
+                       saveRDS(Biobase::pData(tSet@molecularProfiles[[dataType]]) , file = paste0(path, dataType, ".phenoInfo.", name, ".rds"))
                        # To test phenoInfo() against
-                       saveRDS(Biobase::fData(tSet@molecularProfiles[[dataType]]), file = paste0(path, dataType, "featureInfo", name, ".rds"))
+                       saveRDS(Biobase::fData(tSet@molecularProfiles[[dataType]]), file = paste0(path, dataType, ".featureInfo.", name, ".rds"))
                      })
 
   # To test cellInfo() against
