@@ -1,7 +1,7 @@
 library(testthat)
 library(ToxicoGx)
 
-#### Example tSet structure ####
+#### Checking example tSet structure ####
 context("Testing TGGATESsmall object validity...")
 
 test_that("TGGATESsmall tSet has correct structure", {
@@ -47,7 +47,6 @@ test_that("@molecularProfiles slot accessors produce expected results", {
   expect_equal(mDataNames(TGGATESsmall), names(TGGATESsmall@molecularProfiles))
 
   ## TODO:: Test this with incorrect tSet structure to determine if error messages
-  ## TODO:: Write unit test for fNames()
   # print in the correct order
   parallel::mclapply(names(TGGATESsmall@molecularProfiles),
                      function(name) {
@@ -133,7 +132,7 @@ test_that("@curation slot accessors produce expected results", {
 })
 
 # subsetTo Method
-test_that("@subsetTo slot accessors produce expected results", {
+test_that("subsetTo() class method produces expected results", {
   data("TGGATESsmall")
 
   ## TODO:: Add unit tests for `[` subset operator
