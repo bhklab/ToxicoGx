@@ -1,0 +1,9 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^HyxpoxiaPlot.pdf
+^RadioGxDebug.md
+^RadioGx_0.0.1.tar.gz
+^.*\dose_response_plot.pdf
+^dose_response_plot.pdf
+^tests/testthat/.saveTSetAsGroundTruth.R$
+^tests

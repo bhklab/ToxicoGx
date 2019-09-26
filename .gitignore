@@ -1,4 +1,9 @@
 .Rproj.user
 .Rhistory
 .RData
-.Ruserdata
+*.history
+..Rcheck
+RadioGx_0.0.1.tar.gz
+RadioGx.Rcheck
+RadioGxDebug.md
+testWriting.R
