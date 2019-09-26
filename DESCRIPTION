@@ -1,0 +1,36 @@
+Package: ToxicoGx
+Type: Package
+Title: Analysis of Large-Scale Toxicogenomic Data 
+Version: 0.0.1
+Date: 2019-09-03
+Authors@R: c(
+  person("Petr","Smirnov", email = "petr.smirnov@uhnresearch.ca", 
+    role = c("aut")),
+  person("Christopher","Eeles", email = "christopher.eeles@uhnresearch.ca",
+    role = c("aut")),
+  person("Esther","Yoo", email = "yk.yoo@mail.utoronto.ca", 
+    role = c("aut")),
+  person("Benjamin","Haibe-Kains", email = "benjamin.haibe.kains@utoronto.ca",
+    role = c("aut","cre"))
+  )  
+Description: Contains a set of functions to perform large-scale analysis of toxicogenomic data.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Depends: R (>= 3.6.0), CoreGx
+Imports:
+    SummarizedExperiment,
+    Biobase, 
+    RColorBrewer, 
+    caTools, 
+    magicaxis, 
+    methods, 
+    reshape2, 
+    KernSmooth,
+    cluster,
+    Matrix,
+    scales
+RoxygenNote: 6.1.1
+Suggests: 
+    testthat (>= 2.1.0),
+    knitr
