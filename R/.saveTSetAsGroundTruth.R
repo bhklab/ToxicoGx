@@ -6,7 +6,6 @@
 #'
 #' @param tSet A \code{ToxicoSet} object to be used as ground truth for tests
 #'
-#' @keywords internal
 .saveTSetAsGroundTruth <- function(tSet) {
   # Get tSet name for file names
   name <- tSet@annotation$name
@@ -31,12 +30,12 @@
   parallel::mclapply(names(tSet@molecularProfiles),
                      function(dataType) {
                        # To test molecularProfiles() against
-                       saveRDS(tSet@molecularProfiles[[dataType]] , file = paste0(path, dataType, ".molecularProfiles.", name, ".rds"))
-                       # To test featureInfo() against
+                       saveRDS(Biobase::exprs(tSet@molecularProfiles[[dataType]]) , file = paste0(path, dataType, ".molecularProfiles.", name, ".rds"))
+                       # To test phenoInfo() against
                        saveRDS(Biobase::pData(tSet@molecularProfiles[[dataType]]) , file = paste0(path, dataType, ".phenoInfo.", name, ".rds"))
                        # To test fNames() against
-                       saveRDS(Biobase::pData(tSet@molecularProfiles[[dataType]]) , file = paste0(path, dataType, ".phenoInfo.", name, ".rds"))
-                       # To test phenoInfo() against
+                       saveRDS(rownames(Biobase::fData(tSet@molecularProfiles[[dataType]])), file = paste0(path, dataType, ".fNames.", name, ".rds"))
+                       # To test featureInfo() against
                        saveRDS(Biobase::fData(tSet@molecularProfiles[[dataType]]), file = paste0(path, dataType, ".featureInfo.", name, ".rds"))
                      })
 

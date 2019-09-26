@@ -40,6 +40,12 @@ test_that("@annotation slot accessors produce expected results", {
 test_that("@molecularProfiles slot accessors produce expected results", {
   data("TGGATESsmall")
 
+  context("External validation...")
+  expect_equal_to_reference(mDataNames(TGGATESsmall),
+                            "mDataNames.TGGATESsmall.rds")
+  context("Internal validation...")
+  expect_equal(mDataNames(TGGATESsmall), names(TGGATESsmall@molecularProfiles))
+
   ## TODO:: Test this with incorrect tSet structure to determine if error messages
   ## TODO:: Write unit test for fNames()
   # print in the correct order
@@ -51,14 +57,19 @@ test_that("@molecularProfiles slot accessors produce expected results", {
                                                  paste0(name, ".molecularProfiles.TGGATESsmall.rds"))
                        expect_equal_to_reference(featureInfo(TGGATESsmall, name),
                                                  paste0(name, ".featureInfoa.TGGATESsmall.rds"))
+                       expect_equal_to_reference(fNames(TGGATESsmall, name),
+                                                 paste0(name, ".fNames.TGGATESsmall.rds"))
                        expect_equal_to_reference(phenoInfo(TGGATESsmall, name),
                                                  paste0(name, ".phenoData.TGGATESsmall.rds"))
+
 
                        context("Internal validation...")
                        expect_equal(molecularProfiles(TGGATESsmall, name),
                                     Biobase::exprs(TGGATESsmall@molecularProfiles[[name]]))
                        expect_equal(featureInfo(TGGATESsmall, name),
                                     Biobase::fData(TGGATESsmall@molecularProfiles[[name]]))
+                       expect_equal(fNames(TGGATESsmall, name),
+                                    rownames(Biobase::fData(TGGATESsmall@molecularProfiles[[name]])))
                        expect_equal(phenoInfo(TGGATESsmall, name),
                                     Biobase::pData(TGGATESsmall@molecularProfiles[[name]]))
                        })
@@ -131,8 +142,3 @@ test_that("@subsetTo slot accessors produce expected results", {
     TGGATESsmall, drugs = drugNames(TGGATESsmall)[1]),
     "subsetTo.TGGATESsmall.rds")
 })
-
-
-
-
-
