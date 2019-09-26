@@ -841,21 +841,22 @@ setMethod("dim", signature=signature(x="ToxicoSet"), function(x){
 #'   the dataset.
 #' @param molecular.data.cells A list or vector of cell names to keep in the
 #'   molecular data
-#' @param keep.controls If the dataset has perturbation type experiments, should
-#'   the controls be kept in the dataset? Defaults to true.
+## TODO:: Remove as this breaks the function
+# @param keep.controls If the dataset has perturbation type experiments, should
+#   the controls be kept in the dataset? Defaults to true.
 #' @param duration A \code{list} or \code{vector} of the experimental durations
 #'   to include in the subset as strings
 #' @param ... Other arguments passed by other function within the package
 #' @return A ToxicoSet with only the selected drugs and cells
 #' @importFrom CoreGx unionList
 #' @export
-subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, keep.controls=TRUE, duration=NULL, ...) {
+subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, duration=NULL, ...) {
   drop=FALSE
 
   adArgs = list(...)
   if ("exps" %in% names(adArgs)) {
     exps <- adArgs[["exps"]]
-    if(class(exps)=="data.frame"){
+    if(class(exps) == "data.frame"){
       exps2 <- exps[[cSetName(tSet)]]
       names(exps2) <- rownames(exps)
       exps <- exps2
@@ -872,13 +873,6 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, ke
 
   if(!missing(drugs)){
     drugs <- unique(drugs)
-    ## TODO:: Add logic to deal with the removal of cellids from the @cells slot in tSet
-    ## TODO:: Need a foreach loop here to ensure that subset is correct for multiple molecularProfiles
-    # Is is easier just to add back in the cellids?\
-    # Do I need to add condition that molecular.data.cells is.na?
-    molecular.data.cells <- rownames(Biobase::pData(tSet@molecularProfiles$rna))[
-      which(Biobase::pData(tSet@molecularProfiles$rna)$drugid %in% drugs)
-      ]
   }
 
   if (!missing(molecular.data.cells)){
@@ -894,6 +888,8 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, ke
 
   ### the function missing does not work as expected in the context below, because the arguments are passed to the anonymous
   ### function in lapply, so it does not recognize them as missing
+
+  ## TODO:: Determine why this is failing to subset molecularProfiles?
 
   tSet@molecularProfiles <- lapply(tSet@molecularProfiles, function(eset, cells, drugs, molecular.data.cells, duration){
 
@@ -930,10 +926,6 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, ke
         # if (length(drugs_index)==0){
         #         stop("No drugs matched")
         #       }
-        if(keep.controls) {
-          control_indices <- which(Biobase::pData(eset)[["xptype"]]=="control")
-          drugs_index <- c(drugs_index, control_indices)
-        }
       }
     }
 
@@ -951,12 +943,16 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, ke
       }
     }
 
-    row_indices <- 0:nrow(Biobase::exprs(eset))
+    row_indices <- seq_len(nrow(Biobase::exprs(eset)))
 
     eset <- eset[row_indices,column_indices]
     return(eset)
 
   }, cells=cells, drugs=drugs, molecular.data.cells=molecular.data.cells)
+
+  #
+  # END SUBSET MOLECULAR PROFILES
+  #
 
   if ((tSet@datasetType == "sensitivity" | tSet@datasetType == "both") & length(exps) != 0) {
     tSet@sensitivity$info <- tSet@sensitivity$info[exps, , drop=drop]
@@ -1028,6 +1024,10 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, ke
   }
   return(tSet)
 }
+
+#
+# END SUBSET TO FUNCTION
+#
 
 ### TODO:: Add updating of sensitivity Number tables
 updateCellId <- function(tSet, new.ids = vector("character")){
@@ -1122,6 +1122,10 @@ updateCellId <- function(tSet, new.ids = vector("character")){
 
   return(tSet)
 }
+
+
+
+
 
 # updateFeatureNames <- function(tSet, new.ids = vector("character")){
 #
