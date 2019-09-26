@@ -8,11 +8,11 @@
 #'
 #' @examples
 #' data(TGGATESsmall)
-#' summMP <- summarizeMolecularProfiles(
+#' summMP <- ToxicoGx::summarizeMolecularProfiles(
 #'   TGGATESsmall, mDataType = "rna",
 #'   cell.lines=cellNames(TGGATESsmall), drugs = head(drugNames(TGGATESsmall)),
-#'   features = fNames(TGGATESsmall,"rna"), duration = 8,
-#'   dose = c("Control", "High"), summary.stat = 'median',
+#'   features = fNames(TGGATESsmall,"rna"), duration = "8",
+#'   dose = c("Control", "High"), summary.stat = "median",
 #'   fill.missing = TRUE, verbose=TRUE
 #'   )
 #'
@@ -31,7 +31,7 @@
 #'   If any cell.line has no data, missing values will be created
 #' @param drugs \code{character} The drugs to be summarized
 #' @param features \code{character} A vector of the feature names to include in the summary
-#' @param duration \code{numeric} A vector of durations to summarize across
+#' @param duration \code{character} A vector of durations to summarize across
 #' @param dose \code{character} The dose level to summarize replicates across
 #' @param summary.stat \code{character} which summary method to use if there are repeated
 #'   cell.lines? Choices are "mean", "median", "first", or "last"
@@ -64,9 +64,9 @@ summarizeMolecularProfiles <- function(tSet,
 
   ############## ERRORTRAPPING NOT DONE ##############
 
-  dd <- CoreGx::molecularProfiles(tSet, mDataType)[features, , drop = F] #expression matrix of the tSet
-  pp <- CoreGx::phenoInfo(tSet, mDataType) #phenoData of the tSet
-  ff <- CoreGx::featureInfo(tSet, mDataType)[features,,drop = F]
+  dd <- ToxicoGx::molecularProfiles(tSet, mDataType)[features, , drop = F] #expression matrix of the tSet
+  pp <- ToxicoGx::phenoInfo(tSet, mDataType) #phenoData of the tSet
+  ff <- ToxicoGx::featureInfo(tSet, mDataType)[features,,drop = F]
 
   unique.cells <- unique(cell.lines) #unique cell types (row names of the result)
   #subset phenoData to include only the experiments requested

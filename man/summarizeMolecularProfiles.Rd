@@ -23,7 +23,7 @@ If any cell.line has no data, missing values will be created}
 
 \item{features}{\code{character} A vector of the feature names to include in the summary}
 
-\item{duration}{\code{numeric} A vector of durations to summarize across}
+\item{duration}{\code{character} A vector of durations to summarize across}
 
 \item{dose}{\code{character} The dose level to summarize replicates across}
 
@@ -50,11 +50,11 @@ one Assay corresponding to a requested drug.
 }
 \examples{
 data(TGGATESsmall)
-summMP <- summarizeMolecularProfiles(
+summMP <- ToxicoGx::summarizeMolecularProfiles(
   TGGATESsmall, mDataType = "rna",
   cell.lines=cellNames(TGGATESsmall), drugs = head(drugNames(TGGATESsmall)),
-  features = fNames(TGGATESsmall,"rna"), duration = 8,
-  dose = c("Control", "High"), summary.stat = 'median',
+  features = fNames(TGGATESsmall,"rna"), duration = "8",
+  dose = c("Control", "High"), summary.stat = "median",
   fill.missing = TRUE, verbose=TRUE
   )
 
