@@ -136,8 +136,26 @@ test_that("subsetTo() class method produces expected results", {
   data("TGGATESsmall")
 
   ## TODO:: Add unit tests for `[` subset operator
+  ## TODO:: Change context() messages to be more informative when running devtools::test()
   context("External validation...")
   expect_equal_to_reference(subsetTo(
-    TGGATESsmall, drugs = drugNames(TGGATESsmall)[1]),
+    TGGATESsmall, drugs = drugNames(TGGATESsmall)[1], cells=cellNames(TGGATESsmall)[1]),
     "subsetTo.TGGATESsmall.rds")
+  context("Internal validation...")
+  ## Tests that subsetting molecularProfiles on duration works
+  expect_equal(all(ToxicoGx::sensitivityInfo(ToxicoGx::subsetTo(TGGATESsmall, duration = "2"))$duration_h %in% "2"), TRUE)
+  # Tests that relationship between sensitivity experiments and molecularProfiles is preserved (4 molecular Profiles / 1 sensitivity experiment)
+  parallel::mclapply(names(TGGATESsmall@molecularProfiles),
+                     function(name) {
+                       context(paste0("Testing subsetTo on molecularProfile for ", name))
+                       ## TODO:: Generalize duration arguement so that it uses the first unique duration value in tSet (replace "8" with this)
+                       expect_equal(all(Biobase::pData(
+                         ToxicoGx::subsetTo(TGGATESsmall, duration = "8")@molecularProfiles[[name]])$duration %in% "8"),
+                         TRUE)
+                       # Tests that subsetting sensitivity on duration works
+                       expect_equal(nrow(sensitivityInfo(
+                         ToxicoGx::subsetTo(TGGATESsmall, duration = "24"))) * 4 ==
+                         nrow(Biobase::pData(ToxicoGx::subsetTo(TGGATESsmall, duration = "8")@molecularProfiles[[name]])),
+                         TRUE)
+                      })
 })
