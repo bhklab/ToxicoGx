@@ -1,6 +1,6 @@
 ## Rank genes based on drug effect
 ##
-## inputs:	
+## inputs:
 ##      - data: gene expression data matrix
 ##			- drug: single or vector of drug(s) of interest; if a vector of drugs is provided, they will be considered as being the same drug and will be jointly analyszed
 ##			- drug.id: drug used in each experiment
@@ -20,7 +20,7 @@
 
 rankGeneDrugPerturbation <-
   function (data, drug, drug.id, drug.concentration, type, xp, batch, duration, single.type=FALSE, nthread=1, verbose=FALSE) {
-    
+
     if (nthread != 1) {
       availcore <- parallel::detectCores()
       if (missing(nthread) || nthread < 1 || nthread > availcore) {
@@ -40,7 +40,7 @@ rankGeneDrugPerturbation <-
     }
     ## is the drug in the dataset?
     drugix <- drug.id %in% drug
-    
+
     if (sum(drugix) == 0) {
       warning(sprintf("Drug(s) %s not in the dataset", paste(drug, collapse=", ")))
       return(list("all.type"=NULL, "single.type"=NULL))
@@ -54,20 +54,20 @@ rankGeneDrugPerturbation <-
     xp <- xp[iix]
     batch <- batch[iix]
     duration <- duration[iix]
-    
+
     res.type <- NULL
-    
+
     ## build input matrix
     inpumat <- NULL
     ## for each batch/vehicle of perturbations+controls (test within each batch/vehicle to avoid batch effect)
     ubatch <- sort(unique(batch[!is.na(xp) & xp == "perturbation"]))
     names(ubatch) <- paste("batch", ubatch, sep="")
-    
+
     for (bb in 1:length(ubatch)) {
       ## identify the perturbations and corresponding control experiments
       xpix <- rownames(data)[complete.cases(batch, xp) & batch == ubatch[bb] & xp == "perturbation"]
       ctrlix <- rownames(data)[complete.cases(batch, xp) & batch == ubatch[bb] & xp == "control"]
-      
+
       if (all(!is.na(c(xpix, ctrlix))) && length(xpix) > 0 && length(ctrlix) > 0) {
         if (!all(is.element(ctrlix, rownames(data)))) {
           stop("data for some control experiments are missing!")
@@ -80,16 +80,16 @@ rankGeneDrugPerturbation <-
         inpumat <- rbind(inpumat, data.frame("treated"=c(rep(1, length(xpix)), rep(0, length(ctrlix))), "type"=c(type[xpix], type[ctrlix]), "batch"=paste("batch", c(batch[xpix], batch[ctrlix]), sep=""), "concentration"=c(conc[xpix], conc[ctrlix]), "duration"= c(duration[xpix], duration[ctrlix])))
       }
     }
-    
+
     inpumat[ , "type"] <- factor(inpumat[ , "type"], ordered=FALSE)
     inpumat[ , "batch"] <- factor(inpumat[ , "batch"], ordered=FALSE)
-    
+
     if (nrow(inpumat) < 3 || length(sort(unique(inpumat[ , "concentration"]))) < 2){ #|| length(unique(inpumat[ , "duration"])) < 2) {
       ## not enough experiments in drug list
       warning(sprintf("Not enough data for drug(s) %s", paste(drug, collapse=", ")))
       return(list("all.type"=NULL, "single.type"=NULL))
     }
-    
+
     res <- NULL
     utype <- sort(unique(as.character(inpumat[ , "type"])))
     ltype <- list("all"=utype)
@@ -112,12 +112,12 @@ rankGeneDrugPerturbation <-
           splitix <- parallel::splitIndices(nx=ncol(data), ncl=nthread)
           splitix <- splitix[sapply(splitix, length) > 0]
           mcres <- parallel::mclapply(splitix, function(x, data, inpumat) {
-            res <- t(apply(data[rownames(inpumat), x, drop=FALSE], 2, geneDrugPerturbation, concentration=inpumat[ , "concentration"], type=inpumat[ , "type"], batch=inpumat[ , "batch"], duration=inpumat[,"duration"]))
+            res <- t(apply(data[rownames(inpumat), x, drop=FALSE], 2, ToxicoGx:::geneDrugPerturbation, concentration=inpumat[ , "concentration"], type=inpumat[ , "type"], batch=inpumat[ , "batch"], duration=inpumat[,"duration"]))
             return(res)
           }, data=data, inpumat=inpumat2)
           rest <- do.call(rbind, mcres)
         } else {
-          rest <- t(apply(data[rownames(inpumat2), , drop=FALSE], 2, geneDrugPerturbation, concentration=inpumat2[ , "concentration"], type=inpumat2[ , "type"], batch=inpumat2[ , "batch"], duration=inpumat2[,"duration"]))
+          rest <- t(apply(data[rownames(inpumat2), , drop=FALSE], 2, ToxicoGx:::geneDrugPerturbation, concentration=inpumat2[ , "concentration"], type=inpumat2[ , "type"], batch=inpumat2[ , "batch"], duration=inpumat2[,"duration"]))
         }
       }
       rest <- cbind(rest, "fdr"=p.adjust(rest[ , "pvalue"], method="fdr"))

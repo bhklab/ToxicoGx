@@ -956,9 +956,9 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
     # LOGIC TO SUBSET BASED ON DURATION
     ## TODO:: Determine if this works for other eSet data types
     if(!is.null(duration)){
-      if(!(duration %in% unique(Biobase::pData(eset[,column_indices])$duration))) {
+      if(all(!(duration %in% unique(Biobase::pData(eset[,column_indices])$duration)))) {
         # Error when other parameters are passed in
-        if(!is.null(cell) | !is.null(drugs) | !is.null(molecular.data.cells)) {
+        if(!is.null(cells) | !is.null(drugs) | !is.null(molecular.data.cells)) {
           stop(paste0(
             "There are no molecular profiles with duration of ",
             duration, " in the tSet with the selected parameters."
@@ -1026,7 +1026,7 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
     }
     # LOGIC TO SUBSET BASED ON DURATION
     if(!is.null(duration)){
-      if(!(duration %in% unique(sensitivityInfo(tSet)[row_indices,]$duration_h))) {
+      if(all(!(duration %in% unique(sensitivityInfo(tSet)[row_indices,]$duration_h)))) {
         # Error when other parameters are passed in
         if(!is.null(cell) | !is.null(drugs) | !is.null(molecular.data.cells)) {
           stop(paste0(
@@ -1097,6 +1097,9 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
 #
 
 ### TODO:: Add updating of sensitivity Number tables
+#' @example
+#' updateCellId(TGGATESsmall, new.ids = cellNames(TGGATESsmall))
+#'
 updateCellId <- function(tSet, new.ids = vector("character")){
 
   if (length(new.ids)!=nrow(cellInfo(tSet))){
@@ -1229,9 +1232,13 @@ updateCellId <- function(tSet, new.ids = vector("character")){
 # }
 
 ### TODO:: Add updating of sensitivity Number tables
+## TODO:: Is this supposed to be a user facing function?
+#' @example
+#' updateDrugId(TGGATESsmall, new.ids = drugNames(TGGATESsmall))
+#'
 updateDrugId <- function(tSet, new.ids = vector("character")){
 
-  if (length(new.ids)!=nrow(drugInfo(tSet))){
+  if (length(new.ids)!= nrow(drugInfo(tSet))){
     stop("Wrong number of drug identifiers")
   }
 
