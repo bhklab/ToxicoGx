@@ -49,20 +49,71 @@
 #' @export
 #'
 # Output is of SummarizedExperiment class
+## TODO:: Rewrite this using apply functions instead of for loops
 summarizeMolecularProfiles <- function(tSet,
                                               mDataType,
                                               cell.lines,
                                               drugs,
                                               features,
-                                              duration,
-                                              dose,
+                                              duration = NULL,
+                                              dose = c("Control", "Low", "Middle", "High"),
                                               summary.stat = c("mean", "median", "first", "last"),
                                               fill.missing = TRUE,
                                               summarize = TRUE,
                                               verbose = TRUE
 ) {
 
-  ############## ERRORTRAPPING NOT DONE ##############
+  #####
+  # CHECKING INPUT VALIDITY
+  #####
+
+  ## TODO:: Would we like to fix and warn about type errors?
+  ## TODO:: Refactor into helper method
+  errMsg <- dplyr::case_when(
+    # tSet checks
+    length(tSet) > 1 ~ "You may only pass in one tSet.",
+    # mDataType checks
+    is.character(unlist(mDataType)) ~ "mDataType must be a string.",
+    length(mDataType) > 1 ~ "Please only pass in one molecular data type.",
+    all(!(mDataNames(tSet) %in% mDataType)) ~
+      paste0("The molecular data type(s) ",
+             paste(mDataType[which(!(mDataType %in% mDataNames(tSet)))], collapse = ", " ),
+             " is/are not present in ", tSet@annotation$name, "."),
+    #length(mDataType) > 1 ~ "Please pass in only one molecular data type at a time."
+    # cell.lines checks
+    is.character(unlist(cell.lines)) ~ "cell.lines parameter must contain strings.",
+    all(!(cellNames(tSet) %in% cell.lines)) ~ paste0("The cell line(s) ",
+                                                     paste(cell.lines[which(!(cell.lines %in% cellNames(tSet)))], collapse = ", "),
+                                                     " is/are not present in ", tSet@annotation$name, "."),
+    # drugs checks
+    is.character(unlist(drugs)) ~ "drugs parameter must contain strings.",
+    all(!(drugNames(tSet) %in% drugs)) ~ paste0("The drug(s) ",
+                                                paste(drugs[which(!(drugs %in% drugNames(tSet)))], collapse = ", "),
+                                                " is/are not present in ", tSet@annotation$name, "."),
+    # features checks
+    is.character(unlist(features)) ~ "features parameter contain strings.",
+    all(!(fNames(tSet, mDataType[1]) %in% features)) ~ paste0("The feature(s) ",
+                                                              paste(features[which(!(features %in% fNames(tSet, mDataType[1])))], collapse = ", "),
+                                                              " is/are not present in ", tSet@annotation$name, "."),
+    # duration checks
+    is.character(unlist(duration)) ~ "duration parameter must contain strings.",
+    all(!(sensitivityInfo(tSet)$duration_h %in% duration)) ~ paste0("The duration(s) ",
+                                                                    paste(duration[which(!(duration %in% sensitivityInfo(tSet)$duration_h))]), collapse = ", ",
+                                                                    "is/are not present in ", tSet@annotation$name, "."),
+    # dose checks
+    #!(dose %in% sensitivityInfo(tSet)$dose) ~
+    #  stop(paste0("The molecular data type ", mDataType, "is not present in ", tSet@annotation$name. ".")),
+    # no errors found
+    TRUE ~ ""
+  )
+
+  if( errMsg != "") {
+    stop(errMsg)
+  }
+
+  #####
+  # FUNCTION LOGIC BEGINS
+  #####
 
   dd <- ToxicoGx::molecularProfiles(tSet, mDataType)[features, , drop = F] #expression matrix of the tSet
   pp <- ToxicoGx::phenoInfo(tSet, mDataType) #phenoData of the tSet
@@ -88,9 +139,12 @@ summarizeMolecularProfiles <- function(tSet,
   for (drug in drugs){
     cnt <- cnt + 1
     for (i in a){
-      print(i)
+      if (verbose == TRUE) {
+        print(i)
+      }
+      ## TODO:: Is the print error occuring here?
       curr_dose <- sub(';.*$','', i)
-      curr_dur <- sub('.*;','',i)
+      curr_dur <- sub('.*;','', i)
 
       pp3 <- pp2[(pp2[,"dose_level"] == curr_dose
                   & pp2[,"duration"] == curr_dur
@@ -100,8 +154,8 @@ summarizeMolecularProfiles <- function(tSet,
       if (ncol(dd3) > 1){ #if there are replicates
         switch(summary.stat, #ddr, ppr contains gene expression data, phenoData, for replicates
                "mean" = { ddr <- apply(dd3, 1, mean) },
-               "median"={ ddr <- apply(dd3, 1, median) },
-               "first"={ ddr <- dd3[ ,1 , drop=FALSE] },
+               "median"= { ddr <- apply(dd3, 1, median) },
+               "first"= { ddr <- dd3[ ,1 , drop=FALSE] },
                "last" = { ddr <- dd3[ , ncol(dd3), drop=FALSE] },
         )
         ppr <- apply(pp3[, , drop=FALSE], 2, function (x) {
@@ -130,9 +184,13 @@ summarizeMolecularProfiles <- function(tSet,
   names(exp.list) <- drugs
   ppf <- pp2[FALSE,]
   for (i in unique(ppt[,"dose_level"])){
-    print(i)
+    if (verbose == TRUE ) {
+      print(i)
+    }
     for (j in unique(ppt[,"duration"])){
-      print(j)
+      if (verbose == TRUE) {
+        print(j)
+      }
       pp4 <- apply(ppt[ppt[,"dose_level"] == i & ppt[,"duration"] == j,,drop=F], 2, function (x) {
         x <- paste(unique(as.character(x[!is.na(x)])), collapse="///")
         #if (is.na(x)){x <- paste("Exp ",,sep="")}
@@ -153,3 +211,13 @@ summarizeMolecularProfiles <- function(tSet,
 
   return(res)
 }
+
+
+
+
+
+#.checkParamsForErrors(tSet, mDataType, cell.lines, drugs, features, duration) {
+#
+#  )
+#  return(errMsg)
+#}

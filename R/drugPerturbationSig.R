@@ -45,6 +45,11 @@
 #' @export
 #'
 drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duration=NULL, nthread=1, returnValues=c("estimate","tstat", "pvalue", "fdr"), verbose=FALSE){
+
+  if(is.null(duration)) {
+    duration <- unique(tSet@molecularProfiles$rna@phenoData$duration)
+  }
+
   availcore <- parallel::detectCores()
   if ( nthread > availcore) {
     nthread <- availcore
@@ -83,25 +88,36 @@ drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duratio
   if (missing(features)) {
     features <- rownames(featureInfo(tSet, mDataType))
   } else {
-    fix <- is.element(features, rownames(featureInfo(tSet, mDataType)))
+    fix <- is.element(features, fNames(tSet, mDataType))
     if (verbose && !all(fix)) {
       warning (sprintf("%i/%i features can be found", sum(fix), length(features)))
     }
     features <- features[fix]
   }
 
-  samples <- rownames(phenoInfo(tSet, mDataType)[phenoInfo(tSet, mDataType)[,"duration"] %in% duration & phenoInfo(tSet, mDataType)[,"drugid"] %in% drugs,])
+  samples <- rownames(phenoInfo(
+    subsetTo(tSet, mDataType = "rna", cells = cells, drugs = drugs, duration = duration),
+    mDataType = "rna"
+  ))
   # splitix <- parallel::splitIndices(nx=length(drugn), ncl=nthread)
   # splitix <- splitix[sapply(splitix, length) > 0]
+
   mcres <- lapply(drugn, function(x, exprs, sampleinfo) {
     res <- NULL
     i = x
     ## using a linear model (x ~ concentration + cell + batch + duration)
-    res <- rankGeneDrugPerturbation(data=exprs, drug=i, drug.id=as.character(sampleinfo[ , "drugid"]), drug.concentration=as.numeric(sampleinfo[ , "concentration"]), type=as.character(sampleinfo[ , "cellid"]), xp=as.character(sampleinfo[ , "xptype"]), batch=as.character(sampleinfo[ , "batchid"]), duration=as.character(sampleinfo[ , "duration"]) ,single.type=FALSE, nthread=nthread, verbose=FALSE)$all[ , returnValues, drop=FALSE]
+    res <- rankGeneDrugPerturbation(data=exprs, drug=i, drug.id=as.character(sampleinfo[ , "drugid"]),
+                                    drug.concentration=as.numeric(sampleinfo[ , "concentration"]),
+                                    type=as.character(sampleinfo[ , "cellid"]), xp=as.character(sampleinfo[ , "xptype"]),
+                                    batch=as.character(sampleinfo[ , "batchid"]),
+                                    duration=as.character(sampleinfo[ , "duration"]) ,
+                                    single.type=FALSE, nthread=nthread,
+                                    verbose=FALSE)$all[ , returnValues, drop=FALSE]
     res <- list(res)
     names(res) <- i
     return(res)
-  }, exprs=t(molecularProfiles(tSet, mDataType)[features, samples, drop=FALSE]), sampleinfo=phenoInfo(tSet, mDataType)[phenoInfo(tSet, mDataType)[,"duration"] == duration & phenoInfo(tSet, mDataType)[,"drugid"] %in% drugs,])
+  }, exprs=t(molecularProfiles(tSet, mDataType)[features, samples, drop=FALSE]), # This isn't subsetting on duration
+     sampleinfo=phenoInfo(tSet, mDataType)[phenoInfo(tSet, mDataType)[,"duration"] %in% duration & phenoInfo(tSet, mDataType)[,"drugid"] %in% drugs,])
   res <- do.call(c, mcres)
   res <- res[!sapply(res, is.null)]
   drug.perturbation <- array(NA, dim=c(nrow(featureInfo(tSet, mDataType)[features,, drop=FALSE]), length(res), ncol(res[[1]])), dimnames=list(rownames(featureInfo(tSet, mDataType)[features,,drop=FALSE]), names(res), colnames(res[[1]])))
@@ -114,7 +130,7 @@ drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duratio
     drug.perturbation[rownames(featureInfo(tSet, mDataType)[features,, drop=FALSE]), names(res), j] <- ttt
   }
 
-  drug.perturbation <- ToxicoSig(drug.perturbation, tSetName = cSetName(tSet), Call = as.character(match.call()), SigType='Perturbation')
+  drug.perturbation <- ToxicoGx:::ToxicoSig(drug.perturbation, tSetName = cSetName(tSet), Call = as.character(match.call()), SigType='Perturbation')
 
   return(drug.perturbation)
 }

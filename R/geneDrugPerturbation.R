@@ -3,9 +3,10 @@
 #' @importFrom stats lm
 #' @importFrom stats anova
 #' @importFrom stats pf
-#' 
+#'
 
 ## function computing gene-drug associations from perturbation data
+#' @export
 geneDrugPerturbation <- function(x, concentration, type, batch, duration, model=FALSE) {
   ## input:
   ##  x: numeric vector of gene expression values
@@ -17,9 +18,9 @@ geneDrugPerturbation <- function(x, concentration, type, batch, duration, model=
   ##
   ## output:
   ##  vector reporting the effect size (estimateof the coefficient of drug concentration), standard error (se), sample size (n), t statistic, and F statistics and its corresponding p-value
-  
-  
-  
+
+
+
   nc <- c("estimate", "se", "n", "tstat", "fstat", "pvalue")
   if (length(sort(unique(concentration))) < 2) {
     warning("No drug concentrations tested")
@@ -29,9 +30,9 @@ geneDrugPerturbation <- function(x, concentration, type, batch, duration, model=
   }
   ff0 <- sprintf("x ~ 1")
   ff <- sprintf("%s + concentration", ff0)
-  
-  
-  if (length(sort(unique(type))) > 1) { 
+
+
+  if (length(sort(unique(type))) > 1) {
     ff0 <- sprintf("%s + type", ff0)
     ff <- sprintf("%s + type", ff)
   }
@@ -39,14 +40,14 @@ geneDrugPerturbation <- function(x, concentration, type, batch, duration, model=
     ff0 <- sprintf("%s + batch", ff0)
     ff <- sprintf("%s + batch", ff)
   }
-  
+
   ### add experiment duration if the vector consists of more than one different value
-  
+
   if(length(sort(unique(duration))) > 2){
     ff0 <- sprintf("%s + duration", ff0)
     ff <- sprintf("%s + duration", ff)
   }
-  
+
   dd <- data.frame("x"=x, "concentration"=concentration, "duration"=duration, "type"=type, "batch"=batch)
   nn <- sum(complete.cases(dd))
   if(nn < 3) {
@@ -55,7 +56,7 @@ geneDrugPerturbation <- function(x, concentration, type, batch, duration, model=
     names(dd)[1]<-"x"
     mm0 <- lm(formula=ff0, data=dd, model=FALSE, x=FALSE, y=FALSE, qr=TRUE)
     mm <- lm(formula=ff, data=dd, model=model, x=FALSE, y=FALSE, qr=TRUE)
-    
+
     mmc <- stats::anova(mm0, mm)
     mm <- summary(mm)
     ## extract statistics
