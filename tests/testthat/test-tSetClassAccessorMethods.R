@@ -15,7 +15,7 @@ context("Testing tSet Class Accessor Methods...")
 # @drug Slot
 test_that("@drug slot accessors produce expected results", {
   data("TGGATESsmall")
-                         context("External validation...")
+  context("External validation...")
   expect_equal_to_reference(drugInfo(TGGATESsmall), "drugInfo.TGGATESsmall.rds")
   expect_equal_to_reference(drugNames(TGGATESsmall), "drugNames.TGGATESsmall.rds")
 

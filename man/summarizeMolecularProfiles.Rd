@@ -6,7 +6,8 @@
 into one entry per drug and experimental condition.}
 \usage{
 summarizeMolecularProfiles(tSet, mDataType, cell.lines, drugs, features,
-  duration, dose, summary.stat = c("mean", "median", "first", "last"),
+  duration = NULL, dose = c("Control", "Low", "Middle", "High"),
+  summary.stat = c("mean", "median", "first", "last"),
   fill.missing = TRUE, summarize = TRUE, verbose = TRUE)
 }
 \arguments{

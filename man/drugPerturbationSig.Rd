@@ -5,7 +5,7 @@
 \title{Creates a signature representing gene expression (or other molecular profile)
 change induced by administrating a drug, for use in drug effect analysis.}
 \usage{
-drugPerturbationSig(tSet, mDataType, drugs, cells, features,
+drugPerturbationSig(tSet, mDataType, drugs, cells = NULL, features,
   duration = NULL, nthread = 1, returnValues = c("estimate", "tstat",
   "pvalue", "fdr"), verbose = FALSE)
 }
