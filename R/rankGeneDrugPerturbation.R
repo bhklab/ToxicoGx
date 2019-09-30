@@ -39,14 +39,15 @@ rankGeneDrugPerturbation <-
       stop("type, batch, duration and xp should not contain missing values!")
     }
     ## is the drug in the dataset?
-    drugix <- drug.id %in% drug
+    drugix <- drug.id %in% drug # This should already subset controls based on drug.id
 
     if (sum(drugix) == 0) {
       warning(sprintf("Drug(s) %s not in the dataset", paste(drug, collapse=", ")))
       return(list("all.type"=NULL, "single.type"=NULL))
     }
-    ## select xps with controls or with the drug(s) of interest
-    iix <- xp=="control" | drugix
+    ## select xps with or with the drug(s) of interest
+    ## TODO:: Evaluate this works correctly now
+    iix <- drugix
     data <- data[iix, ,drop=FALSE]
     drug.id <- drug.id[iix]
     drug.concentration <- drug.concentration[iix]

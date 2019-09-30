@@ -21,7 +21,8 @@ Depends: R (>= 3.5.0), CoreGx
 Imports:
     SummarizedExperiment,
     Biobase, 
-    RColorBrewer, 
+    RColorBrewer,
+    lest,
     caTools, 
     magicaxis, 
     methods, 

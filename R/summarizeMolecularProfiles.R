@@ -43,6 +43,7 @@
 #' @return \code{SummarizedExperiment} A SummarizedExperiment object with the molecular data summarized
 #'   per cell line.
 #' @importFrom utils setTxtProgressBar txtProgressBar
+#' @importFrom dplyr case_when
 #' @importFrom Biobase ExpressionSet exprs pData AnnotatedDataFrame assayDataElement assayDataElement<- fData<-
 #' @import SummarizedExperiment
 #'
@@ -55,7 +56,7 @@ summarizeMolecularProfiles <- function(tSet,
                                               cell.lines,
                                               drugs,
                                               features,
-                                              duration = NULL,
+                                              duration,
                                               dose = c("Control", "Low", "Middle", "High"),
                                               summary.stat = c("mean", "median", "first", "last"),
                                               fill.missing = TRUE,
@@ -63,57 +64,26 @@ summarizeMolecularProfiles <- function(tSet,
                                               verbose = TRUE
 ) {
 
-  #####
-  # CHECKING INPUT VALIDITY
-  #####
+  ##### CHECKING INPUT VALIDITY #####
 
   ## TODO:: Would we like to fix and warn about type errors?
-  ## TODO:: Refactor into helper method
-  errMsg <- dplyr::case_when(
-    # tSet checks
-    length(tSet) > 1 ~ "You may only pass in one tSet.",
-    # mDataType checks
-    is.character(unlist(mDataType)) ~ "mDataType must be a string.",
-    length(mDataType) > 1 ~ "Please only pass in one molecular data type.",
-    all(!(mDataNames(tSet) %in% mDataType)) ~
-      paste0("The molecular data type(s) ",
-             paste(mDataType[which(!(mDataType %in% mDataNames(tSet)))], collapse = ", " ),
-             " is/are not present in ", tSet@annotation$name, "."),
-    #length(mDataType) > 1 ~ "Please pass in only one molecular data type at a time."
-    # cell.lines checks
-    is.character(unlist(cell.lines)) ~ "cell.lines parameter must contain strings.",
-    all(!(cellNames(tSet) %in% cell.lines)) ~ paste0("The cell line(s) ",
-                                                     paste(cell.lines[which(!(cell.lines %in% cellNames(tSet)))], collapse = ", "),
-                                                     " is/are not present in ", tSet@annotation$name, "."),
-    # drugs checks
-    is.character(unlist(drugs)) ~ "drugs parameter must contain strings.",
-    all(!(drugNames(tSet) %in% drugs)) ~ paste0("The drug(s) ",
-                                                paste(drugs[which(!(drugs %in% drugNames(tSet)))], collapse = ", "),
-                                                " is/are not present in ", tSet@annotation$name, "."),
-    # features checks
-    is.character(unlist(features)) ~ "features parameter contain strings.",
-    all(!(fNames(tSet, mDataType[1]) %in% features)) ~ paste0("The feature(s) ",
-                                                              paste(features[which(!(features %in% fNames(tSet, mDataType[1])))], collapse = ", "),
-                                                              " is/are not present in ", tSet@annotation$name, "."),
-    # duration checks
-    is.character(unlist(duration)) ~ "duration parameter must contain strings.",
-    all(!(sensitivityInfo(tSet)$duration_h %in% duration)) ~ paste0("The duration(s) ",
-                                                                    paste(duration[which(!(duration %in% sensitivityInfo(tSet)$duration_h))]), collapse = ", ",
-                                                                    "is/are not present in ", tSet@annotation$name, "."),
-    # dose checks
-    #!(dose %in% sensitivityInfo(tSet)$dose) ~
-    #  stop(paste0("The molecular data type ", mDataType, "is not present in ", tSet@annotation$name. ".")),
-    # no errors found
-    TRUE ~ ""
-  )
+  ## Yes, but do so in try catch statements
 
-  if( errMsg != "") {
-    stop(errMsg)
-  }
+  #warnMsg <- .checkParamsForWarnings()
 
-  #####
-  # FUNCTION LOGIC BEGINS
-  #####
+  #if( warnMsg[1] != "") {
+  #  tryCatch({
+  #
+  #  })
+  #}
+
+  #
+
+  # Error checking
+  .checkParamsForErrors(tSet, mDataType, cell.lines, drugs, features, duration, dose)
+
+
+  ##### FUNCTION LOGIC BEGINS #####
 
   dd <- ToxicoGx::molecularProfiles(tSet, mDataType)[features, , drop = F] #expression matrix of the tSet
   pp <- ToxicoGx::phenoInfo(tSet, mDataType) #phenoData of the tSet
@@ -123,10 +93,10 @@ summarizeMolecularProfiles <- function(tSet,
   #subset phenoData to include only the experiments requested
   pp2 <- pp[(pp[,"cellid"] %in% unique.cells & pp[,"drugid"] %in% drugs
              & pp[,"duration"] %in% duration & pp[,"dose_level"] %in% dose), , drop = F] #only the phenoData that is relevant to the request input
-  dd2 <- dd[features,rownames(pp2), drop = F] #only the gene expression data that is relevant to the request input\
+  dd2 <- dd[features,rownames(pp2), drop = F] #only the gene expression data that is relevant to the request input
 
   #vector of experimental conditions requested for each drug
-  a <- paste(expand.grid(dose,duration)[,1], expand.grid(dose,duration)[,2], sep = ";")
+  a <- paste(expand.grid(dose,duration)[,1], expand.grid(dose, duration)[,2], sep = ";")
   #b <- expand.grid(dose,duration)
 
   ddt <- dd[,NA][,c(1:length(a)), drop = F]
@@ -136,9 +106,9 @@ summarizeMolecularProfiles <- function(tSet,
   cnt <- 0
   blank <- ddt[,1,drop=F]
 
-  for (drug in drugs){
+  lapply(drugs, function(drug){
     cnt <- cnt + 1
-    for (i in a){
+    lapply(a, function(i){
       if (verbose == TRUE) {
         print(i)
       }
@@ -175,12 +145,12 @@ summarizeMolecularProfiles <- function(tSet,
         ddt <- cbind(ddt,dd3)
         ppt <- rbind(ppt,pp3)
       }
-    }
+    })
     ddt <- ddt[,-(seq_len(length(a))), drop = F] #ddt contains the final expression matrix for a single drug
     colnames(ddt) <- a
 
     exp.list[[cnt]] <- ddt
-  }
+  })
   names(exp.list) <- drugs
   ppf <- pp2[FALSE,]
   for (i in unique(ppt[,"dose_level"])){
@@ -213,11 +183,43 @@ summarizeMolecularProfiles <- function(tSet,
 }
 
 
+# .checkParamsForWarnings(tSet, mDataType, cell.lines, drugs, features, duration) {}
 
+# Generates a descriptive error message if parameter input doesn't meet the function criteria
+.checkParamsForErrors <- function(tSet, mDataType, cell.lines, drugs, features, duration, dose) {
 
-
-#.checkParamsForErrors(tSet, mDataType, cell.lines, drugs, features, duration) {
-#
-#  )
-#  return(errMsg)
-#}
+    nothing <- function() {}
+    # tSet checks
+    ifelse(length(unlist(tSet)) > 1, stop("You may only pass in one tSet."), "" ) -> pass # This prevents print if the test doesn't error
+    # mDataType checks
+    ifelse(length(unlist(mDataType)) > 1, stop("Please only pass in one molecular data type."), "" ) -> pass
+    ifelse(!is.character(mDataType), stop("mDataType must be a string."), "" ) -> pass
+    ifelse(all(!(mDataNames(unlist(tSet)) %in% mDataType)),
+      stop(paste0("The molecular data type(s) ",
+             paste(mDataType[which(!(mDataType %in% mDataNames(tSet)))], collapse = ", " ),
+             " is/are not present in ", tSet@annotation$name, ".")), "") -> pass
+    #length(mDataType) > 1 ~ "Please pass in only one molecular data type at a time."
+    # cell.lines checks
+    ifelse(!is.character(unlist(cell.lines)) ~ stop("cell.lines parameter must contain strings."), "") -> pass
+    ifelse(all(!(cellNames(tSet) %in% cell.lines)) ~ stop(paste0("The cell line(s) ",
+                                                     paste(cell.lines[which(!(cell.lines %in% cellNames(tSet)))], collapse = ", "),
+                                                     " is/are not present in ", tSet@annotation$name, "."))) -> pass
+    # drugs checks
+    ifelse(!is.character(unlist(drugs)) ~ stop("drugs parameter must contain strings.")) -> pass
+    ifelse(all(!(drugNames(tSet) %in% drugs)) ~ stop(paste0("The drug(s) ",
+                                                paste(drugs[which(!(drugs %in% drugNames(tSet)))], collapse = ", "),
+                                                " is/are not present in ", tSet@annotation$name, ".")), "") -> pass
+    # features checks
+    ifelse(!is.character(unlist(features)) ~ stop("features parameter contain strings."), "") -> pass
+    iflese(all(!(fNames(tSet, mDataType[1]) %in% features)) ~ stop(paste0("The feature(s) ",
+                                                              paste(features[which(!(features %in% fNames(tSet, mDataType[1])))], collapse = ", "),
+                                                              " is/are not present in ", tSet@annotation$name, ".")), "") -> pass
+    # duration checks
+    ifelse(!is.character(unlist(duration)) ~ stop("duration parameter must contain strings."), "") -> pass
+    ifelse(all(!(sensitivityInfo(tSet)$duration_h %in% duration)) ~ stop(paste0("The duration(s) ",
+                                                                    paste(duration[which(!(duration %in% sensitivityInfo(tSet)$duration_h))]), collapse = ", ",
+                                                                    "is/are not present in ", tSet@annotation$name, ".")), "") -> pass
+    # dose checks
+    ifelse(all(!(phenoInfo(TGGATESsmall, mDataType)$dose_levels %in% dose)),
+             stop(paste0("The molecular data type ", mDataType, " is not present in ", tSet@annotation$name, " with these parameters.")), "") -> pass
+}
