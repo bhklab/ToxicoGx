@@ -16,7 +16,7 @@ A vector of the drug names used in the ToxicoSet
 A generic for the drugNames method
 }
 \examples{
-drugName <- drugNames(TGGATESsmall)
-drugName[1:10]
+data(TGGATESsmall)
+drugName <- drugNames(TGGATESsmall)[1:10]
 
 }

@@ -13,7 +13,7 @@ drugInfo(tSet)
 a \code{data.frame} with the drug annotations
 }
 \description{
-Generic for drugInfo method
+The generic for drugInfo method
 }
 \examples{
 data(TGGATESsmall)

@@ -110,19 +110,15 @@ drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duratio
   }
 
   # ERROR HANDLING FOR PARAMETERS
-  .checkParamsForErrors(tSet=tSet, mDataType=mDataType, cell.lines=cells, drugs=drugs, features=features, duration=duration, dose=dose)
+  .checkParamsForErrors2(tSet=tSet, mDataType=mDataType, cell.lines=cells, drugs=drugs, features=features, duration=duration, dose=dose)
 
   # SUBSET tSET BASED ON PARAMETERS
   tSetSubsetOnParams <-
     subsetTo(tSet, mDataType = mDataType, cells = cells, drugs = drugs,
-             features=features, duration = duration, dose=dose)
-  samples <- rownames(phenoInfo(tSetSubsetOnParams, mDataType))
+             features=features, duration = duration)
 
-  ## TODO:: This is the old way of subsetting, I am using subsetTo for simplicity
-  #samples <- rownames(phenoInfo(tSet, mDataType)[phenoInfo(tSet, mDataType)[,"duration"] %in% duration & phenoInfo(tSet, mDataType)[,"drugid"] %in% drugs,])
-  #print(samples)
-
-
+  # SUBSET tSET BASED ON DOSE
+  samples <- rownames(phenoInfo(tSetSubsetOnParams, mDataType)[which(phenoInfo(tSetSubsetOnParams, mDataType)$dose %in% dose),])
 
   # LOOP OVER DRUGS TO CALCULATE PER DRUG SUMMARY STATISTICS
   ## TODO:: Determine if this is supposed to be parallelized?
@@ -163,7 +159,7 @@ drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duratio
   }
 
   # CREATE TOXICOSIG OBJECT
-  drug.perturbation <- ToxicoGx:::ToxicoSig(drug.perturbation, tSetName = cSetName(tSet), Call = as.character(match.call()), SigType='Perturbation')
+  drug.perturbation <- ToxicoGx::ToxicoSig(drug.perturbation, tSetName = cSetName(tSet), Call = as.character(match.call()), SigType='Perturbation')
 
   # RETURN TOXICOSIG OBJECT
   return(drug.perturbation)
@@ -171,7 +167,7 @@ drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duratio
 
 ## TODO:: Determine if these are the correct error criteria for this function
 # Generates a descriptive error message if parameter input doesn't meet the function criteria
-.checkParamsForErrors <- function(tSet, mDataType, cell.lines, drugs, features, duration, dose) {
+.checkParamsForErrors2 <- function(tSet, mDataType, cell.lines, drugs, features, duration, dose) {
   ## TODO:: Convert type errors into warnings in separate function
   # tSet checks
 
@@ -196,7 +192,7 @@ drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duratio
                                                                    " is/are not present in ", tSet@annotation$name, ".")), ""))
   # features checks
   ## TODO:: Do we want to implement this function with 1 feature?
-  invisible(ifelse(length(fNames(tSet) < 2), stop("Must include at least 2 features to calculate summary statistics"), ""))
+  invisible(ifelse(length(fNames(tSet, mDataType)) < 2, stop("Must include at least 2 features to calculate summary statistics"), ""))
   invisible(ifelse(!is.character(unlist(features)), stop("features parameter contain strings."), ""))
   invisible(ifelse(all(!(fNames(tSet, mDataType[1]) %in% features)), stop(paste0("The feature(s) ",
                                                                                  paste(features[which(!(features %in% fNames(tSet, mDataType[1])))], collapse = ", "),

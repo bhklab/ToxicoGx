@@ -16,3 +16,8 @@ A named vector with the number of Cells and Drugs in the ToxicoSet
 \description{
 Get the dimensions of a ToxicoSet
 }
+\examples{
+data(TGGATESsmall)
+dim(TGGATESsmall)
+
+}

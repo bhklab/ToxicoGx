@@ -42,7 +42,6 @@ to keep track of all the metadata conventions between different datasets.
 TGGATESDrugNames  <- drugNames(TGGATESsmall)
 TGGATESCells <- cellNames(TGGATESsmall)
 tSet <- subsetTo(TGGATESsmall,drugs = TGGATESDrugNames[1],
-  cells = TGGATESCells[1])
-tSet
+  cells = TGGATESCells[1], duration = "2")
 
 }

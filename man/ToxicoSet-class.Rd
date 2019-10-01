@@ -266,22 +266,29 @@ profiled in the in the dataset, across all data types}
 
 \examples{
 data(TGGATESsmall)
+cellInfo <- cellInfo(TGGATESsmall)
+
+data(TGGATESsmall)
+cellInfo(TGGATESsmall) <- cellInfo(TGGATESsmall)
+
+data(TGGATESsmall)
 phenoInfo <- phenoInfo(TGGATESsmall, mDataType="rna")
 
 data(TGGATESsmall)
 phenoInfo(TGGATESsmall, mDataType="rna") <- phenoInfo(TGGATESsmall, mDataType="rna")
 
-TGGATES_mProf <- molecularProfiles(TGGATESsmall, "rna")
-molecularProfiles <- TGGATES_mProf[1:10,]
+data(TGGATESsmall)
+TGGATES_mProf <- molecularProfiles(TGGATESsmall, "rna")[1:10,]
 
 molecularProfiles(TGGATESsmall, "rna") <- molecularProfiles(TGGATESsmall, "rna")
 
+data(TGGATESsmall)
 featureInfo <- featureInfo(TGGATESsmall, "rna")[1:10,]
 
+data(TGGATESsmall)
 featureInfo(TGGATESsmall, "rna") <- featureInfo(TGGATESsmall, "rna")
 
-sensInf<- sensitivityInfo(TGGATESsmall)
-sensInf1to10 <- sensInf[1:10,]
+sensInf<- sensitivityInfo(TGGATESsmall)[1:10,]
 
 data(TGGATESsmall)
 sensitivityInfo(TGGATESsmall) <- sensitivityInfo(TGGATESsmall)
@@ -295,6 +302,7 @@ sensitivityMeasures(TGGATESsmall)
 
 cellNames(TGGATESsmall)
 
+data(TGGATESsmall)
 cellNames(TGGATESsmall) <- cellNames(TGGATESsmall)
 
 fNames(TGGATESsmall, "rna")[1:10]
