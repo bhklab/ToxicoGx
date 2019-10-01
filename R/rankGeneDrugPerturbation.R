@@ -33,7 +33,6 @@ rankGeneDrugPerturbation <-
     }
 
     #### DIMENSIONALITY CHECK
-    print(paste(length(drug.id), length(drug.concentration), length(type), length(xp), length(batch), length(duration)))
     if (any(c(length(drug.id), length(drug.concentration), length(type), length(xp), length(batch), length(duration)) != nrow(data))) {
       stop("length of drug.id, drug.concentration, type, xp, duration and batch should be equal to the number of rows of data!")
     }
@@ -83,14 +82,12 @@ rankGeneDrugPerturbation <-
         ## transformation of drug concentrations values
         conc <- drug.concentration * 10^6
         inpumat <- rbind(inpumat, data.frame("treated"=c(rep(1, length(xpix)), rep(0, length(ctrlix))), "type"=c(type[xpix], type[ctrlix]), "batch"=paste("batch", c(batch[xpix], batch[ctrlix]), sep=""), "concentration"=c(conc[xpix], conc[ctrlix]), "duration"= c(duration[xpix], duration[ctrlix])))
-        print("inpumat concetration: "); print(inpumat$concentration)
       }
     }
 
 
     inpumat[ , "type"] <- factor(inpumat[ , "type"], ordered=FALSE)
     inpumat[ , "batch"] <- factor(inpumat[ , "batch"], ordered=FALSE)
-    print("inpumat"); print(inpumat)
 
 
     if (nrow(inpumat) < 3 || length(sort(unique(inpumat[ , "concentration"]))) < 2){ #|| length(unique(inpumat[ , "duration"])) < 2) {
@@ -101,9 +98,7 @@ rankGeneDrugPerturbation <-
 
     res <- NULL
     utype <- sort(unique(as.character(inpumat[ , "type"])))
-    print(utype)
     ltype <- list("all"=utype)
-    print(ltype)
 
     if(single.type) {
       ltype <- c(ltype, as.list(utype))
@@ -138,7 +133,6 @@ rankGeneDrugPerturbation <-
       }
       rest <- cbind(rest, "fdr"=p.adjust(rest[ , "pvalue"], method="fdr"))
       res <- c(res, list(rest))
-      print(res)
     }
     names(res) <- names(ltype)
     return(res)

@@ -43,7 +43,6 @@
 #' @return \code{SummarizedExperiment} A SummarizedExperiment object with the molecular data summarized
 #'   per cell line.
 #' @importFrom utils setTxtProgressBar txtProgressBar
-#' @importFrom dplyr case_when
 #' @importFrom Biobase ExpressionSet exprs pData AnnotatedDataFrame assayDataElement assayDataElement<- fData<-
 #' @import SummarizedExperiment
 #'

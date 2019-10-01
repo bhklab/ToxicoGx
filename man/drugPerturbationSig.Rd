@@ -5,9 +5,9 @@
 \title{Creates a signature representing gene expression (or other molecular profile)
 change induced by administrating a drug, for use in drug effect analysis.}
 \usage{
-drugPerturbationSig(tSet, mDataType, drugs, cells = NULL, features,
-  duration = NULL, nthread = 1, returnValues = c("estimate", "tstat",
-  "pvalue", "fdr"), verbose = FALSE)
+drugPerturbationSig(tSet, mDataType, drugs, cells, features, duration,
+  dose, nthread = 1, returnValues = c("estimate", "tstat", "pvalue",
+  "fdr"), verbose = FALSE)
 }
 \arguments{
 \item{tSet}{[ToxicoSet] a ToxicoSet of the perturbation experiment type}
@@ -24,8 +24,10 @@ signatures. Should match the names used in the ToxicoSet.}
 \item{features}{[character] a vector of features for which to compute the
 signatures. Should match the names used in correspondant molecular data in ToxicoSet.}
 
-\item{duration}{[numeric] a vector of experiment durations for which to
-compute the signatures.}
+\item{duration}{[character] a vector of experiment durations for which to inlcude in the
+computed the signatures.}
+
+\item{dose}{[character] a vector of dose levels to include in the results}
 
 \item{nthread}{[numeric] if multiple cores are available, how many cores
 should the computation be parallelized over?}

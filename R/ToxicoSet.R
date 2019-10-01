@@ -918,7 +918,6 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
       if (!all(cells %in% cellNames(tSet))) {
         stop("Some of the cell names passed to function did not match to names in the PharmacoSet. Please ensure you are using cell names as returned by the cellNames function")
       }
-      print("Setting cell line index")
       cell_line_index <- which(Biobase::pData(eset)[["cellid"]] %in% cells)
       ## TODO:: Determine why we removed error returns on no match?
       # if (length(na.omit(cell_line_index))==0){
@@ -933,7 +932,6 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
         if (!all(drugs %in% drugNames(tSet))){
           stop("Some of the drug names passed to function did not match to names in the ToxicoSet Please ensure you are using drug names as returned by the drugNames function")
         }
-        print("Setting drugs index")
         drugs_index <- which(Biobase::pData(eset)[["drugid"]] %in% drugs)
         # if (length(drugs_index)==0){
         #         stop("No drugs matched")
@@ -942,19 +940,15 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
     }
 
     if(length(drugs_index) != 0 && length(cell_line_index) != 0) {
-      print("Intersect")
       if(length(intersect(drugs_index, cell_line_index)) == 0) {
         stop("This Drug - Cell Line combination was not tested together.")
       }
       column_indices <- intersect(drugs_index, cell_line_index)
-      print(column_indices)
     } else {
       if(length(drugs_index) !=0) {
-        print("Drugs")
         column_indices <- drugs_index
       }
       if(length(cell_line_index) !=0) {
-        print("Cells")
         column_indices <- cell_line_index
       }
     }
@@ -1109,9 +1103,10 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
 
 
 ### TODO:: Add updating of sensitivity Number tables
-#' @example
+#' A function to update cell ids
+#' @examples
+#' data(TGGATESsmall)
 #' updateCellId(TGGATESsmall, new.ids = cellNames(TGGATESsmall))
-#'
 updateCellId <- function(tSet, new.ids = vector("character")){
 
   if (length(new.ids)!=nrow(cellInfo(tSet))){
@@ -1245,7 +1240,9 @@ updateCellId <- function(tSet, new.ids = vector("character")){
 
 ### TODO:: Add updating of sensitivity Number tables
 ## TODO:: Is this supposed to be a user facing function?
-#' @example
+#' A function to update drug ids
+#' @examples
+#' data(TGGATESsmall)
 #' updateDrugId(TGGATESsmall, new.ids = drugNames(TGGATESsmall))
 #'
 updateDrugId <- function(tSet, new.ids = vector("character")){
