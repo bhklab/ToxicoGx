@@ -1029,7 +1029,7 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
     if(!is.null(duration)){
       if(all(!(duration %in% unique(sensitivityInfo(tSet)[row_indices,]$duration_h)))) {
         # Error when other parameters are passed in
-        if(!is.null(cell) | !is.null(drugs) | !is.null(molecular.data.cells)) {
+        if(!is.null(cells) | !is.null(drugs) | !is.null(molecular.data.cells)) {
           stop(paste0(
             ## TODO:: Is sample the correct way to refer to one treatment/duration combination in TGx experiments?
             "There are no samples with duration of ",
@@ -1107,6 +1107,10 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
 #' @examples
 #' data(TGGATESsmall)
 #' updateCellId(TGGATESsmall, new.ids = cellNames(TGGATESsmall))
+#' @param tSet [object] A ToxcioSet object to be updates
+#' @param new.ids [character] A character vector of ids to update with
+#' @keywords internal
+#' @export
 updateCellId <- function(tSet, new.ids = vector("character")){
 
   if (length(new.ids)!=nrow(cellInfo(tSet))){
@@ -1126,10 +1130,6 @@ updateCellId <- function(tSet, new.ids = vector("character")){
     Biobase::pData(eset)[["cellid"]]  <- new.ids[myx]
     return(eset)
   })
-
-
-
-
 
   if(any(duplicated(new.ids))){
     warning("Duplicated ids passed to updateCellId. Merging old ids into the same identifier")
@@ -1244,7 +1244,10 @@ updateCellId <- function(tSet, new.ids = vector("character")){
 #' @examples
 #' data(TGGATESsmall)
 #' updateDrugId(TGGATESsmall, new.ids = drugNames(TGGATESsmall))
-#'
+#' @param tSet [object] A ToxcioSet object to be updates
+#' @param new.ids [character] A character vector of ids to update with
+#' @keywords internal
+#' @export
 updateDrugId <- function(tSet, new.ids = vector("character")){
 
   if (length(new.ids)!= nrow(drugInfo(tSet))){

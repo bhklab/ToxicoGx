@@ -1,23 +1,23 @@
-## Rank genes based on drug effect
-##
-## inputs:
-##      - data: gene expression data matrix
-##			- drug: single or vector of drug(s) of interest; if a vector of drugs is provided, they will be considered as being the same drug and will be jointly analyszed
-##			- drug.id: drug used in each experiment
-##			- drug.concentration: drug concentration used in each experiment
-##			- type: cell or tissue type for each experiment
-##			- xp: type of experiment (perturbation or control)
-##      - batch: experiment batches
-##      - duration: The duration of the experiment, in a consistent unit
-##			- single.type: Should the statitsics be computed for each cell/tissue type separately?
-##      - nthread: number of parallel threads (bound to the maximum number of cores available)
-##
-## outputs:
-## list of dataframes with the statistics for each gene, for each type
-##			- list of data.frame with similar results for each type line separately if any
-##
-#################################################
-
+#' Rank genes based on drug effect
+#'
+#' A helper function called from within `drugPerturbationSig`. This is intended
+#'   for developer use only; if you aren't debugging the package, this should
+#'   not be used.
+#'
+#' @param data: gene expression data matrix
+#' @param drug: single or vector of drug(s) of interest; if a vector of drugs is provided, they will be considered as being the same drug and will be jointly analyszed
+#' @param drug.id: drug used in each experiment
+#' @param drug.concentration: drug concentration used in each experiment
+#' @param type: cell or tissue type for each experiment
+#' @param xp: type of experiment (perturbation or control)
+#' @param batch: experiment batches
+#' @param duration: The duration of the experiment, in a consistent unit
+#' @param single.type: Should the statitsics be computed for each cell/tissue type separately?
+#' @param nthread: number of parallel threads (bound to the maximum number of cores available)
+#'
+#' @return [list] of \code{data.frame}s with the statistics for each gene, for each type
+#' @keywords internal
+#' @export
 rankGeneDrugPerturbation <-
   function (data, drug, drug.id, drug.concentration, type, xp, batch, duration, single.type=FALSE, nthread=1, verbose=FALSE) {
 
@@ -47,10 +47,9 @@ rankGeneDrugPerturbation <-
       return(list("all.type"=NULL, "single.type"=NULL))
     }
     # select xps with or with the drug(s) of interest
-    # TODO:: Evaluate this works correctly now
     iix <- xp=="control" | drugix
+
     data <- data[iix, ,drop=FALSE]
-    drug.id <- drug.id[iix]
     drug.concentration <- drug.concentration[iix]
     type <- type[iix]
     xp <- xp[iix]

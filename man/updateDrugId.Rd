@@ -6,6 +6,16 @@
 \usage{
 updateDrugId(tSet, new.ids = vector("character"))
 }
+\arguments{
+\item{tSet}{[object] A ToxcioSet object to be updates}
+
+\item{new.ids}{[character] A character vector of ids to update with}
+}
 \description{
 A function to update drug ids
 }
+\examples{
+data(TGGATESsmall)
+updateDrugId(TGGATESsmall, new.ids = drugNames(TGGATESsmall))
+}
+\keyword{internal}
