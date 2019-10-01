@@ -918,6 +918,7 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
       if (!all(cells %in% cellNames(tSet))) {
         stop("Some of the cell names passed to function did not match to names in the PharmacoSet. Please ensure you are using cell names as returned by the cellNames function")
       }
+      print("Setting cell line index")
       cell_line_index <- which(Biobase::pData(eset)[["cellid"]] %in% cells)
       ## TODO:: Determine why we removed error returns on no match?
       # if (length(na.omit(cell_line_index))==0){
@@ -932,6 +933,7 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
         if (!all(drugs %in% drugNames(tSet))){
           stop("Some of the drug names passed to function did not match to names in the ToxicoSet Please ensure you are using drug names as returned by the drugNames function")
         }
+        print("Setting drugs index")
         drugs_index <- which(Biobase::pData(eset)[["drugid"]] %in% drugs)
         # if (length(drugs_index)==0){
         #         stop("No drugs matched")
@@ -940,15 +942,19 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
     }
 
     if(length(drugs_index) != 0 && length(cell_line_index) != 0) {
+      print("Intersect")
       if(length(intersect(drugs_index, cell_line_index)) == 0) {
         stop("This Drug - Cell Line combination was not tested together.")
       }
       column_indices <- intersect(drugs_index, cell_line_index)
+      print(column_indices)
     } else {
       if(length(drugs_index) !=0) {
+        print("Drugs")
         column_indices <- drugs_index
       }
       if(length(cell_line_index) !=0) {
+        print("Cells")
         column_indices <- cell_line_index
       }
     }
@@ -970,13 +976,14 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
           ))
         }
       }
-      column_indices <- which(Biobase::pData(eset[,column_indices])$duration %in% duration)
+      duration_indices <- which(Biobase::pData(eset)$duration %in% duration)
+      column_indices <- intersect(column_indices, duration_indices)
     }
 
     row_indices <- seq_len(nrow(Biobase::exprs(eset)))
 
     # Final eSet
-    eset <- eset[row_indices,column_indices]
+    eset <- eset[row_indices, column_indices]
     return(eset)
 
   }, cells=cells, drugs=drugs, molecular.data.cells=molecular.data.cells, duration=duration)
@@ -1095,6 +1102,11 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
 #
 # END SUBSET TO FUNCTION
 #
+
+
+
+
+
 
 ### TODO:: Add updating of sensitivity Number tables
 #' @example

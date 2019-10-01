@@ -31,6 +31,9 @@ rankGeneDrugPerturbation <-
         # print(paste("all",nthread,"cores have been allocated"))
       }
     }
+
+    #### DIMENSIONALITY CHECK
+    print(paste(length(drug.id), length(drug.concentration), length(type), length(xp), length(batch), length(duration)))
     if (any(c(length(drug.id), length(drug.concentration), length(type), length(xp), length(batch), length(duration)) != nrow(data))) {
       stop("length of drug.id, drug.concentration, type, xp, duration and batch should be equal to the number of rows of data!")
     }
@@ -38,16 +41,15 @@ rankGeneDrugPerturbation <-
     if (!all(complete.cases(type, xp, batch, duration))) {
       stop("type, batch, duration and xp should not contain missing values!")
     }
-    ## is the drug in the dataset?
-    drugix <- drug.id %in% drug # This should already subset controls based on drug.id
 
+    drugix <- drug.id %in% drug # This should already subset controls based on drug.id
     if (sum(drugix) == 0) {
       warning(sprintf("Drug(s) %s not in the dataset", paste(drug, collapse=", ")))
       return(list("all.type"=NULL, "single.type"=NULL))
     }
-    ## select xps with or with the drug(s) of interest
-    ## TODO:: Evaluate this works correctly now
-    iix <- drugix
+    # select xps with or with the drug(s) of interest
+    # TODO:: Evaluate this works correctly now
+    iix <- xp=="control" | drugix
     data <- data[iix, ,drop=FALSE]
     drug.id <- drug.id[iix]
     drug.concentration <- drug.concentration[iix]
@@ -60,13 +62,15 @@ rankGeneDrugPerturbation <-
 
     ## build input matrix
     inpumat <- NULL
+
     ## for each batch/vehicle of perturbations+controls (test within each batch/vehicle to avoid batch effect)
     ubatch <- sort(unique(batch[!is.na(xp) & xp == "perturbation"]))
-    names(ubatch) <- paste("batch", ubatch, sep="")
+    names(ubatch) <- paste0("batch", ubatch)
 
-    for (bb in 1:length(ubatch)) {
+    for (bb in seq_len(length(ubatch))) {
       ## identify the perturbations and corresponding control experiments
       xpix <- rownames(data)[complete.cases(batch, xp) & batch == ubatch[bb] & xp == "perturbation"]
+
       ctrlix <- rownames(data)[complete.cases(batch, xp) & batch == ubatch[bb] & xp == "control"]
 
       if (all(!is.na(c(xpix, ctrlix))) && length(xpix) > 0 && length(ctrlix) > 0) {
@@ -79,11 +83,15 @@ rankGeneDrugPerturbation <-
         ## transformation of drug concentrations values
         conc <- drug.concentration * 10^6
         inpumat <- rbind(inpumat, data.frame("treated"=c(rep(1, length(xpix)), rep(0, length(ctrlix))), "type"=c(type[xpix], type[ctrlix]), "batch"=paste("batch", c(batch[xpix], batch[ctrlix]), sep=""), "concentration"=c(conc[xpix], conc[ctrlix]), "duration"= c(duration[xpix], duration[ctrlix])))
+        print("inpumat concetration: "); print(inpumat$concentration)
       }
     }
 
+
     inpumat[ , "type"] <- factor(inpumat[ , "type"], ordered=FALSE)
     inpumat[ , "batch"] <- factor(inpumat[ , "batch"], ordered=FALSE)
+    print("inpumat"); print(inpumat)
+
 
     if (nrow(inpumat) < 3 || length(sort(unique(inpumat[ , "concentration"]))) < 2){ #|| length(unique(inpumat[ , "duration"])) < 2) {
       ## not enough experiments in drug list
@@ -93,19 +101,26 @@ rankGeneDrugPerturbation <-
 
     res <- NULL
     utype <- sort(unique(as.character(inpumat[ , "type"])))
+    print(utype)
     ltype <- list("all"=utype)
+    print(ltype)
+
     if(single.type) {
       ltype <- c(ltype, as.list(utype))
       names(ltype)[-1] <- utype
     }
+
     for(ll in 1:length(ltype)) {
+
       ## select the type of cell line/tissue of interest
       inpumat2 <- inpumat[!is.na(inpumat[ , "type"]) & is.element(inpumat[ , "type"], ltype[[ll]]), , drop=FALSE]
       inpumat2 <- inpumat2[complete.cases(inpumat2), , drop=FALSE]
+
       if (nrow(inpumat2) < 3 || length(sort(unique(inpumat2[ , "concentration"]))) < 2) {
         ## not enough experiments in data
         nc <- c("estimate", "se", "n", "tstat", "fstat", "pvalue")
         rest <- matrix(NA, nrow=nrow(data), ncol=length(nc), dimnames=list(rownames(data), nc))
+
       } else {
         ## test perturbation vs control
         if(nthread > 1) {
@@ -123,6 +138,7 @@ rankGeneDrugPerturbation <-
       }
       rest <- cbind(rest, "fdr"=p.adjust(rest[ , "pvalue"], method="fdr"))
       res <- c(res, list(rest))
+      print(res)
     }
     names(res) <- names(ltype)
     return(res)
