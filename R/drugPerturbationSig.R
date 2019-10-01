@@ -30,8 +30,9 @@
 #'   signatures. Should match the names used in the ToxicoSet.
 #' @param features [character] a vector of features for which to compute the
 #'   signatures. Should match the names used in correspondant molecular data in ToxicoSet.
-#' @param duration [numeric] a vector of experiment durations for which to
-#'   compute the signatures.
+#' @param duration [character] a vector of experiment durations for which to inlcude in the
+#'   computed the signatures.
+#' @param dose [character] a vector of dose levels to include in the results
 #' @param nthread [numeric] if multiple cores are available, how many cores
 #'   should the computation be parallelized over?
 #' @param returnValues [character] Which of estimate, t-stat, p-value and fdr
@@ -44,9 +45,6 @@
 #' @export
 #'
 drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duration, dose, nthread=1, returnValues=c("estimate","tstat", "pvalue", "fdr"), verbose=FALSE){
-
-  # ENSG00000198431_at   -3.403147e-10 -1.313231e-10 -1.064461e-08  3.647450e-12
-  # ENSG00000198431_at   -7.309412e-09  9.118625e-11 -1.050585e-09
 
 
   # ALLOCATE CORES FOR PARALLEL PROCESSING
@@ -110,6 +108,10 @@ drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duratio
     dose <- unique(phenoInfo(tSet, mDataType)$dose)
   }
 
+  if (!missing(dose)) {
+    dose <- unique(dose)
+  }
+
   # ERROR HANDLING FOR PARAMETERS
   #.checkParamsForErrors(tSet, mDataType, drugs, cells, features, duration, dose)
 
@@ -120,13 +122,11 @@ drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duratio
              duration = duration, dose=dose),
     mDataType = mDataType
   ))
-  print(samples)
 
+  ## TODO:: This is the old way of subsetting, I am using subsetTo for simplicity
   #samples <- rownames(phenoInfo(tSet, mDataType)[phenoInfo(tSet, mDataType)[,"duration"] %in% duration & phenoInfo(tSet, mDataType)[,"drugid"] %in% drugs,])
   #print(samples)
 
-  # splitix <- parallel::splitIndices(nx=length(drugn), ncl=nthread)
-  # splitix <- splitix[sapply(splitix, length) > 0]
 
 
   # LOOP OVER DRUGS TO CALCULATE PER DRUG SUMMARY STATISTICS
