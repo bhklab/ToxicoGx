@@ -24,3 +24,7 @@ Returns the subsetted tSet
 \description{
 `[`
 }
+\examples{
+tSet <- TGGATESsmall[cellNames(TGGATESsmall), drugNames(TGGATESsmall)[1:3]]
+
+}

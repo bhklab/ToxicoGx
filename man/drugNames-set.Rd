@@ -2,8 +2,7 @@
 % Please edit documentation in R/ToxicoSet.R
 \name{drugNames<-}
 \alias{drugNames<-}
-\title{drugNames<- Generic
-A generic for the drugNames replacement method}
+\title{drugNames<- Generic}
 \usage{
 drugNames(object) <- value
 }
@@ -16,9 +15,9 @@ drugNames(object) <- value
 Updated \code{ToxicoSet}
 }
 \description{
-drugNames<- Generic
 A generic for the drugNames replacement method
 }
 \examples{
+data(TGGATESsmall)
 drugNames(TGGATESsmall) <- drugNames(TGGATESsmall)
 }

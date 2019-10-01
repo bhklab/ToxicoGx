@@ -140,6 +140,9 @@ tSet <- NULL
 #'
 #' A generic for cellInfo method
 #'
+#' @examples
+#' data(TGGATESsmall)
+#' cellInfo <- cellInfo(TGGATESsmall)
 #'
 #' @param tSet A \code{ToxicoSet} object
 #' @param cSet Parameter name for parent method inherited from CoreGx
@@ -161,6 +164,10 @@ setMethod(cellInfo,
 #'
 #' Generic for cellInfo replace method
 #'
+#' @examples
+#' data(TGGATESsmall)
+#' cellInfo(TGGATESsmall) <- cellInfo(TGGATESsmall)
+#'
 #' @param object A \code{ToxicoSet} object
 #' @param value A \code{data.frame} of replacement values
 #'
@@ -181,7 +188,7 @@ setReplaceMethod("cellInfo", signature = signature(object = "ToxicoSet",value = 
 
 #' drugInfo Generic
 #'
-#' Generic for drugInfo method
+#' The generic for drugInfo method
 #'
 #' @examples
 #' data(TGGATESsmall)
@@ -202,6 +209,7 @@ setMethod(drugInfo, "ToxicoSet", function(tSet){
 #' Generic for drugInfo replace method
 #'
 #' @examples
+#' data(TGGATESsmall)
 #' drugInfo(TGGATESsmall) <- drugInfo(TGGATESsmall)
 #'
 #' @param object A \code{ToxicoSet} object.
@@ -271,13 +279,10 @@ setReplaceMethod("phenoInfo", signature = signature(object="ToxicoSet", mDataTyp
 #' Generic for molecularProfiles method
 #'
 #' @examples
-#' TGGATES_mProf <- molecularProfiles(TGGATESsmall, "rna")
-#' molecularProfiles <- TGGATES_mProf[1:10,]
+#' data(TGGATESsmall)
+#' TGGATES_mProf <- molecularProfiles(TGGATESsmall, "rna")[1:10,]
 #'
 #' @inheritParams phenoInfo
-#'
-# @return a \code{data.frame} with the experiment info
-#setGeneric("molecularProfiles", function(tSet, mDataType) standardGeneric("molecularProfiles"))
 #'
 #' @describeIn ToxicoSet Return the given type of molecular data from the ToxicoSet
 #'
@@ -313,6 +318,7 @@ setReplaceMethod("molecularProfiles", signature = signature(object = "ToxicoSet"
 #' Generic for featureInfo method
 #'
 #' @examples
+#' data(TGGATESsmall)
 #' featureInfo <- featureInfo(TGGATESsmall, "rna")[1:10,]
 #'
 #' @inheritParams phenoInfo
@@ -333,6 +339,7 @@ setMethod("featureInfo",
 #' Generic for featureInfo replace method
 #'
 #' @examples
+#' data(TGGATESsmall)
 #' featureInfo(TGGATESsmall, "rna") <- featureInfo(TGGATESsmall, "rna")
 #'
 #' @inheritParams phenoInfo<-
@@ -356,8 +363,7 @@ setReplaceMethod("featureInfo", signature = signature(object="ToxicoSet", mDataT
 #' Generic for sensitivityInfo method
 #'
 #' @examples
-#' sensInf<- sensitivityInfo(TGGATESsmall)
-#' sensInf1to10 <- sensInf[1:10,]
+#' sensInf<- sensitivityInfo(TGGATESsmall)[1:10,]
 #'
 #' @inheritParams cellInfo
 #'
@@ -480,8 +486,8 @@ setMethod(sensitivityMeasures,
 #' A generic for the drugNames method
 #'
 #' @examples
-#' drugName <- drugNames(TGGATESsmall)
-#' drugName[1:10]
+#' data(TGGATESsmall)
+#' drugName <- drugNames(TGGATESsmall)[1:10]
 #'
 #' @inheritParams drugInfo
 #' @return A vector of the drug names used in the ToxicoSet
@@ -495,8 +501,11 @@ setMethod(drugNames,
           })
 
 #' drugNames<- Generic
+#'
 #' A generic for the drugNames replacement method
+#'
 #' @examples
+#' data(TGGATESsmall)
 #' drugNames(TGGATESsmall) <- drugNames(TGGATESsmall)
 #' @inheritParams drugInfo<-
 #' @return Updated \code{ToxicoSet}
@@ -536,6 +545,7 @@ setMethod("cellNames",
 #' A generic for the cellNames replacement method
 #'
 #' @examples
+#' data(TGGATESsmall)
 #' cellNames(TGGATESsmall) <- cellNames(TGGATESsmall)
 #'
 #' @inheritParams drugInfo<-
@@ -637,7 +647,6 @@ setMethod("cSetName",
           function(cSet=tSet){
             callNextMethod(cSet)
           })
-###TODO:: Figure out if there is a better way to rename imported generics/methods?
 tSetName <- cSetName
 
 #' pertNumber Generic
@@ -786,6 +795,9 @@ setMethod(
 
 #'`[`
 #'
+#' @examples
+#' tSet <- TGGATESsmall[cellNames(TGGATESsmall), drugNames(TGGATESsmall)[1:3]]
+#'
 #'@param x tSet
 #'@param i Cell lines to keep in tSet
 #'@param j Drugs to keep in tSet
@@ -803,6 +815,10 @@ setMethod(`[`, "ToxicoSet", function(x, i, j, ..., drop = FALSE){
 })
 
 #' Get the dimensions of a ToxicoSet
+#'
+#' @examples
+#' data(TGGATESsmall)
+#' dim(TGGATESsmall)
 #'
 #' @param x ToxicoSet
 #' @return A named vector with the number of Cells and Drugs in the ToxicoSet
@@ -829,8 +845,7 @@ setMethod("dim", signature=signature(x="ToxicoSet"), function(x){
 #' TGGATESDrugNames  <- drugNames(TGGATESsmall)
 #' TGGATESCells <- cellNames(TGGATESsmall)
 #' tSet <- subsetTo(TGGATESsmall,drugs = TGGATESDrugNames[1],
-#'   cells = TGGATESCells[1])
-#' tSet
+#'   cells = TGGATESCells[1], duration = "2")
 #'
 #' @param tSet A \code{ToxicoSet} to be subsetted
 #' @param cells A list or vector of cell names as used in the dataset to which
@@ -919,10 +934,6 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
         stop("Some of the cell names passed to function did not match to names in the PharmacoSet. Please ensure you are using cell names as returned by the cellNames function")
       }
       cell_line_index <- which(Biobase::pData(eset)[["cellid"]] %in% cells)
-      ## TODO:: Determine why we removed error returns on no match?
-      # if (length(na.omit(cell_line_index))==0){
-      #       stop("No cell lines matched")
-      #     }
     }
 
     # Selecting indexes which match drugs arguement
@@ -933,9 +944,6 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
           stop("Some of the drug names passed to function did not match to names in the ToxicoSet Please ensure you are using drug names as returned by the drugNames function")
         }
         drugs_index <- which(Biobase::pData(eset)[["drugid"]] %in% drugs)
-        # if (length(drugs_index)==0){
-        #         stop("No drugs matched")
-        #       }
       }
     }
 
@@ -1098,10 +1106,6 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
 #
 
 
-
-
-
-
 ### TODO:: Add updating of sensitivity Number tables
 #' A function to update cell ids
 #' @examples
@@ -1239,7 +1243,6 @@ updateCellId <- function(tSet, new.ids = vector("character")){
 # }
 
 ### TODO:: Add updating of sensitivity Number tables
-## TODO:: Is this supposed to be a user facing function?
 #' A function to update drug ids
 #' @examples
 #' data(TGGATESsmall)

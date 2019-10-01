@@ -18,6 +18,7 @@ Updated \code{ToxicoSet}
 Generic for drugInfo replace method
 }
 \examples{
+data(TGGATESsmall)
 drugInfo(TGGATESsmall) <- drugInfo(TGGATESsmall)
 
 }
