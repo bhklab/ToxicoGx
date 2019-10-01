@@ -1,25 +1,21 @@
-#' @importFrom stats median
-#' @importFrom stats complete.cases
-#' @importFrom stats lm
-#' @importFrom stats anova
-#' @importFrom stats pf
+#' Compute gene-drug associations
 #'
-
-## function computing gene-drug associations from perturbation data
+#' Function computing gene-drug associations from perturbation data
+#'
+#' @param x [numeric] Vector of gene expression values
+#' @param concentration [numeric] Vector with drug concentrations/doses
+#' @param type [factor] Vector of factors specifying the cell lines or type types
+#' @param batch [factor] Vector of factors specifying the batch
+#' @param duration [character] Vector of measurement times (in hours)
+#' @param model [logical] Should the full linear model be returned? Default set to FALSE
+#'
+#' @return [numeric] Vector reporting the effect size (estimateof the coefficient of drug concentration), standard error (se), sample size (n), t statistic, and F statistics and its corresponding p-value
+#'
+#' @importFrom stats complete.cases median lm anova
+#'
+#' @keywords internal
 #' @export
 geneDrugPerturbation <- function(x, concentration, type, batch, duration, model=FALSE) {
-  ## input:
-  ##  x: numeric vector of gene expression values
-  ##  concentration: numeric vector with drug concentrations/doses
-  ##  type: vector of factors specifying the cell lines or type types
-  ##  batch: vector of factors specifying the batch
-  ##  duration: numeric vector of measurement times (in hours)
-  ##  model: Should the full linear model be returned? Default set to FALSE
-  ##
-  ## output:
-  ##  vector reporting the effect size (estimateof the coefficient of drug concentration), standard error (se), sample size (n), t statistic, and F statistics and its corresponding p-value
-
-
 
   nc <- c("estimate", "se", "n", "tstat", "fstat", "pvalue")
   if (length(sort(unique(concentration))) < 2) {
