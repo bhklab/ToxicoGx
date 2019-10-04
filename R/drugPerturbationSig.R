@@ -115,7 +115,7 @@ drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duratio
   # SUBSET tSET BASED ON PARAMETERS
   tSetSubsetOnParams <-
     subsetTo(tSet, mDataType = mDataType, cells = cells, drugs = drugs,
-             features=features, duration = duration)
+             features=features, duration = duration, drop = F)
 
   # SUBSET tSET BASED ON DOSE
   samples <- rownames(phenoInfo(tSetSubsetOnParams, mDataType)[which(phenoInfo(tSetSubsetOnParams, mDataType)$dose %in% dose),])
@@ -141,8 +141,8 @@ drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duratio
     res <- list(res)
     names(res) <- i
     return(res)
-  }, exprs=t(molecularProfiles(tSet, mDataType)[features, samples, drop=FALSE]),
-     sampleinfo=phenoInfo(tSet, mDataType)[phenoInfo(tSet, mDataType)[,"duration"] %in% duration & phenoInfo(tSet, mDataType)[,"drugid"] %in% drugs,]
+  }, exprs=t(molecularProfiles(tSetSubsetOnParams, mDataType)[features, samples, drop=FALSE]),
+     sampleinfo=phenoInfo(tSetSubsetOnParams, mDataType)[which(phenoInfo(tSetSubsetOnParams, mDataType)$samplename %in% samples), ]
   )
 
   # ASSEMBLE RESULTS TO BE INCLUDED IN TOXICOSIG
@@ -203,6 +203,10 @@ drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duratio
                                                                                        paste(duration[which(!(duration %in% sensitivityInfo(tSet)$duration_h))]), collapse = ", ",
                                                                                        "is/are not present in ", tSet@annotation$name, ".")), ""))
   # dose checks
+  invisible(ifelse(length(dose) < 2,
+                   stop("To fit a linear model we need at least two dose levels, please add anothor to the dose argument in the function call."), ""))
+  invisible(ifelse(!("Control" %in% dose),
+                   stop("You should not calculate summary statistics without including a control! Please add 'Control' to the dose argument vector."),""))
   invisible(ifelse(all(!(dose %in% phenoInfo(tSet, mDataType)$dose_level)),
                    stop(paste0("The dose level(s) ", dose, " is/are not present in ", tSet@annotation$name, " with the specified parameters.")), ""))
 }

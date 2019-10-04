@@ -882,6 +882,9 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
   }else {
     exps <- NULL
   }
+  if ("dose" %in% names(adArgs)) {
+    stop("Due to the structure of tSets, subsetting on dose can only be done on specific slots - not on the entire tSet")
+  }
 
   if(!missing(cells)){
     ## TODO:: Test this function in a tSet with more than one cell type!
