@@ -46,13 +46,12 @@
 #'
 drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duration, dose, nthread=1, returnValues=c("estimate","tstat", "pvalue", "fdr"), verbose=FALSE){
 
-
   # ALLOCATE CORES FOR PARALLEL PROCESSING
   availcore <- parallel::detectCores()
   if ( nthread > availcore) {
     nthread <- availcore
   }
-  options("mc.cores"=nthread)
+  options("mc.cores" = nthread)
 
   # DEAL WITH MISSING PARAMETERS
   if(!missing(cells)){
@@ -74,7 +73,7 @@ drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duratio
 
 
   if (missing(drugs)) {
-    drugn <- drugNames(tSet)
+    drugn <- drugs <- drugNames(tSet)
   } else {
     drugn <- drugs
   }
@@ -128,8 +127,14 @@ drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duratio
     exprs <- exprs[which(sampleinfo[ , "drugid"] %in% x),]
     sampleinfo <- sampleinfo[which(sampleinfo[ , "drugid"] %in% x),]
 
+    # Warning that rankGeneDrugPerturbation will return a matrix of NAs for this drug
+    if (length(unique(as.character(sampleinfo[ , "batchid"]))) < 2) {
+      warning(paste0("There are only controls available at dose levels ", paste(dose, collapse=" ") ," for ", x, ", results for this drug will be NA.\nAdding another dose level will likely generate results."))
+    }
+
     res <- NULL
     i <- x
+
     ## using a linear model (x ~ concentration + cell + batch + duration)
     res <- ToxicoGx::rankGeneDrugPerturbation(data=exprs, drug=x, drug.id=as.character(sampleinfo[ , "drugid"]),
                                     drug.concentration=as.numeric(sampleinfo[ , "concentration"]),
