@@ -19,7 +19,7 @@
 #' @keywords internal
 #' @export
 rankGeneDrugPerturbation <-
-  function (data, drug, drug.id, drug.concentration, type, xp, batch, duration, single.type=FALSE, nthread=1, verbose=FALSE) {
+  function(data, drug, drug.id, drug.concentration, type, xp, batch, duration, single.type=FALSE, nthread=1, verbose=FALSE) {
 
     if (nthread != 1) {
       availcore <- parallel::detectCores()
@@ -41,20 +41,15 @@ rankGeneDrugPerturbation <-
       stop("type, batch, duration and xp should not contain missing values!")
     }
 
-    drugix <- drug.id %in% drug # This should already subset controls based on drug.id
-    if (sum(drugix) == 0) {
-      warning(sprintf("Drug(s) %s not in the dataset", paste(drug, collapse=", ")))
-      return(list("all.type"=NULL, "single.type"=NULL))
+    # Returns a matrix of NAs if there is no viability values for the requested dose levels
+    if (length(unique(xp)) < 2 ) {
+      nc <- c("estimate", "se", "n", "tstat", "fstat", "pvalue")
+      rest <- matrix(NA, nrow=nrow(data), ncol=length(nc), dimnames=list(rownames(data), nc))
+      rest <- cbind(rest, "fdr"=p.adjust(rest[ , "pvalue"], method="fdr"))
+      res <- c(NULL, list(rest))
+      names(res) <- list("all"=type)
+      return(res)
     }
-    # select xps with or with the drug(s) of interest
-    iix <- xp=="control" | drugix
-
-    data <- data[iix, ,drop=FALSE]
-    drug.concentration <- drug.concentration[iix]
-    type <- type[iix]
-    xp <- xp[iix]
-    batch <- batch[iix]
-    duration <- duration[iix]
 
     res.type <- NULL
 
@@ -64,6 +59,7 @@ rankGeneDrugPerturbation <-
     ## for each batch/vehicle of perturbations+controls (test within each batch/vehicle to avoid batch effect)
     ubatch <- sort(unique(batch[!is.na(xp) & xp == "perturbation"]))
     names(ubatch) <- paste0("batch", ubatch)
+
 
     for (bb in seq_len(length(ubatch))) {
       ## identify the perturbations and corresponding control experiments
@@ -87,7 +83,6 @@ rankGeneDrugPerturbation <-
 
     inpumat[ , "type"] <- factor(inpumat[ , "type"], ordered=FALSE)
     inpumat[ , "batch"] <- factor(inpumat[ , "batch"], ordered=FALSE)
-
 
     if (nrow(inpumat) < 3 || length(sort(unique(inpumat[ , "concentration"]))) < 2){ #|| length(unique(inpumat[ , "duration"])) < 2) {
       ## not enough experiments in drug list
