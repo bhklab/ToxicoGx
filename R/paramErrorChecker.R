@@ -15,13 +15,15 @@
 #'
 #' @export
 #' @keywords internal
-paramErrorChecker <- function(funName, ...) {
-
+paramErrorChecker <- function(funName, tSet, ...) {
 
   # Extract named arguments into local environment
   argList <- list(...)
+  print(argList)
   for (idx in seq_len(length(argList))) {
-    assign(names(argList)[idx], argList[[idx]])
+    assign(
+      gsub("^.", "", names(argList)[idx]), # Removes $ at start of var names
+      argList[[idx]])
   }
 
   # Matches the correct parameter constraints to each function name
@@ -34,9 +36,18 @@ paramErrorChecker <- function(funName, ...) {
                  "drugsNotChar", "drugsNotIn",
                  "featuresLt2", "featuresNotChar", "featuresNotIn",
                  "drugsNotChar", "durationNotIn",
-                 "doseLt2", "doseNoCtl", "doseNotIn"
+                 "doseNotChar", "doseNotIn", , "doseLt2", "doseNoCtl", 
                   ),
-           "summarizeMolecularProfiles" = c("")
+           "summarizeMolecularProfiles" = 
+              c("tSetGt1",
+                "mDataTypeNotStr","mDataTypeNotIn",
+                "cell.linesNotChar", "cell.linesNotIn",
+                "drugsNotChar", "drugsNotIn",
+                "featuresNotChar", "featuresNotIn",
+                "durationNotChar", "durationNotIn",
+                "doseNotChar", "doseNotIn",
+                "summary.statNotChar", "summary.statNotIn", "summary.statGt1"
+               )
            )
 
   # Runs the parameter checks specific to the given funName
@@ -46,7 +57,7 @@ paramErrorChecker <- function(funName, ...) {
       "tSetGt1" %in% paramChecks ~ ifelse(length(unlist(tSet)) > 1, stop("You may only pass in one tSet."), "" ),
       # mDataType checks
       "mDataTypeGt1" %in% paramChecks ~ ifelse(length(unlist(mDataType)) > 1, stop("Please only pass in one molecular data type."), "" ),
-      "mDataTypeNotStr" %in% paramChecks ~ ifelse(!is.character(mDataType), stop("mDataType must be a string."), "" ),
+      "mDataTypeNotChar" %in% paramChecks ~ ifelse(!is.character(mDataType), stop("mDataType must be a string."), "" ),
       "mDataTypeNotIn" %in% paramChecks ~ ifelse(all(!(mDataType %in% mDataNames(unlist(tSet))), stop(paste0("The molecular data type(s) ", paste(mDataType[which(!(mDataType %in% mDataNames(tSet)))], collapse = ", " ), " is/are not present in ", tSet@annotation$name, ".")), "")),
       # cell.lines checks
       "cell.linesNotChar" %in% paramChecks ~ ifelse(!is.character(unlist(cell.lines)), stop("cell.lines parameter must contain strings."), ""),
@@ -65,8 +76,13 @@ paramErrorChecker <- function(funName, ...) {
       # dose checks
       "doseLt2" %in% paramChecks ~ ifelse(length(dose) < 2, stop("To fit a linear model we need at least two dose levels, please add anothor to the dose argument in the function call."), ""),
       "doseNoCtl" %in% paramChecks ~ ifelse(!("Control" %in% dose), stop("You should not calculate summary statistics without including a control! Please add 'Control' to the dose argument vector."),""),
-      "doseNotIn" %in% paramChecks ~ ifelse(all(!(dose %in% phenoInfo(tSet, mDataType)$dose_level)), stop(paste0("The dose level(s) ", dose, " is/are not present in ", tSet@annotation$name, " with the specified parameters.")), "")
-  ))
+      "doseNotChar" %in% paramChecks ~ ifelse(!is.character(dose), stop("Dose must be a string or character vector."), ""),
+      "doseNotIn" %in% paramChecks ~ ifelse(all(!(dose %in% phenoInfo(tSet, mDataType)$dose_level)), stop(paste0("The dose level(s) ", dose, " is/are not present in ", tSet@annotation$name, " with the specified parameters.")), ""),
+      # summary.stat
+      "summary.statNotChar" %in% paramChecks ~ ifelse(!is.character(dose), stop("Dose must be a string or character vector."), ""),
+      "summary.statGt1" %in% paramChecks ~ ifelse(length(unlist(summary.stat)) > 1, stop("Please pick only one summary statistic"), "" )),
+      "summary.statNotIn" %in% paramChecks ~ ifelse(!(summary.stat %in% c("mean", "median", "first", "last")), stop(paste0("The the statistic ", summary.stat, " is not implemented in this package")), "")
+  )
 }
 
 
