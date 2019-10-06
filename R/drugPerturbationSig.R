@@ -109,11 +109,10 @@ drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duratio
     subsetTo(tSet, mDataType = mDataType, cells = cells, drugs = drugs,
              features=features, duration = duration)
 
-  # SUBSET tSET BASED ON DOSE
+  # SUBSET SAMPLES BASED ON DOSE
   samples <- rownames(phenoInfo(tSetSubsetOnParams, mDataType)[which(phenoInfo(tSetSubsetOnParams, mDataType)$dose %in% dose),])
 
   # LOOP OVER DRUGS TO CALCULATE PER DRUG SUMMARY STATISTICS
-  ## TODO:: Determine if this is supposed to be parallelized?
   mcres <- lapply(drugn, function(x, exprs, sampleinfo) {
 
     # Subset to correct drugs
@@ -122,7 +121,7 @@ drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duratio
 
     # Warning that rankGeneDrugPerturbation will return a matrix of NAs for this drug
     if (length(unique(as.character(sampleinfo[ , "xptype"]))) < 2) {
-      warning(paste0("There are only controls available at dose levels ", paste(dose, collapse=" ") ," for ", x, ", results for this drug will be NA.\\nAdding another dose level will likely generate results."))
+      warning(paste0("There are only controls available at dose levels ", paste(dose, collapse=" ") ," for ", x, ", summary statistics for this drug will be excluded for the results.\\nAdding another dose level will likely generate results."))
     }
 
     res <- NULL

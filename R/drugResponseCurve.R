@@ -11,7 +11,7 @@
 #'
 #' @examples
 #' if (interactive()) {
-#' drugDoseResponseCurve(concentrations=list("Experiment 1"=c(.008, .04, .2, 1)),
+#' drugResponseCurve(concentrations=list("Experiment 1"=c(.008, .04, .2, 1)),
 #'  viabilities=list(c(100,50,30,1)), plot.type="Both")
 #' }
 #'
@@ -54,7 +54,6 @@
 #' @param cex.main [numeric] The cex.main parameter passed to plot, controls the size of the titles
 #' @param legend.loc And argument passable to xy.coords for the position to place the legend.
 #' @param trunc [bool] Should the viability values be truncated to lie in [0-100] before doing the fitting
-#' @param reverseAxes [bool] If TRUE switch the x and y axis such that the plot is Viability vs Concentration
 #' @param verbose [boolean] Should warning messages about the data passed in be printed?
 #'
 #' @return Plots to the active graphics device and returns and invisible NULL.
@@ -66,13 +65,15 @@
 #'
 #' @export
 #'
-drugDoseResponseCurve <-
-  function(drug,
-           cellline,
-           durations,
-           tSets=list(),
-           concentrations=list(),
-           viabilities=list(),
+drugResponseCurve <-
+  ## TODO:: Note that all arguments must default to null for the paramErrorChecker to work
+  ##   The logic for the user remains unchanged.
+  function(drug=NULL,
+           cellline=NULL,
+           durations=NULL,
+           tSets=NULL,
+           concentrations=NULL,
+           viabilities=NULL,
            conc_as_log = FALSE,
            viability_as_pct = TRUE,
            trunc=TRUE,
@@ -88,40 +89,22 @@ drugDoseResponseCurve <-
            legend.loc = "topright",
            verbose=TRUE) {
 
-    ## TODO:: Extract parameter checks into paramErrorChecker()
-    if(!missing(tSets)){ #if the tSets argument is defined
-      if (class(tSets) != "list") { #if tSets was not passed in as list
-        if (class(tSets) == "ToxicoSet") { #if tSet is of type "ToxicoSet"
-          # it is a tSet but it's not in a list -> make into a list that has the same name as the tSet
-          temp <- tSetName(tSets)
-          tSets <- list(tSets)
-          names(tSets) <- temp
-        } else { #tSet is not of type ToxicoSet
-          stop("Type of tSets parameter should be either a tSet or a list of tSets.")
-        }
-      }
-    }
-    if(!missing(tSets) && (missing(drug) || missing(cellline))){
-      #if a tSet has been passed in but a drug/cell line argument hasn't
-      stop("If you pass in a tSet then drug and cellline must be set") }
-    # } else {
-    #   if(missing(drug)){
-    #   drug <- "Drug"}
-    #   if(missing(cellline))
-    #   cellline <- "Cell Line"
-    # }
-    if(!missing(concentrations)){ #if a concentrations argument has been passed in
-      if(missing(viabilities)){ #but viabilities argument is missing
+    ## HANDLE INCORRECT ARGUMENT TYPES
+    if (!is.null(tSets)) { if(!is(tSets, "list")) { tSets <- list(tSets) }}
 
-        stop("Please pass in the viabilities to Plot with the concentrations.")
+    #### CHECK PARAMETERS MEET FUNCTION REQUIREMENTS ####
+    paramErrorChecker("drugDoseResponseCurve",
+                      tSets=tSets, concentrations=concentrations,
+                      viabilities=viabilities, cell.lines=cellline, drugs=drug,
+                      duration=durations)
 
-      }
-      if (class(concentrations) != "list") {
-        if (mode(concentrations) == "numeric") {
-          if(mode(viabilities)!="numeric"){
-            stop("Passed in 1 vector of concentrations but the viabilities are not numeric!")
-          }
-          # if mode(concentrations) and mode(viabilities) are both numeric
+
+    #### SANITIZE CONCENTRATION INPUTS ####
+    if(!is.null(concentrations)){ #if a concentrations argument has been passed in
+      ## IF CONCENTRATIONS IS A VECTOR
+
+      ## TODO:: I think much of this logic is unnecessary due to concentration being discrete in ToxicoGx
+      if (!is(concentrations, "list")) {
           #sanitizeInput returns a list of length 2, where [[1]] is the conc, [[2]] is the viabilities as the user requested
           cleanData <- sanitizeInput(concentrations,
                                      viabilities,
@@ -136,22 +119,15 @@ drugDoseResponseCurve <-
           viabilities <- list(viabilities)
           names(concentrations) <- "Exp1"
           names(viabilities) <- "Exp1"
-        } else {
-          stop("Mode of concentrations parameter should be either numeric or a list of numeric vectors")
+      ## IF CONCENTRATIONS IS LIST
+      } else {
+        if(is.null(names(concentrations))){ # Assign numbered names if no names provided
+          names(concentrations) <- paste("Exp", seq_along(concentrations))
         }
-      } else{ #if class(concentrations) == "list"
-        if(length(viabilities) != length(concentrations)){
-          stop("The number of concentration and viability vectors passed in differs")
-        }
-        if(is.null(names(concentrations))){
-          names(concentrations) <- paste("Exp", 1:length(concentrations))
-        }
-        for(i in 1:length(concentrations)){
+        # Loop over each concentration vector in the list
+        ## TODO:: Benchmark against apply statement
+        for(i in seq_along(concentrations)){
           # if multiple concentrations were passed in
-          if (mode(concentrations[[i]]) == "numeric") {
-            if(mode(viabilities[[i]])!="numeric"){
-              stop(sprintf("concentrations[[%d]] are numeric but the viabilities[[%d]] are not numeric!",i,i))
-            }
             # sanitize input for each of the multiple concentrations
             cleanData <- sanitizeInput(concentrations[[i]],
                                        viabilities[[i]],
@@ -161,26 +137,20 @@ drugDoseResponseCurve <-
                                        verbose = verbose)
             concentrations[[i]] <- 10^cleanData[["log_conc"]]
             viabilities[[i]] <- 100*cleanData[["viability"]]
-          } else {
-            stop(sprintf("Mode of concentrations[[%d]] parameter should be numeric",i))
-          }
-
         }
-
       }
     }
 
+    ## TODO:: This appear to do nothing? It is only assigned once as false
     common.range.star <- FALSE
 
-    if (missing(plot.type)) {
-      plot.type <- "Actual"
-    }
+    # SETS DEFAULT PLOT TYPE
+    if (missing(plot.type)) { plot.type <- "Actual" }
 
-    # if the user did not pass in their own concentration, viability values
-    # take the cell line, drug combo
+    ## GETS CONCENTRATIONS AND VIABILITIES FROM tSET BASED ON INTERSECTION
     doses <- list(); responses <- list(); legend.values <- list(); j <- 0; tSetNames <- list(); tSetNames_temp <- list(); doses_temp <- list(); responses_temp <- list(); legend.values_temp <- list();
-    if(!missing(tSets)){
-      for(i in 1:length(tSets)) {
+    if(!is.null(tSets)){
+      for(i in seq_along(tSets)) {
         # exp_i contains the indices of sensitivity object rows that correspond to the requested cell line, drug
         exp_i <- which(sensitivityInfo(tSets[[i]])[ ,"cellid"] == cellline & sensitivityInfo(tSets[[i]])[ ,"drugid"] == drug)
         if(length(exp_i) > 0) { #if there is a UID that corresponds to the cell line - drug combo
@@ -225,7 +195,7 @@ drugDoseResponseCurve <-
               responses <- c(responses, responses_temp)
               legend.values <- c(legend.values, legend.values_temp)
             }
-          } else { #if replicates should not be summarized
+          }else { #if replicates should not be summarized
             for (exp in exp_i) {
               j <- j + 1
               tSetNames[[j]] <- tSetName(tSets[[i]])
@@ -265,9 +235,9 @@ drugDoseResponseCurve <-
       }
     }
 
-    if(!missing(concentrations)){
+    if(!is.null(concentrations)){
       doses2 <- list(); responses2 <- list(); legend.values2 <- list(); j <- 0; tSetNames2 <- list();
-      for (i in 1:length(concentrations)){
+      for (i in seq_along(concentrations)){
         doses2[[i]] <- concentrations[[i]]
         responses2[[i]] <- viabilities[[i]]
         if(length(legends.label)>0){
@@ -288,35 +258,39 @@ drugDoseResponseCurve <-
       tSetNames <- c(tSetNames, tSetNames2)
     }
 
+    ## SETS DEFAULT COLOUR PALETTE
     if (missing(mycol)) {
-      # require(RColorBrewer) || stop("Library RColorBrewer is not available!")
       mycol <- RColorBrewer::brewer.pal(n=9, name="Set1")
     }
 
+    #
     dose.range <- c(10^100 , 0)
     viability.range <- c(0 , 10)
-    for(i in 1:length(doses)) {
+    for(i in seq_along(doses)) {
       dose.range <- c(min(dose.range[1], min(doses[[i]], na.rm=TRUE), na.rm=TRUE), max(dose.range[2], max(doses[[i]], na.rm=TRUE), na.rm=TRUE))
       viability.range <- c(0, max(viability.range[2], max(responses[[i]], na.rm=TRUE), na.rm=TRUE))
     }
     x1 <- 10 ^ 10; x2 <- 0
 
+    ## FINDS INTERSECTION OF RANGES IF MORE THAN ONE EXPERIMENT PLOTTED
     if(length(doses) > 1) {
       common.ranges <- .getCommonConcentrationRange(doses)
 
-      for(i in 1:seq_along(doses)) {
+      for(i in seq_along(doses)) {
         x1 <- min(x1, min(common.ranges[[i]]))
         x2 <- max(x2, max(common.ranges[[i]]))
       }
     }
-
+    # SETS CUSTOM RANGE FOR X-AXIS IF PASSED AS ARGUEMENT
     if (!missing(xlim)) {
       dose.range <- xlim
     }
+    ## SETS CUSTOM RANGE FOR Y-AXIS IF PASSED AS ARGUEMENT
     if (!missing(ylim)) {
       viability.range <- ylim
     }
-    ## SETS THE PLOT TITLE
+
+    ## SETS PLOT TITLE
     if(missing(title)){
       if(!missing(drug)&&!missing(cellline)){
         title <- sprintf("%s:%s", drug, cellline)
@@ -325,6 +299,7 @@ drugDoseResponseCurve <-
       }
     }
 
+    #### DRAWING THE PLOT ####
     plot(NA, xlab="Concentration (uM)", ylab="% Viability", axes =FALSE, main=title, log="x", ylim=viability.range, xlim=dose.range, cex=cex, cex.main=cex.main)
     magicaxis::magaxis(side=1:2, frame.plot=TRUE, tcl=-.3, majorn=c(5,3), minorn=c(5,2))
     legends <- NULL
@@ -332,30 +307,34 @@ drugDoseResponseCurve <-
     if (length(doses) > 1) {
       rect(xleft=x1, xright=x2, ybottom=viability.range[1] , ytop=viability.range[2] , col=rgb(240, 240, 240, maxColorValue = 255), border=FALSE)
     }
-    for (i in 1:length(doses)) {
+    for (i in seq_along(doses)) {
       points(doses[[i]],responses[[i]],pch=20,col = mycol[i], cex=cex)
-      switch(plot.type , "Actual"={
-        lines(doses[[i]], responses[[i]], lty=1, lwd=lwd, col=mycol[i])
-      }, "Fitted"={
-        log_logistic_params <- logLogisticRegression(conc=doses[[i]], viability=responses[[i]])
-        log10_x_vals <- .GetSupportVec(log10(doses[[i]]))
-        lines(10 ^ log10_x_vals, .Hill(log10_x_vals, pars=c(log_logistic_params$HS, log_logistic_params$E_inf/100, log10(log_logistic_params$EC50))) * 100 ,lty=1, lwd=lwd, col=mycol[i])
-      },"Both"={
-        lines(doses[[i]],responses[[i]],lty=1,lwd=lwd,col = mycol[i])
-        log_logistic_params <- logLogisticRegression(conc = doses[[i]], viability = responses[[i]])
-        log10_x_vals <- .GetSupportVec(log10(doses[[i]]))
-        lines(10 ^ log10_x_vals, .Hill(log10_x_vals, pars=c(log_logistic_params$HS, log_logistic_params$E_inf/100, log10(log_logistic_params$EC50))) * 100 ,lty=1, lwd=lwd, col=mycol[i])
-      })
+      switch(plot.type,
+        "Actual"={
+          lines(doses[[i]], responses[[i]], lty=1, lwd=lwd, col=mycol[i])
+          },
+        "Fitted"={
+          log_logistic_params <- logLogisticRegression(conc=doses[[i]], viability=responses[[i]])
+          log10_x_vals <- .GetSupportVec(log10(doses[[i]]))
+          lines(10 ^ log10_x_vals, .Hill(log10_x_vals, pars=c(log_logistic_params$HS, log_logistic_params$E_inf/100, log10(log_logistic_params$EC50))) * 100 ,lty=1, lwd=lwd, col=mycol[i])
+          },
+        "Both"={
+          lines(doses[[i]],responses[[i]],lty=1,lwd=lwd,col = mycol[i])
+          log_logistic_params <- logLogisticRegression(conc = doses[[i]], viability = responses[[i]])
+          log10_x_vals <- .GetSupportVec(log10(doses[[i]]))
+          lines(10 ^ log10_x_vals, .Hill(log10_x_vals, pars=c(log_logistic_params$HS, log_logistic_params$E_inf/100, log10(log_logistic_params$EC50))) * 100 ,lty=1, lwd=lwd, col=mycol[i])
+          })
       legends<- c(legends, sprintf("%s%s", tSetNames[[i]], legend.values[[i]]))
-      legends.col <-  c(legends.col, mycol[i])
+      legends.col <- c(legends.col, mycol[i])
     }
     if (common.range.star) {
       if (length(doses) > 1) {
-        for (i in 1:length(doses)) {
+        for (i in seq_along(doses)) {
           points(common.ranges[[i]], responses[[i]][names(common.ranges[[i]])], pch=8, col=mycol[i])
         }
       }
     }
     legend(legend.loc, legend=legends, col=legends.col, bty="n", cex=cex, pch=c(15,15))
-    return(invisible(NULL))
+    ## TODO:: Don't think we need a return statement
+    #return(invisible(NULL))
 }
