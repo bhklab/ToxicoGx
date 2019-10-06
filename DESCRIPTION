@@ -22,7 +22,6 @@ Imports:
     SummarizedExperiment,
     Biobase, 
     RColorBrewer,
-    lest,
     caTools, 
     magicaxis, 
     methods, 

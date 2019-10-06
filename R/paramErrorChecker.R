@@ -3,7 +3,7 @@
 #' This function will take in the params of a function as well as its name.
 #'   Error checking will then be conducted on each of it's parameter arguments
 #'   to ensure they meet the input requirements for that function. Descriptive
-#'   errosr are returned if the the parameters do not meet the criteria for that
+#'   errors are returned if the the arguements do not meet the criteria for that
 #'   function.
 #'
 #' @param funName [character] A string of the function name. This argument is
@@ -18,12 +18,15 @@
 paramErrorChecker <- function(funName, tSet, ...) {
 
   # Intersection of all function's parameter tests
-  universalParamChecks <- c("tSetNotIs", "tSetGt1",
+  intersectParamChecks <- c("tSetNotIs", "tSetGt1",
                             "mDataTypeNotChar", "mDataTypeNotIn",
                             "cell.linesNotChar","cell.linesNotIn",
                             "drugsNotChar",
                             "durationNotChar"
                             )
+  intersectPlotParamChecks <- c(
+
+                              )
 
   # Matches the correct parameter constraints to each function name
   paramChecks <-
@@ -37,34 +40,47 @@ paramErrorChecker <- function(funName, tSet, ...) {
            "summarizeMolecularProfiles" =
               c(universalParamChecks,
                 "summary.statNotChar", "summary.statNotIn", "summary.statGt1"
+               ),
+           "drugDoseResponseCurve" =
+             c("tSetsNotIs",
+               "viabilitiesNotMissing", "viabilitiesNotNum", "viabilitiesDiffLenConc",
+               "concentrationsNotNum"
                )
            )
 
-  print(paste0("Function: ", funName))
-  print(paste0("Checks: ",paste(paramChecks, collapse=",")))
+  ## Handle missing values
+  if (missing(tSet)) {
+    tSet <- NULL
+  }
+
+  ## DEBUG STATEMENTS
+  #print(paste0("Function: ", funName))
+  #print(paste0("Checks: ",paste(paramChecks, collapse=",")))
 
   # Conducts the parameter checks based on function matched paramChecks
   .checkParamsForErrors(tSet=tSet, paramChecks=paramChecks, ...)
-
 }
 
 .checkParamsForErrors <- function(tSet, paramChecks, ...) {
 
   # Extract named arguments into local environment
   argList <- list(...)
-  for (idx in seq_len(length(argList))) {
+  for (idx in seq_len(length(argList))) { ## TODO:: Make this work with seq_along()
     assign(names(argList)[idx], argList[[idx]])
   }
 
   ## TODO:: Write a cases function that lazily evaluates LHS to replace this switch
   ## TODO:: Benmark for loop vs apply statement for this code
-  # Runs the parameter checks specific to the given funName
+  # Runs the parameter checks specific for the given funName
   for (check in paramChecks) {
     invisible(
       switch(
         check,
+        # tSet checks
         "tSetNotIs" = { if (!is(tSet, "ToxicoSet")) { stop(paste0(tSet@annotations$name, " is a ", class(tSet), ", not a ToxicoSet.")) }},
-        "tSetGt1" = { if (length(unlist(tSet)) > 1) { stop("You may only pass in one tSet.") }},
+        "tSetGt1" = { if (length(tSet) > 1) { stop("You may only pass in one tSet.") }},
+        # tSets checks
+        "tSetsNotIs" = { if (!is.null(tSets)) { if (!all(vapply(tSets, function (tSet) { is(tSet, "ToxicoSet") }, FUN.VALUE = logical(1) ))) { stop("One or more arguments to tSets parameter is not a 'ToxicoSet'.")}}},
         # mDataType checks
         "mDataTypeGt1" = { if (length(unlist(mDataType)) > 1) { stop("Please only pass in one molecular data type.") }},
         "mDataTypeNotChar" = { if (!is.character(mDataType)) { stop("mDataType must be a string.") }},
@@ -90,8 +106,22 @@ paramErrorChecker <- function(funName, tSet, ...) {
         # summary.stat
         "summary.statNotChar" = { if (!is.character(summary.stat)) { stop("The parameter summary.stat must be a string or character vector.") }},
         "summary.statGt1" = { if (length(summary.stat) > 1)  {stop("Please pick only one summary statistic") }},
-        "summary.statNotIn" = { if (!(summary.stat %in% c("mean", "median", "first", "last"))) { stop(paste0("The the statistic ", summary.stat, " is not implemented in this package")) }}
-        )
+        "summary.statNotIn" = { if (!(summary.stat %in% c("mean", "median", "first", "last"))) { stop(paste0("The the statistic ", summary.stat, " is not implemented in this package")) }},
+        # viabilties checks
+        "viabilitiesNotNum" = { if (!is.null(viabilities)) { if (!all(vapply(viabilities, function (viability) { is(viability, "numeric") }, FUN.VALUE = logical(1) ))) { stop("Viability values must be numeric.") }}},
+        "viabilitiesNotMissing" = { if (!is.null(concentrations)) { if (is.null(viabilities)) { stop("If you pass in an argument for concentrations, you must also pass in an argument for viabilities.")}}},
+        "viabilitiesDiffLenConc" = {
+          if (!is.null(concentrations) && !is.null(viabilities)) {
+            if (length(viabilities) != length(concentrations)) {
+              stop(paste0(ifelse(is(viabilities, "list"), "List", "Vector"), " of viabilities is ", length(viabilities), "long, but concentrations is ", length(concentrations), "long.")) }}},
+        # concentrations checks
+        "concentrationsNotNum" = {
+          if (!is.null(concentrations)) {
+            if (!all(vapply(concentrations, function (concentration) {
+              is(concentration, "numeric") }, FUN.VALUE = logical(1) ))) {
+                stop("Concentration values must be numeric.") }
+          }}
       )
+    )
   }
 }
