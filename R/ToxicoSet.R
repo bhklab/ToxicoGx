@@ -1114,7 +1114,7 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
 #' @examples
 #' data(TGGATESsmall)
 #' updateCellId(TGGATESsmall, new.ids = cellNames(TGGATESsmall))
-#' @param tSet [object] A ToxcioSet object to be updates
+#' @param tSet [object] A ToxicoSet object to be updates
 #' @param new.ids [character] A character vector of ids to update with
 #' @keywords internal
 #' @export
@@ -1250,7 +1250,7 @@ updateCellId <- function(tSet, new.ids = vector("character")){
 #' @examples
 #' data(TGGATESsmall)
 #' updateDrugId(TGGATESsmall, new.ids = drugNames(TGGATESsmall))
-#' @param tSet [object] A ToxcioSet object to be updates
+#' @param tSet [object] A ToxicoSet object to be updates
 #' @param new.ids [character] A character vector of ids to update with
 #' @keywords internal
 #' @export

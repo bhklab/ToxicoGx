@@ -60,17 +60,9 @@ drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duratio
     cells <- unique(cellNames(tSet))
   }
 
-  ## TODO:: This is redundant, modify .checkParamsForErrors() to include this information
-  if (mDataType %in% names(tSet@molecularProfiles)) {
-    #eset <- tSet@molecularProfiles[[mDataType]]
-    if(Biobase::annotation(tSet@molecularProfiles[[mDataType]])!="rna"){
-      stop(sprintf("Only rna data type perturbations are currently implemented"))
-    }
+  if(!missing(mDataType)) {
     mDataType <- unique(mDataType)
-  } else {
-    stop (sprintf("This tSet does not have any molecular data of type %s, choose among: %s", mDataType), paste(names(tSet@molecularProfiles), collapse=", "))
   }
-
 
   if (missing(drugs)) {
     drugn <- drugs <- drugNames(tSet)
@@ -87,7 +79,7 @@ drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duratio
   drugn <- drugn[dix]
 
   if (missing(features)) {
-    features <- rownames(featureInfo(tSet, mDataType))
+    features <- unique(rownames(featureInfo(tSet, mDataType)))
   } else {
     fix <- is.element(features, fNames(tSet, mDataType))
     if (verbose && !all(fix)) {
@@ -102,19 +94,20 @@ drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duratio
 
   if (missing(dose)) { # Include all dose levels
     dose <- unique(phenoInfo(tSet, mDataType)$dose)
-  }
-
-  if (!missing(dose)) {
+  } else {
     dose <- unique(dose)
   }
 
   # ERROR HANDLING FOR PARAMETERS
-  .checkParamsForErrors2(tSet=tSet, mDataType=mDataType, cell.lines=cells, drugs=drugs, features=features, duration=duration, dose=dose)
+  paramErrorChecker("drugPerturbationSig", tSet=tSet,
+                    mDataType=mDataType, cell.lines=cells,
+                    drugs=drugs, features=features,
+                    duration=duration, dose=dose)
 
   # SUBSET tSET BASED ON PARAMETERS
   tSetSubsetOnParams <-
     subsetTo(tSet, mDataType = mDataType, cells = cells, drugs = drugs,
-             features=features, duration = duration, drop = F)
+             features=features, duration = duration)
 
   # SUBSET tSET BASED ON DOSE
   samples <- rownames(phenoInfo(tSetSubsetOnParams, mDataType)[which(phenoInfo(tSetSubsetOnParams, mDataType)$dose %in% dose),])
@@ -128,8 +121,8 @@ drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duratio
     sampleinfo <- sampleinfo[which(sampleinfo[ , "drugid"] %in% x),]
 
     # Warning that rankGeneDrugPerturbation will return a matrix of NAs for this drug
-    if (length(unique(as.character(sampleinfo[ , "batchid"]))) < 2) {
-      warning(paste0("There are only controls available at dose levels ", paste(dose, collapse=" ") ," for ", x, ", results for this drug will be NA.\nAdding another dose level will likely generate results."))
+    if (length(unique(as.character(sampleinfo[ , "xptype"]))) < 2) {
+      warning(paste0("There are only controls available at dose levels ", paste(dose, collapse=" ") ," for ", x, ", results for this drug will be NA.\\nAdding another dose level will likely generate results."))
     }
 
     res <- NULL
@@ -150,7 +143,7 @@ drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duratio
      sampleinfo=phenoInfo(tSetSubsetOnParams, mDataType)[which(phenoInfo(tSetSubsetOnParams, mDataType)$samplename %in% samples), ]
   )
 
-  # ASSEMBLE RESULTS TO BE INCLUDED IN TOXICOSIG
+  # ASSEMBLE RESULTS TO BE INCLUDED IN TOXICOSIG OBJECT
   res <- do.call(c, mcres)
   res <- res[!sapply(res, is.null)]
   drug.perturbation <- array(NA, dim=c(nrow(featureInfo(tSet, mDataType)[features,, drop=FALSE]), length(res), ncol(res[[1]])), dimnames=list(rownames(featureInfo(tSet, mDataType)[features,,drop=FALSE]), names(res), colnames(res[[1]])))
@@ -168,50 +161,4 @@ drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duratio
 
   # RETURN TOXICOSIG OBJECT
   return(drug.perturbation)
-}
-
-## TODO:: Determine if these are the correct error criteria for this function
-# Generates a descriptive error message if parameter input doesn't meet the function criteria
-.checkParamsForErrors2 <- function(tSet, mDataType, cell.lines, drugs, features, duration, dose) {
-  ## TODO:: Convert type errors into warnings in separate function
-  # tSet checks
-
-  invisible(ifelse(length(unlist(tSet)) > 1, stop("You may only pass in one tSet."), "" )) # This prevents print if the test doesn't error
-  # mDataType checks
-  invisible(ifelse(length(unlist(mDataType)) > 1, stop("Please only pass in one molecular data type."), "" ))
-  invisible(ifelse(!is.character(mDataType), stop("mDataType must be a string."), "" ))
-  invisible(ifelse(all(!(mDataType %in% mDataNames(unlist(tSet)))),
-                   stop(paste0("The molecular data type(s) ",
-                               paste(mDataType[which(!(mDataType %in% mDataNames(tSet)))], collapse = ", " ),
-                               " is/are not present in ", tSet@annotation$name, ".")), ""))
-  #length(mDataType) > 1 ~ "Please pass in only one molecular data type at a time."
-  # cell.lines checks
-  invisible(ifelse(!is.character(unlist(cell.lines)), stop("cell.lines parameter must contain strings."), ""))
-  invisible(ifelse(all(!(cell.lines %in% cellNames(tSet))), stop(paste0("The cell line(s) ",
-                                                                        paste(cell.lines[which(!(cell.lines %in% cellNames(tSet)))], collapse = ", "),
-                                                                        " is/are not present in ", tSet@annotation$name, "with the specified parameters.")), ""))
-  # drugs checks
-  invisible(ifelse(!is.character(unlist(drugs)), stop("drugs parameter must contain strings."), ""))
-  invisible(ifelse(all(!(drugs %in% drugNames(tSet))), stop(paste0("The drug(s) ",
-                                                                   paste(drugs[which(!(drugs %in% drugNames(tSet)))], collapse = ", "),
-                                                                   " is/are not present in ", tSet@annotation$name, ".")), ""))
-  # features checks
-  ## TODO:: Do we want to implement this function with 1 feature?
-  invisible(ifelse(length(fNames(tSet, mDataType)) < 2, stop("Must include at least 2 features to calculate summary statistics"), ""))
-  invisible(ifelse(!is.character(unlist(features)), stop("features parameter contain strings."), ""))
-  invisible(ifelse(all(!(fNames(tSet, mDataType[1]) %in% features)), stop(paste0("The feature(s) ",
-                                                                                 paste(features[which(!(features %in% fNames(tSet, mDataType[1])))], collapse = ", "),
-                                                                                 " is/are not present in ", tSet@annotation$name, ".")), ""))
-  # duration checks
-  invisible(ifelse(!is.character(unlist(duration)), stop("duration parameter must contain strings."), ""))
-  invisible(ifelse(all(!(duration %in% sensitivityInfo(tSet)$duration_h)), stop(paste0("The duration(s) ",
-                                                                                       paste(duration[which(!(duration %in% sensitivityInfo(tSet)$duration_h))]), collapse = ", ",
-                                                                                       "is/are not present in ", tSet@annotation$name, ".")), ""))
-  # dose checks
-  invisible(ifelse(length(dose) < 2,
-                   stop("To fit a linear model we need at least two dose levels, please add anothor to the dose argument in the function call."), ""))
-  invisible(ifelse(!("Control" %in% dose),
-                   stop("You should not calculate summary statistics without including a control! Please add 'Control' to the dose argument vector."),""))
-  invisible(ifelse(all(!(dose %in% phenoInfo(tSet, mDataType)$dose_level)),
-                   stop(paste0("The dose level(s) ", dose, " is/are not present in ", tSet@annotation$name, " with the specified parameters.")), ""))
 }
