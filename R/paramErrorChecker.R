@@ -7,9 +7,9 @@
 #'   function.
 #'
 #' @param funName [character] A string of the function name. This argument is
-#'   used to match the correct conditions with each function.
-#' @param ... [list] A list of all parameters passed into the function whos
-#'   name is supplied in funName parameter.
+#'   used to match the correct parameter checking conditions with each function.
+#' @param ... [pairlist] A list of all parameters passed as arguements to the
+#'   function "funName".
 #'
 #' @return Returns nothing, this function works by side effects only
 #'
@@ -17,75 +17,81 @@
 #' @keywords internal
 paramErrorChecker <- function(funName, tSet, ...) {
 
-  # Extract named arguments into local environment
-  argList <- list(...)
-  print(argList)
-  for (idx in seq_len(length(argList))) {
-    assign(
-      gsub("^.", "", names(argList)[idx]), # Removes $ at start of var names
-      argList[[idx]])
-  }
+  # Intersection of all function's parameter tests
+  universalParamChecks <- c("tSetNotIs", "tSetGt1",
+                            "mDataTypeNotChar", "mDataTypeNotIn",
+                            "cell.linesNotChar","cell.linesNotIn",
+                            "drugsNotChar",
+                            "durationNotChar"
+                            )
 
   # Matches the correct parameter constraints to each function name
   paramChecks <-
     switch(funName,
            "drugPerturbationSig" =
-               c("tSetGt1",
-                 "mDataTypeGt1", "mDataTypeNotStr", "mDataTypeNotIn",
-                 "cell.linesNotChar",  "cell.linesNotIn",
-                 "drugsNotChar", "drugsNotIn",
-                 "featuresLt2", "featuresNotChar", "featuresNotIn",
-                 "drugsNotChar", "durationNotIn",
-                 "doseNotChar", "doseNotIn", , "doseLt2", "doseNoCtl", 
+               c(universalParamChecks,
+                 "mDataTypeGt1",
+                 "featuresLt2",
+                 "doseLt2", "doseNotCtl"
                   ),
-           "summarizeMolecularProfiles" = 
-              c("tSetGt1",
-                "mDataTypeNotStr","mDataTypeNotIn",
-                "cell.linesNotChar", "cell.linesNotIn",
-                "drugsNotChar", "drugsNotIn",
-                "featuresNotChar", "featuresNotIn",
-                "durationNotChar", "durationNotIn",
-                "doseNotChar", "doseNotIn",
+           "summarizeMolecularProfiles" =
+              c(universalParamChecks,
                 "summary.statNotChar", "summary.statNotIn", "summary.statGt1"
                )
            )
 
-  # Runs the parameter checks specific to the given funName
-  invisible(
-    dplyr::case_when(
-      # Checks for tSet
-      "tSetGt1" %in% paramChecks ~ ifelse(length(unlist(tSet)) > 1, stop("You may only pass in one tSet."), "" ),
-      # mDataType checks
-      "mDataTypeGt1" %in% paramChecks ~ ifelse(length(unlist(mDataType)) > 1, stop("Please only pass in one molecular data type."), "" ),
-      "mDataTypeNotChar" %in% paramChecks ~ ifelse(!is.character(mDataType), stop("mDataType must be a string."), "" ),
-      "mDataTypeNotIn" %in% paramChecks ~ ifelse(all(!(mDataType %in% mDataNames(unlist(tSet))), stop(paste0("The molecular data type(s) ", paste(mDataType[which(!(mDataType %in% mDataNames(tSet)))], collapse = ", " ), " is/are not present in ", tSet@annotation$name, ".")), "")),
-      # cell.lines checks
-      "cell.linesNotChar" %in% paramChecks ~ ifelse(!is.character(unlist(cell.lines)), stop("cell.lines parameter must contain strings."), ""),
-      "cell.linesNotIn" %in% paramChecks ~ ifelse(all(!(cell.lines %in% cellNames(tSet))), stop(paste0("The cell line(s) ", paste(cell.lines[which(!(cell.lines %in% cellNames(tSet)))], collapse = ", "), " is/are not present in ", tSet@annotation$name, "with the specified parameters.")), ""),
-      # drugs checks
-      "drugsNotChar" %in% paramChecks ~ ifelse(!is.character(unlist(drugs)), stop("drugs parameter must contain strings."), ""),
-      "drugsNotIn" %in% paramChecks ~ ifelse(all(!(drugs %in% drugNames(tSet))), stop(paste0("The drug(s) ", paste(drugs[which(!(drugs %in% drugNames(tSet)))], collapse = ", "), " is/are not present in ", tSet@annotation$name, ".")), ""),
-      # features checks
-      ## TODO:: Do we want to implement this function with 1 feature?
-      "featuresLt2" %in% paramChecks ~ ifelse(length(fNames(tSet, mDataType)) < 2, stop("Must include at least 2 features to calculate summary statistics"), ""),
-      "featuresNotChar" %in% paramChecks ~ ifelse(!is.character(unlist(features)), stop("features parameter contain strings."), ""),
-      "featuresNotIn" %in% paramChecks ~ ifelse(all(!(fNames(tSet, mDataType[1]) %in% features)), stop(paste0("The feature(s) ", paste(features[which(!(features %in% fNames(tSet, mDataType[1])))], collapse = ", "), " is/are not present in ", tSet@annotation$name, ".")), ""),
-      # duration checks
-      "durationNotChar" %in% paramChecks ~ ifelse(!is.character(unlist(duration)), stop("duration parameter must contain strings."), ""),
-      "durationNotIn" %in% paramChecks ~ ifelse(all(!(duration %in% sensitivityInfo(tSet)$duration_h)), stop(paste0("The duration(s) ", paste(duration[which(!(duration %in% sensitivityInfo(tSet)$duration_h))]), collapse = ", ", "is/are not present in ", tSet@annotation$name, ".")), ""),
-      # dose checks
-      "doseLt2" %in% paramChecks ~ ifelse(length(dose) < 2, stop("To fit a linear model we need at least two dose levels, please add anothor to the dose argument in the function call."), ""),
-      "doseNoCtl" %in% paramChecks ~ ifelse(!("Control" %in% dose), stop("You should not calculate summary statistics without including a control! Please add 'Control' to the dose argument vector."),""),
-      "doseNotChar" %in% paramChecks ~ ifelse(!is.character(dose), stop("Dose must be a string or character vector."), ""),
-      "doseNotIn" %in% paramChecks ~ ifelse(all(!(dose %in% phenoInfo(tSet, mDataType)$dose_level)), stop(paste0("The dose level(s) ", dose, " is/are not present in ", tSet@annotation$name, " with the specified parameters.")), ""),
-      # summary.stat
-      "summary.statNotChar" %in% paramChecks ~ ifelse(!is.character(dose), stop("Dose must be a string or character vector."), ""),
-      "summary.statGt1" %in% paramChecks ~ ifelse(length(unlist(summary.stat)) > 1, stop("Please pick only one summary statistic"), "" )),
-      "summary.statNotIn" %in% paramChecks ~ ifelse(!(summary.stat %in% c("mean", "median", "first", "last")), stop(paste0("The the statistic ", summary.stat, " is not implemented in this package")), "")
-  )
+  print(paste0("Function: ", funName))
+  print(paste0("Checks: ",paste(paramChecks, collapse=",")))
+
+  # Conducts the parameter checks based on function matched paramChecks
+  .checkParamsForErrors(tSet=tSet, paramChecks=paramChecks, ...)
+
 }
 
+.checkParamsForErrors <- function(tSet, paramChecks, ...) {
 
+  # Extract named arguments into local environment
+  argList <- list(...)
+  for (idx in seq_len(length(argList))) {
+    assign(names(argList)[idx], argList[[idx]])
+  }
 
-
-
+  ## TODO:: Write a cases function that lazily evaluates LHS to replace this switch
+  ## TODO:: Benmark for loop vs apply statement for this code
+  # Runs the parameter checks specific to the given funName
+  for (check in paramChecks) {
+    invisible(
+      switch(
+        check,
+        "tSetNotIs" = { if (!is(tSet, "ToxicoSet")) { stop(paste0(tSet@annotations$name, " is a ", class(tSet), ", not a ToxicoSet.")) }},
+        "tSetGt1" = { if (length(unlist(tSet)) > 1) { stop("You may only pass in one tSet.") }},
+        # mDataType checks
+        "mDataTypeGt1" = { if (length(unlist(mDataType)) > 1) { stop("Please only pass in one molecular data type.") }},
+        "mDataTypeNotChar" = { if (!is.character(mDataType)) { stop("mDataType must be a string.") }},
+        "mDataTypeNotIn" = { if (!(mDataType %in% mDataNames(tSet))) { stop(paste0("The molecular data type(s) ", paste(mDataType[which(!(mDataType %in% mDataNames(tSet)))], collapse = ", " ), " is/are not present in ", tSet@annotation$name, ".")) }},
+        # cell.lines checks
+        "cell.linesNotChar" = { if(!is.character(unlist(cell.lines))) { stop("cell.lines parameter must contain strings.") }},
+        "cell.linesNotIn" = { if(all(!(cell.lines %in% cellNames(tSet)))) { stop(paste0("The cell line(s) ", paste(cell.lines[which(!(cell.lines %in% cellNames(tSet)))], collapse = ", "), " is/are not present in ", tSet@annotation$name, "with the specified parameters.")) }},
+        # drugs checks
+        "drugsNotChar" = { if(!is.character(unlist(drugs))) { stop("drugs parameter must contain strings.") }},
+        "drugsNotIn" = { if(all(!(drugs %in% drugNames(tSet)))) { stop(paste0("The drug(s) ", paste(drugs[which(!(drugs %in% drugNames(tSet)))], collapse = ", "), " is/are not present in ", tSet@annotation$name, ".")) }},
+        # features checks
+        "featuresLt2" = { if (length(fNames(tSet, mDataType)) < 2) { stop("Must include at least 2 features to calculate summary statistics") }},
+        "featuresNotChar" = { if(!is.character(unlist(features))) { stop("features parameter contain strings.") }},
+        "featuresNotIn" = { if(all(!(fNames(tSet, mDataType[1]) %in% features))) { stop(paste0("The feature(s) ", paste(features[which(!(features %in% fNames(tSet, mDataType[1])))], collapse = ", "), " is/are not present in ", tSet@annotation$name, ".")) }},
+        # duration checks
+        "durationNotChar" = { if(!is.character(unlist(duration))) { stop("duration parameter must contain strings.") }},
+        "durationNotIn" = { if(all(!(duration %in% sensitivityInfo(tSet)$duration_h))) { stop(paste0("The duration(s) ", paste(duration[which(!(duration %in% sensitivityInfo(tSet)$duration_h))]), collapse = ", ", "is/are not present in ", tSet@annotation$name, ".")) }},
+        # dose checks
+        "doseLt2" = { if (length(dose) < 2) { stop("To fit a linear model we need at least two dose levels, please add anothor to the dose argument in the function call.") }},
+        "doseNoCtl" = { if (!("Control" %in% dose)) { stop("You should not calculate summary statistics without including a control! Please add 'Control' to the dose argument vector.") }},
+        "doseNotChar" = { if (!is.character(dose)) { stop("Dose must be a string or character vector.") }},
+        "doseNotIn" = { if (all(!(dose %in% phenoInfo(tSet, mDataType)$dose_level))) { stop(paste0("The dose level(s) ", dose, " is/are not present in ", tSet@annotation$name, " with the specified parameters.")) }},
+        # summary.stat
+        "summary.statNotChar" = { if (!is.character(summary.stat)) { stop("The parameter summary.stat must be a string or character vector.") }},
+        "summary.statGt1" = { if (length(summary.stat) > 1)  {stop("Please pick only one summary statistic") }},
+        "summary.statNotIn" = { if (!(summary.stat %in% c("mean", "median", "first", "last"))) { stop(paste0("The the statistic ", summary.stat, " is not implemented in this package")) }}
+        )
+      )
+  }
+}

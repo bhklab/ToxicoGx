@@ -52,7 +52,7 @@ one Assay corresponding to a requested drug.
 \examples{
 data(TGGATESsmall)
 summMP <- ToxicoGx::summarizeMolecularProfiles(
-  TGGATESsmall, mDataType = "rna",
+  tSet = TGGATESsmall, mDataType = "rna",
   cell.lines=cellNames(TGGATESsmall), drugs = head(drugNames(TGGATESsmall)),
   features = fNames(TGGATESsmall,"rna"), duration = "8",
   dose = c("Control", "High"), summary.stat = "median",
