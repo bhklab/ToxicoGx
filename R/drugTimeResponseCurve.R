@@ -13,7 +13,7 @@
 #' @param drug [character] A vector of drugs to be included in this plot.
 #' @param duration [character] A vector of durations to include in the plot.
 #' @param cellLine [character] A vector of cell lines to include in the plot.
-#' @param viabilityAsPct [logical] A vector specifying if viabilities should
+#' @param viability_as_pct [logical] A vector specifying if viabilities should
 #'   be plotted as a percentage. Defaults to TRUE.
 #' @param xlim [numeric] A vector of minimum and maximum values for the x-axis
 #'   of the returned plot.
@@ -26,9 +26,11 @@
 #' @param mycol [vector] A vector of length equal to the lenth of the tSets
 #'   argument specifying which RColorBrewer colour to use per tSet. Default
 #'   colours will be used if this parameter is excluded.
-#' @param plotType [character] The type of plot which you would like returned. Options
+#' @param plot.type [character] The type of plot which you would like returned. Options
 #'   are 'Actual' for unfitted curve, 'Fitted' for the fitted curve and 'Both'
 #'   to display 'Actual and 'Fitted' in the sample plot.
+#'@param summarize.replciates [logical] If true will take the average of all
+#'  replicates at each time point per dose and duration
 #' @param lwd [numeric] The line width to plot with
 #' @param cex [numeric] The cex parameter passed to plot
 #' @param cex.main [numeric] The cex.main parameter passed to plot, controls the size of the titles
@@ -50,16 +52,17 @@ drugTimeResponseCurve <- function(
   cellline,
   dose,
   drug,
-  plotType="Actual",
-  viabilityAsPct=TRUE,
+  plot.type="Actual",
+  summarize.replicates = TRUE,
+  viability_as_pct = TRUE,
   xlim=c(0, 24),
   ylim=c(0, 100),
   mycol,
   title,
-  lwd = 0.5,
+  lwd = 1,
   cex = 0.5,
   cex.main = 0.9,
-  legend.loc = "topright",
+  legend.loc = "topleft",
   verbose=TRUE
   ) {
 
@@ -79,14 +82,16 @@ drugTimeResponseCurve <- function(
   plotData <- lapply(tSets, function(tSet) {
     cbind(
       tSet@sensitivity$raw[,,2][, which(c("Control", "Low", "Middle", "High") %in% dose)],
-      sensitivityInfo(tSet)[, c("duration_h", "replicate")]
+      ToxicoGx::sensitivityInfo(tSet)[, c("duration_h", "replicate")]
     )
   })
 
-  # Getting the names for each
-  legendValues <- lapply(plotData, function(data){
-    lapply(seq_along(unique(data$replicate)), function(idx){
-      rownames(data)[which(data$replicate == idx)]
+  # Assembling the legend names for each line to be plotted
+  legendValues <- lapply(seq_along(plotData), function(d_idx){
+    lapply(dose, function(level) {
+      lapply(seq_along(unique(plotData[[d_idx]]$replicate)), function(r_idx){
+        paste(drug[d_idx], level, r_idx, sep = '_')
+      })
     })
   })
 
@@ -98,8 +103,8 @@ drugTimeResponseCurve <- function(
   })
 
   # Extracting the viability values for each row of plotData
-  responses <- lapply(plotData, function (data) {
-    responseVect <- lapply(dose, function(level) {
+  responses <- lapply(plotData, function(data) {
+    lapply(dose, function(level) {
       lapply(seq_along(unique(data$replicate)), function(idx) {
         as.vector(data[ , which(c("Control", "Low", "Middle", "High") %in% level)])[which(data$replicate == idx)]
       })
@@ -107,21 +112,34 @@ drugTimeResponseCurve <- function(
   })
 
   # Summarizing replicate values
-
+  if (summarize.replicates == TRUE) {
+  responses <- lapply(seq_along(tSets), function(t_idx) {
+        lapply(seq_along(dose), function(d_idx) {
+            responseVals <- NULL
+            responseVect <- unlist(responses[[t_idx]][[d_idx]])
+            for (time in seq_along(unique(duration))) {
+              responseVals <- c(responseVals, mean(responseVect[time], responseVect[time + length(unique(duration))]))
+            }
+            responseVals
+          })
+        })
+  # Take unique values of all time replicates and place into a list
+  times <- list(unique(unlist(times)))
+  }
 
   # Set x and y axis ranges based on time and viability values
   time.range <- c(min(unlist(unlist(times))), max(unlist(unlist(times))))
   viability.range <- c(min(unlist(responses, recursive = TRUE)), max(unlist(responses, recursive=TRUE)))
-  for(i in seq_along(times)) {
+  for(i in seq_along(tSets)) {
     ## TODO:: Generalize this to n replicates
-    time.range <- c(min(time.range[1], min(unlist(times[[i]], recursive=TRUE), na.rm=TRUE), na.rm=TRUE), max(time.range[2], max(unlist(times[[i]], recursive=TRUE), na.rm=TRUE), na.rm=TRUE))
+    time.range <- c(min(time.range[1], min(unlist(times[[i]], recursive = TRUE), na.rm = TRUE), na.rm = TRUE), max(time.range[2], max(unlist(times[[i]], recursive = TRUE), na.rm = TRUE), na.rm = TRUE))
     viability.range <- c(0, max(viability.range[2], max(unlist(responses[[i]], recursive=TRUE), na.rm=TRUE), na.rm=TRUE))
   }
   x1 <- 24; x2 <- 0
 
   ## FINDS INTERSECTION OF RANGES IF MORE THAN ONE tSet PLOTTED
   if(length(times) > 1) {
-    common.ranges <- .getCommonConcentrationRange(times)
+    common.ranges <- ToxicoGx:::.getCommonConcentrationRange(times)
 
     for(i in seq_along(times)) {
       x1 <- min(x1, min(common.ranges[[i]]))
@@ -154,53 +172,84 @@ drugTimeResponseCurve <- function(
     legends.col <- mycol
   }
 
-  print(viability.range)
-  print(time.range)
-
   #### DRAWING THE PLOT ####
-  plot(NA, xlab="Time (hr)", ylab="% Viability", axes =FALSE, main=title, ylim=viability.range, xlim=time.range, cex=cex, cex.main=cex.main)
+  plot(NA, xlab = "Time (hr)", ylab = "% Viability", axes = FALSE, main = title, ylim = viability.range, xlim =time.range, cex=cex, cex.main=cex.main)
   # Adds plot axes
   magicaxis::magaxis(side=1:2, frame.plot=TRUE, tcl=-.3, majorn=c(5,3), minorn=c(5,2))
   # Initialize legends variables
   legends <- NULL
+  pch.val <- NULL
   legends.col <- NULL
   # TBD what this dose
   if (length(times) > 1) {
-    rect(xleft=x1, xright=x2, ybottom=viability.range[1] , ytop=viability.range[2] , col=rgb(240, 240, 240, maxColorValue = 255), border=FALSE)
+    rect(xleft = x1, xright = x2, ybottom = viability.range[1] , ytop = viability.range[2] , col=rgb(240, 240, 240, maxColorValue = 255), border=FALSE)
   }
+  if (summarize.replicates == FALSE) {
   # Loop over tSets
-  for (i in seq_along(times)) {
-    j <- 1
-    # Loop over dose level
-    for (level in seq_along(dose)) {
-      # Loop over replicates per dose level
-      ## TODO:: Generalize this for n replicates
-      for(replicate in seq_len(2)) {
-        # Plot per tSet, per dose level, per replicate points
-        points(times[[i]][[replicate]], responses[[i]][[level]][[replicate]], pch=20, col = mycol[j], cex=cex)
-        # Select plot type
-        switch(plotType,
+    for (i in seq_along(times)) {
+      j <- 1
+      # Loop over dose level
+      for (level in seq_along(dose)) {
+        # Loop over replicates per dose level
+        ## TODO:: Generalize this for n replicates
+          for (replicate in seq_along(unique(responses[[i]][[level]]))) {
+            # Plot per tSet, per dose level, per replicate points
+            points(times[[i]][[replicate]], responses[[i]][[level]][[replicate]], pch=replicate, col = mycol[j], cex=cex+0.2)
+            # Select plot type
+            switch(plot.type,
+                   "Actual" = {
+                     lines(times[[i]][[replicate]], responses[[i]][[level]][[replicate]], lty=replicate, lwd=lwd, col=mycol[j])
+                   },
+                   "Fitted" = {
+                     log_logistic_params <- logLogisticRegression(conc=times[[i]][[replicate]], viability=responses[[i]][[level]][[replicate]])
+                     x_vals <- .GetSupportVec(times[[i]][[replicate]])
+                     lines(10 ^ x_vals, ToxicoGx:::.Hill(x_vals, pars=c(log_logistic_params$HS, log_logistic_params$E_inf/100, log10(log_logistic_params$EC50))) * 100 ,lty=replicate, lwd=lwd, col=mycol[j])
+                   },
+                   "Both" = {
+                     lines(times[[i]][[replicate]],responses[[i]][[level]][[replicate]],lty=replicate, lwd=lwd, col = mycol[j])
+                     log_logistic_params <- logLogisticRegression(conc = times[[i]][[replicate]], viability = responses[[i]][[level]][[replicate]])
+                     x_vals <- .GetSupportVec(times[[i]][[replicate]])
+                     lines(10 ^ x_vals, ToxicoGx:::.Hill(x_vals, pars = c(log_logistic_params$HS, log_logistic_params$E_inf/100, log10(log_logistic_params$EC50))) * 100, lty=replicate, lwd=lwd, col=mycol[j])
+                   })
+            legends <- c(legends, legendValues[[i]][[level]][[replicate]])
+            legends.col <- c(legends.col, mycol[j])
+            pch.val <- c(pch.val, replicate)
+          }
+      j <- j + 1
+      }
+    }
+  } else {
+    # Loop over tSets
+    for (i in seq_along(times)) {
+      j <- 1
+      # Loop over dose level
+      for (level in seq_along(dose)) {
+        # Loop over replicates per dose level
+        ## TODO:: Generalize this for n replicate
+      # Plot per tSet, per dose level, per replicate points
+      points(times[[i]], responses[[i]][[level]], pch = 1, col = mycol[j], cex = cex + 0.2)
+      # Select plot type
+      switch(plot.type,
              "Actual" = {
-               lines(times[[i]][[replicate]], responses[[i]][[level]][[replicate]], lty=replicate, lwd=lwd, col=mycol[j])
+               lines(times[[i]], responses[[i]][[level]], lty = 1, lwd = lwd, col = mycol[j])
              },
              "Fitted" = {
-               log_logistic_params <- logLogisticRegression(conc=times[[i]][[replicate]], viability=responses[[i]][[level]][[replicate]])
-               x_vals <- .GetSupportVec(times[[i]][[replicate]])
-               lines(10 ^ x_vals, ToxicoGx:::.Hill(x_vals, pars=c(log_logistic_params$HS, log_logistic_params$E_inf/100, log10(log_logistic_params$EC50))) * 100 ,lty=replicate, lwd=lwd, col=mycol[j])
+               log_logistic_params <- logLogisticRegression(conc = times[[i]], viability=responses[[i]][[level]])
+               x_vals <- .GetSupportVec(times[[i]])
+               lines(10 ^ x_vals, ToxicoGx:::.Hill(x_vals, pars = c(log_logistic_params$HS, log_logistic_params$E_inf/100, log10(log_logistic_params$EC50))) * 100 ,lty=1, lwd=lwd, col=mycol[j])
              },
              "Both" = {
-               lines(times[[i]][[replicate]],responses[[i]][[level]][[replicate]],lty=replicate, lwd=lwd, col = mycol[j])
-               log_logistic_params <- logLogisticRegression(conc = times[[i]][[replicate]], viability = responses[[i]][[level]][[replicate]])
+               lines(times[[i]],responses[[i]][[level]],lty=1, lwd = lwd, col = mycol[j])
+               log_logistic_params <- logLogisticRegression(conc = times[[i]], viability = responses[[i]][[level]])
                x_vals <- .GetSupportVec(times[[i]][[replicate]])
-               lines(10 ^ x_vals, ToxicoGx:::.Hill(x_vals, pars=c(log_logistic_params$HS, log_logistic_params$E_inf/100, log10(log_logistic_params$EC50))) * 100 ,lty=replicate, lwd=lwd, col=mycol[j])
+               lines(10 ^ x_vals, ToxicoGx:::.Hill(x_vals, pars = c(log_logistic_params$HS, log_logistic_params$E_inf/100, log10(log_logistic_params$EC50))) * 100, lty=1, lwd=lwd, col=mycol[j])
              })
-        legends <- c(legends, legendValues[[i]][[replicate]][level])
-        print(legends)
-        legends.col <- c(legends.col, mycol[i])
-      }
+      legends <- c(legends, legendValues[[i]][[level]])
+      legends.col <- c(legends.col, mycol[j])
+      pch.val <- c(pch.val, 1)
       j <- j + 1
-
+      }
     }
   }
-  legend(legend.loc, legend = legends, col = legends.col, bty="n", cex=cex, pch=c(15,15))
+  legend(legend.loc, legend = legends, col = legends.col, bty="n", cex=cex, pch=pch.val)
 }
