@@ -3,7 +3,7 @@
 #' Description of this function
 #'
 #' @examples
-#' ToxicoGx:::drugTimeResponseCurve(TGGATESsmall, dose = c("Control", "Low", "Middle"), drug = "naphthyl isothiocyanate", duration = c("2", "8", "24))
+#' ToxicoGx:::drugTimeResponseCurve(TGGATESsmall, dose = c("Control", "Low", "Middle"), drug = "naphthyl isothiocyanate", duration = c("2", "8", "24"))
 #'
 #' @param tSets [ToxicoSet] A ToxicoSet or list of ToxicoSets to be plotted in
 #'   this graph.
@@ -175,26 +175,26 @@ drugTimeResponseCurve <- function(
     for (level in seq_along(dose)) {
       # Loop over replicates per dose level
       ## TODO:: Generalize this for n replicates
-      for(idx in seq_len(2)) {
+      for(replicate in seq_len(2)) {
         # Plot per tSet, per dose level, per replicate points
-        points(times[[i]][[idx]], responses[[i]][[level]][[idx]], pch=20, col = mycol[j], cex=cex)
+        points(times[[i]][[replicate]], responses[[i]][[level]][[replicate]], pch=20, col = mycol[j], cex=cex)
         # Select plot type
         switch(plotType,
-             "Actual"={
-               lines(times[[i]][[idx]], responses[[i]][[level]][[idx]], lty=idx, lwd=lwd, col=mycol[j])
+             "Actual" = {
+               lines(times[[i]][[replicate]], responses[[i]][[level]][[replicate]], lty=replicate, lwd=lwd, col=mycol[j])
              },
-             "Fitted"={
-               log_logistic_params <- logLogisticRegression(conc=times[[i]][[idx]], viability=responses[[i]][[level]][[idx]])
-               x_vals <- .GetSupportVec(times[[i]][[idx]])
-               lines(10 ^ x_vals, ToxicoGx:::.Hill(x_vals, pars=c(log_logistic_params$HS, log_logistic_params$E_inf/100, log10(log_logistic_params$EC50))) * 100 ,lty=idx, lwd=lwd, col=mycol[j])
+             "Fitted" = {
+               log_logistic_params <- logLogisticRegression(conc=times[[i]][[replicate]], viability=responses[[i]][[level]][[replicate]])
+               x_vals <- .GetSupportVec(times[[i]][[replicate]])
+               lines(10 ^ x_vals, ToxicoGx:::.Hill(x_vals, pars=c(log_logistic_params$HS, log_logistic_params$E_inf/100, log10(log_logistic_params$EC50))) * 100 ,lty=replicate, lwd=lwd, col=mycol[j])
              },
-             "Both"={
-               lines(times[[i]][[idx]],responses[[i]][[level]][[idx]],lty=idx, lwd=lwd, col = mycol[j])
-               log_logistic_params <- logLogisticRegression(conc = times[[i]][[idx]], viability = responses[[i]][[level]][[idx]])
-               x_vals <- .GetSupportVec(times[[i]][[idx]])
-               lines(10 ^ x_vals, ToxicoGx:::.Hill(x_vals, pars=c(log_logistic_params$HS, log_logistic_params$E_inf/100, log10(log_logistic_params$EC50))) * 100 ,lty=idx, lwd=lwd, col=mycol[j])
+             "Both" = {
+               lines(times[[i]][[replicate]],responses[[i]][[level]][[replicate]],lty=replicate, lwd=lwd, col = mycol[j])
+               log_logistic_params <- logLogisticRegression(conc = times[[i]][[replicate]], viability = responses[[i]][[level]][[replicate]])
+               x_vals <- .GetSupportVec(times[[i]][[replicate]])
+               lines(10 ^ x_vals, ToxicoGx:::.Hill(x_vals, pars=c(log_logistic_params$HS, log_logistic_params$E_inf/100, log10(log_logistic_params$EC50))) * 100 ,lty=replicate, lwd=lwd, col=mycol[j])
              })
-        legends<- c(legends, legendValues[[i]][[idx]][level])
+        legends <- c(legends, legendValues[[i]][[replicate]][level])
         print(legends)
         legends.col <- c(legends.col, mycol[i])
       }
@@ -202,5 +202,5 @@ drugTimeResponseCurve <- function(
 
     }
   }
-  legend(legend.loc, legend=legends, col=legends.col, bty="n", cex=cex, pch=c(15,15))
+  legend(legend.loc, legend = legends, col = legends.col, bty="n", cex=cex, pch=c(15,15))
 }

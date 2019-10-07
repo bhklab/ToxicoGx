@@ -356,6 +356,6 @@ drugDoseResponseCurve <-
         }
       }
     }
-    legend(legend.loc, legend=legends, col=legends.col, bty="n", cex=cex, pch=c(15,15))
+    legend(legend.loc, legend=legends[seq_len(length(times[]))], col=legends.col, bty="n", cex=cex, pch=c(15,15))
     return(invisible(NULL))
 }

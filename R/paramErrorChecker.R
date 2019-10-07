@@ -32,13 +32,13 @@ paramErrorChecker <- function(funName, tSet, ...) {
   paramChecks <-
     switch(funName,
            "drugPerturbationSig" =
-               c(universalParamChecks,
+               c(intersectParamChecks,
                  "mDataTypeGt1",
                  "featuresLt2",
                  "doseLt2", "doseNotCtl"
                   ),
            "summarizeMolecularProfiles" =
-              c(universalParamChecks,
+              c(intersectParamChecks,
                 "summary.statNotChar", "summary.statNotIn", "summary.statGt1"
                ),
            "drugDoseResponseCurve" =
