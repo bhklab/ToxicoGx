@@ -120,7 +120,7 @@ drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duratio
     sampleinfo <- sampleinfo[which(sampleinfo[ , "drugid"] %in% x),]
 
     # Warning that rankGeneDrugPerturbation will return a matrix of NAs for this drug
-    if (length(unique(as.character(sampleinfo[ , "xptype"]))) < 2) {
+    if (length(unique(as.character(sampleinfo[, "xptype"]))) < 2) {
       warning(paste0("There are only controls available at dose levels ", paste(dose, collapse=" ") ," for ", x, ", summary statistics for this drug will be excluded for the results.\\nAdding another dose level will likely generate results."))
     }
 
