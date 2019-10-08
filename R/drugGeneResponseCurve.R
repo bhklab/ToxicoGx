@@ -11,6 +11,8 @@
 #' @param dose [character] A vector of dose levels to be included in the
 #'   plot. Default to include all dose levels available for a drug. Must include
 #'   at minimum two dose levels, one of witch is "Control".
+#' @param mDataTypes [vector] A vector specifying the molecular data types to
+#'   include in this plot. Defaults to the first mDataType if not specified.
 #' @param features [character] A vector of feature names to include in the plot.
 #'   Please note that using all features will have a significant computational
 #'   cost. It is recommended to subset to features of interest before plotting.
@@ -53,10 +55,12 @@
 #' @importFrom magicaxis magaxis
 #'
 #' @export
-drugTimeResponseCurve <- function(
+drugGeneResponseCurve <- function(
   tSets,
   duration,
   cellline,
+  mDataTypes,
+  features,
   dose,
   drug,
   plot.type="Actual",
@@ -75,38 +79,30 @@ drugTimeResponseCurve <- function(
 ) {
 
   # Place tSets in a list if not already
-  if (!is(tSets, "list")) {
-    tSets <- list(tSets)
-  }
+  if (!is(tSets, "list")) { tSets <- list(tSets) }
 
-  #### TEMPORARY ERRORS ####
-
-  ####
-
-  #paramErrorChecker("drugTimeResponseCurve",
-  #                  tSets=tSets, durations=duration, cell.line=cellline, doses=doses)
-
-  ## TODO:: Make this function work with multiple tSets
-  ## TODO::  Make this function work with multiple drugs
   # Subsetting the tSets based on parameter arguments
   tSets <- lapply(tSets, function(tSet) {
-    subsetTo(tSet, mDataType = "rna", drugs = drug, duration = duration)
+    subsetTo(tSet, mDataType = "rna", drugs = drug, duration = duration, features=features)
   })
 
   # Extracting the data required for plotting into a list of data.frames
+  # list of tSets < list of mDataTypes <df of plotData
   plotData <- lapply(tSets, function(tSet) {
-    cbind(
-      tSet@sensitivity$raw[,,2][, which(c("Control", "Low", "Middle", "High") %in% dose)],
-      ToxicoGx::sensitivityInfo(tSet)[, c("duration_h", "replicate")]
-    )
+    mDataTypesData <- lapply(mDataTypes, function(mDataType) {
+      profileMatrix <- as.data.frame(molecularProfiles(tSet, mDataType))
+      relevantFeatureInfo <- featureInfo(tSet, mDataType)[, c("Symbol", "gene_id", "gene_biotype", "transcript_name") ]
+      relevantPhenoInfo <- phenoInfo(tSet, mDataType)[, c("samplename", "cellid", "drugid", "concentration", "dose_level", "duration", "species")]
+      data <- cbind(profileMatrix, relevantFeatureInfo)
+      list(data, relevantPhenoInfo)
+    })
+    names(mDataTypesData) <- mDataTypes # Name list items for easy to understand subsetting
+    mDataTypesData
   })
+  names(plotData) <- names(unlist(tSets))
 
   # Extractiing the duration values for each row of plotData
-  times <- lapply(plotData, function(data) {
-    lapply(seq_along(unique(data$replicate)), function(idx) {
-      as.numeric(data$duration_h)[which(data$replicate == idx)]
-    })
-  })
+  times <- lapply(tSets, f)
 
   # Assembling the legend names for each line to be plotted
   legendValues <- lapply(seq_along(plotData), function(d_idx){

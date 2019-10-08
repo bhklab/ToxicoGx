@@ -86,12 +86,12 @@ ToxicoSet <-  function(name,
   annotation$call <- match.call()
 
   #molecularProfiles <- list("dna"=dna, "rna"=rna, "snp"=snp, "cnv"=cnv)
-  for (i in seq_along(molecularProfiles)){
+  for (i in seq_along(molecularProfiles)) {
     if (!is(molecularProfiles[[i]], "ExpressionSet")) {
       stop(sprintf("Please provide the %s data as an ExpressionSet", names(molecularProfiles[i])))
     }else{
-      Biobase::fData(molecularProfiles[[i]]) <- Biobase::fData(molecularProfiles[[i]])[rownames(Biobase::exprs(molecularProfiles[[i]])), , drop=FALSE]
-      Biobase::pData(molecularProfiles[[i]]) <- Biobase::pData(molecularProfiles[[i]])[colnames(Biobase::exprs(molecularProfiles[[i]])), , drop=FALSE]
+      Biobase::fData(molecularProfiles[[i]]) <- Biobase::fData(molecularProfiles[[i]])[rownames(Biobase::exprs(molecularProfiles[[i]])), , drop = FALSE]
+      Biobase::pData(molecularProfiles[[i]]) <- Biobase::pData(molecularProfiles[[i]])[colnames(Biobase::exprs(molecularProfiles[[i]])), , drop = FALSE]
     }
   }
 
@@ -132,6 +132,26 @@ ToxicoSet <-  function(name,
   }
   return(tSet)
 }
+
+## TODO:: Implement this in CoreGx
+#' tSet Name
+#'
+#' Retrieves the name of a tSet
+#'
+#' @examples
+#' names(TGGATESsmall)
+#'
+#' @param tSet [ToxicoSet] A ToxcioSet object
+#'
+#' @return [character] A string of the tSet's name
+#'
+#' @export
+setMethod(names,
+          "ToxicoSet",
+          function(x=tSet) {
+            x@annotation$name
+          })
+
 
 ## TODO:: Find more elegant solution to 'No visibile global function definition'
 tSet <- NULL

@@ -67,6 +67,9 @@ function from base graphics.}
 
 \item{verbose}{[boolean] Should warning messages about the data passed in be printed?}
 
+\item{mDataTypes}{[vector] A vector specifying the molecular data types to
+include in this plot. Defaults to the first mDataType if not specified.}
+
 \item{features}{[character] A vector of feature names to include in the plot.
 Please note that using all features will have a significant computational
 cost. It is recommended to subset to features of interest before plotting.}
