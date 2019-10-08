@@ -11,7 +11,7 @@ drugDoseResponseCurve(drug, cellline, durations, tSets = list(),
   "auc_recomputed", "ic50_recomputed"), ylim = c(0, 100), xlim, mycol,
   title, plot.type = c("Fitted", "Actual", "Both"),
   summarize.replicates = TRUE, lwd = 0.5, cex = 0.5,
-  cex.main = 0.9, legend.loc = "topleft", verbose = TRUE)
+  cex.main = 0.9, legend.loc = "topright", verbose = TRUE)
 }
 \arguments{
 \item{drug}{[string] A drug name for which the drug response curve should be
@@ -73,6 +73,8 @@ are summarized and replicates are plotted individually otherwise}
 \item{legend.loc}{And argument passable to xy.coords for the position to place the legend.}
 
 \item{verbose}{[boolean] Should warning messages about the data passed in be printed?}
+
+\item{reverseAxes}{[bool] If TRUE switch the x and y axis such that the plot is Viability vs Concentration}
 }
 \value{
 Plots to the active graphics device and returns and invisible NULL.
