@@ -335,6 +335,4 @@ drugResponseCurve <-
       }
     }
     legend(legend.loc, legend=legends, col=legends.col, bty="n", cex=cex, pch=c(15,15))
-    ## TODO:: Don't think we need a return statement
-    #return(invisible(NULL))
 }
