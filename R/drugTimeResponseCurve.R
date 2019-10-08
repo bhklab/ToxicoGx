@@ -21,7 +21,7 @@
 #'   of the returned plot.
 #' @param title [character] A string containing the desired plot name. If excluded
 #'   a title wil be generated automatically.
-#' @param legendLoc [character] The location of the legend as passed to the plot()
+#' @param legend.loc [character] The location of the legend as passed to the plot()
 #'   function from base graphics.
 #' @param mycol [vector] A vector of length equal to the lenth of the tSets
 #'   argument specifying which RColorBrewer colour to use per tSet. Default
@@ -29,9 +29,12 @@
 #' @param plot.type [character] The type of plot which you would like returned. Options
 #'   are 'Actual' for unfitted curve, 'Fitted' for the fitted curve and 'Both'
 #'   to display 'Actual and 'Fitted' in the sample plot.
-#'@param summarize.replciates [logical] If true will take the average of all
-#'  replicates at each time point per dose and duration
-#' @param lwd [numeric] The line width to plot with
+#'  @param summarize.replciates [logical] If true will take the average of all
+#'    replicates at each time point per dose and duration
+#' @param x.custom.ticks [vector] A numeric vector of the distance between major
+#'   and minor ticks on the x-axis. If excluded ticks appear only where duration
+#'   values are specified.
+#' @param lwd [numeric] The line width to plot width
 #' @param cex [numeric] The cex parameter passed to plot
 #' @param cex.main [numeric] The cex.main parameter passed to plot, controls the size of the titles
 #' @param legend.loc And argument passable to xy.coords for the position to place the legend.
@@ -58,6 +61,7 @@ drugTimeResponseCurve <- function(
   xlim=c(0, 24),
   ylim=c(0, 100),
   mycol,
+  x.custom.ticks,
   title,
   lwd = 1,
   cex = 0.5,
@@ -74,9 +78,11 @@ drugTimeResponseCurve <- function(
   #paramErrorChecker("drugTimeResponseCurve",
   #                  tSets=tSets, durations=duration, cell.line=cellline, doses=doses)
 
+  ## TODO:: Make this function work with multiple tSets
+  ## TODO::  Make this function work with multiple drugs
   # Subsetting the tSets based on parameter arguments
   tSets <- lapply(tSets, function(tSet) {
-    subsetTo(tSet, mDataType = "rna", drugs=drug, duration=duration)
+    subsetTo(tSet, mDataType = "rna", drugs = drug, duration = duration)
   })
 
   # Extracting the data required for plotting into a list of data.frames
@@ -180,8 +186,13 @@ drugTimeResponseCurve <- function(
   #### DRAWING THE PLOT ####
   plot(NA, xlab = "Time (hr)", ylab = "% Viability", axes = FALSE, main = title, ylim = viability.range, xlim = time.range, cex = cex, cex.main = cex.main)
   # Adds plot axes
-  magicaxis::magaxis(side = 2, frame.plot = TRUE, tcl = -.3, majorn = c(3), minorn = c(2))
-  axis(1, labels = duration, at = as.numeric(duration))
+  if (!is.null(x.custom.ticks)) {
+    magicaxis::magaxis(side = 1:2, frame.plot = TRUE, tcl= -.3, majorn= c(x.custom.ticks[1], 3), minorn = c(x.custom.ticks[2], 2))
+  } else {
+    magicaxis::magaxis(side = 2, frame.plot = TRUE, tcl = -.3, majorn = c(3), minorn = c(2))
+    axis(1, labels = as.numeric(duration), at = as.numeric(duration))
+  }
+
   # Initialize legends variables
   legends <- NULL
   pch.val <- NULL
@@ -209,7 +220,7 @@ drugTimeResponseCurve <- function(
                    "Fitted" = {
                      log_logistic_params <- logLogisticRegression(conc=times[[i]][[replicate]], viability = responses[[i]][[level]][[replicate]])
                      x_vals <- .GetSupportVec(times[[i]][[replicate]])
-                     lines(10 ^ x_vals, ToxicoGx:::.Hill(x_vals, pars=c(log_logistic_params$HS, log_logistic_params$E_inf/100, log10(log_logistic_params$EC50))) * 100 ,lty=replicate, lwd=lwd, col=mycol[j])
+                     lines(10 ^ x_vals, ToxicoGx:::.Hill(x_vals, pars=c(log_logistic_params$HS, log_logistic_params$E_inf/100, log10(log_logistic_params$EC50))) * 100 ,lty = replicate, lwd = lwd, col = mycol[j])
                    },
                    "Both" = {
                      lines(times[[i]][[replicate]],responses[[i]][[level]][[replicate]],lty=replicate, lwd = lwd, col = mycol[j])
@@ -240,15 +251,17 @@ drugTimeResponseCurve <- function(
                lines(times[[i]], responses[[i]][[level]], lty = 1, lwd = lwd, col = mycol[j])
              },
              "Fitted" = {
-               log_logistic_params <- logLogisticRegression(conc = times[[i]], viability=responses[[i]][[level]])
-               x_vals <- .GetSupportVec(times[[i]])
-               lines(10 ^ x_vals, ToxicoGx:::.Hill(x_vals, pars = c(log_logistic_params$HS, log_logistic_params$E_inf/100, log10(log_logistic_params$EC50))) * 100 ,lty=1, lwd=lwd, col=mycol[j])
+               #log_logistic_params <- logLogisticRegression(conc = times[[i]], viability=responses[[i]][[level]])
+               stop("Curve fitting has not been implemented in this function yet. Feature coming soon!")
+               #x_vals <- .GetSupportVec(times[[i]])
+               #lines(10 ^ x_vals, ToxicoGx:::.Hill(x_vals, pars = c(log_logistic_params$HS, log_logistic_params$E_inf/100, log10(log_logistic_params$EC50))) * 100 ,lty=1, lwd=lwd, col=mycol[j])
              },
              "Both" = {
+               warning("Curve fitting has not been implemented in this function yet. Feature coming soon!")
                lines(times[[i]],responses[[i]][[level]],lty=1, lwd = lwd, col = mycol[j])
-               log_logistic_params <- logLogisticRegression(conc = times[[i]], viability = responses[[i]][[level]])
-               x_vals <- .GetSupportVec(times[[i]])
-               lines(10 ^ x_vals, ToxicoGx:::.Hill(x_vals, pars = c(log_logistic_params$HS, log_logistic_params$E_inf/100, log10(log_logistic_params$EC50))) * 100, lty = 1, lwd=lwd, col=mycol[j])
+               #log_logistic_params <- logLogisticRegression(conc = times[[i]], viability = responses[[i]][[level]])
+               #x_vals <- .GetSupportVec(times[[i]])
+               #lines(10 ^ x_vals, ToxicoGx:::.Hill(x_vals, pars = c(log_logistic_params$HS, log_logistic_params$E_inf/100, log10(log_logistic_params$EC50))) * 100, lty = 1, lwd=lwd, col=mycol[j])
              })
       legends <- c(legends, legendValues[[i]][[level]])
       legends.col <- c(legends.col, mycol[j])
