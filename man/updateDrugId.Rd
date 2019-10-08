@@ -7,7 +7,7 @@
 updateDrugId(tSet, new.ids = vector("character"))
 }
 \arguments{
-\item{tSet}{[object] A ToxcioSet object to be updates}
+\item{tSet}{[object] A ToxicoSet object to be updates}
 
 \item{new.ids}{[character] A character vector of ids to update with}
 }

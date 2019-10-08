@@ -20,7 +20,7 @@ Returns nothing, this function works by side effects only
 This function will take in the params of a function as well as its name.
   Error checking will then be conducted on each of it's parameter arguments
   to ensure they meet the input requirements for that function. Descriptive
-  errosr are returned if the the parameters do not meet the criteria for that
+  errors are returned if the the arguements do not meet the criteria for that
   function.
 }
 \keyword{internal}
