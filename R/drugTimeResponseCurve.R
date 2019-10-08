@@ -1,4 +1,4 @@
-#' Compares viabilities at a given dose over different time points
+#' Compares viabilities at a given dose over different experimental duration
 #'
 #' Description of this function
 #'
@@ -71,7 +71,8 @@ drugTimeResponseCurve <- function(
     tSets <- list(tSets)
   }
 
-  # paramErrorChecker()
+  #paramErrorChecker("drugTimeResponseCurve",
+  #                  tSets=tSets, durations=duration, cell.line=cellline, doses=doses)
 
   # Subsetting the tSets based on parameter arguments
   tSets <- lapply(tSets, function(tSet) {
@@ -86,19 +87,19 @@ drugTimeResponseCurve <- function(
     )
   })
 
-  # Assembling the legend names for each line to be plotted
-  legendValues <- lapply(seq_along(plotData), function(d_idx){
-    lapply(dose, function(level) {
-      lapply(seq_along(unique(plotData[[d_idx]]$replicate)), function(r_idx){
-        paste(drug[d_idx], level, r_idx, sep = '_')
-      })
-    })
-  })
-
   # Extractiing the duration values for each row of plotData
   times <- lapply(plotData, function(data) {
     lapply(seq_along(unique(data$replicate)), function(idx) {
       as.numeric(data$duration_h)[which(data$replicate == idx)]
+    })
+  })
+
+  # Assembling the legend names for each line to be plotted
+  legendValues <- lapply(seq_along(plotData), function(d_idx){
+    lapply(dose, function(level) {
+      lapply(seq_along(unique(plotData[[d_idx]]$replicate)), function(r_idx) {
+        paste(drug[d_idx], level, r_idx, sep = '_')
+      })
     })
   })
 
@@ -125,12 +126,16 @@ drugTimeResponseCurve <- function(
         })
   # Take unique values of all time replicates and place into a list
   times <- list(unique(unlist(times)))
+  legendValues <- lapply(legendValues, function(legendLevel) {
+    lapply(legendLevel, function(legendName) {unique(gsub("_[^_]*$", "", unlist(legendName)))})
+    })
+
   }
 
   # Set x and y axis ranges based on time and viability values
   time.range <- c(min(unlist(unlist(times))), max(unlist(unlist(times))))
   viability.range <- c(min(unlist(responses, recursive = TRUE)), max(unlist(responses, recursive=TRUE)))
-  for(i in seq_along(tSets)) {
+  for (i in seq_along(tSets)) {
     ## TODO:: Generalize this to n replicates
     time.range <- c(min(time.range[1], min(unlist(times[[i]], recursive = TRUE), na.rm = TRUE), na.rm = TRUE), max(time.range[2], max(unlist(times[[i]], recursive = TRUE), na.rm = TRUE), na.rm = TRUE))
     viability.range <- c(0, max(viability.range[2], max(unlist(responses[[i]], recursive=TRUE), na.rm=TRUE), na.rm=TRUE))
@@ -138,10 +143,10 @@ drugTimeResponseCurve <- function(
   x1 <- 24; x2 <- 0
 
   ## FINDS INTERSECTION OF RANGES IF MORE THAN ONE tSet PLOTTED
-  if(length(times) > 1) {
+  if (length(times) > 1) {
     common.ranges <- ToxicoGx:::.getCommonConcentrationRange(times)
 
-    for(i in seq_along(times)) {
+    for (i in seq_along(times)) {
       x1 <- min(x1, min(common.ranges[[i]]))
       x2 <- max(x2, max(common.ranges[[i]]))
     }
@@ -241,7 +246,7 @@ drugTimeResponseCurve <- function(
              "Both" = {
                lines(times[[i]],responses[[i]][[level]],lty=1, lwd = lwd, col = mycol[j])
                log_logistic_params <- logLogisticRegression(conc = times[[i]], viability = responses[[i]][[level]])
-               x_vals <- .GetSupportVec(times[[i]][[replicate]])
+               x_vals <- .GetSupportVec(times[[i]])
                lines(10 ^ x_vals, ToxicoGx:::.Hill(x_vals, pars = c(log_logistic_params$HS, log_logistic_params$E_inf/100, log10(log_logistic_params$EC50))) * 100, lty=1, lwd=lwd, col=mycol[j])
              })
       legends <- c(legends, legendValues[[i]][[level]])
