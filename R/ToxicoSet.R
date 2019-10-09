@@ -884,7 +884,7 @@ setMethod("dim", signature=signature(x="ToxicoSet"), function(x){
 #' @return A ToxicoSet with only the selected drugs and cells
 #' @importFrom CoreGx unionList
 #' @export
-subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, duration=NULL, ...) {
+subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, duration=NULL, features=NULL, ...) {
   drop=FALSE
 
   ####
@@ -904,6 +904,7 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
     exps <- NULL
   }
   if ("dose" %in% names(adArgs)) {
+    ## TODO:: Add subsetting on dose
     stop("Due to the structure of tSets, subsetting on dose can only be done on specific slots - not on the entire tSet")
   }
 
@@ -928,6 +929,9 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
     }
   }
 
+  if (!is.null(features)) {
+    features <- unique(features)
+  }
 
   ######
   # SUBSETTING MOLECULAR PROFILES SLOT
@@ -936,7 +940,11 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
 
   ### the function missing does not work as expected in the context below, because the arguments are passed to the anonymous
   ### function in lapply, so it does not recognize them as missing
-  tSet@molecularProfiles <- lapply(tSet@molecularProfiles, function(eset, cells, drugs, molecular.data.cells, duration){
+  tSet@molecularProfiles <- lapply(tSet@molecularProfiles, function(eset, cells, drugs, molecular.data.cells, duration, features){
+
+    if (!is.null(features)) {
+      eset <- eset[which(Biobase::featureNames(eset) %in% features), ]
+    }
 
     molecular.data.type <- ifelse(length(grep("rna", Biobase::annotation(eset)) > 0), "rna", Biobase::annotation(eset))
     if (length(grep(molecular.data.type, names(molecular.data.cells))) > 0) {
@@ -962,8 +970,8 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
 
     # Selecting indexes which match drugs arguement
     drugs_index <- NULL
-    if(tSet@datasetType == "perturbation" || tSet@datasetType == "both"){
-      if(length(drugs) != 0) {
+    if (tSet@datasetType == "perturbation" || tSet@datasetType == "both"){
+      if (length(drugs) != 0) {
         if (!all(drugs %in% drugNames(tSet))){
           stop("Some of the drug names passed to function did not match to names in the ToxicoSet Please ensure you are using drug names as returned by the drugNames function")
         }
@@ -977,10 +985,10 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
       }
       column_indices <- intersect(drugs_index, cell_line_index)
     } else {
-      if( length(drugs_index) != 0) {
+      if (length(drugs_index) != 0) {
         column_indices <- drugs_index
       }
-      if(length(cell_line_index) != 0) {
+      if (length(cell_line_index) != 0) {
         column_indices <- cell_line_index
       }
     }
@@ -1012,7 +1020,7 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
     eset <- eset[row_indices, column_indices]
     return(eset)
 
-  }, cells = cells, drugs = drugs, molecular.data.cells = molecular.data.cells, duration = duration)
+  }, cells = cells, drugs = drugs, molecular.data.cells = molecular.data.cells, duration = duration, features = features)
 
 
   ######

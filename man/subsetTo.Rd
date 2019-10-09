@@ -5,7 +5,7 @@
 \title{A function to subset a ToxicoSet to data containing only specified drugs, cells and genes}
 \usage{
 subsetTo(tSet, cells = NULL, drugs = NULL,
-  molecular.data.cells = NULL, duration = NULL, ...)
+  molecular.data.cells = NULL, duration = NULL, features = NULL, ...)
 }
 \arguments{
 \item{tSet}{A \code{ToxicoSet} to be subsetted}
