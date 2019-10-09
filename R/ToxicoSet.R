@@ -849,6 +849,7 @@ setMethod("dim", signature=signature(x="ToxicoSet"), function(x){
 
 })
 
+#### subsetTo ####
 
 ## FIXED? TODO:: Subset function breaks if it doesnt find cell line in sensitivity info
 #' A function to subset a ToxicoSet to data containing only specified drugs, cells and genes
@@ -906,20 +907,20 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
     stop("Due to the structure of tSets, subsetting on dose can only be done on specific slots - not on the entire tSet")
   }
 
-  if(!missing(cells)){
+  if (!is.null(cells)){
     ## TODO:: Test this function in a tSet with more than one cell type!
     cells <- unique(cells)
   }
 
-  if(!missing(drugs)){
+  if (!is.null(drugs)) {
     drugs <- unique(drugs)
   }
 
-  if (!missing(molecular.data.cells)){
+  if (!is.null(molecular.data.cells)) {
     molecular.data.cells <- unique(molecular.data.cells)
   }
 
-  if (!missing(duration)) {
+  if (!is.null(duration)) {
     duration <- unique(duration)
     if (is.numeric(duration)) {
       warning("Duration values should be character, not numeric! Converting for you...")
@@ -961,7 +962,7 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
 
     # Selecting indexes which match drugs arguement
     drugs_index <- NULL
-    if(tSet@datasetType=="perturbation" || tSet@datasetType=="both"){
+    if(tSet@datasetType == "perturbation" || tSet@datasetType == "both"){
       if(length(drugs) != 0) {
         if (!all(drugs %in% drugNames(tSet))){
           stop("Some of the drug names passed to function did not match to names in the ToxicoSet Please ensure you are using drug names as returned by the drugNames function")
@@ -970,26 +971,26 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
       }
     }
 
-    if(length(drugs_index) != 0 && length(cell_line_index) != 0) {
-      if(length(intersect(drugs_index, cell_line_index)) == 0) {
+    if (length(drugs_index) != 0 && length(cell_line_index) != 0) {
+      if (length(intersect(drugs_index, cell_line_index)) == 0) {
         stop("This Drug - Cell Line combination was not tested together.")
       }
       column_indices <- intersect(drugs_index, cell_line_index)
     } else {
-      if(length(drugs_index) !=0) {
+      if( length(drugs_index) != 0) {
         column_indices <- drugs_index
       }
-      if(length(cell_line_index) !=0) {
+      if(length(cell_line_index) != 0) {
         column_indices <- cell_line_index
       }
     }
 
     # LOGIC TO SUBSET BASED ON DURATION
     ## TODO:: Determine if this works for other eSet data types
-    if(!is.null(duration)){
-      if(all(!(duration %in% unique(Biobase::pData(eset[,column_indices])$duration)))) {
+    if (!is.null(duration)){
+      if (all(!(duration %in% unique(Biobase::pData(eset[,column_indices])$duration)))) {
         # Error when other parameters are passed in
-        if(!is.null(cells) | !is.null(drugs) | !is.null(molecular.data.cells)) {
+        if ( !is.null(cells) | !is.null(drugs) | !is.null(molecular.data.cells)) {
           stop(paste0(
             "There are no molecular profiles with duration of ",
             duration, " in the tSet with the selected parameters."
@@ -1011,17 +1012,17 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
     eset <- eset[row_indices, column_indices]
     return(eset)
 
-  }, cells=cells, drugs=drugs, molecular.data.cells=molecular.data.cells, duration=duration)
+  }, cells = cells, drugs = drugs, molecular.data.cells = molecular.data.cells, duration = duration)
 
 
   ######
-  # SUBSET SENSITIVTY SLOT
+  # SUBSET SENSITIVITY SLOT
   ######
-  # Logic is any "..." arguments are passed to subsetTo
+  # Logic if any "..." arguments are passed to subsetTo
   if ((tSet@datasetType == "sensitivity" | tSet@datasetType == "both") & length(exps) != 0) {
     tSet@sensitivity$info <- tSet@sensitivity$info[exps, , drop=drop]
     rownames(tSet@sensitivity$info) <- names(exps)
-    if(length(tSet@sensitivity$raw) > 0) {
+    if (length(tSet@sensitivity$raw) > 0) {
       tSet@sensitivity$raw <- tSet@sensitivity$raw[exps, , , drop=drop]
       dimnames(tSet@sensitivity$raw)[[1]] <- names(exps)
     }
@@ -1031,7 +1032,6 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
     tSet@sensitivity$n <- .summarizeSensitivityNumbers(tSet)
   }
   # Logic if drug or cell parameters are passed to subsetTo
-  ## TODO:: Can we simplify this logic with sequential subsetting... avoid all the if conditions
   else if (
     (tSet@datasetType == "sensitivity" | tSet@datasetType == "both") &
     (length(drugs) != 0 | length(cells) != 0 | !is.null(duration) )
@@ -1073,25 +1073,37 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
           ))
         }
       }
-      row_indices <- which(sensitivityInfo(tSet)[row_indices,]$duration_h %in% duration)
+      duration_indices <- which(sensitivityInfo(tSet)$duration_h %in% duration)
+      row_indices <- intersect(row_indices, duration_indices)
     }
-    tSet@sensitivity[names(tSet@sensitivity)[names(tSet@sensitivity)!="n"]] <-
-      lapply(tSet@sensitivity[names(tSet@sensitivity)[names(tSet@sensitivity)!="n"]], function(x,i, drop){
-        if (length(dim(x))==2){
-          return(x[i,,drop=drop])
+    sensItemNames <- names(tSet@sensitivity)
+    sensitivityVals <-
+      lapply(sensItemNames, function(sensItemName, drop){
+        if (sensItemName == "n") {
+          sensItem <- tSet@sensitivity[[sensItemName]]
+          if (!is.null(cells)) {
+            sensItem[which(rownames(sensItem) %in% cells), which(colnames(sensItem) %in% drugs), drop = drop]
+          } else {
+            sensItem[ , which(colnames(sensItem) %in% drugs), drop = drop]
+          }
+        } else {
+          sensItem <- tSet@sensitivity[[sensItemName]]
+          if (length(dim(sensItem)) == 3) {
+            sensItem[row_indices, , , drop = drop]
+          } else {
+            sensItem[row_indices, , drop = drop]
+          }
         }
-          return(x[i,,,drop=drop])
-        if (length(dim(x))==3){
-        }
-      }, i=row_indices, drop=drop)
+      }, drop = drop)
+    names(sensitivityVals) <- sensItemNames
+    tSet@sensitivity <- sensitivityVals
   }
-
 
   #####
   # SUBSET DRUG SLOT
   #####
-  if (length(drugs)==0) {
-    if(tSet@datasetType == "sensitivity" | tSet@datasetType == "both"){
+  if (length(drugs) == 0) {
+    if (tSet@datasetType == "sensitivity" | tSet@datasetType == "both"){
       drugs <- unique(sensitivityInfo(tSet)[["drugid"]])
     }
     if(tSet@datasetType == "perturbation" | tSet@datasetType == "both"){
@@ -1101,9 +1113,9 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
   #####
   # SUBSET CELLS SLOT
   #####
-  if (length(cells)==0) {
+  if (length(cells) == 0) {
     cells <- union(cells, na.omit(unionList(lapply(tSet@molecularProfiles, function(eSet){unique(Biobase::pData(eSet)[["cellid"]])}))))
-    if (tSet@datasetType =="sensitivity" | tSet@datasetType == "both"){
+    if (tSet@datasetType == "sensitivity" | tSet@datasetType == "both"){
       cells <- union(cells, sensitivityInfo(tSet)[["cellid"]])
     }
   }
@@ -1115,18 +1127,17 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
   tSet@curation$drug <- tSet@curation$drug[drugs , , drop=drop]
   tSet@curation$cell <- tSet@curation$cell[cells , , drop=drop]
   tSet@curation$tissue <- tSet@curation$tissue[cells , , drop=drop]
-  if (tSet@datasetType == "sensitivity" | tSet@datasetType == "both"  & length(exps) == 0) {
-    tSet@sensitivity$n <- tSet@sensitivity$n[cells, drugs , drop=drop]
-  }
-  if (tSet@datasetType == "perturbation" | tSet@datasetType == "both") {
-    tSet@perturbation$n <- tSet@perturbation$n[cells,drugs, , drop=drop]
-  }
   return(tSet)
 }
 
 #
 # END SUBSET TO FUNCTION
 #
+
+
+
+
+
 
 
 ### TODO:: Add updating of sensitivity Number tables
@@ -1298,10 +1309,10 @@ updateDrugId <- function(tSet, new.ids = vector("character")){
   if(any(duplicated(new.ids))){
     warning("Duplicated ids passed to updateDrugId. Merging old ids into the same identifier")
 
-    if(ncol(sensNumber(tSet))>0){
+    if(ncol(sensNumber(tSet)) > 0){
       sensMatch <- match(colnames(sensNumber(tSet)), rownames(drugInfo(tSet)))
     }
-    if(dim(pertNumber(tSet))[[2]]>0){
+    if(dim(pertNumber(tSet))[[2]] > 0){
       pertMatch <- match(dimnames(pertNumber(tSet))[[2]], rownames(drugInfo(tSet)))
     }
     curMatch <- match(rownames(tSet@curation$drug),rownames(drugInfo(tSet)))
@@ -1479,8 +1490,8 @@ checkTSetStructure <-
       } else {
         message("unique.tissueid which is curated tissue id across data set should be a column of tissue curation slot")
       }
-      if(any(is.na(tSet@cell[,"tissueid"]) | tSet@cell[,"tissueid"]=="", na.rm=TRUE)){
-        message(sprintf("There is no tissue type for this cell line(s): %s", paste(rownames(tSet@cell)[which(is.na(tSet@cell[,"tissueid"]) | tSet@cell[,"tissueid"]=="")], collapse=" ")))
+      if(any(is.na(tSet@cell[,"tissueid"]) | tSet@cell[,"tissueid"] == "", na.rm = TRUE)) {
+        message(sprintf("There is no tissue type for this cell line(s): %s", paste(rownames(tSet@cell)[which(is.na(tSet@cell[,"tissueid"]) | tSet@cell[,"tissueid"] == "")], collapse = " ")))
       }
     } else {
       warning("tissueid does not exist in cell slot")
