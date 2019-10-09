@@ -124,8 +124,8 @@ drugTimeResponseCurve <- function(
         lapply(seq_along(dose), function(d_idx) {
             responseVals <- NULL
             responseVect <- unlist(responses[[t_idx]][[d_idx]])
-            for (time in seq_along(unique(duration))) {
-              responseVals <- c(responseVals, mean(responseVect[time], responseVect[time + length(unique(duration))]))
+            for (time in seq_along(unique(unlist(times[[t_idx]])))) {
+              responseVals <- c(responseVals, mean(responseVect[time], responseVect[time + length(unique(unlist(times[[t_idx]])))]))
             }
             responseVals
           })
