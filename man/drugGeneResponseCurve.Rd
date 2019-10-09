@@ -5,11 +5,12 @@
 \title{Compares gene expression for a specificed set of features over specific
   drug dosages}
 \usage{
-drugGeneResponseCurve(tSets, duration, cellline, mDataTypes, features,
-  dose, drug, plot.type = "Actual", summarize.replicates = TRUE,
-  viability_as_pct = TRUE, xlim = c(0, 24), ylim = c(0, 100), mycol,
-  x.custom.ticks = NULL, title, lwd = 1, cex = 0.5, cex.main = 0.9,
-  legend.loc = "topleft", verbose = TRUE)
+drugGeneResponseCurve(tSets, duration, cellline, mDataTypes,
+  features = NULL, dose, drug, plot.type = "Actual",
+  summarize.replicates = TRUE, viability_as_pct = TRUE, xlim = c(0,
+  24), ylim = c(0, 100), mycol, x.custom.ticks = NULL, title,
+  lwd = 1, cex = 0.5, cex.main = 0.9, legend.loc = "topleft",
+  verbose = TRUE)
 }
 \arguments{
 \item{tSets}{[ToxicoSet] A ToxicoSet or list of ToxicoSets to be plotted in

@@ -11,7 +11,7 @@
 #' @param dose [character] A vector of dose levels to be included in the
 #'   plot. Default to include all dose levels available for a drug. Must include
 #'   at minimum two dose levels, one of witch is "Control".
-#' @param mDataTypes [vector] A vector specifying the molecular data types to
+#' @param mDataType [vector] A vector specifying the molecular data types to
 #'   include in this plot. Defaults to the first mDataType if not specified.
 #' @param features [character] A vector of feature names to include in the plot.
 #'   Please note that using all features will have a significant computational
@@ -60,7 +60,7 @@ drugGeneResponseCurve <- function(
   duration,
   cellline,
   mDataTypes,
-  features,
+  features = NULL,
   dose,
   drug,
   plot.type="Actual",
@@ -81,16 +81,21 @@ drugGeneResponseCurve <- function(
   # Place tSets in a list if not already
   if (!is(tSets, "list")) { tSets <- list(tSets) }
 
+  ## TODO:: Generalize this to work with multiple data types
+  if (missing(mDataTypes)) { mDataTypes <- names(tSets[[1]]@molecularProfiles) }
+
   # Subsetting the tSets based on parameter arguments
   tSets <- lapply(tSets, function(tSet) {
-    subsetTo(tSet, mDataType = "rna", drugs = drug, duration = duration, features = features)
+    #if (is.null(features)) { features <- lapply(mDataTypes, function(mDataType) { featureInfo(tSet, mDataType)$gene_id }) }
+    if (is.null(features)) { features <- rownames(featureInfo(tSet, "rna")) }
+    ToxicoGx::subsetTo(tSet, mDataType = mDataTypes, drugs = drug, duration = duration, features = features)
   })
 
   # Extracting the data required for plotting into a list of data.frames
   # list of tSets < list of mDataTypes <df of plotData
   plotData <- lapply(tSets, function(tSet) {
     mDataTypesData <- lapply(mDataTypes, function(mDataType) {
-      profileMatrix <- as.data.frame(molecularProfiles(tSet, mDataType)) # Sensitivity
+      profileMatrix <- molecularProfiles(tSet, mDataType) # Sensitivity
       relevantFeatureInfo <- featureInfo(tSet, mDataType)[, c("Symbol", "gene_id", "gene_biotype", "transcript_name") ]
       relevantPhenoInfo <- phenoInfo(tSet, mDataType)[, c("samplename", "cellid", "drugid", "concentration", "dose_level", "duration", "species")]
       data <- list(profileMatrix, relevantFeatureInfo, relevantPhenoInfo)
@@ -103,10 +108,13 @@ drugGeneResponseCurve <- function(
   names(plotData) <- vapply(tSets, names, FUN.VALUE = character(length(tSets)))
 
   # Extractiing the duration values for each row of plotData
-  times <- lapply(tSets, function(tSet) {
-
+  times <- lapply(plotData, function(tSetData) {
+    lapply(mDataTypes, function(mDataType) {
+      lapply(unique(tSetData[[mDataType]]$dose_level), function(dose){
+        unique(tSetData[[mDataType]][[duration]])
+      })
+    })
   })
-
 
   # Assembling the legend names for each line to be plotted
   legendValues <- lapply(seq_along(plotData), function(d_idx){
@@ -118,7 +126,7 @@ drugGeneResponseCurve <- function(
   })
 
   # Extracting the viability values for each row of plotData
-  responses <- lapply(plotData, function(data) {
+  expression <- lapply(plotData, function(data) {
     lapply(dose, function(level) {
       lapply(seq_along(unique(data$replicate)), function(idx) {
         as.vector(data[ , which(c("Control", "Low", "Middle", "High") %in% level)])[which(data$replicate == idx)]
