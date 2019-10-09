@@ -93,16 +93,17 @@ drugGeneResponseCurve <- function(
       profileMatrix <- as.data.frame(molecularProfiles(tSet, mDataType))
       relevantFeatureInfo <- featureInfo(tSet, mDataType)[, c("Symbol", "gene_id", "gene_biotype", "transcript_name") ]
       relevantPhenoInfo <- phenoInfo(tSet, mDataType)[, c("samplename", "cellid", "drugid", "concentration", "dose_level", "duration", "species")]
-      data <- cbind(profileMatrix, relevantFeatureInfo)
-      list(data, relevantPhenoInfo)
+      data <- list(cbind(profileMatrix, relevantFeatureInfo), relevantPhenoInfo)
+      names(data) <- "sampleData"
+      data
     })
     names(mDataTypesData) <- mDataTypes # Name list items for easy to understand subsetting
     mDataTypesData
   })
-  names(plotData) <- names(unlist(tSets))
+  names(plotData) <- vapply(tSets, names, FUN.VALUE = character(length(tSets)))
 
   # Extractiing the duration values for each row of plotData
-  times <- lapply(tSets, f)
+  times <- NULL#lapply(tSets, f)
 
   # Assembling the legend names for each line to be plotted
   legendValues <- lapply(seq_along(plotData), function(d_idx){

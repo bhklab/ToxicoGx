@@ -61,7 +61,7 @@ drugTimeResponseCurve <- function(
   xlim=c(0, 24),
   ylim=c(0, 100),
   mycol,
-  x.custom.ticks,
+  x.custom.ticks = NULL,
   title,
   lwd = 1,
   cex = 0.5,
