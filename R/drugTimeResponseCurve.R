@@ -79,7 +79,9 @@ drugTimeResponseCurve <- function(
   #                  tSets=tSets, durations=duration, cell.line=cellline, doses=doses)
 
   ## TODO:: Make this function work with multiple tSets
-  ## TODO::  Make this function work with multiple drugs
+  ## TODO:: Make this function work with multiple drugs
+  ## TODO:: Throw warning if a dose level or time point is not available for a specific drug
+  ## TODO:: Add logic to handle viability_as_pct = FALSE
   # Subsetting the tSets based on parameter arguments
   tSets <- lapply(tSets, function(tSet) {
     subsetTo(tSet, mDataType = "rna", drugs = drug, duration = duration)

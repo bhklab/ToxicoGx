@@ -83,18 +83,18 @@ drugGeneResponseCurve <- function(
 
   # Subsetting the tSets based on parameter arguments
   tSets <- lapply(tSets, function(tSet) {
-    subsetTo(tSet, mDataType = "rna", drugs = drug, duration = duration, features=features)
+    subsetTo(tSet, mDataType = "rna", drugs = drug, duration = duration, features = features)
   })
 
   # Extracting the data required for plotting into a list of data.frames
   # list of tSets < list of mDataTypes <df of plotData
   plotData <- lapply(tSets, function(tSet) {
     mDataTypesData <- lapply(mDataTypes, function(mDataType) {
-      profileMatrix <- as.data.frame(molecularProfiles(tSet, mDataType))
+      profileMatrix <- as.data.frame(molecularProfiles(tSet, mDataType)) # Sensitivity
       relevantFeatureInfo <- featureInfo(tSet, mDataType)[, c("Symbol", "gene_id", "gene_biotype", "transcript_name") ]
       relevantPhenoInfo <- phenoInfo(tSet, mDataType)[, c("samplename", "cellid", "drugid", "concentration", "dose_level", "duration", "species")]
-      data <- list(cbind(profileMatrix, relevantFeatureInfo), relevantPhenoInfo)
-      names(data) <- "sampleData"
+      data <- list(profileMatrix, relevantFeatureInfo, relevantPhenoInfo)
+      names(data) <- c("data", "featureInfo", "phenoInfo")
       data
     })
     names(mDataTypesData) <- mDataTypes # Name list items for easy to understand subsetting
@@ -103,7 +103,10 @@ drugGeneResponseCurve <- function(
   names(plotData) <- vapply(tSets, names, FUN.VALUE = character(length(tSets)))
 
   # Extractiing the duration values for each row of plotData
-  times <- NULL#lapply(tSets, f)
+  times <- lapply(tSets, function(tSet) {
+
+  })
+
 
   # Assembling the legend names for each line to be plotted
   legendValues <- lapply(seq_along(plotData), function(d_idx){
