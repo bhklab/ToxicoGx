@@ -6,13 +6,14 @@
 #' @examples
 #' ToxicoGx:::drugGeneResponseCurve(TGGATESsmall, dose = c("Control", "Low", "Middle"), drug = "naphthyl isothiocyanate", duration = c("2", "8", "24"))
 #'
-#' @param tSets [ToxicoSet] A ToxicoSet or list of ToxicoSets to be plotted in
-#'   this graph.
+#' @param tSets [ToxicoSet] A ToxicoSet to be plotted in this graph.
 #' @param dose [character] A vector of dose levels to be included in the
 #'   plot. Default to include all dose levels available for a drug. Must include
 #'   at minimum two dose levels, one of witch is "Control".
 #' @param mDataType [vector] A vector specifying the molecular data types to
 #'   include in this plot. Defaults to the first mDataType if not specified.
+#'   This release version only accepts one mDataType, more to be added in
+#'   forthcoming versions.
 #' @param features [character] A vector of feature names to include in the plot.
 #'   Please note that using all features will have a significant computational
 #'   cost. It is recommended to subset to features of interest before plotting.
@@ -41,7 +42,7 @@
 #' @param lwd [numeric] The line width to plot width
 #' @param cex [numeric] The cex parameter passed to plot
 #' @param cex.main [numeric] The cex.main parameter passed to plot, controls the size of the titles
-#' @param legend.loc And argument passable to xy.coords for the position to place the legend.
+#' @param legend.loc An argument passable to xy.coords for the position to place the legend.
 #' @param trunc [bool] Should the viability values be truncated to lie in [0-100] before doing the fitting
 #' @param verbose [boolean] Should warning messages about the data passed in be printed?
 #'
@@ -69,16 +70,18 @@ drugGeneResponseCurve <- function(
   x.custom.ticks = NULL,
   title,
   lwd = 1,
-  cex = 0.5,
-  cex.main = 0.9,
-  legend.loc = "topleft",
+  cex = 0.7,
+  cex.main = 1.0,
+  legend.loc = "topright",
   verbose=TRUE
 ) {
 
   # Place tSets in a list if not already
   if (!is(tSets, "list")) { tSets <- list(tSets) }
 
-  if (length(drug) > 1) { stop("This function currently only supports one drug per plot!")}
+  if (length(drug) > 1) { stop("This function currently only supports one drug per plot...")}
+  if (length(mDataTypes) > 1) {stop("This function currently only supports one molecular data type per plot...")}
+  if (length(features) > 1) {warning("Multiple feature support has not yet been added to this package...")}
 
   ## TODO:: Generalize this to work with multiple data types
   if (missing(mDataTypes)) { mDataTypes <- names(tSets[[1]]@molecularProfiles) }
@@ -92,7 +95,8 @@ drugGeneResponseCurve <- function(
   # Subsetting the tSets based on parameter arguments
   tSets <- lapply(tSets, function(tSet) {
     #if (is.null(features)) { features <- lapply(mDataTypes, function(mDataType) { featureInfo(tSet, mDataType)$gene_id }) }
-    ToxicoGx::subsetTo(tSet, mDataType = mDataTypes, drugs = drug, duration = duration, features = unique(unlist(features)))
+    ToxicoGx::subsetTo(tSet, mDataType = mDataTypes, drugs = drug,
+                       duration = duration, features = unique(unlist(features)))
   })
 
   # Extracting the data required for plotting into a list of data.frames
@@ -100,7 +104,7 @@ drugGeneResponseCurve <- function(
   plotData <- lapply(tSets, function(tSet) {
     mDataTypesData <- lapply(mDataTypes, function(mDataType) {
       profileMatrix <- molecularProfiles(tSet, mDataType) # Sensitivity
-      relevantFeatureInfo <- featureInfo(tSet, mDataType)[, c("gene_id", "gene_biotype", "transcript_name") ]
+      relevantFeatureInfo <- featureInfo(tSet, mDataType)[, c("gene_id", "transcript_name") ]
       relevantPhenoInfo <- phenoInfo(tSet, mDataType)[, c("samplename", "cellid", "drugid", "concentration", "dose_level", "duration", "species", "individual_id")]
       relevantSensitivityInfo <- ToxicoGx::sensitivityInfo(tSet)[, c("drugid", "duration_h", "replicate", "Control", "Low", "Middle", "High") ]
       data <- list(profileMatrix, relevantFeatureInfo, relevantPhenoInfo, relevantSensitivityInfo)
@@ -132,12 +136,11 @@ drugGeneResponseCurve <- function(
         replicateLegends <- lapply(unique(tSetData[[mDataType]]$sensitivityInfo$replicate), function(rep){
           legendValues <- vapply(tSetData[[mDataType]]$featureInfo$gene_id, function(feature) {
             paste(
-              ## TODO:: Add tSet name to legend values
-              ## TODO:: Add species to legend values #tSetData[[mDataType]]$phenoInfo[sample, ]$species,
               doseLvl,
-              paste(tSetData[[mDataType]]$featureInfo[feature, ], collapse = "/"),
+              paste(gsub("_at", "", tSetData[[mDataType]]$featureInfo[feature, "gene_id"])),
+              paste(gsub("-.*", "", tSetData[[mDataType]]$featureInfo[feature, "transcript_name"])),
               rep,
-              sep = "/" )
+              sep = "_" )
           }, FUN.VALUE = character(1))
           names(legendValues) <- unique(unlist(features)); legendValues
         })

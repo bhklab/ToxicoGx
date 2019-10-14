@@ -2,7 +2,7 @@ Package: ToxicoGx
 Type: Package
 Title: Analysis of Large-Scale Toxicogenomic Data 
 Version: 0.0.1
-Date: 2019-09-03
+Date: 2019-10-14
 Authors@R: c(
   person("Petr","Smirnov", email = "petr.smirnov@uhnresearch.ca", 
     role = c("aut")),
