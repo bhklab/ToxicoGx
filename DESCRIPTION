@@ -37,9 +37,6 @@ Imports:
     magicaxis, 
     methods, 
     reshape2, 
-    KernSmooth,
-    cluster,
-    Matrix,
     scales
 RoxygenNote: 6.1.1
 VignetteBuilder: knitr
