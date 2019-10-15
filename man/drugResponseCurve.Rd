@@ -61,7 +61,7 @@ missed default colors from Rcolorbrewer package will be used as curves color.}
 the one fitted by logl logistic regression ("Fitted") or both of them ("Both").
 If this parameter is missed by default actual curve is plotted.}
 
-\item{summarize.replicates}{[logical] If this parameter is set to true replicates
+\item{summarize.replicates}{[character] If this parameter is set to true replicates
 are summarized and replicates are plotted individually otherwise}
 
 \item{lwd}{[numeric] The line width to plot with}

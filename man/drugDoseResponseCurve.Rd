@@ -61,7 +61,7 @@ missed default colors from Rcolorbrewer package will be used as curves color.}
 the one fitted by logl logistic regression ("Fitted") or both of them ("Both").
 If this parameter is missed by default actual curve is plotted.}
 
-\item{summarize.replicates}{[logical] If this parameter is set to true replicates
+\item{summarize.replicates}{[character] If this parameter is set to true replicates
 are summarized and replicates are plotted individually otherwise}
 
 \item{lwd}{[numeric] The line width to plot with}
@@ -73,6 +73,8 @@ are summarized and replicates are plotted individually otherwise}
 \item{legend.loc}{And argument passable to xy.coords for the position to place the legend.}
 
 \item{verbose}{[boolean] Should warning messages about the data passed in be printed?}
+
+\item{reverseAxes}{[bool] If TRUE switch the x and y axis such that the plot is Viability vs Concentration}
 }
 \value{
 Plots to the active graphics device and returns and invisible NULL.

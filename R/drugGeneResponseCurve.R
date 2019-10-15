@@ -1,33 +1,25 @@
 #' Compares gene expression for a specificed set of features over specific
-#'   drug dosages vs time
+#'   drug dosages
 #'
-#' This function generates a plot visualizing the relationship between gene
-#'   expression, time and dose level for the selected tSet.
+#' Description of this function
 #'
 #' @examples
+#' ToxicoGx:::drugGeneResponseCurve(TGGATESsmall, dose = c("Control", "Low", "Middle"), drug = "naphthyl isothiocyanate", duration = c("2", "8", "24"))
 #'
-#' if (interactive()) {
-#' drugGeneResponseCurve(TGGATESsmall, dose = c("Control", "Low", "Middle"),
-#'   mDataTypes="rna", drug = "naphthyl isothiocyanate",
-#'   duration = c("2", "8", "24"), features = "ENSG00000000003_at")
-#' }
-#'
-#' @param tSets [ToxicoSet] A ToxicoSet to be plotted in this graph. Currently
-#'   only a single tSet is supported, passing more may results in errors.
+#' @param tSets [ToxicoSet] A ToxicoSet to be plotted in this graph.
 #' @param dose [character] A vector of dose levels to be included in the
 #'   plot. Default to include all dose levels available for a drug. Must include
-#'   at minimum two dose levels, one of which must be "Control".
-#' @param mDataTypes [vector] A vector specifying the molecular data types to
+#'   at minimum two dose levels, one of witch is "Control".
+#' @param mDataType [vector] A vector specifying the molecular data types to
 #'   include in this plot. Defaults to the first mDataType if not specified.
 #'   This release version only accepts one mDataType, more to be added in
-#'   forthcoming releases.
+#'   forthcoming versions.
 #' @param features [character] A vector of feature names to include in the plot.
-#'   Please note that using too many features will have a significant computational
-#'   cost and will likely result in a over crowded plot.
-#' @param drug [character] A vector of drugs to be included in this plot. In
-#'   this release, only one drug is supported.
+#'   Please note that using all features will have a significant computational
+#'   cost. It is recommended to subset to features of interest before plotting.
+#' @param drug [character] A vector of drugs to be included in this plot.
 #' @param duration [character] A vector of durations to include in the plot.
-#' @param cellline [character] A vector of cell lines to include in the plot.
+#' @param cellLine [character] A vector of cell lines to include in the plot.
 #' @param xlim [numeric] A vector of minimum and maximum values for the x-axis
 #'   of the returned plot.
 #' @param ylim [numeric] A vector of minimum and miximum values for the y-axis
@@ -35,30 +27,24 @@
 #' @param title [character] A string containing the desired plot name. If excluded
 #'   a title wil be generated automatically.
 #' @param legend.loc [character] The location of the legend as passed to the plot()
-#'   function from base graphics. Suggested values are either "topleft" or
-#'   "topright", with the latter as the default.
+#'   function from base graphics.
 #' @param mycol [vector] A vector of length equal to the lenth of the tSets
 #'   argument specifying which RColorBrewer colour to use per tSet. Default
 #'   colours will be used if this parameter is excluded.
 #' @param plot.type [character] The type of plot which you would like returned. Options
 #'   are 'Actual' for unfitted curve, 'Fitted' for the fitted curve and 'Both'
-#'   to display 'Actual and 'Fitted' in the sample plot. Currently this function
-#'   only supports 'Actual'.
-#' @param summarize.replicates [logical] If true will take the average of all
-#'  replicates at each time point per gene and duration. This release has not
-#'  yet implemented this feature.
+#'   to display 'Actual and 'Fitted' in the sample plot.
+#'  @param summarize.replciates [logical] If true will take the average of all
+#'    replicates at each time point per dose and duration
 #' @param x.custom.ticks [vector] A numeric vector of the distance between major
 #'   and minor ticks on the x-axis. If excluded ticks appear only where duration
 #'   values are specified.
 #' @param lwd [numeric] The line width to plot width
-#' @param cex [numeric] The cex parameter passed to plot. Controls the size of
-#'   plot points and the font size of the legend and defaults to 0.7.
-#' @param cex.main [numeric] The cex.main parameter passed to plot,
-#'   controls the size of the titles and defaults to 1.0.
-# @param trunc [bool] Should the viability values be truncated to lie in
-#   [0-100] before doing the fitting
-#' @param verbose [boolean] Should warning messages about the data passed
-#'   in be printed?
+#' @param cex [numeric] The cex parameter passed to plot
+#' @param cex.main [numeric] The cex.main parameter passed to plot, controls the size of the titles
+#' @param legend.loc An argument passable to xy.coords for the position to place the legend.
+#' @param trunc [bool] Should the viability values be truncated to lie in [0-100] before doing the fitting
+#' @param verbose [boolean] Should warning messages about the data passed in be printed?
 #'
 #' @return Plot of the viabilities for each drug vs time of exposure
 #'
@@ -83,7 +69,7 @@ drugGeneResponseCurve <- function(
   mycol,
   x.custom.ticks = NULL,
   title,
-  lwd = 1.5,
+  lwd = 1,
   cex = 0.7,
   cex.main = 1.0,
   legend.loc = "topright",
@@ -93,10 +79,9 @@ drugGeneResponseCurve <- function(
   # Place tSets in a list if not already
   if (!is(tSets, "list")) { tSets <- list(tSets) }
 
-  if (length(tSets) > 1) { warning("Multiple tSet plotting has not been tested in this release...")}
   if (length(drug) > 1) { stop("This function currently only supports one drug per plot...")}
   if (length(mDataTypes) > 1) {stop("This function currently only supports one molecular data type per plot...")}
-  if (length(features) > 1) {warning("Plot scaling for multiple features has not yet been implemented for this release...")}
+  if (length(features) > 1) {warning("Multiple feature support has not yet been added to this package...")}
 
   ## TODO:: Generalize this to work with multiple data types
   if (missing(mDataTypes)) { mDataTypes <- names(tSets[[1]]@molecularProfiles) }
@@ -106,9 +91,6 @@ drugGeneResponseCurve <- function(
       rownames(featureInfo(tSet, "rna"))[seq_len(5)]
     })
   }
-
-  # Places features in list if not already
-  if (!is(features, "list")) { features <- list(features) }
 
   # Subsetting the tSets based on parameter arguments
   tSets <- lapply(tSets, function(tSet) {
@@ -228,7 +210,7 @@ drugGeneResponseCurve <- function(
 
   ## FINDS INTERSECTION OF RANGES IF MORE THAN ONE tSet PLOTTED
   if (length(times) > 1) {
-    common.ranges <- .getCommonConcentrationRange(times)
+    common.ranges <- ToxicoGx:::.getCommonConcentrationRange(times)
 
     for (i in seq_along(times)) {
       x1 <- min(x1, min(common.ranges[[i]]))
@@ -301,13 +283,13 @@ drugGeneResponseCurve <- function(
                      "Fitted" = {
                        #log_logistic_params <- logLogisticRegression(conc=times[[i]][[replicate]], expression = expression[[i]][[level]][[replicate]])
                        #x_vals <- .GetSupportVec(times[[i]][[replicate]])
-                       #lines(10 ^ x_vals, .Hill(x_vals, pars=c(log_logistic_params$HS, log_logistic_params$E_inf/100, log10(log_logistic_params$EC50))) * 100 ,lty = replicate, lwd = lwd, col = mycol[j])
+                       #lines(10 ^ x_vals, ToxicoGx:::.Hill(x_vals, pars=c(log_logistic_params$HS, log_logistic_params$E_inf/100, log10(log_logistic_params$EC50))) * 100 ,lty = replicate, lwd = lwd, col = mycol[j])
                      },
                      "Both" = {
                        lines(times[[i]][[mDataType]][[level]], expression[[i]][[mDataType]][[level]][[replicate]][[feature]], lty = replicate, lwd = lwd, col = mycol[j])
                        #log_logistic_params <- logLogisticRegression(conc = times[[i]][[replicate]], expression = expression[[i]][[level]][[replicate]])
                        #x_vals <- .GetSupportVec(times[[i]][[replicate]])
-                       #lines(10 ^ x_vals, .Hill(x_vals, pars = c(log_logistic_params$HS, log_logistic_params$E_inf/100, log10(log_logistic_params$EC50))) * 100, lty=replicate, lwd=lwd, col=mycol[j])
+                       #lines(10 ^ x_vals, ToxicoGx:::.Hill(x_vals, pars = c(log_logistic_params$HS, log_logistic_params$E_inf/100, log10(log_logistic_params$EC50))) * 100, lty=replicate, lwd=lwd, col=mycol[j])
                      })
               legends <- c(legends, legendValues[[i]][[mDataType]][[level]][[replicate]][feature])
               legends.col <- c(legends.col, mycol[j])
@@ -320,7 +302,6 @@ drugGeneResponseCurve <- function(
     }
   } else {
     # Loop over tSets
-    stop("Summarized replicates has net been implemented in this package yet.")
     for (i in seq_along(times)) {
       j <- 1
       for (mDataType in seq_along(mDataTypes)) {
@@ -339,14 +320,14 @@ drugGeneResponseCurve <- function(
                    #log_logistic_params <- logLogisticRegression(conc = times[[i]], expression=expression[[i]][[level]])
                    stop("Curve fitting has not been implemented in this function yet. Feature coming soon!")
                    #x_vals <- .GetSupportVec(times[[i]])
-                   #lines(10 ^ x_vals, .Hill(x_vals, pars = c(log_logistic_params$HS, log_logistic_params$E_inf/100, log10(log_logistic_params$EC50))) * 100 ,lty=1, lwd=lwd, col=mycol[j])
+                   #lines(10 ^ x_vals, ToxicoGx:::.Hill(x_vals, pars = c(log_logistic_params$HS, log_logistic_params$E_inf/100, log10(log_logistic_params$EC50))) * 100 ,lty=1, lwd=lwd, col=mycol[j])
                  },
                  "Both" = {
                    warning("Curve fitting has not been implemented in this function yet. Feature coming soon!")
                    lines(times[[i]],expression[[i]][[mDataType]][[level]],lty=1, lwd = lwd, col = mycol[j])
                    #log_logistic_params <- logLogisticRegression(conc = times[[i]], expression = expression[[i]][[level]])
                    #x_vals <- .GetSupportVec(times[[i]])
-                   #lines(10 ^ x_vals, .Hill(x_vals, pars = c(log_logistic_params$HS, log_logistic_params$E_inf/100, log10(log_logistic_params$EC50))) * 100, lty = 1, lwd=lwd, col=mycol[j])
+                   #lines(10 ^ x_vals, ToxicoGx:::.Hill(x_vals, pars = c(log_logistic_params$HS, log_logistic_params$E_inf/100, log10(log_logistic_params$EC50))) * 100, lty = 1, lwd=lwd, col=mycol[j])
                  })
           legends <- c(legends, legendValues[[i]][[level]])
           legends.col <- c(legends.col, mycol[j])

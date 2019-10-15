@@ -1,18 +1,19 @@
-# An Error Checker for Function Parameters
-#
-# This function will take in the params of a function as well as its name.
-#   Error checking will then be conducted on each of it's parameter arguments
-#   to ensure they meet the input requirements for that function. Descriptive
-#   errors are returned if the the arguements do not meet the criteria for that
-#   function.
-#
-# @param funName [character] A string of the function name. This argument is
-#   used to match the correct parameter checking conditions with each function.
-# @param ... [pairlist] A list of all parameters passed as arguements to the
-#   function "funName".
-#
-# @return Returns nothing, this function works by side effects only
-#
+#' An Error Checker for Function Parameters
+#'
+#' This function will take in the params of a function as well as its name.
+#'   Error checking will then be conducted on each of it's parameter arguments
+#'   to ensure they meet the input requirements for that function. Descriptive
+#'   errors are returned if the the arguements do not meet the criteria for that
+#'   function.
+#'
+#' @param funName [character] A string of the function name. This argument is
+#'   used to match the correct parameter checking conditions with each function.
+#' @param ... [pairlist] A list of all parameters passed as arguements to the
+#'   function "funName".
+#'
+#' @return Returns nothing, this function works by side effects only
+#'
+#' @export
 #' @keywords internal
 paramErrorChecker <- function(funName, tSet, ...) {
 
@@ -62,11 +63,7 @@ paramErrorChecker <- function(funName, tSet, ...) {
   .checkParamsForErrors(tSet = tSet, paramChecks = paramChecks, ...)
 }
 
-#' @keywords internal
 .checkParamsForErrors <- function(tSet, paramChecks, ...) {
-
-  cell.lines = concentrations = dose = drugs = duration = features = mDataType =
-  summary.stat = tSets = viabilities <- NULL
 
   # Extract named arguments into local environment
   argList <- list(...)
