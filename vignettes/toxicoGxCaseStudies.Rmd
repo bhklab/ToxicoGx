@@ -13,6 +13,7 @@ author:
     institute: [PMCC. UOTMP, VECT]
   - name: Benjamin Haibe-Kains
     institute: [PMCC, UOTMP, UOTCS, OICR, VECT]
+    email: benjamin.haibe.kains@utoronto.ca
 institute:
   - PMCC: Princess Margaret Cancer Centre, University Health Network, Toronto, ON, Canada
   - UOTMP: Department of Medical Biophysics, University of Toronto, ON, Canada
@@ -37,11 +38,11 @@ devtools::install_github("bhklab/ToxicoGx")
 ```{r}
 library(ToxicoGx)
 # Load the tset 
-data("TGGATESsmall")
+data(TGGATESsmall)
 drugGeneResponseCurve(tSets = TGGATESsmall, duration = c("2", "8", "24"), cellline = "Hepatocyte",
                       mDataTypes = "rna",features = "ENSG00000140465_at", dose = c("Control", "Low", "Middle","High"),
                       drug = "carbon tetrachloride", plot.type = "Actual",title = "Effect of Carbon tetra chloride on CYP1A1.",
-                      cex = 1, cex.main = 2, legend.loc = "topright",verbose = T)
+                      cex = 0.7, cex.main = 1, legend.loc = "topright", verbose = T)
 ```
 
 #Case study 2 - Connectivity map analysis on TG-GATEs and human hepatocarcinoma signatures.
@@ -55,7 +56,7 @@ require(xtable)
 data("TGGATESsmall")
 # To compute the effect of drug concentration on the molecular profile of the cell
 drug.perturbation <- drugPerturbationSig(TGGATESsmall,mDataType="rna",cells = "Hepatocyte",
-                                         duration = "24",dose = c("Control", "Low"),drugs = drugNames(tggates_humanLdh_subset),
+                                         duration = "24",dose = c("Control", "Low"),drugs = drugNames(TGGATESsmall),
                                          verbose=FALSE)
 data(HCC_sig)
 res <- apply(drug.perturbation[,,c("tstat", "fdr")],
