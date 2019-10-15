@@ -71,7 +71,7 @@ summarizeMolecularProfiles <-
 
   ## TODO:: Standardized parameter names across all function
   ## ERROR HANDLING FOR PARAMETERS
-  paramErrorChecker("summarizeMolecularProfiles", tSet=tSet,
+  ToxicoGx:::paramErrorChecker("summarizeMolecularProfiles", tSet=tSet,
                     mDataType=mDataType, cell.lines=cell.lines, drugs=drugs,
                     features=features, duration=duration, dose=dose,
                     summary.stat=summary.stat

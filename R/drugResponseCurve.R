@@ -45,7 +45,7 @@
 #' @param plot.type [character] Plot type which can be the actual one ("Actual") or
 #' the one fitted by logl logistic regression ("Fitted") or both of them ("Both").
 #' If this parameter is missed by default actual curve is plotted.
-#' @param summarize.replicates [logical] If this parameter is set to true replicates
+#' @param summarize.replicates [character] If this parameter is set to true replicates
 #' are summarized and replicates are plotted individually otherwise
 #' @param title [character] The title of the graph. If no title is provided, then it defaults to
 #' 'Drug':'Cell Line'.

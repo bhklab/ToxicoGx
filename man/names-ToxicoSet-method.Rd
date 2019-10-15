@@ -8,9 +8,6 @@
 \S4method{names}{ToxicoSet}(x = tSet)
 }
 \arguments{
-\item{x}{[param] The named parameter from the base R names function. This is
-only needed for internal use.}
-
 \item{tSet}{[ToxicoSet] A ToxcioSet object}
 }
 \value{
