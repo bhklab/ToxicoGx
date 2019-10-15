@@ -1,0 +1,581 @@
+Hmm ... looks like a package
+
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex)
+ restricted \write18 enabled.
+entering extended mode
+LaTeX2e <2018-12-01>
+(./Rd2.tex
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/book.cls
+Document Class: book 2018/09/03 v1.4i Standard LaTeX document class
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/bk10.clo))
+(/usr/share/R/share/texmf/tex/latex/Rd.sty
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/ifthen.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/tools/longtable.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/tools/bm.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/alltt.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/tools/verbatim.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/url/url.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/textcomp.sty
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/ts1enc.def
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/ts1enc.dfu)))
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/fontenc.sty
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/t1enc.def))
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/psnfss/times.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/inconsolata/zi4.sty
+`inconsolata-zi4' v1.12, 2019/05/17 Text macros for Inconsolata (msharpe)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/xkeyval/xkeyval.sty
+(/home/ceeles/.TinyTeX/texmf-dist/tex/generic/xkeyval/xkeyval.tex
+(/home/ceeles/.TinyTeX/texmf-dist/tex/generic/xkeyval/xkvutils.tex
+(/home/ceeles/.TinyTeX/texmf-dist/tex/generic/xkeyval/keyval.tex)))))
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/graphics/color.sty
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/graphics-cfg/color.cfg)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/graphics-def/pdftex.def))
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/hyperref/hyperref.sty
+(/home/ceeles/.TinyTeX/texmf-dist/tex/generic/oberdiek/hobsub-hyperref.sty
+(/home/ceeles/.TinyTeX/texmf-dist/tex/generic/oberdiek/hobsub-generic.sty))
+(/home/ceeles/.TinyTeX/texmf-dist/tex/generic/ifxetex/ifxetex.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/oberdiek/auxhook.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/oberdiek/kvoptions.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/hyperref/pd1enc.def)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/latexconfig/hyperref.cfg))
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/hyperref/hpdftex.def
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/oberdiek/rerunfilecheck.sty))
+
+Package hyperref Warning: Option `hyperindex' has already been used,
+(hyperref)                setting the option has no effect on input line 377.
+
+
+Package hyperref Warning: Option `pagebackref' has already been used,
+(hyperref)                setting the option has no effect on input line 377.
+
+) (/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/makeidx.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/inputenc.sty)
+Writing index file Rd2.idx
+No file Rd2.aux.
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/ts1cmr.fd)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/psnfss/t1ptm.fd)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/hyperref/nameref.sty
+(/home/ceeles/.TinyTeX/texmf-dist/tex/generic/oberdiek/gettitlestring.sty))
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/psnfss/ts1ptm.fd)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/inconsolata/t1zi4.fd)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/psnfss/t1phv.fd) [1{/home/ceeles/.T
+inyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2] [3] [4]
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/inconsolata/ts1zi4.fd) [5] [6]
+[7] [8] [9] [10] [11] [12] [13] [14] [15] [16] [17] [18] [19] [20]
+Overfull \hbox (35.25941pt too wide) in paragraph at lines 1094--1094
+ []\T1/zi4/m/n/9 drug.perturbation <- drugPerturbationSig(TGGATESsmall, mDataTy
+pe="rna", nthread=1, duration = "2",[] 
+
+Overfull \hbox (15.74715pt too wide) in paragraph at lines 1095--1095
+ []     \T1/zi4/m/n/9 drugs = head(drugNames(TGGATESsmall)), features = fNames(
+TGGATESsmall, "rna")[seq_len(2)])[] 
+[21]
+Overfull \hbox (35.25941pt too wide) in paragraph at lines 1127--1127
+ []\T1/zi4/m/n/9 drug.perturbation <- drugPerturbationSig(TGGATESsmall, mDataTy
+pe="rna", nthread=1, duration = "2",[] 
+
+Overfull \hbox (15.74715pt too wide) in paragraph at lines 1128--1128
+ []     \T1/zi4/m/n/9 drugs = head(drugNames(TGGATESsmall)), features = fNames(
+TGGATESsmall, "rna")[seq_len(2)])[] 
+[22]
+Overfull \hbox (6.38779pt too wide) in paragraph at lines 1230--1232
+[]\T1/zi4/m/n/10 character \T1/ptm/m/n/10 which sum-mary method to use if there
+ are re-peated cell.lines? Choices
+[23]
+Overfull \hbox (5.26248pt too wide) in paragraph at lines 1264--1264
+ []\T1/zi4/m/n/9 featureData <- SummarizedExperiment::rowData(summMP) #featureD
+ata for requested experiments[] 
+[24]
+Overfull \hbox (23.27168pt too wide) in paragraph at lines 1322--1322
+ []\T1/zi4/m/n/9 TGGATESauc <- summarizeSensitivityProfiles(TGGATESsmall, sensi
+tivity.measure=\TS1/zi4/m/n/9 '\T1/zi4/m/n/9 auc_recomputed\TS1/zi4/m/n/9 '\T1/
+zi4/m/n/9 )[] 
+[25] [26] [27]
+Underfull \vbox (badness 10000) has occurred while \output is active [28]
+Overfull \hbox (44.42609pt too wide) in paragraph at lines 1612--1614
+[]\T1/ptm/m/n/10 Updated \T1/zi4/m/n/10 ToxicoSet \T1/ptm/m/n/10 setGeneric("se
+nsitivityInfo<-", func-tion(object, value) standardGeneric("sensitivityInfo<-
+[29]
+Overfull \hbox (72.22537pt too wide) in paragraph at lines 1618--1620
+[]\T1/ptm/m/n/10 Updated \T1/zi4/m/n/10 ToxicoSet \T1/ptm/m/n/10 setGeneric("se
+nsitivityProfiles<-", func-tion(object, value) standardGeneric("sensitivityProf
+iles<-
+[30] [31] [32]
+No file Rd2.ind.
+[33] (/tmp/RtmpRq5c8r/Rd2pdf35203acc12de/Rd2.aux)
+
+Package rerunfilecheck Warning: File `Rd2.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+ )
+(see the transcript file for additional information){/home/ceeles/.TinyTeX/texm
+f-dist/fonts/enc/dvips/inconsolata/i4-ts1.enc}{/home/ceeles/.TinyTeX/texmf-dist
+/fonts/enc/dvips/base/8r.enc}{/home/ceeles/.TinyTeX/texmf-dist/fonts/enc/dvips/
+inconsolata/i4-t1-0.enc}</home/ceeles/.TinyTeX/texmf-dist/fonts/type1/public/in
+consolata/Inconsolata-zi4r.pfb></home/ceeles/.TinyTeX/texmf-dist/fonts/type1/ur
+w/helvetic/uhvr8a.pfb></home/ceeles/.TinyTeX/texmf-dist/fonts/type1/urw/times/u
+tmb8a.pfb></home/ceeles/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></
+home/ceeles/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></home/ceeles/
+.TinyTeX/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on Rd2.pdf (33 pages, 138762 bytes).
+Transcript written on Rd2.log.
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex)
+ restricted \write18 enabled.
+entering extended mode
+LaTeX2e <2018-12-01>
+(./Rd2.tex
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/book.cls
+Document Class: book 2018/09/03 v1.4i Standard LaTeX document class
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/bk10.clo))
+(/usr/share/R/share/texmf/tex/latex/Rd.sty
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/ifthen.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/tools/longtable.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/tools/bm.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/alltt.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/tools/verbatim.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/url/url.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/textcomp.sty
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/ts1enc.def
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/ts1enc.dfu)))
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/fontenc.sty
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/t1enc.def))
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/psnfss/times.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/inconsolata/zi4.sty
+`inconsolata-zi4' v1.12, 2019/05/17 Text macros for Inconsolata (msharpe)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/xkeyval/xkeyval.sty
+(/home/ceeles/.TinyTeX/texmf-dist/tex/generic/xkeyval/xkeyval.tex
+(/home/ceeles/.TinyTeX/texmf-dist/tex/generic/xkeyval/xkvutils.tex
+(/home/ceeles/.TinyTeX/texmf-dist/tex/generic/xkeyval/keyval.tex)))))
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/graphics/color.sty
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/graphics-cfg/color.cfg)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/graphics-def/pdftex.def))
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/hyperref/hyperref.sty
+(/home/ceeles/.TinyTeX/texmf-dist/tex/generic/oberdiek/hobsub-hyperref.sty
+(/home/ceeles/.TinyTeX/texmf-dist/tex/generic/oberdiek/hobsub-generic.sty))
+(/home/ceeles/.TinyTeX/texmf-dist/tex/generic/ifxetex/ifxetex.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/oberdiek/auxhook.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/oberdiek/kvoptions.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/hyperref/pd1enc.def)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/latexconfig/hyperref.cfg))
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/hyperref/hpdftex.def
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/oberdiek/rerunfilecheck.sty))
+
+Package hyperref Warning: Option `hyperindex' has already been used,
+(hyperref)                setting the option has no effect on input line 377.
+
+
+Package hyperref Warning: Option `pagebackref' has already been used,
+(hyperref)                setting the option has no effect on input line 377.
+
+) (/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/makeidx.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/inputenc.sty)
+Writing index file Rd2.idx
+(/tmp/RtmpRq5c8r/Rd2pdf35203acc12de/Rd2.aux)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/ts1cmr.fd)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/psnfss/t1ptm.fd)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/hyperref/nameref.sty
+(/home/ceeles/.TinyTeX/texmf-dist/tex/generic/oberdiek/gettitlestring.sty))
+(/tmp/RtmpRq5c8r/Rd2pdf35203acc12de/Rd2.out)
+(/tmp/RtmpRq5c8r/Rd2pdf35203acc12de/Rd2.out)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/psnfss/ts1ptm.fd)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/inconsolata/t1zi4.fd)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/psnfss/t1phv.fd)
+(/tmp/RtmpRq5c8r/Rd2pdf35203acc12de/Rd2.toc [1{/home/ceeles/.TinyTeX/texmf-var/
+fonts/map/pdftex/updmap/pdftex.map}]) [2] [3] [4] [5]
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/inconsolata/ts1zi4.fd) [6] [7]
+[8] [9] [10] [11] [12] [13] [14] [15] [16] [17] [18] [19] [20] [21]
+Overfull \hbox (35.25941pt too wide) in paragraph at lines 1094--1094
+ []\T1/zi4/m/n/9 drug.perturbation <- drugPerturbationSig(TGGATESsmall, mDataTy
+pe="rna", nthread=1, duration = "2",[] 
+
+Overfull \hbox (15.74715pt too wide) in paragraph at lines 1095--1095
+ []     \T1/zi4/m/n/9 drugs = head(drugNames(TGGATESsmall)), features = fNames(
+TGGATESsmall, "rna")[seq_len(2)])[] 
+[22]
+Overfull \hbox (35.25941pt too wide) in paragraph at lines 1127--1127
+ []\T1/zi4/m/n/9 drug.perturbation <- drugPerturbationSig(TGGATESsmall, mDataTy
+pe="rna", nthread=1, duration = "2",[] 
+
+Overfull \hbox (15.74715pt too wide) in paragraph at lines 1128--1128
+ []     \T1/zi4/m/n/9 drugs = head(drugNames(TGGATESsmall)), features = fNames(
+TGGATESsmall, "rna")[seq_len(2)])[] 
+[23]
+Overfull \hbox (6.38779pt too wide) in paragraph at lines 1230--1232
+[]\T1/zi4/m/n/10 character \T1/ptm/m/n/10 which sum-mary method to use if there
+ are re-peated cell.lines? Choices
+[24]
+Overfull \hbox (5.26248pt too wide) in paragraph at lines 1264--1264
+ []\T1/zi4/m/n/9 featureData <- SummarizedExperiment::rowData(summMP) #featureD
+ata for requested experiments[] 
+[25]
+Overfull \hbox (23.27168pt too wide) in paragraph at lines 1322--1322
+ []\T1/zi4/m/n/9 TGGATESauc <- summarizeSensitivityProfiles(TGGATESsmall, sensi
+tivity.measure=\TS1/zi4/m/n/9 '\T1/zi4/m/n/9 auc_recomputed\TS1/zi4/m/n/9 '\T1/
+zi4/m/n/9 )[] 
+[26] [27] [28]
+Underfull \vbox (badness 10000) has occurred while \output is active [29]
+Overfull \hbox (44.42609pt too wide) in paragraph at lines 1612--1614
+[]\T1/ptm/m/n/10 Updated \T1/zi4/m/n/10 ToxicoSet \T1/ptm/m/n/10 setGeneric("se
+nsitivityInfo<-", func-tion(object, value) standardGeneric("sensitivityInfo<-
+[30]
+Overfull \hbox (72.22537pt too wide) in paragraph at lines 1618--1620
+[]\T1/ptm/m/n/10 Updated \T1/zi4/m/n/10 ToxicoSet \T1/ptm/m/n/10 setGeneric("se
+nsitivityProfiles<-", func-tion(object, value) standardGeneric("sensitivityProf
+iles<-
+[31] [32] [33]
+No file Rd2.ind.
+[34] (/tmp/RtmpRq5c8r/Rd2pdf35203acc12de/Rd2.aux) )
+(see the transcript file for additional information){/home/ceeles/.TinyTeX/texm
+f-dist/fonts/enc/dvips/inconsolata/i4-ts1.enc}{/home/ceeles/.TinyTeX/texmf-dist
+/fonts/enc/dvips/base/8r.enc}{/home/ceeles/.TinyTeX/texmf-dist/fonts/enc/dvips/
+inconsolata/i4-t1-0.enc}</home/ceeles/.TinyTeX/texmf-dist/fonts/type1/public/in
+consolata/Inconsolata-zi4r.pfb></home/ceeles/.TinyTeX/texmf-dist/fonts/type1/ur
+w/helvetic/uhvr8a.pfb></home/ceeles/.TinyTeX/texmf-dist/fonts/type1/urw/times/u
+tmb8a.pfb></home/ceeles/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></
+home/ceeles/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></home/ceeles/
+.TinyTeX/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on Rd2.pdf (34 pages, 142457 bytes).
+Transcript written on Rd2.log.
+This is makeindex, version 2.15 [TeX Live 2019] (kpathsea + Thai support).
+Scanning input file Rd2.idx....done (60 entries accepted, 0 rejected).
+Sorting entries....done (436 comparisons).
+Generating output file Rd2.ind....done (124 lines written, 0 warnings).
+Output written in Rd2.ind.
+Transcript written in Rd2.ilg.
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex)
+ restricted \write18 enabled.
+entering extended mode
+LaTeX2e <2018-12-01>
+(./Rd2.tex
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/book.cls
+Document Class: book 2018/09/03 v1.4i Standard LaTeX document class
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/bk10.clo))
+(/usr/share/R/share/texmf/tex/latex/Rd.sty
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/ifthen.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/tools/longtable.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/tools/bm.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/alltt.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/tools/verbatim.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/url/url.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/textcomp.sty
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/ts1enc.def
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/ts1enc.dfu)))
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/fontenc.sty
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/t1enc.def))
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/psnfss/times.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/inconsolata/zi4.sty
+`inconsolata-zi4' v1.12, 2019/05/17 Text macros for Inconsolata (msharpe)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/xkeyval/xkeyval.sty
+(/home/ceeles/.TinyTeX/texmf-dist/tex/generic/xkeyval/xkeyval.tex
+(/home/ceeles/.TinyTeX/texmf-dist/tex/generic/xkeyval/xkvutils.tex
+(/home/ceeles/.TinyTeX/texmf-dist/tex/generic/xkeyval/keyval.tex)))))
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/graphics/color.sty
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/graphics-cfg/color.cfg)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/graphics-def/pdftex.def))
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/hyperref/hyperref.sty
+(/home/ceeles/.TinyTeX/texmf-dist/tex/generic/oberdiek/hobsub-hyperref.sty
+(/home/ceeles/.TinyTeX/texmf-dist/tex/generic/oberdiek/hobsub-generic.sty))
+(/home/ceeles/.TinyTeX/texmf-dist/tex/generic/ifxetex/ifxetex.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/oberdiek/auxhook.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/oberdiek/kvoptions.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/hyperref/pd1enc.def)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/latexconfig/hyperref.cfg))
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/hyperref/hpdftex.def
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/oberdiek/rerunfilecheck.sty))
+
+Package hyperref Warning: Option `hyperindex' has already been used,
+(hyperref)                setting the option has no effect on input line 377.
+
+
+Package hyperref Warning: Option `pagebackref' has already been used,
+(hyperref)                setting the option has no effect on input line 377.
+
+) (/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/makeidx.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/inputenc.sty)
+Writing index file Rd2.idx
+(/tmp/RtmpRq5c8r/Rd2pdf35203acc12de/Rd2.aux)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/ts1cmr.fd)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/psnfss/t1ptm.fd)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/hyperref/nameref.sty
+(/home/ceeles/.TinyTeX/texmf-dist/tex/generic/oberdiek/gettitlestring.sty))
+(/tmp/RtmpRq5c8r/Rd2pdf35203acc12de/Rd2.out)
+(/tmp/RtmpRq5c8r/Rd2pdf35203acc12de/Rd2.out)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/psnfss/ts1ptm.fd)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/inconsolata/t1zi4.fd)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/psnfss/t1phv.fd)
+(/tmp/RtmpRq5c8r/Rd2pdf35203acc12de/Rd2.toc [1{/home/ceeles/.TinyTeX/texmf-var/
+fonts/map/pdftex/updmap/pdftex.map}]) [2] [3] [4] [5]
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/inconsolata/ts1zi4.fd) [6] [7]
+[8] [9] [10] [11] [12] [13] [14] [15] [16] [17] [18] [19] [20] [21]
+Overfull \hbox (35.25941pt too wide) in paragraph at lines 1094--1094
+ []\T1/zi4/m/n/9 drug.perturbation <- drugPerturbationSig(TGGATESsmall, mDataTy
+pe="rna", nthread=1, duration = "2",[] 
+
+Overfull \hbox (15.74715pt too wide) in paragraph at lines 1095--1095
+ []     \T1/zi4/m/n/9 drugs = head(drugNames(TGGATESsmall)), features = fNames(
+TGGATESsmall, "rna")[seq_len(2)])[] 
+[22]
+Overfull \hbox (35.25941pt too wide) in paragraph at lines 1127--1127
+ []\T1/zi4/m/n/9 drug.perturbation <- drugPerturbationSig(TGGATESsmall, mDataTy
+pe="rna", nthread=1, duration = "2",[] 
+
+Overfull \hbox (15.74715pt too wide) in paragraph at lines 1128--1128
+ []     \T1/zi4/m/n/9 drugs = head(drugNames(TGGATESsmall)), features = fNames(
+TGGATESsmall, "rna")[seq_len(2)])[] 
+[23]
+Overfull \hbox (6.38779pt too wide) in paragraph at lines 1230--1232
+[]\T1/zi4/m/n/10 character \T1/ptm/m/n/10 which sum-mary method to use if there
+ are re-peated cell.lines? Choices
+[24]
+Overfull \hbox (5.26248pt too wide) in paragraph at lines 1264--1264
+ []\T1/zi4/m/n/9 featureData <- SummarizedExperiment::rowData(summMP) #featureD
+ata for requested experiments[] 
+[25]
+Overfull \hbox (23.27168pt too wide) in paragraph at lines 1322--1322
+ []\T1/zi4/m/n/9 TGGATESauc <- summarizeSensitivityProfiles(TGGATESsmall, sensi
+tivity.measure=\TS1/zi4/m/n/9 '\T1/zi4/m/n/9 auc_recomputed\TS1/zi4/m/n/9 '\T1/
+zi4/m/n/9 )[] 
+[26] [27] [28]
+Underfull \vbox (badness 10000) has occurred while \output is active [29]
+Overfull \hbox (44.42609pt too wide) in paragraph at lines 1612--1614
+[]\T1/ptm/m/n/10 Updated \T1/zi4/m/n/10 ToxicoSet \T1/ptm/m/n/10 setGeneric("se
+nsitivityInfo<-", func-tion(object, value) standardGeneric("sensitivityInfo<-
+[30]
+Overfull \hbox (72.22537pt too wide) in paragraph at lines 1618--1620
+[]\T1/ptm/m/n/10 Updated \T1/zi4/m/n/10 ToxicoSet \T1/ptm/m/n/10 setGeneric("se
+nsitivityProfiles<-", func-tion(object, value) standardGeneric("sensitivityProf
+iles<-
+[31] [32] [33] (/tmp/RtmpRq5c8r/Rd2pdf35203acc12de/Rd2.ind [34]
+
+LaTeX Font Warning: Font shape `T1/zi4/m/it' undefined
+(Font)              using `T1/zi4/m/n' instead on input line 6.
+
+
+Overfull \hbox (0.8567pt too wide) in paragraph at lines 15--17
+[]\T1/zi4/m/it/10 cellInfo<-,ToxicoSet,data.frame-method 
+
+Overfull \hbox (0.8567pt too wide) in paragraph at lines 19--21
+[]\T1/zi4/m/it/10 cellNames<-,ToxicoSet,character-method 
+
+Overfull \hbox (0.8567pt too wide) in paragraph at lines 40--42
+[]\T1/zi4/m/it/10 drugInfo<-,ToxicoSet,data.frame-method 
+
+Overfull \hbox (0.8567pt too wide) in paragraph at lines 46--48
+[]\T1/zi4/m/it/10 drugNames<-,ToxicoSet,character-method 
+
+Overfull \hbox (0.8567pt too wide) in paragraph at lines 54--56
+[]\T1/zi4/m/it/10 featureInfo,ToxicoSet,character-method 
+
+Overfull \hbox (65.8567pt too wide) in paragraph at lines 56--58
+[]\T1/zi4/m/it/10 featureInfo<-,ToxicoSet,character,data.frame-method 
+
+Overfull \hbox (30.8567pt too wide) in paragraph at lines 72--74
+[]\T1/zi4/m/it/10 molecularProfiles,ToxicoSet,character-method 
+
+Overfull \hbox (75.8567pt too wide) in paragraph at lines 74--76
+[]\T1/zi4/m/it/10 molecularProfiles<-,ToxicoSet,character,matrix-method 
+
+Overfull \hbox (55.8567pt too wide) in paragraph at lines 90--92
+[]\T1/zi4/m/it/10 phenoInfo<-,ToxicoSet,character,data.frame-method 
+
+Overfull \hbox (35.8567pt too wide) in paragraph at lines 97--99
+[]\T1/zi4/m/it/10 sensitivityInfo<-,ToxicoSet,data.frame-method 
+
+Overfull \hbox (55.8567pt too wide) in paragraph at lines 103--105
+[]\T1/zi4/m/it/10 sensitivityProfiles<-,ToxicoSet,data.frame-method 
+
+Overfull \hbox (35.8567pt too wide) in paragraph at lines 105--107
+[]\T1/zi4/m/it/10 sensitivityProfiles<-,ToxicoSet,matrix-method 
+[35] [36]) (/tmp/RtmpRq5c8r/Rd2pdf35203acc12de/Rd2.aux)
+
+Package rerunfilecheck Warning: File `Rd2.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+
+LaTeX Font Warning: Some font shapes were not available, defaults substituted.
+
+ )
+(see the transcript file for additional information){/home/ceeles/.TinyTeX/texm
+f-dist/fonts/enc/dvips/inconsolata/i4-ts1.enc}{/home/ceeles/.TinyTeX/texmf-dist
+/fonts/enc/dvips/base/8r.enc}{/home/ceeles/.TinyTeX/texmf-dist/fonts/enc/dvips/
+inconsolata/i4-t1-0.enc}</home/ceeles/.TinyTeX/texmf-dist/fonts/type1/public/in
+consolata/Inconsolata-zi4r.pfb></home/ceeles/.TinyTeX/texmf-dist/fonts/type1/pu
+blic/amsfonts/cm/cmsy10.pfb></home/ceeles/.TinyTeX/texmf-dist/fonts/type1/urw/h
+elvetic/uhvr8a.pfb></home/ceeles/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmb
+8a.pfb></home/ceeles/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></hom
+e/ceeles/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></home/ceeles/.Ti
+nyTeX/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on Rd2.pdf (36 pages, 153911 bytes).
+Transcript written on Rd2.log.
+This is makeindex, version 2.15 [TeX Live 2019] (kpathsea + Thai support).
+Scanning input file Rd2.idx....done (60 entries accepted, 0 rejected).
+Sorting entries....done (436 comparisons).
+Generating output file Rd2.ind....done (124 lines written, 0 warnings).
+Output written in Rd2.ind.
+Transcript written in Rd2.ilg.
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex)
+ restricted \write18 enabled.
+entering extended mode
+LaTeX2e <2018-12-01>
+(./Rd2.tex
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/book.cls
+Document Class: book 2018/09/03 v1.4i Standard LaTeX document class
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/bk10.clo))
+(/usr/share/R/share/texmf/tex/latex/Rd.sty
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/ifthen.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/tools/longtable.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/tools/bm.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/alltt.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/tools/verbatim.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/url/url.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/textcomp.sty
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/ts1enc.def
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/ts1enc.dfu)))
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/fontenc.sty
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/t1enc.def))
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/psnfss/times.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/inconsolata/zi4.sty
+`inconsolata-zi4' v1.12, 2019/05/17 Text macros for Inconsolata (msharpe)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/xkeyval/xkeyval.sty
+(/home/ceeles/.TinyTeX/texmf-dist/tex/generic/xkeyval/xkeyval.tex
+(/home/ceeles/.TinyTeX/texmf-dist/tex/generic/xkeyval/xkvutils.tex
+(/home/ceeles/.TinyTeX/texmf-dist/tex/generic/xkeyval/keyval.tex)))))
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/graphics/color.sty
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/graphics-cfg/color.cfg)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/graphics-def/pdftex.def))
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/hyperref/hyperref.sty
+(/home/ceeles/.TinyTeX/texmf-dist/tex/generic/oberdiek/hobsub-hyperref.sty
+(/home/ceeles/.TinyTeX/texmf-dist/tex/generic/oberdiek/hobsub-generic.sty))
+(/home/ceeles/.TinyTeX/texmf-dist/tex/generic/ifxetex/ifxetex.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/oberdiek/auxhook.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/oberdiek/kvoptions.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/hyperref/pd1enc.def)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/latexconfig/hyperref.cfg))
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/hyperref/hpdftex.def
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/oberdiek/rerunfilecheck.sty))
+
+Package hyperref Warning: Option `hyperindex' has already been used,
+(hyperref)                setting the option has no effect on input line 377.
+
+
+Package hyperref Warning: Option `pagebackref' has already been used,
+(hyperref)                setting the option has no effect on input line 377.
+
+) (/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/makeidx.sty)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/inputenc.sty)
+Writing index file Rd2.idx
+(/tmp/RtmpRq5c8r/Rd2pdf35203acc12de/Rd2.aux)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/base/ts1cmr.fd)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/psnfss/t1ptm.fd)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/hyperref/nameref.sty
+(/home/ceeles/.TinyTeX/texmf-dist/tex/generic/oberdiek/gettitlestring.sty))
+(/tmp/RtmpRq5c8r/Rd2pdf35203acc12de/Rd2.out)
+(/tmp/RtmpRq5c8r/Rd2pdf35203acc12de/Rd2.out)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/psnfss/ts1ptm.fd)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/inconsolata/t1zi4.fd)
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/psnfss/t1phv.fd)
+(/tmp/RtmpRq5c8r/Rd2pdf35203acc12de/Rd2.toc [1{/home/ceeles/.TinyTeX/texmf-var/
+fonts/map/pdftex/updmap/pdftex.map}]) [2] [3] [4] [5]
+(/home/ceeles/.TinyTeX/texmf-dist/tex/latex/inconsolata/ts1zi4.fd) [6] [7]
+[8] [9] [10] [11] [12] [13] [14] [15] [16] [17] [18] [19] [20] [21]
+Overfull \hbox (35.25941pt too wide) in paragraph at lines 1094--1094
+ []\T1/zi4/m/n/9 drug.perturbation <- drugPerturbationSig(TGGATESsmall, mDataTy
+pe="rna", nthread=1, duration = "2",[] 
+
+Overfull \hbox (15.74715pt too wide) in paragraph at lines 1095--1095
+ []     \T1/zi4/m/n/9 drugs = head(drugNames(TGGATESsmall)), features = fNames(
+TGGATESsmall, "rna")[seq_len(2)])[] 
+[22]
+Overfull \hbox (35.25941pt too wide) in paragraph at lines 1127--1127
+ []\T1/zi4/m/n/9 drug.perturbation <- drugPerturbationSig(TGGATESsmall, mDataTy
+pe="rna", nthread=1, duration = "2",[] 
+
+Overfull \hbox (15.74715pt too wide) in paragraph at lines 1128--1128
+ []     \T1/zi4/m/n/9 drugs = head(drugNames(TGGATESsmall)), features = fNames(
+TGGATESsmall, "rna")[seq_len(2)])[] 
+[23]
+Overfull \hbox (6.38779pt too wide) in paragraph at lines 1230--1232
+[]\T1/zi4/m/n/10 character \T1/ptm/m/n/10 which sum-mary method to use if there
+ are re-peated cell.lines? Choices
+[24]
+Overfull \hbox (5.26248pt too wide) in paragraph at lines 1264--1264
+ []\T1/zi4/m/n/9 featureData <- SummarizedExperiment::rowData(summMP) #featureD
+ata for requested experiments[] 
+[25]
+Overfull \hbox (23.27168pt too wide) in paragraph at lines 1322--1322
+ []\T1/zi4/m/n/9 TGGATESauc <- summarizeSensitivityProfiles(TGGATESsmall, sensi
+tivity.measure=\TS1/zi4/m/n/9 '\T1/zi4/m/n/9 auc_recomputed\TS1/zi4/m/n/9 '\T1/
+zi4/m/n/9 )[] 
+[26] [27] [28]
+Underfull \vbox (badness 10000) has occurred while \output is active [29]
+Overfull \hbox (44.42609pt too wide) in paragraph at lines 1612--1614
+[]\T1/ptm/m/n/10 Updated \T1/zi4/m/n/10 ToxicoSet \T1/ptm/m/n/10 setGeneric("se
+nsitivityInfo<-", func-tion(object, value) standardGeneric("sensitivityInfo<-
+[30]
+Overfull \hbox (72.22537pt too wide) in paragraph at lines 1618--1620
+[]\T1/ptm/m/n/10 Updated \T1/zi4/m/n/10 ToxicoSet \T1/ptm/m/n/10 setGeneric("se
+nsitivityProfiles<-", func-tion(object, value) standardGeneric("sensitivityProf
+iles<-
+[31] [32] [33] (/tmp/RtmpRq5c8r/Rd2pdf35203acc12de/Rd2.ind [34]
+
+LaTeX Font Warning: Font shape `T1/zi4/m/it' undefined
+(Font)              using `T1/zi4/m/n' instead on input line 6.
+
+
+Overfull \hbox (0.8567pt too wide) in paragraph at lines 15--17
+[]\T1/zi4/m/it/10 cellInfo<-,ToxicoSet,data.frame-method 
+
+Overfull \hbox (0.8567pt too wide) in paragraph at lines 19--21
+[]\T1/zi4/m/it/10 cellNames<-,ToxicoSet,character-method 
+
+Overfull \hbox (0.8567pt too wide) in paragraph at lines 40--42
+[]\T1/zi4/m/it/10 drugInfo<-,ToxicoSet,data.frame-method 
+
+Overfull \hbox (0.8567pt too wide) in paragraph at lines 46--48
+[]\T1/zi4/m/it/10 drugNames<-,ToxicoSet,character-method 
+
+Overfull \hbox (0.8567pt too wide) in paragraph at lines 54--56
+[]\T1/zi4/m/it/10 featureInfo,ToxicoSet,character-method 
+
+Overfull \hbox (65.8567pt too wide) in paragraph at lines 56--58
+[]\T1/zi4/m/it/10 featureInfo<-,ToxicoSet,character,data.frame-method 
+
+Overfull \hbox (30.8567pt too wide) in paragraph at lines 72--74
+[]\T1/zi4/m/it/10 molecularProfiles,ToxicoSet,character-method 
+
+Overfull \hbox (75.8567pt too wide) in paragraph at lines 74--76
+[]\T1/zi4/m/it/10 molecularProfiles<-,ToxicoSet,character,matrix-method 
+
+Overfull \hbox (55.8567pt too wide) in paragraph at lines 90--92
+[]\T1/zi4/m/it/10 phenoInfo<-,ToxicoSet,character,data.frame-method 
+
+Overfull \hbox (35.8567pt too wide) in paragraph at lines 97--99
+[]\T1/zi4/m/it/10 sensitivityInfo<-,ToxicoSet,data.frame-method 
+
+Overfull \hbox (55.8567pt too wide) in paragraph at lines 103--105
+[]\T1/zi4/m/it/10 sensitivityProfiles<-,ToxicoSet,data.frame-method 
+
+Overfull \hbox (35.8567pt too wide) in paragraph at lines 105--107
+[]\T1/zi4/m/it/10 sensitivityProfiles<-,ToxicoSet,matrix-method 
+[35] [36]) (/tmp/RtmpRq5c8r/Rd2pdf35203acc12de/Rd2.aux)
+
+LaTeX Font Warning: Some font shapes were not available, defaults substituted.
+
+ )
+(see the transcript file for additional information){/home/ceeles/.TinyTeX/texm
+f-dist/fonts/enc/dvips/inconsolata/i4-ts1.enc}{/home/ceeles/.TinyTeX/texmf-dist
+/fonts/enc/dvips/base/8r.enc}{/home/ceeles/.TinyTeX/texmf-dist/fonts/enc/dvips/
+inconsolata/i4-t1-0.enc}</home/ceeles/.TinyTeX/texmf-dist/fonts/type1/public/in
+consolata/Inconsolata-zi4r.pfb></home/ceeles/.TinyTeX/texmf-dist/fonts/type1/pu
+blic/amsfonts/cm/cmsy10.pfb></home/ceeles/.TinyTeX/texmf-dist/fonts/type1/urw/h
+elvetic/uhvr8a.pfb></home/ceeles/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmb
+8a.pfb></home/ceeles/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></hom
+e/ceeles/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></home/ceeles/.Ti
+nyTeX/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on Rd2.pdf (36 pages, 154582 bytes).
+Transcript written on Rd2.log.
+Saving output to ‘ToxicoGx-manual.pdf’ ...
+Done
+You may want to clean up by 'rm -Rf /tmp/RtmpRq5c8r/Rd2pdf35203acc12de'

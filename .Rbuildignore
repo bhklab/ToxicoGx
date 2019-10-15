@@ -7,3 +7,5 @@
 ^dose_response_plot.pdf
 ^tests/testthat/.saveTSetAsGroundTruth.R$
 ^tests
+^doc$
+^Meta$
