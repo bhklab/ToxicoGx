@@ -142,6 +142,8 @@ ToxicoSet <-  function(name,
 #' names(TGGATESsmall)
 #'
 #' @param tSet [ToxicoSet] A ToxcioSet object
+#' @param x [param] The named parameter from the base R names function. This is
+#'  only needed for internal use.
 #'
 #' @return [character] A string of the tSet's name
 #'
@@ -872,11 +874,13 @@ setMethod("dim", signature=signature(x="ToxicoSet"), function(x){
 #' @param cells A list or vector of cell names as used in the dataset to which
 #'   the object will be subsetted. If left blank, then all cells will be left in
 #'   the dataset.
-#' @param drugs A list or vector of drug names as used in the dataset to which
+#' @param drugs A list or vector of drug names as used in the dataset from which
 #'   the object will be subsetted. If left blank, then all drugs will be left in
 #'   the dataset.
+#' @param features A list or vector of feature names as used in the dataset
+#'   from which the object will be subsetted.
 #' @param molecular.data.cells A list or vector of cell names to keep in the
-#'   molecular data
+#'   molecular data.
 #   the controls be kept in the dataset? Defaults to true.
 #' @param duration A \code{list} or \code{vector} of the experimental durations
 #'   to include in the subset as strings

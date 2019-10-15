@@ -14,15 +14,18 @@ subsetTo(tSet, cells = NULL, drugs = NULL,
 the object will be subsetted. If left blank, then all cells will be left in
 the dataset.}
 
-\item{drugs}{A list or vector of drug names as used in the dataset to which
+\item{drugs}{A list or vector of drug names as used in the dataset from which
 the object will be subsetted. If left blank, then all drugs will be left in
 the dataset.}
 
 \item{molecular.data.cells}{A list or vector of cell names to keep in the
-molecular data}
+molecular data.}
 
 \item{duration}{A \code{list} or \code{vector} of the experimental durations
 to include in the subset as strings}
+
+\item{features}{A list or vector of feature names as used in the dataset
+from which the object will be subsetted.}
 
 \item{...}{Other arguments passed by other function within the package}
 }
