@@ -3,35 +3,46 @@
 \name{drugGeneResponseCurve}
 \alias{drugGeneResponseCurve}
 \title{Compares gene expression for a specificed set of features over specific
-  drug dosages}
+  drug dosages vs time}
 \usage{
 drugGeneResponseCurve(tSets, duration, cellline, mDataTypes,
   features = NULL, dose, drug, plot.type = "Actual",
   summarize.replicates = FALSE, xlim = c(0, 24), ylim = c(0, 15),
-  mycol, x.custom.ticks = NULL, title, lwd = 1, cex = 0.5,
-  cex.main = 0.9, legend.loc = "topleft", verbose = TRUE)
+  mycol, x.custom.ticks = NULL, title, lwd = 1.5, cex = 0.7,
+  cex.main = 1, legend.loc = "topright", verbose = TRUE)
 }
 \arguments{
-\item{tSets}{[ToxicoSet] A ToxicoSet or list of ToxicoSets to be plotted in
-this graph.}
+\item{tSets}{[ToxicoSet] A ToxicoSet to be plotted in this graph. Currently
+only a single tSet is supported, passing more may results in errors.}
 
 \item{duration}{[character] A vector of durations to include in the plot.}
 
+\item{cellline}{[character] A vector of cell lines to include in the plot.}
+
+\item{mDataTypes}{[vector] A vector specifying the molecular data types to
+include in this plot. Defaults to the first mDataType if not specified.
+This release version only accepts one mDataType, more to be added in
+forthcoming releases.}
+
 \item{features}{[character] A vector of feature names to include in the plot.
-Please note that using all features will have a significant computational
-cost. It is recommended to subset to features of interest before plotting.}
+Please note that using too many features will have a significant computational
+cost and will likely result in a over crowded plot.}
 
 \item{dose}{[character] A vector of dose levels to be included in the
 plot. Default to include all dose levels available for a drug. Must include
-at minimum two dose levels, one of witch is "Control".}
+at minimum two dose levels, one of which must be "Control".}
 
-\item{drug}{[character] A vector of drugs to be included in this plot.}
+\item{drug}{[character] A vector of drugs to be included in this plot. In
+this release, only one drug is supported.}
 
 \item{plot.type}{[character] The type of plot which you would like returned. Options
- are 'Actual' for unfitted curve, 'Fitted' for the fitted curve and 'Both'
- to display 'Actual and 'Fitted' in the sample plot.
-@param summarize.replciates [logical] If true will take the average of all
-  replicates at each time point per dose and duration}
+are 'Actual' for unfitted curve, 'Fitted' for the fitted curve and 'Both'
+to display 'Actual and 'Fitted' in the sample plot. Currently this function
+only supports 'Actual'.}
+
+\item{summarize.replicates}{[logical] If true will take the average of all
+replicates at each time point per gene and duration. This release has not
+yet implemented this feature.}
 
 \item{xlim}{[numeric] A vector of minimum and maximum values for the x-axis
 of the returned plot.}
@@ -52,31 +63,32 @@ a title wil be generated automatically.}
 
 \item{lwd}{[numeric] The line width to plot width}
 
-\item{cex}{[numeric] The cex parameter passed to plot}
+\item{cex}{[numeric] The cex parameter passed to plot. Controls the size of
+plot points and the font size of the legend and defaults to 0.7.}
 
-\item{cex.main}{[numeric] The cex.main parameter passed to plot, controls the size of the titles}
+\item{cex.main}{[numeric] The cex.main parameter passed to plot,
+controls the size of the titles and defaults to 1.0.}
 
 \item{legend.loc}{[character] The location of the legend as passed to the plot()
-function from base graphics.}
+function from base graphics. Suggested values are either "topleft" or
+"topright", with the latter as the default.}
 
-\item{verbose}{[boolean] Should warning messages about the data passed in be printed?}
-
-\item{mDataType}{[vector] A vector specifying the molecular data types to
-include in this plot. Defaults to the first mDataType if not specified.}
-
-\item{cellLine}{[character] A vector of cell lines to include in the plot.}
-
-\item{legend.loc}{And argument passable to xy.coords for the position to place the legend.}
-
-\item{trunc}{[bool] Should the viability values be truncated to lie in [0-100] before doing the fitting}
+\item{verbose}{[boolean] Should warning messages about the data passed
+in be printed?}
 }
 \value{
 Plot of the viabilities for each drug vs time of exposure
 }
 \description{
-Description of this function
+This function generates a plot visualizing the relationship between gene
+  expression, time and dose level for the selected tSet.
 }
 \examples{
-ToxicoGx:::drugGeneResponseCurve(TGGATESsmall, dose = c("Control", "Low", "Middle"), drug = "naphthyl isothiocyanate", duration = c("2", "8", "24"))
+
+if (interactive()) {
+drugGeneResponseCurve(TGGATESsmall, dose = c("Control", "Low", "Middle"),
+  mDataTypes="rna", drug = "naphthyl isothiocyanate",
+  duration = c("2", "8", "24"), features = "ENSG00000000003_at")
+}
 
 }

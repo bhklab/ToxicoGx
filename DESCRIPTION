@@ -1,19 +1,30 @@
 Package: ToxicoGx
 Type: Package
-Title: Analysis of Large-Scale Toxicogenomic Data 
+Title: Analysis of Large-Scale Toxicogenomic Data
 Version: 0.0.1
 Date: 2019-10-14
 Authors@R: c(
-  person("Petr","Smirnov", email = "petr.smirnov@uhnresearch.ca", 
-    role = c("aut")),
-  person("Christopher","Eeles", email = "christopher.eeles@uhnresearch.ca",
+  person("Sisira","Nair", email = "sisira.nair@uhnresearch.ca",
     role = c("aut")),
   person("Esther","Yoo", email = "yk.yoo@mail.utoronto.ca", 
     role = c("aut")),
+  person("Christopher","Eeles", email = "christopher.eeles@uhnresearch.ca",
+    role = c("aut")),
+  person("Amy", "Tang", email = "amy.tang@queensu.ca", 
+    role = c("aut")),
+  person("Nehme", "El-Hachem1", email = "hachemn@gmail.com",
+    role = c("aut")),
+  person("Petr","Smirnov", email = "petr.smirnov@uhnresearch.ca", 
+    role = c("aut")),
   person("Benjamin","Haibe-Kains", email = "benjamin.haibe.kains@utoronto.ca",
     role = c("aut","cre"))
-  )  
-Description: Contains a set of functions to perform large-scale analysis of toxicogenomic data.
+  )
+Description: Contains a set of functions to perform large-scale analysis of 
+  toxicogenomic data. A member of the BHK lab's Gx suite of software, this
+  package provides a standardized data structure to hold information relevant
+  to annotation, visualization and statistical analysis of toxicogenomic data.
+  This package is in early release, and more features will be added over the
+  next few months.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
@@ -22,7 +33,7 @@ Imports:
     SummarizedExperiment,
     Biobase, 
     RColorBrewer,
-    caTools, 
+    caTools,
     magicaxis, 
     methods, 
     reshape2, 

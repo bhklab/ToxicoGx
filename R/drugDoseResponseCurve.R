@@ -45,8 +45,8 @@
 #' @param plot.type [character] Plot type which can be the actual one ("Actual") or
 #' the one fitted by logl logistic regression ("Fitted") or both of them ("Both").
 #' If this parameter is missed by default actual curve is plotted.
-#' @param summarize.replicates [character] If this parameter is set to true replicates
-#' are summarized and replicates are plotted individually otherwise
+#' @param summarize.replicates [logical] If this parameter is set to true replicates
+#'   are summarized and replicates are plotted individually otherwise
 #' @param title [character] The title of the graph. If no title is provided, then it defaults to
 #' 'Drug':'Cell Line'.
 #' @param lwd [numeric] The line width to plot with
@@ -54,7 +54,6 @@
 #' @param cex.main [numeric] The cex.main parameter passed to plot, controls the size of the titles
 #' @param legend.loc And argument passable to xy.coords for the position to place the legend.
 #' @param trunc [bool] Should the viability values be truncated to lie in [0-100] before doing the fitting
-#' @param reverseAxes [bool] If TRUE switch the x and y axis such that the plot is Viability vs Concentration
 #' @param verbose [boolean] Should warning messages about the data passed in be printed?
 #'
 #' @return Plots to the active graphics device and returns and invisible NULL.
