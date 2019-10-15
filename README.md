@@ -6,4 +6,3 @@ a specialized object, the ToxicoSet, which allows unified storage of all
 data related to a specific toxicogenomic study. Methods accepting this object
 are inlcuded for summarize results and annotaiton, conduct various analyses as 
 well as to visualize the results thereof.
-r
