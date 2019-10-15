@@ -141,17 +141,17 @@ test_that("Errors if specified duration is not in the tSet", { expect_error(
 
 # dose
 context("...Checking for correct dose param errors")
-test_that("Errors if given features as type other than character", { expect_error(
+test_that("Errors if given dose as type other than character", { expect_error(
   drugPerturbationSig(
-    TGGATESsmall, mDataType="rna", nthread=1,
+    TGGATESsmall, mDataType = "rna", nthread = 1,
     duration = "2", drugs = head(drugNames(TGGATESsmall)),
     features = fNames(TGGATESsmall, "rna")[1:2], dose = c(1, 2)
     )
   )
 })
-test_that("Errors if specified doses are not in the tSet", { expect_error(
+test_that("Errors if specified doses are not in the tSet", {expect_error(
   drugPerturbationSig(
-    TGGATESsmall, mDataType="rna", nthread=1,
+    TGGATESsmall, mDataType="rna", nthread = 1,
     duration = "2", drugs = head(drugNames(TGGATESsmall)),
     features = fNames(TGGATESsmall, "rna")[1:2], dose = c("Too Much", "Lots")
     )
