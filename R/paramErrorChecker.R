@@ -24,8 +24,8 @@ paramErrorChecker <- function(funName, tSet, ...) {
                             "drugsNotChar",
                             "durationNotChar"
   )
-  intersectPlotParamChecks <- c("tSetNotIs",
-                                "vaibilitiesNotMissing", "viabilitiesNotNum"
+  intersectViabPlotParamChecks <- c("tSetNotIs",
+                                    "vaibilitiesNotMissing", "viabilitiesNotNum"
   )
 
   # Matches the correct parameter constraints to each function name
@@ -42,11 +42,11 @@ paramErrorChecker <- function(funName, tSet, ...) {
                "summary.statNotChar", "summary.statNotIn", "summary.statGt1"
              ),
            "drugDoseResponseCurve" =
-             c(intersectPlotParamChecks, "viabilitiesDiffLenConc",
+             c(intersectViabPlotParamChecks, "viabilitiesDiffLenConc",
                "concentrationsNotNum"
              ),
            "drugTimeResponseCurve" =
-             c(intersectPlotParamChecks, "viabilitiesDiffLenDur",
+             c(intersectViabPlotParamChecks, "viabilitiesDiffLenDur",
                "durationNotChar")
     )
 
