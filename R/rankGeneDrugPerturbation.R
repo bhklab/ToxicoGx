@@ -19,7 +19,8 @@
 #' @keywords internal
 #' @export
 rankGeneDrugPerturbation <-
-  function(data, drug, drug.id, drug.concentration, type, xp, batch, duration, single.type=FALSE, nthread=1, verbose=FALSE) {
+  function(data, drug, drug.id, drug.concentration, type, xp, batch, duration,
+           single.type=FALSE, nthread=1, verbose=FALSE) {
 
     if (nthread != 1) {
       availcore <- parallel::detectCores()

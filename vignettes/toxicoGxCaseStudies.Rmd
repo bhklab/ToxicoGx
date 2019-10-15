@@ -22,6 +22,7 @@ For plotting the gene expression under same conditions using the package, the fi
 To plot, the function drugGeneResponseCurve has been used wherein mandatory inputs such as dataset, drug name, cell-line, molecular type, gene name, dose and time points should be specified.
 
 ```{r, message = FALSE}
+require(devtools)
 devtools::install_github("bhklab/ToxicoGx")
 ```
 
@@ -60,7 +61,7 @@ drug.perturbation <- drugPerturbationSig(TGGATESsmall,
 data(HCC_sig)
 res <- apply(drug.perturbation[,,c("tstat", "fdr")],
              2, function(x, HCC){
-               return(PharamcoGx::connectivityScore(x=x,
+               return(PharmacoGx::connectivityScore(x=x,
                                         y=HCC[,2,drop=FALSE],
                                         method="fgsea", nperm=100))
              }, HCC=HCC_sig)
