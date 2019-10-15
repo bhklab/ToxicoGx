@@ -37,7 +37,6 @@ output:
     fig_width: 7
     fig_height: 7
     keep_tex: no
-    number_sections: no
     template: manuscript.latex
     includes:
       in_header: header.tex
@@ -51,12 +50,10 @@ classoption: a4paper
 capsize: normalsize
 fontsize: 10pt
 geometry: margin=0.5in
-linenumbers: no
 spacing: singlespacing
 footerdate: yes
 csl: ecology.csl
 ---
-
 
 ```{r setup, include=FALSE, cache=FALSE, message = FALSE}
 
@@ -77,26 +74,6 @@ opts_chunk$set(fig.path = "output/figures/")
 
 
 ```
-
-
-```{r knitcitations, echo=FALSE, cache = FALSE}
-library(knitcitations)
-cleanbib()   
-cite_options(citation_format = "pandoc")
-```
-
-
-\singlespace
-
-\vspace{2mm}\hrule
-
-Write your abstract here.
-
-\vspace{3mm}\hrule
-
-\singlespace
-
-\bleft
 
 
 ## Plotting gene expression changes from TG-GATEs dataset
@@ -137,7 +114,7 @@ require(xtable)
 data("TGGATESsmall")
 # To compute the effect of drug concentration on the molecular profile of the cell
 drug.perturbation <- drugPerturbationSig(TGGATESsmall,
-                                         mDataType = "rna", 
+                                         mDataType = "rna",
                                          cells = "Hepatocyte",
                                          duration = "24",
                                          dose = c("Control", "Low"),
@@ -160,3 +137,5 @@ xtable::xtable(res,
 ```
 
 In the above table, omeprazole showed a positive connectivity score in contrast to isoniazid. This observation aligns with the trends reported in the paper. The above example is to demonstrate the ease with which drug perturbation analysis can be done using ToxicoGx package.
+
+\end{document}
