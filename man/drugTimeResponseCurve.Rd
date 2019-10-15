@@ -16,8 +16,6 @@ this graph.}
 
 \item{duration}{[character] A vector of durations to include in the plot.}
 
-\item{cellline}{[character] A vector of cell lines to include in the plot.}
-
 \item{dose}{[character] A vector of dose levels to be included in the
 plot. Default to include all dose levels available for a drug. Must include
 at minimum two dose levels, one of witch is "Control".}
@@ -25,12 +23,10 @@ at minimum two dose levels, one of witch is "Control".}
 \item{drug}{[character] A vector of drugs to be included in this plot.}
 
 \item{plot.type}{[character] The type of plot which you would like returned. Options
-are 'Actual' for unfitted curve, 'Fitted' for the fitted curve and 'Both'
-to display 'Actual and 'Fitted' in the sample plot.}
-
-\item{summarize.replicates}{[logical] If true will take the average of all
-replicates at each time point per gene and duration. This release has not
-yet implemented this feature.}
+ are 'Actual' for unfitted curve, 'Fitted' for the fitted curve and 'Both'
+ to display 'Actual and 'Fitted' in the sample plot.
+@param summarize.replciates [logical] If true will take the average of all
+  replicates at each time point per dose and duration}
 
 \item{viability_as_pct}{[logical] A vector specifying if viabilities should
 be plotted as a percentage. Defaults to TRUE.}
@@ -56,14 +52,18 @@ a title wil be generated automatically.}
 
 \item{cex}{[numeric] The cex parameter passed to plot}
 
-\item{cex.main}{[numeric] The cex.main parameter passed to plot, controls
-the size of the titles}
+\item{cex.main}{[numeric] The cex.main parameter passed to plot, controls the size of the titles}
 
-\item{legend.loc}{[character] The location of the legend as passed to the
-legends function from base graphics. Recommended values are 'topright' or
-'topleft'. Default is 'topleft'.}
+\item{legend.loc}{[character] The location of the legend as passed to the plot()
+function from base graphics.}
 
 \item{verbose}{[boolean] Should warning messages about the data passed in be printed?}
+
+\item{cellLine}{[character] A vector of cell lines to include in the plot.}
+
+\item{legend.loc}{And argument passable to xy.coords for the position to place the legend.}
+
+\item{trunc}{[bool] Should the viability values be truncated to lie in [0-100] before doing the fitting}
 }
 \value{
 Plot of the viabilities for each drug vs time of exposure
@@ -72,10 +72,6 @@ Plot of the viabilities for each drug vs time of exposure
 Description of this function
 }
 \examples{
-if (interactive()) {
-  ToxicoGx::drugTimeResponseCurve(TGGATESsmall, cellline = "Hepatocyte",
-    dose = c("Control", "Low", "Middle"),
-    drug = "naphthyl isothiocyanate", duration = c("2", "8", "24"))
-}
+ToxicoGx:::drugTimeResponseCurve(TGGATESsmall, dose = c("Control", "Low", "Middle"), drug = "naphthyl isothiocyanate", duration = c("2", "8", "24"))
 
 }
