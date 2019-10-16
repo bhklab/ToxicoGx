@@ -98,7 +98,7 @@ data(TGGATESsmall)
 drugGeneResponseCurve(tSets = TGGATESsmall, duration = c("2", "8", "24"), 
                       cellline = "Hepatocyte", mDataTypes = "rna", 
                       features = "ENSG00000140465_at", 
-                      dose = c("Control", "Low", "Middle","High"),
+                      dose = c("Control", "Low", "Middle", "High"),
                       drug = "carbon tetrachloride", 
                       plot.type = "Actual",
                       title = "Effect of Carbon tetra chloride on CYP1A1.",

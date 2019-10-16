@@ -45,4 +45,5 @@ Suggests:
     rmarkdown,
     knitr,
     knitcitations,
-    tinytex
+    tinytex,
+    devtools
