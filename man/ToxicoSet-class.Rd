@@ -31,7 +31,7 @@
 \alias{sensNumber,ToxicoSet-method}
 \alias{pertNumber<-,ToxicoSet,array-method}
 \alias{sensNumber<-,ToxicoSet,matrix-method}
-\title{Class to contain Toxicogenomic Data}
+\title{Class to contain Toxico-genomic Data}
 \usage{
 \S4method{cellInfo}{ToxicoSet}(cSet = tSet)
 

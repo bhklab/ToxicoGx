@@ -1,5 +1,5 @@
 ---
-title: 'ToxicoGx: A Package for Large Scale Analysis of Toxicogenomic Data'
+title: 'ToxicoGx: A Package for Large Scale Analysis of Toxico-genomic Data'
 
 author:  
 - name: Sisira Kadambat Nair
@@ -51,9 +51,13 @@ capsize: normalsize
 fontsize: 10pt
 geometry: margin=0.5in
 spacing: singlespacing
-footerdate: yes
 csl: ecology.csl
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{ToxicoGx: A Package for Large Scale Analysis of Toxico-genomic Data}
 ---
+
+
 
 ```{r setup, include=FALSE, cache=FALSE, message = FALSE}
 
@@ -82,13 +86,12 @@ Our first case study is based on a plot from a paper by Rangel-Escareño et al.,
 For plotting the gene expression under same conditions using the package, the first step is to load the datasets from disk or download them using the downloadTSet function above. In the following example, we use the toy dataset provided with the package to illustrate the process. 
 To plot, the function drugGeneResponseCurve has been used wherein mandatory inputs such as dataset, drug name, cell-line, molecular type, gene name, dose and time points should be specified.
 
-```{r, message = FALSE}
-require(devtools)
+```{r, message = FALSE, eval = FALSE}
 devtools::install_github("bhklab/ToxicoGx")
 ```
 
 **Plot time dependent dose response of Carbon tetra chloride on CYP1A1 gene.**
-```{r, message = FALSE, fig.width = 7, fig.height = 7}
+```{r, message = FALSE, fig.width = 6, fig.height = 6}
 library(ToxicoGx)
 # Load the tset 
 data(TGGATESsmall)
@@ -118,7 +121,7 @@ drug.perturbation <- drugPerturbationSig(TGGATESsmall,
                                          cells = "Hepatocyte",
                                          duration = "24",
                                          dose = c("Control", "Low"),
-                                         drugs = drugNames(TGGATESsmall),
+                                         drugs = c("omeprazole", "isoniazid"),
                                          verbose = FALSE)
 data(HCC_sig)
 res <- apply(drug.perturbation[,,c("tstat", "fdr")],
@@ -137,5 +140,3 @@ xtable::xtable(res,
 ```
 
 In the above table, omeprazole showed a positive connectivity score in contrast to isoniazid. This observation aligns with the trends reported in the paper. The above example is to demonstrate the ease with which drug perturbation analysis can be done using ToxicoGx package.
-
-\end{document}

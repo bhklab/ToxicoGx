@@ -1,4 +1,4 @@
-#' Class to contain Toxicogenomic Data
+#' Class to contain Toxico-genomic Data
 #'
 #' A description which has yet to be added to this class. This is just a place
 #' holder.
