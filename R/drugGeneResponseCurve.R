@@ -37,8 +37,8 @@
 #' @param legend.loc [character] The location of the legend as passed to the plot()
 #'   function from base graphics. Suggested values are either "topleft" or
 #'   "topright", with the latter as the default.
-#' @param mycol [vector] A vector of length equal to the lenth of the tSets
-#'   argument specifying which RColorBrewer colour to use per tSet. Default
+#' @param mycol [vector] A vector of length equal to the number of features
+#'   argument specifying which RColorBrewer colour to use per feature. Default
 #'   colours will be used if this parameter is excluded.
 #' @param plot.type [character] The type of plot which you would like returned. Options
 #'   are 'Actual' for unfitted curve, 'Fitted' for the fitted curve and 'Both'
