@@ -14,7 +14,7 @@ author:
   affilnum: 1
 - name: Petr Smirnov
   affilnum: '1, 2, 5'
-- name: Benjamin Hiabe-Kains
+- name: Benjamin Haibe-Kains
   affilnum: '1, 2, 3, 4, 5'
 
 affiliation:
