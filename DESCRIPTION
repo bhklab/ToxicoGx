@@ -40,10 +40,12 @@ Imports:
     scales
 RoxygenNote: 6.1.1
 VignetteBuilder: knitr
-Suggests: 
+Suggests:
     testthat (>= 2.1.0),
     rmarkdown,
     knitr,
     knitcitations,
     tinytex,
-    devtools
+    devtools,
+    PharmacoGx
+  

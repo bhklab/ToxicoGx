@@ -92,6 +92,7 @@ devtools::install_github("bhklab/ToxicoGx")
 
 **Plot time dependent dose response of Carbon tetra chloride on CYP1A1 gene.**
 ```{r, message = FALSE, fig.width = 6, fig.height = 6}
+library(PharmacoGx)
 library(ToxicoGx)
 # Load the tset 
 data(TGGATESsmall)
@@ -114,7 +115,6 @@ The HCC signature, already mapped to the gene level, has been included in this p
 
 ```{r, results = 'asis'}
 require(xtable)
-library(PharmacoGx)
 data("TGGATESsmall")
 # To compute the effect of drug concentration on the molecular profile of the cell
 drug.perturbation <- drugPerturbationSig(TGGATESsmall,
