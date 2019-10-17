@@ -86,7 +86,7 @@ Our first case study is based on a plot from a paper by Rangel-Escareño et al.,
 For plotting the gene expression under same conditions using the package, the first step is to load the datasets from disk or download them using the downloadTSet function above. In the following example, we use the toy dataset provided with the package to illustrate the process. 
 To plot, the function drugGeneResponseCurve has been used wherein mandatory inputs such as dataset, drug name, cell-line, molecular type, gene name, dose and time points should be specified.
 
-```{r, message = FALSE, eval = FALSE}
+```{r, message = FALSE, results = 'hide'}
 devtools::install_github("bhklab/ToxicoGx")
 ```
 
@@ -114,6 +114,7 @@ The HCC signature, already mapped to the gene level, has been included in this p
 
 ```{r, results = 'asis'}
 require(xtable)
+library(PharmacoGx)
 data("TGGATESsmall")
 # To compute the effect of drug concentration on the molecular profile of the cell
 drug.perturbation <- drugPerturbationSig(TGGATESsmall,
