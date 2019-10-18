@@ -47,5 +47,6 @@ Suggests:
     knitcitations,
     tinytex,
     devtools,
-    PharmacoGx
+    PharmacoGx,
+    xtable
   
