@@ -871,26 +871,32 @@ setMethod("dim", signature=signature(x="ToxicoSet"), function(x){
 #'   cells = TGGATESCells[1], duration = "2")
 #'
 #' @param tSet A \code{ToxicoSet} to be subsetted
-#' @param cells A list or vector of cell names as used in the dataset to which
+#' @param cell.lines A list or vector of cell names as used in the dataset to which
 #'   the object will be subsetted. If left blank, then all cells will be left in
 #'   the dataset.
 #' @param drugs A list or vector of drug names as used in the dataset to which
 #'   the object will be subsetted. If left blank, then all drugs will be left in
 #'   the dataset.
-#' @param features A list or vector of feature names as used int he dataset from
+#' @param features A list or vector of feature names as used in the dataset from
 #'   which the object will be subsetted. If left blank that all features will
 #'   be left in.
 #' @param molecular.data.cells A list or vector of cell names to keep in the
 #'   molecular data
-#   the controls be kept in the dataset? Defaults to true.
 #' @param duration A \code{list} or \code{vector} of the experimental durations
-#'   to include in the subset as strings
+#'   to include in the subset as strings. Defaults to all durations if parameter
+#'   is not specified.
 #' @param ... Other arguments passed by other function within the package
 #' @return A ToxicoSet with only the selected drugs and cells
 #' @importFrom CoreGx unionList
 #' @export
-subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, duration=NULL, features=NULL, ...) {
-  drop=FALSE
+## TODO:: Include dose parmater to subset on
+subsetTo <- function(tSet, cell.lines = NULL,
+                     drugs=NULL,
+                     molecular.data.cells=NULL,
+                     duration=NULL, features=NULL, ...
+                     ) {
+  ## TODO:: Remove this or add it to the function parameters?
+  drop = FALSE
 
   ####
   # PARSING ARGUMENTS
@@ -908,35 +914,30 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
   }else {
     exps <- NULL
   }
+
   if ("dose" %in% names(adArgs)) {
     ## TODO:: Add subsetting on dose
     stop("Due to the structure of tSets, subsetting on dose can only be done on specific slots - not on the entire tSet")
   }
 
-  if (!is.null(cells)){
-    ## TODO:: Test this function in a tSet with more than one cell type!
-    cells <- unique(cells)
-  }
-
-  if (!is.null(drugs)) {
-    drugs <- unique(drugs)
-  }
-
-  if (!is.null(molecular.data.cells)) {
-    molecular.data.cells <- unique(molecular.data.cells)
-  }
-
-  if (!is.null(duration)) {
-    duration <- unique(duration)
-    if (is.numeric(duration)) {
-      warning("Duration values should be character, not numeric! Converting for you...")
-      duration <- vapply(duration, function(x) { as.character(x) }, character(1))
+  ## MISSING VALUE HANDLING FOR PARAMETERS
+  # Get named list of defualt values for missing parameters
+  argDefaultList <-
+    paramMissingHandler(funName = "subsetTo", tSet = tSet,
+                        drugs = drugs, cell.lines = cell.lines, features = features,
+                        duration = duration)
+  # Assign any missing parameter default values to function environment
+  if (length(argDefaultList) > 0) {
+    for (idx in seq_along(argDefaultList)) {
+      assign(names(argDefaultList)[idx], argDefaultList[[idx]])
     }
   }
 
-  if (!is.null(features)) {
-    features <- unique(features)
-  }
+  # ERROR HANDLING FOR PARAMETERS
+  paramErrorChecker(funName = "subsetTo", tSet = tSet,
+                    cell.lines = cell.lines,
+                    drugs = drugs, features = features,
+                    duration = duration)
 
   ######
   # SUBSETTING MOLECULAR PROFILES SLOT
@@ -945,7 +946,7 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
 
   ### the function missing does not work as expected in the context below, because the arguments are passed to the anonymous
   ### function in lapply, so it does not recognize them as missing
-  tSet@molecularProfiles <- lapply(tSet@molecularProfiles, function(eset, cells, drugs, molecular.data.cells, duration, features){
+  tSet@molecularProfiles <- lapply(tSet@molecularProfiles, function(eset, cell.lines, drugs, molecular.data.cells, duration, features){
 
     if (!is.null(features)) {
       eset <- eset[which(Biobase::featureNames(eset) %in% features), ]
@@ -953,24 +954,24 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
 
     molecular.data.type <- ifelse(length(grep("rna", Biobase::annotation(eset)) > 0), "rna", Biobase::annotation(eset))
     if (length(grep(molecular.data.type, names(molecular.data.cells))) > 0) {
-      cells <- molecular.data.cells[[molecular.data.type]]
+      cell.lines <- molecular.data.cells[[molecular.data.type]]
     }
     column_indices <- NULL
 
-    if (length(cells) == 0 && length(drugs) == 0) {
+    if (length(cell.lines) == 0 && length(drugs) == 0) {
       column_indices <- seq_len(ncol(eset))
     }
-    if (length(cells) == 0 && tSet@datasetType == "sensitivity") {
+    if (length(cell.lines) == 0 && tSet@datasetType == "sensitivity") {
       column_indices <- seq_len(ncol(eset))
     }
 
     # Selecting indices which match the cells arguemnt
     cell_line_index <- NULL
-    if (length(cells) != 0) {
-      if (!all(cells %in% cellNames(tSet))) {
+    if (length(cell.lines) != 0) {
+      if (!all(cell.lines %in% cellNames(tSet))) {
         stop("Some of the cell names passed to function did not match to names in the PharmacoSet. Please ensure you are using cell names as returned by the cellNames function")
       }
-      cell_line_index <- which(Biobase::pData(eset)[["cellid"]] %in% cells)
+      cell_line_index <- which(Biobase::pData(eset)[["cellid"]] %in% cell.lines)
     }
 
     # Selecting indexes which match drugs arguement
@@ -1003,7 +1004,7 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
     if (!is.null(duration)){
       if (all(!(duration %in% unique(Biobase::pData(eset[,column_indices])$duration)))) {
         # Error when other parameters are passed in
-        if ( !is.null(cells) | !is.null(drugs) | !is.null(molecular.data.cells)) {
+        if ( !is.null(cell.lines) | !is.null(drugs) | !is.null(molecular.data.cells)) {
           stop(paste0(
             "There are no molecular profiles with duration of ",
             duration, " in the tSet with the selected parameters."
@@ -1025,7 +1026,7 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
     eset <- eset[row_indices, column_indices]
     return(eset)
 
-  }, cells = cells, drugs = drugs, molecular.data.cells = molecular.data.cells, duration = duration, features = features)
+  }, cell.lines = cell.lines, drugs = drugs, molecular.data.cells = molecular.data.cells, duration = duration, features = features)
 
 
   ######
@@ -1047,18 +1048,18 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
   # Logic if drug or cell parameters are passed to subsetTo
   else if (
     (tSet@datasetType == "sensitivity" | tSet@datasetType == "both") &
-    (length(drugs) != 0 | length(cells) != 0 | !is.null(duration) )
+    (length(drugs) != 0 | length(cell.lines) != 0 | !is.null(duration) )
   ) {
 
     drugs_index <- which(sensitivityInfo(tSet)[, "drugid"] %in% drugs)
-    cell_line_index <- which(sensitivityInfo(tSet)[,"cellid"] %in% cells)
+    cell_line_index <- which(sensitivityInfo(tSet)[,"cellid"] %in% cell.lines)
     if (length(drugs_index) !=0 & length(cell_line_index) !=0 ) {
       if (length(intersect(drugs_index, cell_line_index)) == 0) {
         stop("This Drug - Cell Line combination was not tested together.")
       }
       row_indices <- intersect(drugs_index, cell_line_index)
     } else {
-      if(length(drugs_index)!=0 & length(cells)==0) {
+      if(length(drugs_index)!=0 & length(cell.lines)==0) {
         row_indices <- drugs_index
       } else {
         if(length(cell_line_index)!=0 & length(drugs)==0){
@@ -1073,7 +1074,7 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
     if(!is.null(duration)){
       if(all(!(duration %in% unique(sensitivityInfo(tSet)[row_indices,]$duration_h)))) {
         # Error when other parameters are passed in
-        if(!is.null(cells) | !is.null(drugs) | !is.null(molecular.data.cells)) {
+        if(!is.null(cell.lines) | !is.null(drugs) | !is.null(molecular.data.cells)) {
           stop(paste0(
             ## TODO:: Is sample the correct way to refer to one treatment/duration combination in TGx experiments?
             "There are no samples with duration of ",
@@ -1094,8 +1095,8 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
       lapply(sensItemNames, function(sensItemName, drop){
         if (sensItemName == "n") {
           sensItem <- tSet@sensitivity[[sensItemName]]
-          if (!is.null(cells)) {
-            sensItem[which(rownames(sensItem) %in% cells), which(colnames(sensItem) %in% drugs), drop = drop]
+          if (!is.null(cell.lines)) {
+            sensItem[which(rownames(sensItem) %in% cell.lines), which(colnames(sensItem) %in% drugs), drop = drop]
           } else {
             sensItem[ , which(colnames(sensItem) %in% drugs), drop = drop]
           }
@@ -1126,20 +1127,20 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
   #####
   # SUBSET CELLS SLOT
   #####
-  if (length(cells) == 0) {
-    cells <- union(cells, na.omit(unionList(lapply(tSet@molecularProfiles, function(eSet){unique(Biobase::pData(eSet)[["cellid"]])}))))
+  if (length(cell.lines) == 0) {
+    celll.lines <- union(cell.lines, na.omit(unionList(lapply(tSet@molecularProfiles, function(eSet){unique(Biobase::pData(eSet)[["cellid"]])}))))
     if (tSet@datasetType == "sensitivity" | tSet@datasetType == "both"){
-      cells <- union(cells, sensitivityInfo(tSet)[["cellid"]])
+      cell.lines <- union(cell.lines, sensitivityInfo(tSet)[["cellid"]])
     }
   }
   #####
   # ASSIGN SUBSETS BACK TO TOXICOSET OBJECT
   #####
   drugInfo(tSet) <- drugInfo(tSet)[drugs , , drop=drop]
-  cellInfo(tSet) <- cellInfo(tSet)[cells , , drop=drop]
+  cellInfo(tSet) <- cellInfo(tSet)[cell.lines , , drop=drop]
   tSet@curation$drug <- tSet@curation$drug[drugs , , drop=drop]
-  tSet@curation$cell <- tSet@curation$cell[cells , , drop=drop]
-  tSet@curation$tissue <- tSet@curation$tissue[cells , , drop=drop]
+  tSet@curation$cell <- tSet@curation$cell[cell.lines , , drop=drop]
+  tSet@curation$tissue <- tSet@curation$tissue[cell.lines , , drop=drop]
   return(tSet)
 }
 
@@ -1517,13 +1518,6 @@ checkTSetStructure <-
     } else {
       print("unique.cellid which is curated cell id across data set should be a column of cell curation slot")
     }
-    #     if("cellid" %in% colnames(tSet@cell)) {
-    #       if(length(intersect(tSet@curation$cell$cellid, rownames(tSet@cell))) != nrow(tSet@cell)) {
-    #         print("values of cellid column should be curated cell line ids")
-    #       }
-    #     } else {
-    #       print("cellid which is curated cell id across data set should be a column of cell slot")
-    #     }
 
     if(length(intersect(rownames(tSet@curation$cell), rownames(tSet@cell))) != nrow(tSet@cell)) {
       print("rownames of curation cell slot should be the same as cell slot (curated cell ids)")
@@ -1536,14 +1530,6 @@ checkTSetStructure <-
     } else {
       print("unique.drugid which is curated drug id across data set should be a column of drug curation slot")
     }
-
-    #     if("drugid" %in% colnames(tSet@drug)) {
-    #       if(length(intersect(tSet@curation$drug$drugid, rownames(tSet@drug))) != nrow(tSet@drug)) {
-    #         print("values of drugid column should be curated drug ids")
-    #       }
-    #     } else {
-    #       print("drugid which is curated drug id across data set should be a column of drug slot")
-    #     }
 
     if(length(intersect(rownames(tSet@curation$cell), rownames(tSet@cell))) != nrow(tSet@cell)) {
       print("rownames of curation drug slot should be the same as drug slot (curated drug ids)")

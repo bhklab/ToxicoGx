@@ -5,56 +5,58 @@
 \title{Creates a signature representing gene expression (or other molecular profile)
 change induced by administrating a drug, for use in drug effect analysis.}
 \usage{
-drugPerturbationSig(tSet, mDataType, drugs, cells, features, duration,
-  dose, nthread = 1, returnValues = c("estimate", "tstat", "pvalue",
-  "fdr"), verbose = FALSE)
+drugPerturbationSig(tSet, mDataType, drugs = NULL, cell.lines = NULL,
+  features = NULL, duration = NULL, dose = NULL, nthread = 1,
+  returnValues = c("estimate", "tstat", "pvalue", "fdr"),
+  verbose = FALSE)
 }
 \arguments{
-\item{tSet}{[ToxicoSet] a ToxicoSet of the perturbation experiment type}
+\item{tSet}{\code{ToxicoSet} a ToxicoSet of the perturbation experiment type}
 
-\item{mDataType}{[character] which one of the molecular data types to use
+\item{mDataType}{\code{character} which one of the molecular data types to use
 in the analysis, out of dna, rna, rnaseq, snp, cnv (only rna currently supported)}
 
-\item{drugs}{[character] a vector of drug names for which to compute the
+\item{drugs}{\code{character} a vector of drug names for which to compute the
 signatures. Should match the names used in the ToxicoSet.}
 
-\item{cells}{[character] a vector of cell names to use in computing the
+\item{cell.lines}{\code{character} a vector of cell names to use in computing the
 signatures. Should match the names used in the ToxicoSet.}
 
-\item{features}{[character] a vector of features for which to compute the
+\item{features}{\code{character} a vector of features for which to compute the
 signatures. Should match the names used in correspondant molecular data in ToxicoSet.}
 
-\item{duration}{[character] a vector of experiment durations for which to inlcude in the
+\item{duration}{\code{character} a vector of experiment durations for which to inlcude in the
 computed the signatures.}
 
-\item{dose}{[character] a vector of dose levels to include in the results}
+\item{dose}{\code{character} a vector of dose levels to include in the results}
 
-\item{nthread}{[numeric] if multiple cores are available, how many cores
+\item{nthread}{\code{numeric} if multiple cores are available, how many cores
 should the computation be parallelized over?}
 
-\item{returnValues}{[character] Which of estimate, t-stat, p-value and fdr
-should the function return for each gene drug pair?}
+\item{returnValues}{\code{character} Which of estimate, t-stat, p-value and fdr
+should the function return for each gene drug pair}
 
-\item{verbose}{[bool] Should diagnostive messages be printed? (default false)}
+\item{verbose}{\code{bool} Should diagnostive messages be printed? (default false)}
 }
 \value{
-[list] a 3D array with genes in the first dimension, drugs in the
-  second, and return values in the third.
+\code{ToxicoSig} An object composed of a 3D array with genes in the
+  first dimension, drugs in the second, and return values in the third.
 }
 \description{
-Given a Toxicoset of the perturbation experiment type, and a list of drugs,
-the function will compute a signature for the effect of drug concentration on
-the molecular profile of a cell. The algorithm uses a regression model which
-corrects for experimental batch effects, cell specific differences, and
-duration of experiment to isolate the effect of the concentration of the drug
-applied. The function returns the estimated coefficient for concentration,
-the t-stat, the p-value and the false discovery rate associated with that
-coefficient, in a 3 dimensional array, with genes in the first direction,
-drugs in the second, and the selected return values in the third.
+Given a Toxicoset of the perturbation experiment type, and a character vector
+of drugs, the function will compute a signature for the effect of
+drug concentration on the molecular profile of a cell. The algorithm uses a
+regression model which corrects for experimental batch effects, cell specific
+differences, and duration of experiment to isolate the effect of the
+concentration of the drug applied. The function returns the estimated
+coefficient for concentration, the t-stat, the p-value and the false
+discovery rate associated with that coefficient, in a 3 dimensional array,
+with genes in the first direction, drugs in the second, and the selected
+return values in the third.
 }
 \examples{
-#data(TGGATES_small)
-#drug.perturbation <- drugPerturbationSig(TGGATES_small, mDataType="rna", nthread=1)
-#print(drug.perturbation)
+data(TGGATESsmall)
+drug.perturbation <- drugPerturbationSig(TGGATESsmall, mDataType="rna",
+ features = head(fNames(TGGATESsmall, "rna")), nthread=1)
 
 }

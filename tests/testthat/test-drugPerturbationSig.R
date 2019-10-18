@@ -8,8 +8,8 @@ context("Testing drugPertubrationSig...")
 test_that("Summary statistics don't change based on number of drugs", {
   context("...Testing summary stats are independent of number of drugs...")
   expect_equal(
-    as.data.frame(drugPerturbationSig(TGGATESsmall, mDataType = "rna", drugs =  drugNames(TGGATESsmall)[1:3], cells = "Hepatocyte", features = fNames(TGGATESsmall, "rna")[1:200], duration = c("2"), verbose = T, nthread = 3)@.Data)$estimate[,1:3],
-    as.data.frame(drugPerturbationSig(TGGATESsmall, mDataType = "rna", drugs =  drugNames(TGGATESsmall)[1:5], cells = "Hepatocyte", features = fNames(TGGATESsmall, "rna")[1:200], duration = c("2"), verbose = T, nthread = 3)@.Data)$estimate[,1:3]
+    suppressWarnings(drugPerturbationSig(TGGATESsmall, mDataType = "rna", drugs =  drugNames(TGGATESsmall)[1:3], cell.lines = "Hepatocyte", features = fNames(TGGATESsmall, "rna")[1:200], duration = c("2"), verbose = T, nthread = 2)@.Data[1,1:2,1]),
+    suppressWarnings(drugPerturbationSig(TGGATESsmall, mDataType = "rna", drugs =  drugNames(TGGATESsmall)[1:5], cell.lines = "Hepatocyte", features = fNames(TGGATESsmall, "rna")[1:200], duration = c("2"), verbose = T, nthread = 2)@.Data[1,1:2,1])
     )
 })
 
@@ -59,7 +59,7 @@ test_that("Errors if specified mDataType is not in the tSet.", { expect_error(
 context("...Checking for correct cells param errors...")
 test_that("Errors if given cell.lines as type other than character.", { expect_error(
   drugPerturbationSig(
-    TGGATESsmall, mDataType="rna", nthread=1, cells = c(TRUE, FALSE),
+    TGGATESsmall, mDataType="rna", nthread=1, cell.lines = c(TRUE, FALSE),
     duration = "2", drugs = head(drugNames(TGGATESsmall)),
     features = fNames(TGGATESsmall, "rna")[1:2]
   )
@@ -67,7 +67,7 @@ test_that("Errors if given cell.lines as type other than character.", { expect_e
 })
 test_that("Errors if specified cells are not in the tSet", { expect_error(
   drugPerturbationSig(
-    TGGATESsmall, mDataType="rna", nthread=1, cells = "NOTINtSET",
+    TGGATESsmall, mDataType="rna", nthread=1, cell.lines = "NOTINtSET",
     duration = "2", drugs = head(drugNames(TGGATESsmall)),
     features = fNames(TGGATESsmall, "rna")[1:2]
   )
