@@ -4,13 +4,13 @@
 \alias{subsetTo}
 \title{A function to subset a ToxicoSet to data containing only specified drugs, cells and genes}
 \usage{
-subsetTo(tSet, cells = NULL, drugs = NULL,
+subsetTo(tSet, cell.lines = NULL, drugs = NULL,
   molecular.data.cells = NULL, duration = NULL, features = NULL, ...)
 }
 \arguments{
 \item{tSet}{A \code{ToxicoSet} to be subsetted}
 
-\item{cells}{A list or vector of cell names as used in the dataset to which
+\item{cell.lines}{A list or vector of cell names as used in the dataset to which
 the object will be subsetted. If left blank, then all cells will be left in
 the dataset.}
 
@@ -22,9 +22,10 @@ the dataset.}
 molecular data}
 
 \item{duration}{A \code{list} or \code{vector} of the experimental durations
-to include in the subset as strings}
+to include in the subset as strings. Defaults to all durations if parameter
+is not specified.}
 
-\item{features}{A list or vector of feature names as used int he dataset from
+\item{features}{A list or vector of feature names as used in the dataset from
 which the object will be subsetted. If left blank that all features will
 be left in.}
 

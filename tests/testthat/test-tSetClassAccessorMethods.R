@@ -139,7 +139,7 @@ test_that("subsetTo() class method produces expected results", {
   ## TODO:: Change context() messages to be more informative when running devtools::test()
   context("External validation...")
   expect_equal_to_reference(subsetTo(
-    TGGATESsmall, drugs = drugNames(TGGATESsmall)[1], cells=cellNames(TGGATESsmall)[1]),
+    TGGATESsmall, drugs = drugNames(TGGATESsmall)[1], cell.lines=cellNames(TGGATESsmall)[1]),
     "subsetTo.TGGATESsmall.rds")
   context("Internal validation...")
   ## Tests that subsetting molecularProfiles on duration works

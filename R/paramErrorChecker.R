@@ -1,4 +1,3 @@
-
 # An Error Checker for Function Parameters
 #
 # This function will take in the params of a function as well as its name.
@@ -18,36 +17,43 @@
 paramErrorChecker <- function(funName, tSet, ...) {
 
   # Intersection of all function's parameter tests
-  intersectParamChecks <- c("tSetNotIs", "tSetGt1",
-                            "mDataTypeNotChar", "mDataTypeNotIn",
-                            "cell.linesNotChar","cell.linesNotIn",
-                            "drugsNotChar",
-                            "durationNotChar"
+  intersectParamChecks <- c(
+    "tSetNotIs", "tSetGt1", "mDataTypeNotChar", "mDataTypeNotIn",
+      "cell.linesNotChar","cell.linesNotIn", "drugsNotChar", "durationNotChar"
   )
-  intersectViabPlotParamChecks <- c("tSetNotIs",
-                                    "vaibilitiesNotMissing", "viabilitiesNotNum"
+  intersectViabPlotParamChecks <- c(
+    "tSetNotIs", "vaibilitiesNotMissing", "viabilitiesNotNum"
   )
+  #intersectGenePlotParamChecks <- c()
 
   # Matches the correct parameter constraints to each function name
   paramChecks <-
     switch(funName,
            "drugPerturbationSig" =
-             c(intersectParamChecks,
-               "mDataTypeGt1",
-               "featuresLt2",
-               "doseLt2", "doseNotCtl"
+             c(intersectParamChecks, "mDataTypeGt1", "featuresLt2", "doseLt2",
+               "doseNotCtl"
              ),
            "summarizeMolecularProfiles" =
              c(intersectParamChecks,
-               "summary.statNotChar", "summary.statNotIn", "summary.statGt1"
+               "summary.statNotChar", "summary.statNotIn", "summary.statGt1",
+               "durationMissing", "durationNotIn", "cell.linesNotIn"
              ),
+           "summarizeSensitivityProfiles" =
+             c(intersectParamChecks,
+               "durationGt1", "durationMissing", "durationNotIn", "cell.linesNotIn"
+              ),
            "drugDoseResponseCurve" =
              c(intersectViabPlotParamChecks, "viabilitiesDiffLenConc",
                "concentrationsNotNum"
              ),
            "drugTimeResponseCurve" =
              c(intersectViabPlotParamChecks, "viabilitiesDiffLenDur",
-               "durationNotChar")
+               "durationNotChar"),
+           "subsetTo" =
+             c("returnValuesGt1",
+               "tSetGt1", "tSetNotIs", "cell.linesNotChar", "cell.linesNotIn",
+               "drugsNotChar", "drugsNotIn", "featuresNotChar", "featuresNotIn"
+               ),
     )
 
   ## Handle missing values
@@ -55,25 +61,28 @@ paramErrorChecker <- function(funName, tSet, ...) {
     tSet <- NULL
   }
 
-  ## DEBUG STATEMENTS
-  #print(paste0("Function: ", funName))
-  #print(paste0("Checks: ",paste(paramChecks, collapse=",")))
-
   # Conducts the parameter checks based on function matched paramChecks
-  .checkParamsForErrors(tSet = tSet, paramChecks = paramChecks, ...)
+  .checkParamsForErrors(funName = funName, tSet = tSet,
+                        paramChecks = paramChecks, ...)
+
 }
 
-#' @keywords internal
-.checkParamsForErrors <- function(tSet, paramChecks, ...) {
 
-  cell.lines = concentrations = dose = drugs = duration = features = mDataType =
-    summary.stat = tSets = viabilities <- NULL
+
+#' @keywords internal
+.checkParamsForErrors <- function(tSet, funName, paramChecks, ...) {
+
+  # Initialize variable names in the local environment
+  cell.lines <- concentrations <- dose <- drugs <- duration <- features <-
+    mDataType <- summary.stat <- tSets <- viabilities <- NULL
 
   # Extract named arguments into local environment
   argList <- list(...)
   for (idx in seq_len(length(argList))) { ## TODO:: Make this work with seq_along()
     assign(names(argList)[idx], argList[[idx]])
   }
+
+  if (is.null(mDataType)) {mDataType <- names(tSet@molecularProfiles)}
 
   ## TODO:: Write a cases function that lazily evaluates LHS to replace this switch
   ## TODO:: Benmark for loop vs apply statement for this code
@@ -86,7 +95,7 @@ paramErrorChecker <- function(funName, tSet, ...) {
         "tSetNotIs" = {if (!is(tSet, "ToxicoSet")) { stop(paste0(tSet@annotations$name, " is a ", class(tSet), ", not a ToxicoSet.")) }},
         "tSetGt1" = {if (length(tSet) > 1) { stop("You may only pass in one tSet.") }},
         # tSets checks
-        "tSetsNotIs" = {if (!is.null(tSets)) { if (!all(vapply(tSets, function (tSet) { is(tSet, "ToxicoSet") }, FUN.VALUE = logical(1) ))) { stop("One or more arguments to tSets parameter is not a 'ToxicoSet'.")}}},
+        "tSetsNotIs" = {if (!is.null(tSets)) { if (!all(vapply(tSets, function(tSet) { is(tSet, "ToxicoSet") }, FUN.VALUE = logical(1) ))) { stop("One or more arguments to tSets parameter is not a 'ToxicoSet'.")}}},
         # mDataType checks
         "mDataTypeGt1" = {if (length(unlist(mDataType)) > 1) { stop("Please only pass in one molecular data type.") }},
         "mDataTypeNotChar" = {if (!is.character(mDataType)) { stop("mDataType must be a string.") }},
@@ -102,8 +111,10 @@ paramErrorChecker <- function(funName, tSet, ...) {
         "featuresNotChar" = {if (!is.character(unlist(features))) { stop("features parameter contain strings.") }},
         "featuresNotIn" = {if (all(!(fNames(tSet, mDataType[1]) %in% features))) { stop(paste0("The feature(s) ", paste(features[which(!(features %in% fNames(tSet, mDataType[1])))], collapse = ", "), " is/are not present in ", tSet@annotation$name, ".")) }},
         # duration checks
+        "durationMissing" = {if (is.null(duration)) { stop(paste(funName, "requires an argument be passed to the duration parameter!" )) }},
+        "durationGt1" = {if (length(duration) > 1) { stop(paste(funName, "only accepts one duration at a time!" )) }},
         "durationNotChar" = {if (!is.character(unlist(duration))) { stop("duration parameter must contain strings.") }},
-        "durationNotIn" = {if (all(!(duration %in% sensitivityInfo(tSet)$duration_h))) { stop(paste0("The duration(s) ", paste(duration[which(!(duration %in% sensitivityInfo(tSet)$duration_h))]), collapse = ", ", "is/are not present in ", tSet@annotation$name, ".")) }},
+        "durationNotIn" = {if (all(!(duration %in% ToxicoGx::sensitivityInfo(tSet)$duration_h))) { stop(paste0("The duration(s) ", paste(duration[which(!(duration %in% ToxicoGx::sensitivityInfo(tSet)$duration_h))]), collapse = ", ", "is/are not present in ", tSet@annotation$name, ".")) }},
         # dose checks
         "doseLt2" = {if (length(dose) < 2) { stop("To fit a linear model we need at least two dose levels, please add anothor to the dose argument in the function call.") }},
         "doseNoCtl" = {if (!("Control" %in% dose)) { stop("You should not calculate summary statistics without including a control! Please add 'Control' to the dose argument vector.") }},
@@ -114,7 +125,7 @@ paramErrorChecker <- function(funName, tSet, ...) {
         "summary.statGt1" = {if (length(summary.stat) > 1)  {stop("Please pick only one summary statistic") }},
         "summary.statNotIn" = {if (!(summary.stat %in% c("mean", "median", "first", "last"))) { stop(paste0("The the statistic ", summary.stat, " is not implemented in this package")) }},
         # viabilties checks
-        "viabilitiesNotNum" = {if (!is.null(viabilities)) { if (!all(vapply(viabilities, function (viability) { is(viability, "numeric") }, FUN.VALUE = logical(1) ))) { stop("Viability values must be numeric.") }}},
+        "viabilitiesNotNum" = {if (!is.null(viabilities)) { if (!all(vapply(viabilities, function(viability) { is(viability, "numeric") }, FUN.VALUE = logical(1) ))) { stop("Viability values must be numeric.") }}},
         "viabilitiesNotMissing" = {if (!is.null(concentrations)) { if (is.null(viabilities)) { stop("If you pass in an argument for concentrations, you must also pass in an argument for viabilities.")}}},
         "viabilitiesDiffLenConc" = {
           if (!is.null(concentrations) && !is.null(viabilities)) {
@@ -127,7 +138,7 @@ paramErrorChecker <- function(funName, tSet, ...) {
         # concentrations checks
         "concentrationsNotNum" = {
           if (!is.null(concentrations)) {
-            if (!all(vapply(concentrations, function (concentration) {
+            if (!all(vapply(concentrations, function(concentration) {
               is(concentration, "numeric") }, FUN.VALUE = logical(1) ))) {
               stop("Concentration values must be numeric.") }
           }}

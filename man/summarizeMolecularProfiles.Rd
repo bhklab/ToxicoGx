@@ -5,8 +5,9 @@
 \title{Takes molecular data from a ToxicoSet, and summarises them
 into one entry per drug and experimental condition.}
 \usage{
-summarizeMolecularProfiles(tSet, mDataType, cell.lines, drugs, features,
-  duration, dose = c("Control", "Low", "Middle", "High"),
+summarizeMolecularProfiles(tSet, mDataType, cell.lines = NULL,
+  drugs = NULL, features = NULL, duration = NULL,
+  dose = c("Control", "Low", "Middle", "High"),
   summary.stat = c("mean", "median", "first", "last"),
   fill.missing = TRUE, summarize = TRUE, verbose = TRUE)
 }
@@ -54,7 +55,7 @@ data(TGGATESsmall)
 summMP <- ToxicoGx::summarizeMolecularProfiles(
   tSet = TGGATESsmall, mDataType = "rna",
   cell.lines=cellNames(TGGATESsmall), drugs = head(drugNames(TGGATESsmall)),
-  features = fNames(TGGATESsmall,"rna"), duration = "8",
+  features = fNames(TGGATESsmall,"rna")[1:1000], duration = "8",
   dose = c("Control", "High"), summary.stat = "median",
   fill.missing = TRUE, verbose=TRUE
   )

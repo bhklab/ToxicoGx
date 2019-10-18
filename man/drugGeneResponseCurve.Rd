@@ -50,8 +50,8 @@ of the returned plot.}
 \item{ylim}{[numeric] A vector of minimum and miximum values for the y-axis
 of the returned plot.}
 
-\item{mycol}{[vector] A vector of length equal to the lenth of the tSets
-argument specifying which RColorBrewer colour to use per tSet. Default
+\item{mycol}{[vector] A vector of length equal to the number of features
+argument specifying which RColorBrewer colour to use per feature. Default
 colours will be used if this parameter is excluded.}
 
 \item{x.custom.ticks}{[vector] A numeric vector of the distance between major

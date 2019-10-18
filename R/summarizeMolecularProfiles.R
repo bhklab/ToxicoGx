@@ -53,10 +53,10 @@
 summarizeMolecularProfiles <-
   function(tSet,
            mDataType,
-           cell.lines,
-           drugs,
-           features,
-           duration,
+           cell.lines = NULL, # Defaults get set in paramMissingHandler call
+           drugs = NULL,
+           features = NULL,
+           duration = NULL,
            dose = c("Control", "Low", "Middle", "High"),
            summary.stat = c("mean", "median", "first", "last"),
            fill.missing = TRUE,
@@ -66,15 +66,29 @@ summarizeMolecularProfiles <-
 
     ##### CHECKING INPUT VALIDITY #####
 
-    ## TODO:: Implement paramWarningHandler()
-    #paramWarningHandler()
+    ## MISSING VALUE HANDLING FOR PARAMETERS
+    # Get named list of defualt values for missing parameters
+    argDefaultList <-
+      paramMissingHandler(
+        funName = "summarizeMolecularProfiles", tSet = tSet,
+        mDataType = mDataType, cell.lines = cell.lines, drugs = drugs,
+        features = features, duration = duration
+      )
+
+    # Assign any missing parameter default values to function environment
+    if (length(argDefaultList) > 0) {
+      for (idx in seq_along(argDefaultList)) {
+        assign(names(argDefaultList)[idx], argDefaultList[[idx]])
+      }
+    }
 
     ## TODO:: Standardized parameter names across all function
     ## ERROR HANDLING FOR PARAMETERS
-    paramErrorChecker("summarizeMolecularProfiles", tSet=tSet,
-                      mDataType=mDataType, cell.lines=cell.lines, drugs=drugs,
-                      features=features, duration=duration, dose=dose,
-                      summary.stat=summary.stat
+    paramErrorChecker(
+      "summarizeMolecularProfiles", tSet = tSet,
+      mDataType = mDataType, cell.lines = cell.lines, drugs = drugs,
+      features = features, duration = duration, dose = dose,
+      summary.stat = summary.stat
     )
 
     ##### FUNCTION LOGIC BEGINS #####

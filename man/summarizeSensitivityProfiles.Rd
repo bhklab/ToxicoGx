@@ -5,27 +5,26 @@
 \title{Takes the sensitivity data from a ToxicoSet, and summarises them into a
 drug vs cell line table}
 \usage{
-summarizeSensitivityProfiles(tSet,
-  sensitivity.measure = "auc_recomputed", cell.lines, drugs, duration,
+summarizeSensitivityProfiles(tSet, duration = NULL, cell.lines = NULL,
+  drugs = NULL, sensitivity.measure = "auc_recomputed",
   summary.stat = c("mean", "median", "first", "last", "max", "min"),
   fill.missing = TRUE, verbose = TRUE)
 }
 \arguments{
-\item{tSet}{[ToxicoSet] The ToxicoSet from which to extract the data}
+\item{tSet}{\code{ToxicoSet} The ToxicoSet from which to extract the data}
 
-\item{sensitivity.measure}{[character] which sensitivity sensitivity.measure to use? Use the
-sensitivityMeasures function to find out what measures are available for each TSet.}
+\item{duration}{\code{numeric} The duration at which to summarize
+the drug-cell combo. This is a required parameter.}
 
 \item{cell.lines}{\code{character} The cell lines to be summarized.
- If any cell lines has no data, it will be filled with
-missing values}
+If any cell lines has no data, it will be filled with missing values}
 
 \item{drugs}{\code{character} The drugs to be summarized.
 If any drugs has no data, it will be filled with
-missing values}
+missing values. Defaults to include all drugs in the given tSet.}
 
-\item{duration}{\code{numeric} The duration at which to summarize
-the drug-cell combo.}
+\item{sensitivity.measure}{\code{character} which sensitivity sensitivity.measure to use? Use the
+sensitivityMeasures function to find out what measures are available for each TSet.}
 
 \item{summary.stat}{\code{character} which summary method to use if there are repeated
 cell line-drug experiments? Choices are "mean", "median", "first", "last", "max", or "min"}
@@ -36,7 +35,7 @@ molecular data object be filled in with missing values?}
 \item{verbose}{Should the function print progress messages?}
 }
 \value{
-[matrix] A matrix with drugs going down the rows, cell lines across
+\code{matrix} A matrix with drugs going down the rows, cell lines across
   the columns, with the selected sensitivity statistic for each pair.
 }
 \description{
