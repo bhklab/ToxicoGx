@@ -1,5 +1,5 @@
 ---
-title: 'ToxicoGx: A Package for Large Scale Analysis of Toxico-genomic Data'
+title: 'ToxicoGx: An R Platform for Integrated Toxicogenomics Data Analysis'
 
 author:  
 - name: Sisira Kadambat Nair
@@ -54,7 +54,7 @@ spacing: singlespacing
 csl: ecology.csl
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{ToxicoGx: A Package for Large Scale Analysis of Toxico-genomic Data}
+  %\VignetteIndexEntry{ToxicoGx: An R Platform for Integrated Toxicogenomics Data Analysis}
 ---
 
 
@@ -90,13 +90,15 @@ To plot, the function drugGeneResponseCurve has been used wherein mandatory inpu
 devtools::install_github("bhklab/ToxicoGx")
 ```
 
+
 **Plot time dependent dose response of Carbon tetra chloride on CYP1A1 gene.**
-```{r, message = FALSE, fig.width = 6, fig.height = 6}
+```{r, message = FALSE, fig.width = 8, fig.height = 5}
 library(PharmacoGx)
 library(ToxicoGx)
 # Load the tset 
 data(TGGATESsmall)
-drugGeneResponseCurve(tSets = TGGATESsmall, duration = c("2", "8", "24"), 
+ToxicoGx::drugGeneResponseCurve(tSets = TGGATESsmall, 
+                      duration = c("2", "8", "24"), 
                       cellline = "Hepatocyte", mDataTypes = "rna", 
                       features = "ENSG00000140465_at", 
                       dose = c("Control", "Low", "Middle", "High"),
@@ -105,6 +107,11 @@ drugGeneResponseCurve(tSets = TGGATESsmall, duration = c("2", "8", "24"),
                       title = "Effect of Carbon tetra chloride on CYP1A1.",
                       cex = 0.5, cex.main = 1, legend.loc = "topright", 
                       verbose = T)
+
+```
+
+```{r, echo = FALSE}
+knitr::include_graphics('CS1_published.png')
 ```
 
 ## Connectivity map analysis on TG-GATEs and human hepatocarcinoma signatures.
@@ -113,11 +120,12 @@ For the second case study, we will recreate an analysis from the paper by Jos Kl
 by linking in vivo human hepatocarcinoma (HCC) signature geneset with in vitro TG-GATEs primary human hepatocyte data. In this example, we are using the toy dataset. The full dataset has to be downloaded to carry out the whole analysis done in the paper.
 The HCC signature, already mapped to the gene level, has been included in this package and it can be loaded by calling data(HCC_sig). Once the dataset is loaded, recreate drug signatures for each drug using the function drugPerturbationSig to peform statistical modelling of the transcriptomic response to the application of each drug. We then compare the observed up-regulated and down-regulated genes to HCC signature published in the paper. The output will be the GSEA connectivity score with FDR values that can be used to determine the correlation between the two signatures.
 
+
 ```{r, results = 'asis'}
-require(xtable)
+library(xtable)
 data("TGGATESsmall")
 # To compute the effect of drug concentration on the molecular profile of the cell
-drug.perturbation <- drugPerturbationSig(TGGATESsmall,
+drug.perturbation <- ToxicoGx::drugPerturbationSig(TGGATESsmall,
                                          mDataType = "rna",
                                          cells = "Hepatocyte",
                                          duration = "24",
@@ -141,3 +149,4 @@ xtable::xtable(res,
 ```
 
 In the above table, omeprazole showed a positive connectivity score in contrast to isoniazid. This observation aligns with the trends reported in the paper. The above example is to demonstrate the ease with which drug perturbation analysis can be done using ToxicoGx package.
+
