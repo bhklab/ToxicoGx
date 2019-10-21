@@ -48,8 +48,7 @@ paramMissingHandler <- function(funName, tSet, mDataType, ...) {
                "features", "duration", "dose"
                ),
            "subsetTo" =
-             c(
-              intersectMissingChecks,
+             c(intersectMissingChecks,
               "features", "duration", "dose"
              ),
     )
