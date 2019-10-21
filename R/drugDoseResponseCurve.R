@@ -253,7 +253,7 @@ drugDoseResponseCurve <-
             }
           }
 
-          for (i in length(doses)){
+          for (i in seq_along(doses)){
             names(doses[[i]]) <- names(responses[[i]]) <- i
           }
         } else {
@@ -293,7 +293,7 @@ drugDoseResponseCurve <-
 
     dose.range <- c(10^100 , 0)
     viability.range <- c(0 , 10)
-    for(i in 1:length(doses)) {
+    for(i in seq_along(doses)) {
       dose.range <- c(min(dose.range[1], min(doses[[i]], na.rm=TRUE), na.rm=TRUE), max(dose.range[2], max(doses[[i]], na.rm=TRUE), na.rm=TRUE))
       viability.range <- c(0, max(viability.range[2], max(responses[[i]], na.rm=TRUE), na.rm=TRUE))
     }
@@ -302,7 +302,7 @@ drugDoseResponseCurve <-
     if(length(doses) > 1) {
       common.ranges <- .getCommonConcentrationRange(doses)
 
-      for(i in 1:seq_along(doses)) {
+      for(i in seq_along(doses)) {
         x1 <- min(x1, min(common.ranges[[i]]))
         x2 <- max(x2, max(common.ranges[[i]]))
       }
@@ -330,7 +330,7 @@ drugDoseResponseCurve <-
     if (length(doses) > 1) {
       rect(xleft = x1, xright = x2, ybottom = viability.range[1] , ytop=viability.range[2] , col=rgb(240, 240, 240, maxColorValue = 255), border=FALSE)
     }
-    for (i in 1:length(doses)) {
+    for (i in seq_along(doses)) {
       points(doses[[i]],responses[[i]],pch = 20,col = mycol[i], cex=cex)
       switch(plot.type , "Actual" = {
         lines(doses[[i]], responses[[i]], lty = 1, lwd=lwd, col=mycol[i])

@@ -93,6 +93,7 @@ drugGeneResponseCurve <- function(
   # Place tSets in a list if not already
   if (!is(tSets, "list")) { tSets <- list(tSets) }
 
+  ## Tempary warnings until function is finished
   if (length(tSets) > 1) { warning("Multiple tSet plotting has not been tested in this release...")}
   if (length(drug) > 1) { stop("This function currently only supports one drug per plot...")}
   if (length(mDataTypes) > 1) {stop("This function currently only supports one molecular data type per plot...")}
@@ -217,7 +218,7 @@ drugGeneResponseCurve <- function(
   #### AXIS RANGES ####
 
   # Set x and y axis ranges based on time and viability values
-  time.range <- as.numeric(c(min(unlist(unlist(times))), max(unlist(unlist(times)))))
+  time.range <- as.numeric(c(min(unlist(times)), max(unlist(times))))
   expression.range <- c(floor(min(unlist(expression, recursive = TRUE))), ceiling(max(unlist(expression, recursive=TRUE))))
   for (i in seq_along(tSets)) {
     ## TODO:: Generalize this to n replicates
