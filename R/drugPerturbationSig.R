@@ -1,8 +1,5 @@
-###############################################################################
-## Drug perturbation analysis
-## create profiles before vs after drug for each drug
-###############################################################################
-
+#' Drug perturbation analysis
+#'
 #' Creates a signature representing gene expression (or other molecular profile)
 #' change induced by administrating a drug, for use in drug effect analysis.
 #'

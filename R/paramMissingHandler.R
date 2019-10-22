@@ -39,17 +39,19 @@ paramMissingHandler <- function(funName, tSet, mDataType, ...) {
     switch(funName,
            "summarizeMolecularProfiles" =
              c(intersectMissingChecks,
-               "features", "duration"
+               "features", "durations"
              ),
            "summarizeSensitivityProfiles" =
-             intersectMissingChecks,
+             c(intersectMissingChecks,
+              "duration"
+              ),
            "drugPerturbationSig" =
              c(intersectMissingChecks,
-               "features", "duration", "dose"
+               "features", "durations", "dose"
                ),
            "subsetTo" =
              c(intersectMissingChecks,
-              "features", "duration", "dose"
+              "features", "durations", "dose"
              ),
     )
 
@@ -87,9 +89,12 @@ paramMissingHandler <- function(funName, tSet, mDataType, ...) {
       "features" = {if (is.null(features)) {missingParamValues[[missing]] <- unique(fNames(tSet, mDataType[1]));
         warning(paste0(missing, " parameter not specified, defaults to all features in the given tSet for the specified mDataType!"))}
         },
-      "duration" = {if (is.null(duration)) {missingParamValues[[missing]] <- unique(as.character(ToxicoGx::sensitivityInfo(tSet)$duration_h));
+      "durations" = {if (is.null(duration)) {missingParamValues[[missing]] <- unique(as.character(ToxicoGx::sensitivityInfo(tSet)$duration_h));
       warning(paste0(missing, " parameter not specified, defaults to all experimental durations in given tSet!"))}
         },
+      "duration" = {if (is.null(duration)) {missingParamValues[[missing]] <- unique(as.character(ToxicoGx::sensitivityInfo(tSet)$duration_h))[1];
+      warning(paste0(missing, " parameter not specified, defaults to ", missingParamValues[[missing]]))}
+      },
       "dose" = {if (is.null(dose)) {missingParamValues[[missing]] <- unique(phenoInfo(tSet, mDataType)$dose_level);
       warning(paste0(missing, " parameter not specified, defaults to all dose levels in the given tSet for the specified mDataType!"))}}
     )

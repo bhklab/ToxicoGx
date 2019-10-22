@@ -18,37 +18,42 @@ paramErrorChecker <- function(funName, tSet, ...) {
 
   # Intersection of all function's parameter tests
   intersectParamChecks <- c(
-    "tSetNotIs", "tSetGt1", "mDataTypeNotChar", "mDataTypeNotIn",
-      "cell.linesNotChar","cell.linesNotIn", "drugsNotChar", "durationNotChar"
+    "tSetNotIs", "tSetGt1", "cell.linesNotChar","cell.linesNotIn",
+    "drugsNotChar", "durationNotChar"
   )
   intersectViabPlotParamChecks <- c(
     "tSetNotIs", "vaibilitiesNotMissing", "viabilitiesNotNum"
   )
-  #intersectGenePlotParamChecks <- c()
 
   # Matches the correct parameter constraints to each function name
   paramChecks <-
     switch(funName,
            "drugPerturbationSig" =
-             c(intersectParamChecks, "mDataTypeGt1", "featuresLt2", "doseLt2",
+             c(intersectParamChecks, "mDataTypeNotChar", "mDataTypeNotIn",
+               "mDataTypeGt1", "featuresLt2", "doseLt2",
                "doseNotCtl"
              ),
            "summarizeMolecularProfiles" =
-             c(intersectParamChecks,
+             c(intersectParamChecks, "mDataTypeNotChar", "mDataTypeNotIn",
                "summary.statNotChar", "summary.statNotIn", "summary.statGt1",
                "durationMissing", "durationNotIn", "cell.linesNotIn"
              ),
            "summarizeSensitivityProfiles" =
              c(intersectParamChecks,
-               "durationGt1", "durationMissing", "durationNotIn", "cell.linesNotIn"
+               "durationMissing", "durationNotIn", "cell.linesNotIn",
+               "drugNotInCellLine", "summary.statNotIn", "summaryStatNotChar",
+               "summary.statGt1", "sensitivty.measureGt1",
+               "sensitivity.measureNotChar"
               ),
            "drugDoseResponseCurve" =
-             c(intersectViabPlotParamChecks, "viabilitiesDiffLenConc",
+             c(intersectViabPlotParamChecks, "mDataTypeNotChar",
+               "mDataTypeNotIn", "viabilitiesDiffLenConc",
                "concentrationsNotNum"
-             ),
+              ),
            "drugTimeResponseCurve" =
              c(intersectViabPlotParamChecks, "viabilitiesDiffLenDur",
-               "durationNotChar"),
+               "durationNotChar"
+               ),
            "subsetTo" =
              c("returnValuesGt1",
                "tSetGt1", "tSetNotIs", "cell.linesNotChar", "cell.linesNotIn",
@@ -74,7 +79,7 @@ paramErrorChecker <- function(funName, tSet, ...) {
 
   # Initialize variable names in the local environment
   cell.lines <- concentrations <- dose <- drugs <- duration <- features <-
-    mDataType <- summary.stat <- tSets <- viabilities <- NULL
+    mDataType <- summary.stat <- sensitivity.measure <- tSets <- viabilities <- NULL
 
   # Extract named arguments into local environment
   argList <- list(...)
@@ -106,6 +111,8 @@ paramErrorChecker <- function(funName, tSet, ...) {
         # drugs checks
         "drugsNotChar" = {if (!is.character(unlist(drugs))) { stop("drugs parameter must contain strings.") }},
         "drugsNotIn" = {if (all(!(drugs %in% drugNames(tSet)))) { stop(paste0("The drug(s) ", paste(drugs[which(!(drugs %in% drugNames(tSet)))], collapse = ", "), " is/are not present in ", tSet@annotation$name, ".")) }},
+        ## TODO:: Test this works correctly once an additional cell line is added to a tSet
+        "drugIntersectsCellLine" = {if (length(drugs) == 1) { if (!(drugs %in% subset(sensitivityInfo(tSet), cellid == cell.lines, select = drugid)))  {stop(paste0("The drug ", drugs, "is not present for cell line(s)", paste0(cell.lines, collapse = ", ")), "!") }}},
         # features checks
         "featuresLt2" = {if (length(fNames(tSet, mDataType)) < 2) { stop("Must include at least 2 features to calculate summary statistics") }},
         "featuresNotChar" = {if (!is.character(unlist(features))) { stop("features parameter contain strings.") }},
@@ -124,6 +131,11 @@ paramErrorChecker <- function(funName, tSet, ...) {
         "summary.statNotChar" = {if (!is.character(summary.stat)) { stop("The parameter summary.stat must be a string or character vector.") }},
         "summary.statGt1" = {if (length(summary.stat) > 1)  {stop("Please pick only one summary statistic") }},
         "summary.statNotIn" = {if (!(summary.stat %in% c("mean", "median", "first", "last"))) { stop(paste0("The the statistic ", summary.stat, " is not implemented in this package")) }},
+        # sensitivity.measure
+        "sensitivity.measureNotChar" = {if (!is.character(sensitivity.measure)) { stop("The parameter sensitivty.measure must be a string or character vector.") }},
+        "sensitivity.measureGt1" = {if (length(sensitivity.measure) > 1)  {stop("Please pick only one sensitivity measure") }},
+        "sensitivity.measureNotIn" = {if (!(sensitivity.measure %in% c(colnames(sensitivityProfiles(tSet)), "max_conc"))) {
+          stop(sprintf("Invalid sensitivity measure for %s, choose among: %s", tSet@annotation$name, paste0(colnames(sensitivityProfiles(tSet)), collapse = ", ")))}},
         # viabilties checks
         "viabilitiesNotNum" = {if (!is.null(viabilities)) { if (!all(vapply(viabilities, function(viability) { is(viability, "numeric") }, FUN.VALUE = logical(1) ))) { stop("Viability values must be numeric.") }}},
         "viabilitiesNotMissing" = {if (!is.null(concentrations)) { if (is.null(viabilities)) { stop("If you pass in an argument for concentrations, you must also pass in an argument for viabilities.")}}},
@@ -141,7 +153,7 @@ paramErrorChecker <- function(funName, tSet, ...) {
             if (!all(vapply(concentrations, function(concentration) {
               is(concentration, "numeric") }, FUN.VALUE = logical(1) ))) {
               stop("Concentration values must be numeric.") }
-          }}
+          }},
       )
     )
   }
