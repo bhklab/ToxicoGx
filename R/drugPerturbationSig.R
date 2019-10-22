@@ -17,9 +17,10 @@
 #' drugs in the second, and the selected return values in the third.
 #'
 #' @examples
-#' #data(TGGATES_small)
-#' #drug.perturbation <- drugPerturbationSig(TGGATES_small, mDataType="rna", nthread=1)
-#' #print(drug.perturbation)
+#' \donttest{
+#'   data(TGGATES_small)
+#'   drug.perturbation <- drugPerturbationSig(TGGATES_small, mDataType="rna", nthread=1)
+#' }
 #'
 #' @param tSet [ToxicoSet] a ToxicoSet of the perturbation experiment type
 #' @param mDataType [character] which one of the molecular data types to use
@@ -54,13 +55,13 @@ drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duratio
   options("mc.cores" = nthread)
 
   # DEAL WITH MISSING PARAMETERS
-  if(!missing(cells)){
+  if (!missing(cells)){
     cells <- unique(cells)
   } else {
     cells <- unique(cellNames(tSet))
   }
 
-  if(!missing(mDataType)) {
+  if (!missing(mDataType)) {
     mDataType <- unique(mDataType)
   }
 
@@ -71,7 +72,7 @@ drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duratio
   }
   dix <- is.element(drugn, phenoInfo(tSet, mDataType)[ , "drugid"])
   if (verbose && !all(dix)) {
-    warning (sprintf("%i/%i drugs can be found", sum(dix), length(drugn)))
+    warning(sprintf("%i/%i drugs can be found", sum(dix), length(drugn)))
   }
   if (!any(dix)) {
     stop("None of the drugs were found in the dataset")
@@ -83,7 +84,7 @@ drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duratio
   } else {
     fix <- is.element(features, fNames(tSet, mDataType))
     if (verbose && !all(fix)) {
-      warning (sprintf("%i/%i features can be found", sum(fix), length(features)))
+      warning(sprintf("%i/%i features can be found", sum(fix), length(features)))
     }
     features <- features[fix]
   }
@@ -99,15 +100,15 @@ drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duratio
   }
 
   # ERROR HANDLING FOR PARAMETERS
-  paramErrorChecker("drugPerturbationSig", tSet=tSet,
-                    mDataType=mDataType, cell.lines=cells,
-                    drugs=drugs, features=features,
-                    duration=duration, dose=dose)
+  paramErrorChecker("drugPerturbationSig", tSet = tSet,
+                    mDataType = mDataType, cell.lines = cells,
+                    drugs = drugs, features = features,
+                    duration = duration, dose = dose)
 
   # SUBSET tSET BASED ON PARAMETERS
   tSetSubsetOnParams <-
     subsetTo(tSet, mDataType = mDataType, cells = cells, drugs = drugs,
-             features=features, duration = duration)
+             features = features, duration = duration)
 
   # SUBSET SAMPLES BASED ON DOSE
   samples <- rownames(phenoInfo(tSetSubsetOnParams, mDataType)[which(phenoInfo(tSetSubsetOnParams, mDataType)$dose %in% dose),])
@@ -121,20 +122,20 @@ drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duratio
 
     # Warning that rankGeneDrugPerturbation will return a matrix of NAs for this drug
     if (length(unique(as.character(sampleinfo[, "xptype"]))) < 2) {
-      warning(paste0("There are only controls available at dose levels ", paste(dose, collapse=" ") ," for ", x, ", summary statistics for this drug will be excluded for the results.\\nAdding another dose level will likely generate results."))
+      warning(paste0("There are only controls available at dose levels ", paste(dose, collapse = " ") ," for ", x, ", summary statistics for this drug will be excluded for the results.\\nAdding another dose level will likely generate results."))
     }
 
     res <- NULL
     i <- x
 
     ## using a linear model (x ~ concentration + cell + batch + duration)
-    res <- ToxicoGx::rankGeneDrugPerturbation(data=exprs, drug=x, drug.id=as.character(sampleinfo[ , "drugid"]),
-                                    drug.concentration=as.numeric(sampleinfo[ , "concentration"]),
-                                    type=as.character(sampleinfo[ , "cellid"]), xp=as.character(sampleinfo[ , "xptype"]),
-                                    batch=as.character(sampleinfo[ , "batchid"]),
-                                    duration=as.character(sampleinfo[ , "duration"]) ,
-                                    single.type=FALSE, nthread=nthread,
-                                    verbose=FALSE)$all[ , returnValues, drop=FALSE]
+    res <- ToxicoGx::rankGeneDrugPerturbation(data = exprs, drug = x, drug.id = as.character(sampleinfo[ , "drugid"]),
+                                    drug.concentration = as.numeric(sampleinfo[ , "concentration"]),
+                                    type = as.character(sampleinfo[ , "cellid"]), xp = as.character(sampleinfo[ , "xptype"]),
+                                    batch = as.character(sampleinfo[ , "batchid"]),
+                                    duration = as.character(sampleinfo[ , "duration"]) ,
+                                    single.type = FALSE, nthread = nthread,
+                                    verbose = FALSE)$all[ , returnValues, drop = FALSE]
     res <- list(res)
     names(res) <- i
     return(res)
@@ -145,8 +146,8 @@ drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duratio
   # ASSEMBLE RESULTS TO BE INCLUDED IN TOXICOSIG OBJECT
   res <- do.call(c, mcres)
   res <- res[!sapply(res, is.null)]
-  drug.perturbation <- array(NA, dim=c(nrow(featureInfo(tSet, mDataType)[features,, drop=FALSE]), length(res), ncol(res[[1]])), dimnames=list(rownames(featureInfo(tSet, mDataType)[features,,drop=FALSE]), names(res), colnames(res[[1]])))
-  for(j in seq_len(ncol(res[[1]]))) {
+  drug.perturbation <- array(NA, dim = c(nrow(featureInfo(tSet, mDataType)[features,, drop=FALSE]), length(res), ncol(res[[1]])), dimnames=list(rownames(featureInfo(tSet, mDataType)[features,,drop=FALSE]), names(res), colnames(res[[1]])))
+  for (j in seq_len(ncol(res[[1]]))) {
     ttt <- sapply(res, function(x, j, k) {
       xx <- array(NA, dim=length(k), dimnames=list(k))
       xx[rownames(x)] <- x[ , j, drop=FALSE]

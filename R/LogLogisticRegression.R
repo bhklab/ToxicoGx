@@ -80,82 +80,68 @@ logLogisticRegression <- function(conc,
   family <- match.arg(family)
 
   if (prod(is.finite(step)) != 1) {
-    print(step)
-    stop("Step vector contains elements which are not positive real numbers.")
+    stop(paste(step, "Step vector contains elements which are not positive real numbers.", sep = '\n'))
   }
 
   if (prod(is.finite(precision)) != 1) {
-    print(precision)
-    stop("Precision value is not a real number.")
+    stop(paste(precision, "\nPrecision value is not a real number.", sep = '\n'))
   }
 
   if (prod(is.finite(lower_bounds)) != 1) {
-    print(lower_bounds)
-    stop("Lower bounds vector contains elements which are not real numbers.")
+    stop(paste(lower_bounds, "Lower bounds vector contains elements which are not real numbers.", sep = '\n'))
   }
 
   if (prod(is.finite(upper_bounds)) != 1) {
-    print(upper_bounds)
-    stop("Upper bounds vector contains elements which are not real numbers.")
+    stop(paste(upper_bounds, "Upper bounds vector contains elements which are not real numbers.", sep = '\n'))
   }
 
   if (prod(is.finite(density)) != 1) {
-    print(density)
-    stop("Density vector contains elements which are not real numbers.")
+    stop(paste(density, "Density vector contains elements which are not real numbers.", sep = '\n'))
   }
 
   if (is.finite(scale) == FALSE) {
-    print(scale)
-    stop("Scale is not a real number.")
+    stop(paste(scale, "Scale is not a real number.", sep = '\n'))
   }
 
   if (is.character(family) == FALSE) {
-    print(family)
-    stop("Cauchy flag is not a string.")
+    stop(paste(family, "Cauchy flag is not a string.", sep = '\n'))
   }
 
-  if (length(density) != 3){
-    stop("Density parameter needs to have length of 3, for HS, Einf, EC50")
+  if (length(density) != 3) {
+    stop(paste(density, "Density parameter needs to have length of 3, for HS, Einf, EC50", sep = '\n'))
   }
 
-  if (!median_n==as.integer(median_n)){
-    stop("There can only be a integral number of samples to take a median of. Check your setting of median_n parameter, it is not an integer")
+  if ( median_n != as.integer(median_n)) {
+    stop(paste(median_n, "There can only be a integral number of samples to take a median of. Check your setting of median_n parameter, it is not an integer", sep = '\n'))
   }
-
 
   if (min(upper_bounds - lower_bounds) < 0) {
-    print(rbind(lower_bounds, upper_bounds))
-    stop("Upper bounds on parameters do not exceed lower bounds.")
+    stop(rbind(lower_bounds, upper_bounds), "Upper bounds on parameters do not exceed lower bounds.", sep = '\n')
   }
-
 
 
   if (min(density) <= 0) {
-    print(density)
-    stop("Lattice point density vector contains negative values.")
+    stop(paste(density, "Lattice point density vector contains negative values.", sep = '\n'))
   }
 
   if (precision <= 0) {
-    print(precision)
-    stop("Negative precision value.")
+    stop(paste(precision, "Negative precision value.", sep = '\n'))
   }
 
   if (min(step) <= 0) {
-    print(step)
-    stop("Step vector contains nonpositive numbers.")
+    stop(step, "Step vector contains nonpositive numbers.", sep = '\n')
   }
 
   if (scale <= 0) {
-    print(scale)
-    stop("Scale parameter is a nonpositive number.")
+    stop(step, "Scale parameter is a nonpositive number.", sep = '\n')
   }
 
-  cleanData  <- sanitizeInput(conc=conc,
-                              viability=viability,
+  cleanData  <- sanitizeInput(conc = conc,
+                              viability = viability,
                               conc_as_log = conc_as_log,
                               viability_as_pct = viability_as_pct,
                               trunc = trunc,
-                              verbose=verbose)
+                              verbose = verbose)
 
   log_conc <- cleanData[["log_conc"]]
   viability <- cleanData[["viability"]]
@@ -181,10 +167,10 @@ logLogisticRegression <- function(conc,
                           #control=list(maxit=100000)
   ),#[[1]],
   error = function(e) {
-    list("par"=gritty_guess, "convergence"=-1)
+    list("par" = gritty_guess, "convergence" = -1)
   })
   # if(guess[["convergence"]]!=0)  print(guess[["message"]]); #print(results[["convergence"]])
-  failed = guess[["convergence"]]!=0
+  failed = guess[["convergence"]] != 0
   guess <- guess[["par"]]
 
   guess_residual <- .residual(log_conc,
@@ -215,7 +201,7 @@ logLogisticRegression <- function(conc,
                              lower_bounds = lower_bounds,
                              upper_bounds = upper_bounds,
                              density = density,
-                             n=median_n,
+                             n = median_n,
                              scale = scale,
                              family = family,
                              trunc = trunc)
