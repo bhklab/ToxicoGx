@@ -38,16 +38,16 @@ summarizeSensitivityProfiles <- function(tSet,
                                          cell.lines = NULL,
                                          drugs = NULL,
                                          sensitivity.measure="auc_recomputed",
-                                         summary.stat = c("mean", "median", "first", "last", "max", "min"),
+                                         summary.stat = c("mean",
+                                                          "median", "first", "last", "max", "min"),
                                          fill.missing=TRUE, verbose=TRUE) {
-
 
   ## MISSING VALUE HANDLING FOR PARAMETERS
   # Get named list of defualt values for missing parameters
   argDefaultList <-
     paramMissingHandler(
       funName = "summarizeSensitivityProfiles", tSet = tSet,
-      cell.lines = cell.lines, drugs = drugs
+      cell.lines = cell.lines, drugs = drugs, duration = duration
     )
   # Assign any missing parameter default values to function environment
   ## TODO:: I think we can do a for loop over index names?
@@ -60,44 +60,12 @@ summarizeSensitivityProfiles <- function(tSet,
 
   ## ERROR HANDLING FOR FUNCTION PARAMETERS
   paramErrorChecker(
-    "summarizeSensitivtyProfiles", tSet = tSet,
+    "summarizeSensitivtyProfiles", tSet = tSet, drugs = drugs,
     sensivity.measure = sensitivity.measure, duration = duration,
     summary.stat = summary.stat
     )
 
   summary.stat <- match.arg(summary.stat)
-  # sensitivity.measure <- match.arg(sensitivity.measure)
-  if (!(sensitivity.measure %in% c(colnames(sensitivityProfiles(tSet)),"max.conc"))) {
-    #if the sensitivity.measure specified is not available for the tSet
-    stop(sprintf("Invalid sensitivity measure for %s, choose among: %s",
-                 tSet@annotation$name,
-                 paste(colnames(sensitivityProfiles(tSet)), collapse = ", ")))
-  }
-
-  if (missing(cell.lines)) {
-    #if cell.lines was not specified
-    cell.lines <- cellNames(tSet)
-  }
-  if (missing(drugs)) {
-    #if drugs was not specified
-    if (sensitivity.measure != "Synergy_score")
-    {
-      #if the sensitivity.measure specified was not "Synergy_score"
-      drugs <- drugNames(tSet)
-    }else{
-      #wtf is this
-      drugs <-
-        ToxicoGx::sensitivityInfo(tSet)[
-          grep("///", ToxcioGx::sensitivityInfo(tSet)$drugid), "drugid"
-          ]
-    }
-  }
-  if (missing(duration)) { # Selects the first row's duration if no duration is specified in argument
-    duration <- ToxicoGx::sensitivityInfo(tSet)$duration_h[1]
-  }
-  if (length(duration) > 1 ) {
-    stop("Please enter only one duration value to be summarized.")
-  }
 
   pp <- ToxicoGx::sensitivityInfo(tSet)
   ## TODO:: Determine what this supposed to do?
@@ -108,7 +76,7 @@ summarizeSensitivityProfiles <- function(tSet,
     dd <- sensitivityProfiles(tSet)
   } else {
     #if the sensitivity.measure specified is "max.conc"
-    if (!"max.conc" %in% colnames(ToxicoGx::sensitivityInfo(tSet))){
+    if (!"max.conc" %in% colnames(ToxicoGx::sensitivityInfo(tSet))) {
       # if max.conc is not a column in sensitivityInfo:
       # call updateMaxConc, which finds the maximum dosage within sensitivity raw, puts
       # the value in a new column of sensitivity info called max.conc, and returns the tSet
@@ -121,7 +89,7 @@ summarizeSensitivityProfiles <- function(tSet,
   }
 
   #result is a matrix of NA's where # of rows, # columns is as specified:
-  result <- matrix(NA_real_, nrow=length(drugs), ncol=length(cell.lines))
+  result <- matrix(NA_real_, nrow = length(drugs), ncol = length(cell.lines))
   #specify the row, column names of the result matrix
   rownames(result) <- drugs
   colnames(result) <- cell.lines
@@ -141,7 +109,7 @@ summarizeSensitivityProfiles <- function(tSet,
 
 
   summary.function <- function(x) {
-    if(all(is.na(x))){
+    if (all(is.na(x))) {
       return(NA_real_)
     }
     switch(summary.stat,

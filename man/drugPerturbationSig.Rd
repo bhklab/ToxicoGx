@@ -2,8 +2,7 @@
 % Please edit documentation in R/drugPerturbationSig.R
 \name{drugPerturbationSig}
 \alias{drugPerturbationSig}
-\title{Creates a signature representing gene expression (or other molecular profile)
-change induced by administrating a drug, for use in drug effect analysis.}
+\title{Drug perturbation analysis}
 \usage{
 drugPerturbationSig(tSet, mDataType, drugs = NULL, cell.lines = NULL,
   features = NULL, duration = NULL, dose = NULL, nthread = 1,
@@ -43,6 +42,10 @@ should the function return for each gene drug pair}
   first dimension, drugs in the second, and return values in the third.
 }
 \description{
+Creates a signature representing gene expression (or other molecular profile)
+change induced by administrating a drug, for use in drug effect analysis.
+}
+\details{
 Given a Toxicoset of the perturbation experiment type, and a character vector
 of drugs, the function will compute a signature for the effect of
 drug concentration on the molecular profile of a cell. The algorithm uses a
