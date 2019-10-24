@@ -44,7 +44,7 @@
 #'   per cell line.
 #' @importFrom utils setTxtProgressBar txtProgressBar
 #' @importFrom Biobase ExpressionSet exprs pData AnnotatedDataFrame assayDataElement assayDataElement<- fData<-
-#' @import SummarizedExperiment
+#' @importFrom SummarizedExperiment SummarizedExperiment
 #'
 #' @export
 #'
@@ -112,7 +112,7 @@ summarizeMolecularProfiles <-
 
     exp.list <- list()
     cnt <- 0
-    blank <- ddt[,1,drop=F]
+    blank <- ddt[,1,drop = F]
 
     #lapply(drugs, function(drug){
     for (drug in drugs) {
@@ -120,7 +120,7 @@ summarizeMolecularProfiles <-
       #lapply(a, function(i){
       for (i in a) {
         if (verbose == TRUE) {
-          print(i)
+          message(i)
         }
         ## TODO:: Is the print error occuring here?
         curr_dose <- sub(';.*$','', i)
@@ -140,7 +140,7 @@ summarizeMolecularProfiles <-
           )
           ppr <- apply(pp3[, , drop=FALSE], 2, function (x) {
             x <- paste(unique(as.character(x[!is.na(x)])), collapse="/")
-            return (x)
+            return(x)
           })
           ppr <- as.data.frame(t(ppr))
           ppr[!is.na(ppr) & ppr == ""] <- NA
@@ -151,7 +151,7 @@ summarizeMolecularProfiles <-
           ddt <- cbind(ddt,blank)
           # ppt <- rbind(ppt,pp3[NA,])
         }
-        else { #no replicates
+        else{#no replicates
           ddt <- cbind(ddt,dd3)
           ppt <- rbind(ppt,pp3)
         }
@@ -166,17 +166,17 @@ summarizeMolecularProfiles <-
     #lapply(unique(ppt[,"dose_level"]), function(i){
     for (i in unique(ppt[,"dose_level"])) {
       if (verbose == TRUE ) {
-        print(i)
+        message(i)
       }
       #lapply(unique(ppt[,"duration"]), function(j){
       for (j in unique(ppt[,"duration"])) {
         if (verbose == TRUE) {
-          print(j)
+          message(j)
         }
-        pp4 <- apply(ppt[ppt[,"dose_level"] == i & ppt[,"duration"] == j,,drop=F], 2, function (x) {
-          x <- paste(unique(as.character(x[!is.na(x)])), collapse="///")
+        pp4 <- apply(ppt[ppt[,"dose_level"] == i & ppt[,"duration"] == j,,drop = F], 2, function(x) {
+          x <- paste(unique(as.character(x[!is.na(x)])), collapse = "///")
           #if (is.na(x)){x <- paste("Exp ",,sep="")}
-          return (x)
+          return(x)
         })
         pp4 <- as.data.frame(t(pp4))
         pp4[!is.na(pp4) & pp4 == ""] <- NA

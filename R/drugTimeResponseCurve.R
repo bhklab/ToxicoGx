@@ -9,44 +9,44 @@
 #'     drug = "naphthyl isothiocyanate", duration = c("2", "8", "24"))
 #' }
 #'
-#' @param tSets [ToxicoSet] A ToxicoSet or list of ToxicoSets to be plotted in
+#' @param tSets \code{ToxicoSet} A ToxicoSet or list of ToxicoSets to be plotted in
 #'   this graph.
-#' @param dose [character] A vector of dose levels to be included in the
+#' @param dose \code{character} A vector of dose levels to be included in the
 #'   plot. Default to include all dose levels available for a drug. Must include
 #'   at minimum two dose levels, one of witch is "Control".
-#' @param drug [character] A vector of drugs to be included in this plot.
-#' @param duration [character] A vector of durations to include in the plot.
-#' @param cellline [character] A vector of cell lines to include in the plot.
-#' @param viability_as_pct [logical] A vector specifying if viabilities should
+#' @param drug \code{character} A vector of drugs to be included in this plot.
+#' @param duration \code{character} A vector of durations to include in the plot.
+#' @param cellline \code{character} A vector of cell lines to include in the plot.
+#' @param viability_as_pct \code{logical} A vector specifying if viabilities should
 #'   be plotted as a percentage. Defaults to TRUE.
-#' @param xlim [numeric] A vector of minimum and maximum values for the x-axis
+#' @param xlim \code{numeric} A vector of minimum and maximum values for the x-axis
 #'   of the returned plot.
-#' @param ylim [numeric] A vector of minimum and miximum values for the y-axis
+#' @param ylim \code{numeric} A vector of minimum and miximum values for the y-axis
 #'   of the returned plot.
-#' @param title [character] A string containing the desired plot name. If excluded
+#' @param title \code{character} A string containing the desired plot name. If excluded
 #'   a title wil be generated automatically.
-#' @param legend.loc [character] The location of the legend as passed to the
+#' @param legend.loc \code{character} The location of the legend as passed to the
 #'   legends function from base graphics. Recommended values are 'topright' or
 #'   'topleft'. Default is 'topleft'.
-#' @param mycol [vector] A vector of length equal to the lenth of the tSets
+#' @param mycol \code{vector} A vector of length equal to the lenth of the tSets
 #'   argument specifying which RColorBrewer colour to use per tSet. Default
 #'   colours will be used if this parameter is excluded.
-#' @param plot.type [character] The type of plot which you would like returned. Options
+#' @param plot.type \code{character} The type of plot which you would like returned. Options
 #'   are 'Actual' for unfitted curve, 'Fitted' for the fitted curve and 'Both'
 #'   to display 'Actual and 'Fitted' in the sample plot.
-#' @param summarize.replicates [logical] If true will take the average of all
+#' @param summarize.replicates \code{logical} If true will take the average of all
 #'  replicates at each time point per gene and duration. This release has not
 #'  yet implemented this feature.
-#' @param x.custom.ticks [vector] A numeric vector of the distance between major
+#' @param x.custom.ticks \code{vector} A numeric vector of the distance between major
 #'   and minor ticks on the x-axis. If excluded ticks appear only where duration
 #'   values are specified.
-#' @param lwd [numeric] The line width to plot width
-#' @param cex [numeric] The cex parameter passed to plot
-#' @param cex.main [numeric] The cex.main parameter passed to plot, controls
+#' @param lwd \code{numeric} The line width to plot width
+#' @param cex \code{numeric} The cex parameter passed to plot
+#' @param cex.main \code{numeric} The cex.main parameter passed to plot, controls
 #' the size of the titles
-# @param trunc [bool] Should the viability values be truncated to lie in [0-100]
+# @param trunc \code{bool} Should the viability values be truncated to lie in \code{0-100}
 # before doing the fitting
-#' @param verbose [boolean] Should warning messages about the data passed in be printed?
+#' @param verbose \code{boolean} Should warning messages about the data passed in be printed?
 #'
 #' @return Plot of the viabilities for each drug vs time of exposure
 #'
@@ -58,15 +58,15 @@
 #' @export
 drugTimeResponseCurve <- function(
   tSets,
-  duration,
-  cellline,
-  dose,
-  drug,
+  duration = NULL,
+  cellline = NULL,
+  dose = NULL,
+  drug = NULL,
   plot.type="Actual",
   summarize.replicates = TRUE,
   viability_as_pct = TRUE,
-  xlim=c(0, 24),
-  ylim=c(0, 100),
+  xlim = NULL,
+  ylim = NULL,
   #  trunc,
   mycol,
   x.custom.ticks = NULL,
@@ -84,8 +84,8 @@ drugTimeResponseCurve <- function(
   }
 
   paramErrorChecker("drugTimeResponseCurve",
-                    tSets=tSets, durations=duration, cell.line=cellline,
-                    doses=dose)
+                    tSets = tSets, duration = duration, cell.lines = cellline,
+                    dose = dose)
 
   ## TODO:: Make this function work with multiple tSets
   ## TODO:: Make this function work with multiple drugs
@@ -151,11 +151,11 @@ drugTimeResponseCurve <- function(
 
   # Set x and y axis ranges based on time and viability values
   time.range <- c(min(unlist(unlist(times))), max(unlist(unlist(times))))
-  viability.range <- c(min(unlist(responses, recursive = TRUE)), max(unlist(responses, recursive=TRUE)))
+  viability.range <- c(min(unlist(responses, recursive = TRUE)), max(unlist(responses, recursive = TRUE)))
   for (i in seq_along(tSets)) {
     ## TODO:: Generalize this to n replicates
     time.range <- c(min(time.range[1], min(unlist(times[[i]], recursive = TRUE), na.rm = TRUE), na.rm = TRUE), max(time.range[2], max(unlist(times[[i]], recursive = TRUE), na.rm = TRUE), na.rm = TRUE))
-    viability.range <- c(0, max(viability.range[2], max(unlist(responses[[i]], recursive=TRUE), na.rm = TRUE), na.rm = TRUE))
+    viability.range <- c(0, max(viability.range[2], max(unlist(responses[[i]], recursive = TRUE), na.rm = TRUE), na.rm = TRUE))
   }
   x1 <- 24; x2 <- 0
 
@@ -170,12 +170,14 @@ drugTimeResponseCurve <- function(
   }
 
   # SETS CUSTOM RANGE FOR X-AXIS IF PASSED AS ARGUEMENT
-  if (!missing(xlim)) {
+  if (!is.null(xlim)) {
     time.range <- xlim
   }
 
   ## SETS CUSTOM RANGE FOR Y-AXIS IF PASSED AS ARGUEMENT
-  if (!missing(ylim)) {
+  print(ylim)
+  if (!is.null(ylim)) {
+    print("ylim not null")
     viability.range <- ylim
   }
 
@@ -198,7 +200,7 @@ drugTimeResponseCurve <- function(
   plot(NA, xlab = "Time (hr)", ylab = "% Viability", axes = FALSE, main = title, ylim = viability.range, xlim = time.range, cex = cex, cex.main = cex.main)
   # Adds plot axes
   if (!is.null(x.custom.ticks)) {
-    magicaxis::magaxis(side = 1:2, frame.plot = TRUE, tcl= -.3, majorn= c(x.custom.ticks[1], 3), minorn = c(x.custom.ticks[2], 2))
+    magicaxis::magaxis(side = 1:2, frame.plot = TRUE, tcl = -.3, majorn = c(x.custom.ticks[1], 3), minorn = c(x.custom.ticks[2], 2))
   } else {
     magicaxis::magaxis(side = 2, frame.plot = TRUE, tcl = -.3, majorn = c(3), minorn = c(2))
     axis(1, labels = as.numeric(duration), at = as.numeric(duration))
@@ -210,7 +212,7 @@ drugTimeResponseCurve <- function(
   legends.col <- NULL
   # TBD what this dose
   if (length(times) > 1) {
-    rect(xleft = x1, xright = x2, ybottom = viability.range[1] , ytop = viability.range[2] , col=rgb(240, 240, 240, maxColorValue = 255), border = FALSE)
+    rect(xleft = x1, xright = x2, ybottom = viability.range[1] , ytop = viability.range[2] , col = rgb(240, 240, 240, maxColorValue = 255), border = FALSE)
   }
   if (summarize.replicates == FALSE) {
     # Loop over tSets

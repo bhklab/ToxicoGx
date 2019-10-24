@@ -22,7 +22,7 @@ paramErrorChecker <- function(funName, tSet, ...) {
     "drugsNotChar", "durationNotChar"
   )
   intersectViabPlotParamChecks <- c(
-    "tSetNotIs", "vaibilitiesNotMissing", "viabilitiesNotNum"
+    "tSetsNotIs", "viabilitiesNotMissing", "viabilitiesNotNum"
   )
 
   # Matches the correct parameter constraints to each function name
@@ -46,8 +46,7 @@ paramErrorChecker <- function(funName, tSet, ...) {
                "sensitivity.measureNotChar"
               ),
            "drugDoseResponseCurve" =
-             c(intersectViabPlotParamChecks, "mDataTypeNotChar",
-               "mDataTypeNotIn", "viabilitiesDiffLenConc",
+             c(intersectViabPlotParamChecks, "viabilitiesDiffLenConc",
                "concentrationsNotNum"
               ),
            "drugTimeResponseCurve" =
@@ -87,7 +86,7 @@ paramErrorChecker <- function(funName, tSet, ...) {
     assign(names(argList)[idx], argList[[idx]])
   }
 
-  if (is.null(mDataType)) {mDataType <- names(tSet@molecularProfiles)}
+  if (is.null(mDataType) & !is.null(tSet)) {mDataType <- names(tSet@molecularProfiles)}
 
   ## TODO:: Write a cases function that lazily evaluates LHS to replace this switch
   ## TODO:: Benmark for loop vs apply statement for this code

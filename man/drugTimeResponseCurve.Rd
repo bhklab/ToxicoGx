@@ -4,11 +4,12 @@
 \alias{drugTimeResponseCurve}
 \title{Compares viabilities at a given dose over different experimental duration}
 \usage{
-drugTimeResponseCurve(tSets, duration, cellline, dose, drug,
-  plot.type = "Actual", summarize.replicates = TRUE,
-  viability_as_pct = TRUE, xlim = c(0, 24), ylim = c(0, 100), mycol,
-  x.custom.ticks = NULL, title, lwd = 1, cex = 0.5, cex.main = 0.9,
-  legend.loc = "topleft", verbose = TRUE)
+drugTimeResponseCurve(tSets, duration = NULL, cellline = NULL,
+  dose = NULL, drug = NULL, plot.type = "Actual",
+  summarize.replicates = TRUE, viability_as_pct = TRUE, xlim = NULL,
+  ylim = NULL, mycol, x.custom.ticks = NULL, title, lwd = 1,
+  cex = 0.5, cex.main = 0.9, legend.loc = "topleft",
+  verbose = TRUE)
 }
 \arguments{
 \item{tSets}{[ToxicoSet] A ToxicoSet or list of ToxicoSets to be plotted in

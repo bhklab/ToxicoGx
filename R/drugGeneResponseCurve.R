@@ -12,52 +12,52 @@
 #'   duration = c("2", "8", "24"), features = "ENSG00000000003_at")
 #' }
 #'
-#' @param tSets [ToxicoSet] A ToxicoSet to be plotted in this graph. Currently
+#' @param tSets \code{ToxicoSet} A ToxicoSet to be plotted in this graph. Currently
 #'   only a single tSet is supported, passing more may results in errors.
-#' @param dose [character] A vector of dose levels to be included in the
+#' @param dose \code{character} A vector of dose levels to be included in the
 #'   plot. Default to include all dose levels available for a drug. Must include
 #'   at minimum two dose levels, one of which must be "Control".
-#' @param mDataTypes [vector] A vector specifying the molecular data types to
+#' @param mDataTypes \code{vector} A vector specifying the molecular data types to
 #'   include in this plot. Defaults to the first mDataType if not specified.
 #'   This release version only accepts one mDataType, more to be added in
 #'   forthcoming releases.
-#' @param features [character] A vector of feature names to include in the plot.
+#' @param features \code{character} A vector of feature names to include in the plot.
 #'   Please note that using too many features will have a significant computational
 #'   cost and will likely result in a over crowded plot.
-#' @param drug [character] A vector of drugs to be included in this plot. In
+#' @param drug \code{character} A vector of drugs to be included in this plot. In
 #'   this release, only one drug is supported.
-#' @param duration [character] A vector of durations to include in the plot.
-#' @param cellline [character] A vector of cell lines to include in the plot.
-#' @param xlim [numeric] A vector of minimum and maximum values for the x-axis
+#' @param duration \code{character} A vector of durations to include in the plot.
+#' @param cellline \code{character} A vector of cell lines to include in the plot.
+#' @param xlim \code{numeric} A vector of minimum and maximum values for the x-axis
 #'   of the returned plot.
-#' @param ylim [numeric] A vector of minimum and miximum values for the y-axis
+#' @param ylim \code{numeric} A vector of minimum and miximum values for the y-axis
 #'   of the returned plot.
-#' @param title [character] A string containing the desired plot name. If excluded
+#' @param title \code{character} A string containing the desired plot name. If excluded
 #'   a title wil be generated automatically.
-#' @param legend.loc [character] The location of the legend as passed to the plot()
+#' @param legend.loc \code{character} The location of the legend as passed to the plot()
 #'   function from base graphics. Suggested values are either "topleft" or
 #'   "topright", with the latter as the default.
-#' @param mycol [vector] A vector of length equal to the number of features
+#' @param mycol \code{vector} A vector of length equal to the number of features
 #'   argument specifying which RColorBrewer colour to use per feature. Default
 #'   colours will be used if this parameter is excluded.
-#' @param plot.type [character] The type of plot which you would like returned. Options
+#' @param plot.type \code{character} The type of plot which you would like returned. Options
 #'   are 'Actual' for unfitted curve, 'Fitted' for the fitted curve and 'Both'
 #'   to display 'Actual and 'Fitted' in the sample plot. Currently this function
 #'   only supports 'Actual'.
-#' @param summarize.replicates [logical] If true will take the average of all
+#' @param summarize.replicates \code{logical} If true will take the average of all
 #'  replicates at each time point per gene and duration. This release has not
 #'  yet implemented this feature.
-#' @param x.custom.ticks [vector] A numeric vector of the distance between major
+#' @param x.custom.ticks \code{vector} A numeric vector of the distance between major
 #'   and minor ticks on the x-axis. If excluded ticks appear only where duration
 #'   values are specified.
-#' @param lwd [numeric] The line width to plot width
-#' @param cex [numeric] The cex parameter passed to plot. Controls the size of
+#' @param lwd \code{numeric} The line width to plot width
+#' @param cex \code{numeric} The cex parameter passed to plot. Controls the size of
 #'   plot points and the font size of the legend and defaults to 0.7.
-#' @param cex.main [numeric] The cex.main parameter passed to plot,
+#' @param cex.main \code{numeric} The cex.main parameter passed to plot,
 #'   controls the size of the titles and defaults to 1.0.
-# @param trunc [bool] Should the viability values be truncated to lie in
-#   [0-100] before doing the fitting
-#' @param verbose [boolean] Should warning messages about the data passed
+# @param trunc \code{bool} Should the viability values be truncated to lie in
+#   \code{0-100} before doing the fitting
+#' @param verbose \code{boolean} Should warning messages about the data passed
 #'   in be printed?
 #'
 #' @return Plot of the viabilities for each drug vs time of exposure
@@ -328,7 +328,7 @@ drugGeneResponseCurve <- function(
         # Loop over dose level
         for (level in seq_along(dose)) {
           # Loop over replicates per dose level
-          ## TODO:: Generalize this for n replicate
+          ## TODO:: Generalize this for n replicates
           # Plot per tSet, per dose level, per replicate points
           points(times[[i]][[mDataType]][[level]], expression[[i]][[mDataType]][[level]], pch = 1, col = mycol[j], cex = cex + 0.2)
           # Select plot type
