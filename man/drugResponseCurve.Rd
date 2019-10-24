@@ -8,8 +8,8 @@ drugResponseCurve(drug = NULL, cellline = NULL, durations = NULL,
   tSets = NULL, concentrations = NULL, viabilities = NULL,
   conc_as_log = FALSE, viability_as_pct = TRUE, trunc = TRUE,
   legends.label = c("ic50_published", "gi50_published", "auc_published",
-  "auc_recomputed", "ic50_recomputed"), ylim = c(0, 100), xlim, mycol,
-  title, plot.type = c("Fitted", "Actual", "Both"),
+  "auc_recomputed", "ic50_recomputed"), ylim, xlim, mycol, title,
+  plot.type = c("Fitted", "Actual", "Both"),
   summarize.replicates = TRUE, lwd = 0.5, cex = 0.5,
   cex.main = 0.9, legend.loc = "topright", verbose = TRUE)
 }

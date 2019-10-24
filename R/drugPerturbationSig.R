@@ -81,6 +81,8 @@ drugPerturbationSig <- function(
                     drugs = drugs, features = features,
                     duration = duration, dose = dose)
 
+  returnValues <- match.arg(returnValues) # Handle argument matching for return values
+
   # SUBSET tSET BASED ON PARAMETERS
   tSetSubsetOnParams <-
     subsetTo(tSet, mDataType = mDataType, cells = cell.lines, drugs = drugs,

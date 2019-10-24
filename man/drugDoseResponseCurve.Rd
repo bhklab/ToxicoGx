@@ -4,75 +4,74 @@
 \alias{drugDoseResponseCurve}
 \title{Plot drug response curve of a given drug and a given cell for a list of tSets (objects of the ToxicoSet class).}
 \usage{
-drugDoseResponseCurve(drug, cellline, durations, tSets = list(),
-  concentrations = list(), viabilities = list(), conc_as_log = FALSE,
-  viability_as_pct = TRUE, trunc = TRUE,
-  legends.label = c("ic50_published", "gi50_published", "auc_published",
-  "auc_recomputed", "ic50_recomputed"), ylim = c(0, 100), xlim, mycol,
-  title, plot.type = c("Fitted", "Actual", "Both"),
+drugDoseResponseCurve(drug, cellline, durations, tSets, concentrations,
+  viabilities, conc_as_log = FALSE, viability_as_pct = TRUE,
+  trunc = TRUE, legends.label = c("ic50_published", "gi50_published",
+  "auc_published", "auc_recomputed", "ic50_recomputed"), ylim = c(0,
+  100), xlim, mycol, title, plot.type = c("Fitted", "Actual", "Both"),
   summarize.replicates = TRUE, lwd = 0.5, cex = 0.5,
   cex.main = 0.9, legend.loc = "topright", verbose = TRUE)
 }
 \arguments{
-\item{drug}{[string] A drug name for which the drug response curve should be
+\item{drug}{\code{string} A drug name for which the drug response curve should be
 plotted. If the plot is desirable for more than one toxico set, A unique drug id
 should be provided.}
 
-\item{cellline}{[string] A cell line name for which the drug response curve should be
+\item{cellline}{\code{string} A cell line name for which the drug response curve should be
 plotted. If the plot is desirable for more than one toxico set, A unique cell id
 should be provided.}
 
-\item{durations}{[numeric] A duration for which the drug response curve should be plotted.}
+\item{durations}{\code{numeric} A duration for which the drug response curve should be plotted.}
 
-\item{tSets}{[list] a list of ToxicoSet objects, for which the function
+\item{tSets}{\code{list} a list of ToxicoSet objects, for which the function
 should plot the curves.}
 
-\item{concentrations, viabilities}{[list] A list of concentrations and viabilities to plot, the function assumes that
+\item{concentrations, viabilities}{\code{list} A list of concentrations and viabilities to plot, the function assumes that
 concentrations[[i]] is plotted against viabilities[[i]]. The names of the concentration list are used to create the legend labels}
 
-\item{conc_as_log}{[logical], if true, assumes that log10-concentration data has been given rather than concentration data,
+\item{conc_as_log}{\code{logical}, if true, assumes that log10-concentration data has been given rather than concentration data,
 and that log10(ICn) should be returned instead of ICn. Applies only to the concentrations parameter.}
 
-\item{viability_as_pct}{[logical], if false, assumes that viability is given as a decimal rather
+\item{viability_as_pct}{\code{logical}, if false, assumes that viability is given as a decimal rather
 than a percentage, and that E_inf passed in as decimal. Applies only to the viabilities parameter.}
 
-\item{trunc}{[bool] Should the viability values be truncated to lie in [0-100] before doing the fitting}
+\item{trunc}{\code{bool} Should the viability values be truncated to lie in [0-100] before doing the fitting}
 
-\item{legends.label}{[vector] A vector of sensitivity measurment types.
+\item{legends.label}{\code{vector} A vector of sensitivity measurment types.
 A legend will be displayed on the top right of the plot which each line of the legend is
 the values of requested sensitivity measurements for one of the requested tSets.
 If this parameter is missed no legend would be provided for the plot.}
 
-\item{ylim}{[vector] A vector of two numerical values to be used as ylim of the plot.
+\item{ylim}{\code{vector} A vector of two numerical values to be used as ylim of the plot.
 If this parameter would be missed c(0,100) would be used as the ylim of the plot.}
 
-\item{xlim}{[vector] A vector of two numerical values to be used as xlim of the plot.
+\item{xlim}{\code{vector} A vector of two numerical values to be used as xlim of the plot.
 If this parameter would be missed the minimum and maximum comncentrations between all
 the tSets would be used as plot xlim.}
 
-\item{mycol}{[vector] A vector with the same length of the tSets parameter which
+\item{mycol}{\code{vector} A vector with the same length of the tSets parameter which
 will determine the color of the curve for the toxico sets. If this parameter is
 missed default colors from Rcolorbrewer package will be used as curves color.}
 
-\item{title}{[character] The title of the graph. If no title is provided, then it defaults to
+\item{title}{\code{character} The title of the graph. If no title is provided, then it defaults to
 'Drug':'Cell Line'.}
 
-\item{plot.type}{[character] Plot type which can be the actual one ("Actual") or
+\item{plot.type}{\code{character} Plot type which can be the actual one ("Actual") or
 the one fitted by logl logistic regression ("Fitted") or both of them ("Both").
 If this parameter is missed by default actual curve is plotted.}
 
-\item{summarize.replicates}{[character] If this parameter is set to true replicates
+\item{summarize.replicates}{\code{character} If this parameter is set to true replicates
 are summarized and replicates are plotted individually otherwise}
 
-\item{lwd}{[numeric] The line width to plot with}
+\item{lwd}{\code{numeric} The line width to plot with}
 
-\item{cex}{[numeric] The cex parameter passed to plot}
+\item{cex}{\code{numeric} The cex parameter passed to plot}
 
-\item{cex.main}{[numeric] The cex.main parameter passed to plot, controls the size of the titles}
+\item{cex.main}{\code{numeric} The cex.main parameter passed to plot, controls the size of the titles}
 
 \item{legend.loc}{And argument passable to xy.coords for the position to place the legend.}
 
-\item{verbose}{[boolean] Should warning messages about the data passed in be printed?}
+\item{verbose}{\code{boolean} Should warning messages about the data passed in be printed?}
 }
 \value{
 Plots to the active graphics device and returns and invisible NULL.
@@ -90,7 +89,7 @@ from a tSet. The names of the concentration list determine the legend labels.
 \examples{
 if (interactive()) {
 drugDoseResponseCurve(concentrations=list("Experiment 1"=c(.008, .04, .2, 1)),
- viabilities=list(c(100,50,30,1)), plot.type="Both")
+ viabilities=list(c(100,50,30,1)), durations=c("2","8", "24") , plot.type="Actual")
 }
 
 }

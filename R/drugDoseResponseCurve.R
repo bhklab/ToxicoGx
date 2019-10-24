@@ -12,49 +12,49 @@
 #' @examples
 #' if (interactive()) {
 #' drugDoseResponseCurve(concentrations=list("Experiment 1"=c(.008, .04, .2, 1)),
-#'  viabilities=list(c(100,50,30,1)), plot.type="Both")
+#'  viabilities=list(c(100,50,30,1)), durations=c("2","8", "24") , plot.type="Actual")
 #' }
 #'
-#' @param drug [string] A drug name for which the drug response curve should be
+#' @param drug \code{string} A drug name for which the drug response curve should be
 #' plotted. If the plot is desirable for more than one toxico set, A unique drug id
 #' should be provided.
-#' @param cellline [string] A cell line name for which the drug response curve should be
+#' @param cellline \code{string} A cell line name for which the drug response curve should be
 #' plotted. If the plot is desirable for more than one toxico set, A unique cell id
 #' should be provided.
-#' @param durations [numeric] A duration for which the drug response curve should be plotted.
-#' @param tSets [list] a list of ToxicoSet objects, for which the function
+#' @param durations \code{numeric} A duration for which the drug response curve should be plotted.
+#' @param tSets \code{list} a list of ToxicoSet objects, for which the function
 #' should plot the curves.
-#' @param concentrations,viabilities [list] A list of concentrations and viabilities to plot, the function assumes that
+#' @param concentrations,viabilities \code{list} A list of concentrations and viabilities to plot, the function assumes that
 #' concentrations[[i]] is plotted against viabilities[[i]]. The names of the concentration list are used to create the legend labels
-#' @param conc_as_log [logical], if true, assumes that log10-concentration data has been given rather than concentration data,
+#' @param conc_as_log \code{logical}, if true, assumes that log10-concentration data has been given rather than concentration data,
 #' and that log10(ICn) should be returned instead of ICn. Applies only to the concentrations parameter.
-#' @param viability_as_pct [logical], if false, assumes that viability is given as a decimal rather
+#' @param viability_as_pct \code{logical}, if false, assumes that viability is given as a decimal rather
 #' than a percentage, and that E_inf passed in as decimal. Applies only to the viabilities parameter.
-#' @param legends.label [vector] A vector of sensitivity measurment types.
+#' @param legends.label \code{vector} A vector of sensitivity measurment types.
 #' A legend will be displayed on the top right of the plot which each line of the legend is
 #' the values of requested sensitivity measurements for one of the requested tSets.
 #' If this parameter is missed no legend would be provided for the plot.
-#' @param ylim [vector] A vector of two numerical values to be used as ylim of the plot.
+#' @param ylim \code{vector} A vector of two numerical values to be used as ylim of the plot.
 #' If this parameter would be missed c(0,100) would be used as the ylim of the plot.
-#' @param xlim [vector] A vector of two numerical values to be used as xlim of the plot.
+#' @param xlim \code{vector} A vector of two numerical values to be used as xlim of the plot.
 #' If this parameter would be missed the minimum and maximum comncentrations between all
 #' the tSets would be used as plot xlim.
-#' @param mycol [vector] A vector with the same length of the tSets parameter which
+#' @param mycol \code{vector} A vector with the same length of the tSets parameter which
 #' will determine the color of the curve for the toxico sets. If this parameter is
 #' missed default colors from Rcolorbrewer package will be used as curves color.
-#' @param plot.type [character] Plot type which can be the actual one ("Actual") or
+#' @param plot.type \code{character} Plot type which can be the actual one ("Actual") or
 #' the one fitted by logl logistic regression ("Fitted") or both of them ("Both").
 #' If this parameter is missed by default actual curve is plotted.
-#' @param summarize.replicates [character] If this parameter is set to true replicates
+#' @param summarize.replicates \code{character} If this parameter is set to true replicates
 #' are summarized and replicates are plotted individually otherwise
-#' @param title [character] The title of the graph. If no title is provided, then it defaults to
+#' @param title \code{character} The title of the graph. If no title is provided, then it defaults to
 #' 'Drug':'Cell Line'.
-#' @param lwd [numeric] The line width to plot with
-#' @param cex [numeric] The cex parameter passed to plot
-#' @param cex.main [numeric] The cex.main parameter passed to plot, controls the size of the titles
+#' @param lwd \code{numeric} The line width to plot with
+#' @param cex \code{numeric} The cex parameter passed to plot
+#' @param cex.main \code{numeric} The cex.main parameter passed to plot, controls the size of the titles
 #' @param legend.loc And argument passable to xy.coords for the position to place the legend.
-#' @param trunc [bool] Should the viability values be truncated to lie in [0-100] before doing the fitting
-#' @param verbose [boolean] Should warning messages about the data passed in be printed?
+#' @param trunc \code{bool} Should the viability values be truncated to lie in [0-100] before doing the fitting
+#' @param verbose \code{boolean} Should warning messages about the data passed in be printed?
 #'
 #' @return Plots to the active graphics device and returns and invisible NULL.
 #'
@@ -68,13 +68,15 @@ drugDoseResponseCurve <-
   function(drug,
            cellline,
            durations,
-           tSets=list(),
-           concentrations=list(),
-           viabilities=list(),
+           tSets,
+           concentrations,
+           viabilities,
            conc_as_log = FALSE,
            viability_as_pct = TRUE,
            trunc=TRUE,
-           legends.label = c("ic50_published", "gi50_published","auc_published","auc_recomputed","ic50_recomputed"),
+           legends.label = c("ic50_published", "gi50_published",
+                             "auc_published","auc_recomputed",
+                             "ic50_recomputed"),
            ylim=c(0,100),
            xlim, mycol,
            title,
@@ -86,34 +88,30 @@ drugDoseResponseCurve <-
            legend.loc = "topright",
            verbose=TRUE) {
 
-    ## TODO:: Extract parameter checks into paramErrorChecker()
-    if(!missing(tSets)){ #if the tSets argument is defined
-      if (class(tSets) != "list") { #if tSets was not passed in as list
-        if (class(tSets) == "ToxicoSet") { #if tSet is of type "ToxicoSet"
-          # it is a tSet but it's not in a list -> make into a list that has the same name as the tSet
-          temp <- tSetName(tSets)
-          tSets <- list(tSets)
-          names(tSets) <- temp
-        } else { #tSet is not of type ToxicoSet
-          stop("Type of tSets parameter should be either a tSet or a list of tSets.")
-        }
-      }
+
+    if (!is(tSets, "list")) {
+      tSets <- list(tSets, names = names(tSets))
     }
-    if(!missing(tSets) && (missing(drug) || missing(cellline))){
+
+    paramErrorChecker("drugDoesResponseCurve", tSets = tSets, drug = drug,
+                      cell.lines = cellline, concentrations = concentrations,
+                      )
+
+
+    #### tSet case
+    if (!missing(tSets) && (missing(drug) || missing(cellline))){
       #if a tSet has been passed in but a drug/cell line argument hasn't
       stop("If you pass in a tSet then drug and cellline must be set") }
-    # } else {
-    #   if(missing(drug)){
-    #   drug <- "Drug"}
-    #   if(missing(cellline))
-    #   cellline <- "Cell Line"
-    # }
-    if(!missing(concentrations)){ #if a concentrations argument has been passed in
-      if(missing(viabilities)){ #but viabilities argument is missing
+
+    #### Not tSet case
+    if (!missing(concentrations)){ #if a concentrations argument has been passed in
+      if (missing(viabilities)){ #but viabilities argument is missing
 
         stop("Please pass in the viabilities to Plot with the concentrations.")
 
       }
+
+
       if (class(concentrations) != "list") {
         if (mode(concentrations) == "numeric") {
           if(mode(viabilities)!="numeric"){
@@ -169,6 +167,8 @@ drugDoseResponseCurve <-
     }
 
     common.range.star <- FALSE
+
+
 
     if (missing(plot.type)) {
       plot.type <- "Actual"
@@ -228,8 +228,8 @@ drugDoseResponseCurve <-
               j <- j + 1
               tSetNames[[j]] <- tSetName(tSets[[i]])
 
-              drug.responses <- as.data.frame(cbind("Dose"=as.numeric(as.vector(tSets[[i]]@sensitivity$raw[exp, colnames(tSets[[i]]@sensitivity$raw[,,"Dose"]) != "Control", "Dose"])),
-                                                    "Viability"=as.numeric(as.vector(tSets[[i]]@sensitivity$raw[exp, colnames(tSets[[i]]@sensitivity$raw[,,"Viability"]) != "Control", "Viability"])), stringsAsFactors=FALSE))
+              drug.responses <- as.data.frame(cbind("Dose" = as.numeric(as.vector(tSets[[i]]@sensitivity$raw[exp, colnames(tSets[[i]]@sensitivity$raw[,,"Dose"]) != "Control", "Dose"])),
+                                                    "Viability" = as.numeric(as.vector(tSets[[i]]@sensitivity$raw[exp, colnames(tSets[[i]]@sensitivity$raw[,,"Viability"]) != "Control", "Viability"])), stringsAsFactors=FALSE))
               drug.responses <- drug.responses[complete.cases(drug.responses), ]
               doses[[j]] <- drug.responses$Dose
               responses[[j]] <- drug.responses$Viability
@@ -243,7 +243,7 @@ drugDoseResponseCurve <-
                   legend.values[[j]] <- sprintf(" Exp %s %s = %s", rownames(tSets[[i]]@sensitivity$info)[exp], legends.label, round(as.numeric(tSets[[i]]@sensitivity$profiles[exp, legends.label]), digits=2))
                 }
               } else {
-                tt <- unlist(strsplit(rownames(tSets[[i]]@sensitivity$info)[exp], split="_"))
+                tt <- unlist(strsplit(rownames(tSets[[i]]@sensitivity$info)[exp], split = "_"))
                 if (tt[1] == "drugid") {
                   legend.values[[j]] <- paste(tt[2],"_", tt[5], sep = "")
                 }else{
@@ -258,7 +258,6 @@ drugDoseResponseCurve <-
           }
         } else {
           warning("The cell line and drug combo were not tested together. Aborting function.")
-          return()
         }
       }
     }

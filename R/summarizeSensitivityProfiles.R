@@ -39,8 +39,10 @@ summarizeSensitivityProfiles <- function(tSet,
                                          drugs = NULL,
                                          sensitivity.measure="auc_recomputed",
                                          summary.stat = c("mean",
-                                                          "median", "first", "last", "max", "min"),
-                                         fill.missing=TRUE, verbose=TRUE) {
+                                                          "median", "first",
+                                                          "last", "max", "min"),
+                                         fill.missing=TRUE, verbose=TRUE)
+  {
 
   ## MISSING VALUE HANDLING FOR PARAMETERS
   # Get named list of defualt values for missing parameters
@@ -94,6 +96,8 @@ summarizeSensitivityProfiles <- function(tSet,
   rownames(result) <- drugs
   colnames(result) <- cell.lines
 
+
+  ## TODO:: Finish progress bar
   # if(verbose){
 
   #   message(sprintf("Summarizing %s sensitivity data for:\t%s", sensitivity.measure, tSet@annotation$name))
@@ -105,8 +109,7 @@ summarizeSensitivityProfiles <- function(tSet,
 
   # }
 
-  pp_dd <- cbind(pp[,c("cellid", "drugid","duration_h")], "sensitivity.measure"=dd[, sensitivity.measure])
-
+  pp_dd <- cbind(pp[,c("cellid", "drugid","duration_h")], "sensitivity.measure" = dd[, sensitivity.measure])
 
   summary.function <- function(x) {
     if (all(is.na(x))) {
@@ -114,10 +117,10 @@ summarizeSensitivityProfiles <- function(tSet,
     }
     switch(summary.stat,
            "mean" = {
-             return(mean(as.numeric(x), na.rm=TRUE))
+             return(mean(as.numeric(x), na.rm = TRUE))
            },
            "median" = {
-             return(median(as.numeric(x), na.rm=TRUE))
+             return(median(as.numeric(x), na.rm = TRUE))
            },
            "first" = {
              return(as.numeric(x)[[1]])
@@ -125,11 +128,11 @@ summarizeSensitivityProfiles <- function(tSet,
            "last" = {
              return(as.numeric(x)[[length(x)]])
            },
-           "max"= {
-             return(max(as.numeric(x), na.rm=TRUE))
+           "max" = {
+             return(max(as.numeric(x), na.rm = TRUE))
            },
            "min" = {
-             return(min(as.numeric(x), na.rm=TRUE))
+             return(min(as.numeric(x), na.rm = TRUE))
            })
 
   }
