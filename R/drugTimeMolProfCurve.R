@@ -7,7 +7,7 @@
 #' @examples
 #'
 #' if (interactive()) {
-#' drugGeneResponseCurve(TGGATESsmall, dose = c("Control", "Low", "Middle"),
+#' drugTimeMolProfCurve(TGGATESsmall, dose = c("Control", "Low", "Middle"),
 #'   mDataTypes="rna", drug = drugNames(TGGATESsmall)[1],
 #'   duration = c("2", "8", "24"), features = "ENSG00000000003_at")
 #' }
@@ -68,7 +68,7 @@
 #' @importFrom magicaxis magaxis
 #'
 #' @export
-drugGeneResponseCurve <- function(
+drugTimeMolProfCurve <- function(
   tSets,
   duration,
   cellline,

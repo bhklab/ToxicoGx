@@ -12,59 +12,59 @@ drugTimeResponseCurve(tSets, duration = NULL, cellline = NULL,
   verbose = TRUE)
 }
 \arguments{
-\item{tSets}{[ToxicoSet] A ToxicoSet or list of ToxicoSets to be plotted in
+\item{tSets}{\code{ToxicoSet} A ToxicoSet or list of ToxicoSets to be plotted in
 this graph.}
 
-\item{duration}{[character] A vector of durations to include in the plot.}
+\item{duration}{\code{character} A vector of durations to include in the plot.}
 
-\item{cellline}{[character] A vector of cell lines to include in the plot.}
+\item{cellline}{\code{character} A vector of cell lines to include in the plot.}
 
-\item{dose}{[character] A vector of dose levels to be included in the
+\item{dose}{\code{character} A vector of dose levels to be included in the
 plot. Default to include all dose levels available for a drug. Must include
 at minimum two dose levels, one of witch is "Control".}
 
-\item{drug}{[character] A vector of drugs to be included in this plot.}
+\item{drug}{\code{character} A vector of drugs to be included in this plot.}
 
-\item{plot.type}{[character] The type of plot which you would like returned. Options
+\item{plot.type}{\code{character} The type of plot which you would like returned. Options
 are 'Actual' for unfitted curve, 'Fitted' for the fitted curve and 'Both'
 to display 'Actual and 'Fitted' in the sample plot.}
 
-\item{summarize.replicates}{[logical] If true will take the average of all
+\item{summarize.replicates}{\code{logical} If true will take the average of all
 replicates at each time point per gene and duration. This release has not
 yet implemented this feature.}
 
-\item{viability_as_pct}{[logical] A vector specifying if viabilities should
+\item{viability_as_pct}{\code{logical} A vector specifying if viabilities should
 be plotted as a percentage. Defaults to TRUE.}
 
-\item{xlim}{[numeric] A vector of minimum and maximum values for the x-axis
+\item{xlim}{\code{numeric} A vector of minimum and maximum values for the x-axis
 of the returned plot.}
 
-\item{ylim}{[numeric] A vector of minimum and miximum values for the y-axis
+\item{ylim}{\code{numeric} A vector of minimum and miximum values for the y-axis
 of the returned plot.}
 
-\item{mycol}{[vector] A vector of length equal to the lenth of the tSets
+\item{mycol}{\code{vector} A vector of length equal to the lenth of the tSets
 argument specifying which RColorBrewer colour to use per tSet. Default
 colours will be used if this parameter is excluded.}
 
-\item{x.custom.ticks}{[vector] A numeric vector of the distance between major
+\item{x.custom.ticks}{\code{vector} A numeric vector of the distance between major
 and minor ticks on the x-axis. If excluded ticks appear only where duration
 values are specified.}
 
-\item{title}{[character] A string containing the desired plot name. If excluded
+\item{title}{\code{character} A string containing the desired plot name. If excluded
 a title wil be generated automatically.}
 
-\item{lwd}{[numeric] The line width to plot width}
+\item{lwd}{\code{numeric} The line width to plot width}
 
-\item{cex}{[numeric] The cex parameter passed to plot}
+\item{cex}{\code{numeric} The cex parameter passed to plot}
 
-\item{cex.main}{[numeric] The cex.main parameter passed to plot, controls
+\item{cex.main}{\code{numeric} The cex.main parameter passed to plot, controls
 the size of the titles}
 
-\item{legend.loc}{[character] The location of the legend as passed to the
+\item{legend.loc}{\code{character} The location of the legend as passed to the
 legends function from base graphics. Recommended values are 'topright' or
 'topleft'. Default is 'topleft'.}
 
-\item{verbose}{[boolean] Should warning messages about the data passed in be printed?}
+\item{verbose}{\code{boolean} Should warning messages about the data passed in be printed?}
 }
 \value{
 Plot of the viabilities for each drug vs time of exposure
