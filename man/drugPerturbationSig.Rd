@@ -58,8 +58,10 @@ with genes in the first direction, drugs in the second, and the selected
 return values in the third.
 }
 \examples{
+if (interactive()) {
 data(TGGATESsmall)
 drug.perturbation <- drugPerturbationSig(TGGATESsmall, mDataType="rna",
  features = head(fNames(TGGATESsmall, "rna")), nthread=1)
+}
 
 }

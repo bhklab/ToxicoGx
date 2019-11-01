@@ -2,7 +2,7 @@
 
 export(ToxicoSet)
 export(ToxicoSig)
-export(availabletSets)
+export(availableTSets)
 export(checkTSetStructure)
 export(computeAUC)
 export(computeIC50)

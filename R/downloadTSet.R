@@ -16,7 +16,7 @@
 #' @export
 #' @import downloader
 #' @importFrom utils read.table write.table
-availabletSets <- function(saveDir=file.path(".", "tSets"), myfn="availableToxicoSets.csv", verbose=TRUE){
+availableTSets <- function(saveDir=file.path(".", "tSets"), myfn="availableToxicoSets.csv", verbose=TRUE){
 
   if (!file.exists(saveDir)) {
     dir.create(saveDir, recursive = TRUE)
@@ -65,7 +65,7 @@ availabletSets <- function(saveDir=file.path(".", "tSets"), myfn="availableToxic
 #' @import downloader
 downloadTSet <- function(name, saveDir = file.path(".", "tSets"), tSetFileName = NULL, verbose = TRUE) {
 
-  tSetTable <- availabletSets(saveDir = saveDir)
+  tSetTable <- availableTSets(saveDir = saveDir)
 
   whichx <- match(name, tSetTable[,1])
   if (is.na(whichx)) {
