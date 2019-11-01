@@ -29,7 +29,6 @@
 #' methods. For a much more detailed instruction on creating ToxicoSets, please
 #' see the "CreatingToxicoSet" vignette.
 #'
-#'
 #' @param name A \code{character} string detailing the name of the dataset
 #' @param molecularProfiles A \code{list} of ExpressionSet objects containing
 #'   molecular profiles
@@ -981,7 +980,7 @@ subsetTo <- function(tSet, cell.lines = NULL,
         if (!all(drugs %in% drugNames(tSet))){
           stop("Some of the drug names passed to function did not match to names in the ToxicoSet Please ensure you are using drug names as returned by the drugNames function")
         }
-        drugs_index <- which(Biobase::pData(eset)[["drugid"]] %in% drugs)
+        drugs_index <- which(Biobase::pData(eset)[["tggates_drugid"]] %in% drugs)
       }
     }
 

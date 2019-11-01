@@ -15,9 +15,11 @@
 #' return values in the third.
 #'
 #' @examples
+#' if (interactive()) {
 #' data(TGGATESsmall)
 #' drug.perturbation <- drugPerturbationSig(TGGATESsmall, mDataType="rna",
 #'  features = head(fNames(TGGATESsmall, "rna")), nthread=1)
+#' }
 #'
 #' @param tSet \code{ToxicoSet} a ToxicoSet of the perturbation experiment type
 #' @param mDataType \code{character} which one of the molecular data types to use
