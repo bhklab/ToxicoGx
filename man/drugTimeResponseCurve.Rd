@@ -76,7 +76,7 @@ Description of this function
 if (interactive()) {
   ToxicoGx::drugTimeResponseCurve(TGGATESsmall, cellline = "Hepatocyte",
     dose = c("Control", "Low", "Middle"),
-    drug = "naphthyl isothiocyanate", duration = c("2", "8", "24"))
+    drug = drugNames(TGGATESsmall)[1], duration = c("2", "8", "24"))
 }
 
 }

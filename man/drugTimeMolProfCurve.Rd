@@ -12,9 +12,6 @@ drugTimeMolProfCurve(tSets, duration, cellline, mDataTypes,
   cex.main = 1, legend.loc = "topright", verbose = TRUE)
 }
 \arguments{
-\item{tSets}{\code{ToxicoSet} A ToxicoSet to be plotted in this graph. Currently
-only a single tSet is supported, passing more may results in errors.}
-
 \item{duration}{\code{character} A vector of durations to include in the plot.}
 
 \item{cellline}{\code{character} A vector of cell lines to include in the plot.}
@@ -75,6 +72,9 @@ function from base graphics. Suggested values are either "topleft" or
 
 \item{verbose}{\code{boolean} Should warning messages about the data passed
 in be printed?}
+
+\item{tSet}{\code{ToxicoSet} A ToxicoSet to be plotted in this graph. Currently
+only a single tSet is supported, passing more may results in errors.}
 }
 \value{
 Plot of the viabilities for each drug vs time of exposure
