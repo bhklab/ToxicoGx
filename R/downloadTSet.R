@@ -28,8 +28,10 @@ availabletSets <- function(saveDir=file.path(".", "tSets"), myfn="availableToxic
                          quiet = !verbose)
   }, warning = function(w) {
     message(paste(myfn ,"download has a warning, this is likely due to connectivity issues."))
+    return(w)
   }, error = function(e) {
     message(paste(myfn, "download has errored, this is likely due to server availability issues and should be resolved shortly."))
+    return(e)
   }, finally = {
     message(paste(myfn, "downloaded successfully to", saveDir))
   })
@@ -61,7 +63,7 @@ availabletSets <- function(saveDir=file.path(".", "tSets"), myfn="availableToxic
 #' @return A tSet object with the dataset, downloaded from our server
 #' @export
 #' @import downloader
-downloadtSet <- function(name, saveDir = file.path(".", "tSets"), tSetFileName = NULL, verbose = TRUE) {
+downloadTSet <- function(name, saveDir = file.path(".", "tSets"), tSetFileName = NULL, verbose = TRUE) {
 
   tSetTable <- availabletSets(saveDir = saveDir)
 
@@ -82,6 +84,7 @@ downloadtSet <- function(name, saveDir = file.path(".", "tSets"), tSetFileName =
         downloader::download(url = as.character(tSetTable[whichx,"URL"]), destfile = file.path(saveDir, tSetFileName), quiet = !verbose)
       }, warning = function(w) {
         message(paste(tSetFileName, "download has a warning, this is likely due to connectivity issues."))
+        return(w)
       }, error = function(e) {
         message(paste(tSetFileName, "download has errored, this is likely due to server availability issues and will be resolved shortly."))
       }, finally = {

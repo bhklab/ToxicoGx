@@ -6,7 +6,7 @@
 #' if (interactive()) {
 #'   ToxicoGx::drugTimeResponseCurve(TGGATESsmall, cellline = "Hepatocyte",
 #'     dose = c("Control", "Low", "Middle"),
-#'     drug = "naphthyl isothiocyanate", duration = c("2", "8", "24"))
+#'     drug = drugNames(TGGATESsmall)[1], duration = c("2", "8", "24"))
 #' }
 #'
 #' @param tSets \code{ToxicoSet} A ToxicoSet or list of ToxicoSets to be plotted in
@@ -175,7 +175,6 @@ drugTimeResponseCurve <- function(
   }
 
   ## SETS CUSTOM RANGE FOR Y-AXIS IF PASSED AS ARGUEMENT
-  print(ylim)
   if (!is.null(ylim)) {
     print("ylim not null")
     viability.range <- ylim

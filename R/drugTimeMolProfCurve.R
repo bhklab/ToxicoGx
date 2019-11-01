@@ -12,7 +12,7 @@
 #'   duration = c("2", "8", "24"), features = "ENSG00000000003_at")
 #' }
 #'
-#' @param tSets \code{ToxicoSet} A ToxicoSet to be plotted in this graph. Currently
+#' @param tSet \code{ToxicoSet} A ToxicoSet to be plotted in this graph. Currently
 #'   only a single tSet is supported, passing more may results in errors.
 #' @param dose \code{character} A vector of dose levels to be included in the
 #'   plot. Default to include all dose levels available for a drug. Must include
@@ -357,5 +357,5 @@ drugTimeMolProfCurve <- function(
       }
     }
   }
-  legend(legend.loc, legend = legends, col = legends.col, bty="n", cex = cex, pch = pch.val)
+  legend(legend.loc, legend = legends, col = legends.col, bty = "n", cex = cex, pch = pch.val)
 }

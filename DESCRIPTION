@@ -12,7 +12,7 @@ Authors@R: c(
     role = c("aut")),
   person("Amy", "Tang", email = "amy.tang@queensu.ca", 
     role = c("aut")),
-  person("Nehme", "El-Hachem1", email = "hachemn@gmail.com",
+  person("Nehme", "El-Hachem", email = "hachemn@gmail.com",
     role = c("aut")),
   person("Petr","Smirnov", email = "petr.smirnov@uhnresearch.ca", 
     role = c("aut")),
