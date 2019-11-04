@@ -22,19 +22,9 @@ availableTSets <- function(saveDir=file.path(".", "tSets"), myfn="availableToxic
     dir.create(saveDir, recursive = TRUE)
   }
 
-  tryCatch({
-    downloader::download("https://ndownloader.figshare.com/files/18155444?private_link=d286d7386d5f5e778585",
-                         destfile = file.path(saveDir, myfn),
-                         quiet = !verbose)
-  }, warning = function(w) {
-    message(paste(myfn ,"download has a warning, this is likely due to connectivity issues."))
-    return(w)
-  }, error = function(e) {
-    message(paste(myfn, "download has errored, this is likely due to server availability issues and should be resolved shortly."))
-    return(e)
-  }, finally = {
-    message(paste(myfn, "downloaded successfully to", saveDir))
-  })
+  downloader::download("https://ndownloader.figshare.com/files/18508424?private_link=d286d7386d5f5e778585",
+                       destfile = file.path(saveDir, myfn),
+                       quiet = !verbose)
 
   tSetTable <- read.csv(file.path(saveDir, myfn), header = TRUE, stringsAsFactors = FALSE)
   return(tSetTable)
@@ -67,7 +57,7 @@ downloadTSet <- function(name, saveDir = file.path(".", "tSets"), tSetFileName =
 
   tSetTable <- availableTSets(saveDir = saveDir)
 
-  whichx <- match(name, tSetTable[,1])
+  whichx <- match(name, tSetTable[, 1])
   if (is.na(whichx)) {
     stop('Unknown Dataset. Please use the availabletSets() function for the table of available PharamcoSets.')
   }
@@ -76,21 +66,13 @@ downloadTSet <- function(name, saveDir = file.path(".", "tSets"), tSetFileName =
     dir.create(saveDir, recursive = TRUE)
   }
 
-  if (is.null(tSetFileName)){
-    tSetFileName <- paste(tSetTable[whichx,"tSet.Name"], ".RData", sep="")
+  if (is.null(tSetFileName)) {
+    tSetFileName <- paste0(tSetTable[whichx,"ToxicoSet.Name"], ".rda")
   }
   if (!file.exists(file.path(saveDir, tSetFileName))) {
-    tryCatch({
-        downloader::download(url = as.character(tSetTable[whichx,"URL"]), destfile = file.path(saveDir, tSetFileName), quiet = !verbose)
-      }, warning = function(w) {
-        message(paste(tSetFileName, "download has a warning, this is likely due to connectivity issues."))
-        return(w)
-      }, error = function(e) {
-        message(paste(tSetFileName, "download has errored, this is likely due to server availability issues and will be resolved shortly."))
-      }, finally = {
-        message(paste(tSetFileName, "downloaded successfully to", saveDir))
-      })
-    }
+    downloader::download(url = as.character(tSetTable[whichx,"URL"]), destfile = file.path(saveDir, tSetFileName), quiet = !verbose)
+  }
+
   tSet <- load(file.path(saveDir, tSetFileName))
   return(get(tSet))
 }
@@ -102,12 +84,12 @@ downloadTSet <- function(name, saveDir = file.path(".", "tSets"), tSetFileName =
     tSetTable <- read.table(outfn, as.is = TRUE)
     newrow <- c(tSetName(tSet), tSet@datasetType, paste(names(tSet@molecularProfiles), collapse = "/"), tSet@annotation$dateCreated, NA)
     tSetTable <- rbind(tSetTable, newrow)
-    rownames(tSetTable) <- tSetTable[,1]
+    rownames(tSetTable) <- tSetTable[, 1]
     write.table(tSetTable, file = outfn)
   } else {
     newrow <- c(tSetName(tSet), tSet@datasetType, paste(names(tSet@molecularProfiles), collapse = "/"), tSet@annotation$dateCreated, NA)
     tSetTable <- t(matrix(newrow))
-    colnames(tSetTable) <- c("tSet.Name","Description", "Available.Molecular.Profiles","Date.Updated","URL")
+    colnames(tSetTable) <- c("ToxicoSet.Name","Description", "Available.Molecular.Profiles","Date.Updated","URL")
     rownames(tSetTable) <- tSetTable[,1]
     write.table(tSetTable, file = outfn)
   }

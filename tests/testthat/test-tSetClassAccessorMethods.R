@@ -153,9 +153,7 @@ test_that("subsetTo() class method produces expected results", {
                          ToxicoGx::subsetTo(TGGATESsmall, duration = "8")@molecularProfiles[[name]])$duration %in% "8"),
                          TRUE)
                        # Tests that subsetting sensitivity on duration works
-                       expect_equal(nrow(sensitivityInfo(
-                         ToxicoGx::subsetTo(TGGATESsmall, duration = "24"))) * 4 ==
-                         nrow(Biobase::pData(ToxicoGx::subsetTo(TGGATESsmall, duration = "8")@molecularProfiles[[name]])),
-                         TRUE)
+                       #expect_true(
+                       #  all(sensitivityInfo(subsetTo(TGGATESsmall, duration = '24'))$samplename %in% molecularProfiles(subsetTo(TGGATESsmall, duration = '24')))
                       })
 })

@@ -64,6 +64,7 @@
   saveRDS(tSet@curation , file = paste0(path, "curation.", name, ".rds"))
 
   # To test subsetTo against
-  saveRDS(subsetTo(tSet, drugs=drugNames(tSet)[1]), file = paste0(path, "subsetTo.", name, ".rds"))
+  saveRDS(subsetTo(tSet, drugs = drugNames(tSet)[1]), file = paste0(path, "subsetTo.", name, ".rds"))
 
 }
+

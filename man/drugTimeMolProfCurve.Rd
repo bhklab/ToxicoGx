@@ -32,11 +32,6 @@ at minimum two dose levels, one of which must be "Control".}
 \item{drug}{\code{character} A vector of drugs to be included in this plot. In
 this release, only one drug is supported.}
 
-\item{plot.type}{\code{character} The type of plot which you would like returned. Options
-are 'Actual' for unfitted curve, 'Fitted' for the fitted curve and 'Both'
-to display 'Actual and 'Fitted' in the sample plot. Currently this function
-only supports 'Actual'.}
-
 \item{summarize.replicates}{\code{logical} If true will take the average of all
 replicates at each time point per gene and duration. This release has not
 yet implemented this feature.}
