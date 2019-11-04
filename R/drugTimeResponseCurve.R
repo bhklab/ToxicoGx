@@ -9,7 +9,7 @@
 #'     drug = drugNames(TGGATESsmall)[1], duration = c("2", "8", "24"))
 #' }
 #'
-#' @param tSets \code{ToxicoSet} A ToxicoSet or list of ToxicoSets to be plotted in
+#' @param tSet \code{ToxicoSet} A ToxicoSet or list of ToxicoSets to be plotted in
 #'   this graph.
 #' @param dose \code{character} A vector of dose levels to be included in the
 #'   plot. Default to include all dose levels available for a drug. Must include
@@ -28,7 +28,7 @@
 #' @param legend.loc \code{character} The location of the legend as passed to the
 #'   legends function from base graphics. Recommended values are 'topright' or
 #'   'topleft'. Default is 'topleft'.
-#' @param mycol \code{vector} A vector of length equal to the lenth of the tSets
+#' @param mycol \code{vector} A vector of length equal to the lenth of the tSet
 #'   argument specifying which RColorBrewer colour to use per tSet. Default
 #'   colours will be used if this parameter is excluded.
 #' @param plot.type \code{character} The type of plot which you would like returned. Options
@@ -57,7 +57,7 @@
 #'
 #' @export
 drugTimeResponseCurve <- function(
-  tSets,
+  tSet,
   duration = NULL,
   cellline = NULL,
   dose = NULL,
@@ -67,7 +67,6 @@ drugTimeResponseCurve <- function(
   viability_as_pct = TRUE,
   xlim = NULL,
   ylim = NULL,
-  #  trunc,
   mycol,
   x.custom.ticks = NULL,
   title,
@@ -78,26 +77,27 @@ drugTimeResponseCurve <- function(
   verbose=TRUE
 ) {
 
-  # Place tSets in a list if not already
-  if (!is(tSets, "list")) {
-    tSets <- list(tSets)
+  # Place tSet in a list if not already
+  if (!is(tSet, "list")) {
+    tSet <- list(tSet)
   }
 
   paramErrorChecker("drugTimeResponseCurve",
-                    tSets = tSets, duration = duration, cell.lines = cellline,
+                    tSet = tSet, duration = duration, cell.lines = cellline,
                     dose = dose)
 
-  ## TODO:: Make this function work with multiple tSets
+  ## TODO:: Make this function work with multiple tSet
   ## TODO:: Make this function work with multiple drugs
   ## TODO:: Throw warning if a dose level or time point is not available for a specific drug
   ## TODO:: Add logic to handle viability_as_pct = FALSE
-  # Subsetting the tSets based on parameter arguments
-  tSets <- lapply(tSets, function(tSet) {
+
+  # Subsetting the tSet based on parameter arguments
+  tSet <- lapply(tSet, function(tSet) {
     subsetTo(tSet, mDataType = "rna", drugs = drug, duration = duration)
   })
 
   # Extracting the data required for plotting into a list of data.frames
-  plotData <- lapply(tSets, function(tSet) {
+  plotData <- lapply(tSet, function(tSet) {
     cbind(
       tSet@sensitivity$raw[,,2][, which(c("Control", "Low", "Middle", "High") %in% dose)],
       ToxicoGx::sensitivityInfo(tSet)[, c("duration_h", "replicate")]
@@ -131,7 +131,7 @@ drugTimeResponseCurve <- function(
 
   # Summarizing replicate values
   if (summarize.replicates == TRUE) {
-    responses <- lapply(seq_along(tSets), function(t_idx) {
+    responses <- lapply(seq_along(tSet), function(t_idx) {
       lapply(seq_along(dose), function(d_idx) {
         responseVals <- NULL
         responseVect <- unlist(responses[[t_idx]][[d_idx]])
@@ -152,7 +152,7 @@ drugTimeResponseCurve <- function(
   # Set x and y axis ranges based on time and viability values
   time.range <- c(min(unlist(unlist(times))), max(unlist(unlist(times))))
   viability.range <- c(min(unlist(responses, recursive = TRUE)), max(unlist(responses, recursive = TRUE)))
-  for (i in seq_along(tSets)) {
+  for (i in seq_along(tSet)) {
     ## TODO:: Generalize this to n replicates
     time.range <- c(min(time.range[1], min(unlist(times[[i]], recursive = TRUE), na.rm = TRUE), na.rm = TRUE), max(time.range[2], max(unlist(times[[i]], recursive = TRUE), na.rm = TRUE), na.rm = TRUE))
     viability.range <- c(0, max(viability.range[2], max(unlist(responses[[i]], recursive = TRUE), na.rm = TRUE), na.rm = TRUE))
@@ -214,7 +214,7 @@ drugTimeResponseCurve <- function(
     rect(xleft = x1, xright = x2, ybottom = viability.range[1] , ytop = viability.range[2] , col = rgb(240, 240, 240, maxColorValue = 255), border = FALSE)
   }
   if (summarize.replicates == FALSE) {
-    # Loop over tSets
+    # Loop over tSet
     for (i in seq_along(times)) {
       j <- 1
       # Loop over dose level
@@ -248,7 +248,7 @@ drugTimeResponseCurve <- function(
       }
     }
   } else {
-    # Loop over tSets
+    # Loop over tSet
     for (i in seq_along(times)) {
       j <- 1
       # Loop over dose level

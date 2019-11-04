@@ -4,7 +4,7 @@
 \alias{drugTimeResponseCurve}
 \title{Compares viabilities at a given dose over different experimental duration}
 \usage{
-drugTimeResponseCurve(tSets, duration = NULL, cellline = NULL,
+drugTimeResponseCurve(tSet, duration = NULL, cellline = NULL,
   dose = NULL, drug = NULL, plot.type = "Actual",
   summarize.replicates = TRUE, viability_as_pct = TRUE, xlim = NULL,
   ylim = NULL, mycol, x.custom.ticks = NULL, title, lwd = 1,
@@ -12,7 +12,7 @@ drugTimeResponseCurve(tSets, duration = NULL, cellline = NULL,
   verbose = TRUE)
 }
 \arguments{
-\item{tSets}{\code{ToxicoSet} A ToxicoSet or list of ToxicoSets to be plotted in
+\item{tSet}{\code{ToxicoSet} A ToxicoSet or list of ToxicoSets to be plotted in
 this graph.}
 
 \item{duration}{\code{character} A vector of durations to include in the plot.}
@@ -42,7 +42,7 @@ of the returned plot.}
 \item{ylim}{\code{numeric} A vector of minimum and miximum values for the y-axis
 of the returned plot.}
 
-\item{mycol}{\code{vector} A vector of length equal to the lenth of the tSets
+\item{mycol}{\code{vector} A vector of length equal to the lenth of the tSet
 argument specifying which RColorBrewer colour to use per tSet. Default
 colours will be used if this parameter is excluded.}
 

@@ -40,10 +40,6 @@
 #' @param mycol \code{vector} A vector of length equal to the number of features
 #'   argument specifying which RColorBrewer colour to use per feature. Default
 #'   colours will be used if this parameter is excluded.
-#' @param plot.type \code{character} The type of plot which you would like returned. Options
-#'   are 'Actual' for unfitted curve, 'Fitted' for the fitted curve and 'Both'
-#'   to display 'Actual and 'Fitted' in the sample plot. Currently this function
-#'   only supports 'Actual'.
 #' @param summarize.replicates \code{logical} If true will take the average of all
 #'  replicates at each time point per gene and duration. This release has not
 #'  yet implemented this feature.
@@ -120,9 +116,9 @@ drugTimeMolProfCurve <- function(
 
   # Extracting the data required for plotting into a list of data.frames
   # list of tSets < list of mDataTypes <df of plotData
-  plotData <- lapply(tSets, function(tSet) {
+  plotData <- lapply(tSet, function(tSet) {
     mDataTypesData <- lapply(mDataTypes, function(mDataType) {
-      profileMatrix <- molecularProfiles(tSet, mDataType) # Sensitivity
+      profileMatrix <- molecularProfiles(tSet, mDataType) #
       relevantFeatureInfo <- featureInfo(tSet, mDataType)[, c("gene_id", "transcript_name") ]
       relevantPhenoInfo <- phenoInfo(tSet, mDataType)[, c("samplename", "cellid", "drugid", "concentration", "dose_level", "duration", "species", "individual_id")]
       relevantSensitivityInfo <- ToxicoGx::sensitivityInfo(tSet)[, c("drugid", "duration_h", "replicate", "Control", "Low", "Middle", "High") ]
@@ -196,34 +192,33 @@ drugTimeMolProfCurve <- function(
   #### SUMMARIZATION ####
 
   # Summarizing replicate values
-  #if (summarize.replicates == TRUE) {
-  #  expression <- lapply(seq_along(tSets), function(t_idx) {
-  #    lapply(seq_along(dose), function(d_idx) {
-  #      expressionVals <- NULL
-  #      responseVect <- unlist(expression[[t_idx]][[d_idx]])
-  #      for (time in seq_along(unique(duration))) {
-  #        expressionVals <- c(expressionVals, mean(responseVect[time], responseVect[time + length(unique(duration))]))
-  #      }
-  #      expressionVals
-  #    })
-  #  })
-  #  # Take unique values of all time replicates and place into a list
-  #  times <- list(unique(unlist(times)))
-  #  legendValues <- lapply(legendValues, function(legendLevel) {
-  #    lapply(legendLevel, function(legendName) {unique(gsub("_[^_]*$", "", unlist(legendName)))})
-  #  })
-  #
-  #}
+  if (summarize.replicates == TRUE) {
+   expression <- lapply(seq_along(tSets), function(t_idx) {
+     lapply(seq_along(dose), function(d_idx) {
+       expressionVals <- NULL
+       responseVect <- unlist(expression[[t_idx]][[d_idx]])
+       for (time in seq_along(unique(duration))) {
+         expressionVals <- c(expressionVals, mean(responseVect[time], responseVect[time + length(unique(duration))]))
+       }
+       expressionVals
+     })
+   })
+   # Take unique values of all time replicates and place into a list
+   times <- list(unique(unlist(times)))
+   legendValues <- lapply(legendValues, function(legendLevel) {
+     lapply(legendLevel, function(legendName) {unique(gsub("_[^_]*$", "", unlist(legendName)))})
+   })
+  }
 
   #### AXIS RANGES ####
 
   # Set x and y axis ranges based on time and viability values
   time.range <- as.numeric(c(min(unlist(times)), max(unlist(times))))
-  expression.range <- c(floor(min(unlist(expression, recursive = TRUE))), ceiling(max(unlist(expression, recursive=TRUE))))
+  expression.range <- c(floor(min(unlist(expression, recursive = TRUE))), ceiling(max(unlist(expression, recursive = TRUE))))
   for (i in seq_along(tSets)) {
     ## TODO:: Generalize this to n replicates
     time.range <- c(min(time.range[1], min(unlist(times[[i]], recursive = TRUE), na.rm = TRUE), na.rm = TRUE), max(time.range[2], max(unlist(times[[i]], recursive = TRUE), na.rm = TRUE), na.rm = TRUE))
-    expression.range <- c(0, max(expression.range[2], max(unlist(expression[[i]], recursive=TRUE), na.rm = TRUE), na.rm = TRUE))
+    expression.range <- c(0, max(expression.range[2], max(unlist(expression[[i]], recursive = TRUE), na.rm = TRUE), na.rm = TRUE))
   }
   x1 <- 24; x2 <- 0
 
@@ -277,10 +272,11 @@ drugTimeMolProfCurve <- function(
   legends <- NULL
   pch.val <- NULL
   legends.col <- NULL
-  # TBD what this dose
+  # TBD what this does?
   if (length(times) > 1) {
     rect(xleft = x1, xright = x2, ybottom = expression.range[1] , ytop = expression.range[2] , col=rgb(240, 240, 240, maxColorValue = 255), border = FALSE)
   }
+
   if (summarize.replicates == FALSE) {
     # Loop over tSets
     for (i in seq_along(times)) { # tSet subset
@@ -295,21 +291,7 @@ drugTimeMolProfCurve <- function(
             for (feature in seq_along(features[[mDataType]])) {
               points(times[[i]][[mDataType]][[level]], expression[[i]][[mDataType]][[level]][[replicate]][[feature]], pch = replicate, col = mycol[j], cex = cex)
               # Select plot type
-              switch(plot.type,
-                     "Actual" = {
-                       lines(times[[i]][[mDataType]][[level]], expression[[i]][[mDataType]][[level]][[replicate]][[feature]], lty = replicate, lwd = lwd, col = mycol[j])
-                     },
-                     "Fitted" = {
-                       #log_logistic_params <- logLogisticRegression(conc=times[[i]][[replicate]], expression = expression[[i]][[level]][[replicate]])
-                       #x_vals <- .GetSupportVec(times[[i]][[replicate]])
-                       #lines(10 ^ x_vals, .Hill(x_vals, pars=c(log_logistic_params$HS, log_logistic_params$E_inf/100, log10(log_logistic_params$EC50))) * 100 ,lty = replicate, lwd = lwd, col = mycol[j])
-                     },
-                     "Both" = {
-                       lines(times[[i]][[mDataType]][[level]], expression[[i]][[mDataType]][[level]][[replicate]][[feature]], lty = replicate, lwd = lwd, col = mycol[j])
-                       #log_logistic_params <- logLogisticRegression(conc = times[[i]][[replicate]], expression = expression[[i]][[level]][[replicate]])
-                       #x_vals <- .GetSupportVec(times[[i]][[replicate]])
-                       #lines(10 ^ x_vals, .Hill(x_vals, pars = c(log_logistic_params$HS, log_logistic_params$E_inf/100, log10(log_logistic_params$EC50))) * 100, lty=replicate, lwd=lwd, col=mycol[j])
-                     })
+              lines(times[[i]][[mDataType]][[level]], expression[[i]][[mDataType]][[level]][[replicate]][[feature]], lty = replicate, lwd = lwd, col = mycol[j])
               legends <- c(legends, legendValues[[i]][[mDataType]][[level]][[replicate]][feature])
               legends.col <- c(legends.col, mycol[j])
               pch.val <- c(pch.val, feature)
@@ -332,23 +314,7 @@ drugTimeMolProfCurve <- function(
           # Plot per tSet, per dose level, per replicate points
           points(times[[i]][[mDataType]][[level]], expression[[i]][[mDataType]][[level]], pch = 1, col = mycol[j], cex = cex + 0.2)
           # Select plot type
-          switch(plot.type,
-                 "Actual" = {
-                   lines(times[[i]][[mDataType]], expression[[i]][[level]], lty = 1, lwd = lwd, col = mycol[j])
-                 },
-                 "Fitted" = {
-                   #log_logistic_params <- logLogisticRegression(conc = times[[i]], expression=expression[[i]][[level]])
-                   stop("Curve fitting has not been implemented in this function yet. Feature coming soon!")
-                   #x_vals <- .GetSupportVec(times[[i]])
-                   #lines(10 ^ x_vals, .Hill(x_vals, pars = c(log_logistic_params$HS, log_logistic_params$E_inf/100, log10(log_logistic_params$EC50))) * 100 ,lty=1, lwd=lwd, col=mycol[j])
-                 },
-                 "Both" = {
-                   warning("Curve fitting has not been implemented in this function yet. Feature coming soon!")
-                   lines(times[[i]],expression[[i]][[mDataType]][[level]],lty=1, lwd = lwd, col = mycol[j])
-                   #log_logistic_params <- logLogisticRegression(conc = times[[i]], expression = expression[[i]][[level]])
-                   #x_vals <- .GetSupportVec(times[[i]])
-                   #lines(10 ^ x_vals, .Hill(x_vals, pars = c(log_logistic_params$HS, log_logistic_params$E_inf/100, log10(log_logistic_params$EC50))) * 100, lty = 1, lwd=lwd, col=mycol[j])
-                 })
+          lines(times[[i]][[mDataType]], expression[[i]][[level]], lty = 1, lwd = lwd, col = mycol[j])
           legends <- c(legends, legendValues[[i]][[level]])
           legends.col <- c(legends.col, mycol[j])
           pch.val <- c(pch.val, 1)
