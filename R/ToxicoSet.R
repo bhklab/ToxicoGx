@@ -66,10 +66,10 @@ ToxicoSet <-  function(name,
                        cell=data.frame(),
                        drug=data.frame(),
                        sensitivityInfo=data.frame(),
-                       sensitivityRaw=array(dim=c(0,0,0)),
+                       sensitivityRaw=array(dim = c(0,0,0)),
                        sensitivityProfiles=matrix(),
-                       sensitivityN=matrix(nrow=0, ncol=0),
-                       perturbationN=array(NA, dim=c(0,0,0)),
+                       sensitivityN=matrix(nrow = 0, ncol=0),
+                       perturbationN=array(NA, dim = c(0,0,0)),
                        curationDrug=data.frame(),
                        curationCell = data.frame(),
                        curationTissue = data.frame(),
@@ -199,8 +199,8 @@ setMethod(cellInfo,
 #' @describeIn ToxicoSet Update the cell line annotations
 #'
 #' @export
-setReplaceMethod("cellInfo", signature = signature(object = "ToxicoSet",value = "data.frame"), function(object, value){
-  if(is.null(rownames(value))){
+setReplaceMethod("cellInfo", signature = signature(object = "ToxicoSet", value = "data.frame"), function(object, value){
+  if (is.null(rownames(value))){
     stop("Please provide the cell_id as rownames for the cell line annotations")
   }
   object <- callNextMethod(object, value)
@@ -241,7 +241,7 @@ setMethod(drugInfo, "ToxicoSet", function(tSet){
 setGeneric("drugInfo<-", function(object, value) standardGeneric("drugInfo<-"))
 #' @describeIn ToxicoSet Update the drug annotations
 #' @export
-setReplaceMethod("drugInfo", signature = signature(object="ToxicoSet",value="data.frame"), function(object, value){
+setReplaceMethod("drugInfo", signature = signature(object = "ToxicoSet",value = "data.frame"), function(object, value){
   object@drug <- value
   object
 })
