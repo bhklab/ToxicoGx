@@ -7,9 +7,7 @@
 #' @examples
 #'
 #' if (interactive()) {
-#' drugTimeMolProfCurve(TGGATESsmall, dose = c("Control", "Low", "Middle"),
-#'   mDataTypes="rna", drug = drugNames(TGGATESsmall)[1],
-#'   duration = c("2", "8", "24"), features = "ENSG00000000003_at")
+#' drugTimeMolProfCurve(TGGATESsmall, dose = c("Control", "Low", "Middle"), mDataTypes="rna", drug = drugNames(TGGATESsmall)[1], duration = c("2", "8", "24"), features = "ENSG00000000003_at")
 #' }
 #'
 #' @param tSet \code{ToxicoSet} A ToxicoSet to be plotted in this graph. Currently
@@ -72,7 +70,6 @@ drugTimeMolProfCurve <- function(
   features = NULL,
   dose,
   drug,
-  plot.type="Actual",
   summarize.replicates = FALSE,
   xlim=c(0, 24),
   ylim=c(0, 15),
@@ -109,7 +106,6 @@ drugTimeMolProfCurve <- function(
 
   # Subsetting the tSet based on parameter arguments
   tSet <- lapply(tSet, function(tSet) {
-    #if (is.null(features)) { features <- lapply(mDataTypes, function(mDataType) { featureInfo(tSet, mDataType)$gene_id }) }
     ToxicoGx::subsetTo(tSet, mDataType = mDataTypes, drugs = drug,
                        duration = duration, features = unique(unlist(features)))
   })
@@ -118,7 +114,7 @@ drugTimeMolProfCurve <- function(
   # list of tSet < list of mDataTypes <df of plotData
   plotData <- lapply(tSet, function(tSet) {
     mDataTypesData <- lapply(mDataTypes, function(mDataType) {
-      profileMatrix <- molecularProfiles(tSet, mDataType) #
+      profileMatrix <- molecularProfiles(tSet, mDataType)
       relevantFeatureInfo <- featureInfo(tSet, mDataType)[, c("gene_id", "transcript_name") ]
       relevantPhenoInfo <- phenoInfo(tSet, mDataType)[, c("samplename", "cellid", "drugid", "concentration", "dose_level", "duration", "species", "individual_id")]
       relevantSensitivityInfo <- ToxicoGx::sensitivityInfo(tSet)[, c("drugid", "duration_h", "replicate", "Control", "Low", "Middle", "High") ]
@@ -130,6 +126,23 @@ drugTimeMolProfCurve <- function(
     mDataTypesData
   })
   names(plotData) <- vapply(tSet, names, FUN.VALUE = character(1))
+
+  ## Take the average over all replicates in the data
+  if (summarize.replicates) {
+    # Data for each tSet
+    lapply(plotData, function(tSetData) {
+      # Data for each mDataType in tSet
+      lapply(tSetData, function(mDtData) {
+          # Get the sample names for each set of replicates, then take the average of those values
+          lapply(seq.int(1, length(mDtData$data), length(unique(mDtData$data$individual_id))), function(c_idx) {
+            samplenames <- mDtData$phenoInfo[seq.int(c_idx, c_idx + (length(unique(mDTtData$data$individual_id) - 1))), 'samplename']
+            avgs <- lapply(nrow(mDTPlotData$data), function(r_idx) {
+              mean(mDtData$data[r_idx, which(colnames(mDtDatat$data) %in% samplenames)])
+            })
+          })
+      })
+    })
+  }
 
   # Get a list of times per tSet per mDataType per dose level
   # This will also need to be per drug if we extend the function to multiple drugs

@@ -6,10 +6,10 @@
   drug dosages vs time}
 \usage{
 drugTimeMolProfCurve(tSet, duration, cellline, mDataTypes,
-  features = NULL, dose, drug, plot.type = "Actual",
-  summarize.replicates = FALSE, xlim = c(0, 24), ylim = c(0, 15),
-  mycol, x.custom.ticks = NULL, title, lwd = 1.5, cex = 0.7,
-  cex.main = 1, legend.loc = "topright", verbose = TRUE)
+  features = NULL, dose, drug, summarize.replicates = FALSE,
+  xlim = c(0, 24), ylim = c(0, 15), mycol, x.custom.ticks = NULL,
+  title, lwd = 1.5, cex = 0.7, cex.main = 1,
+  legend.loc = "topright", verbose = TRUE)
 }
 \arguments{
 \item{tSet}{\code{ToxicoSet} A ToxicoSet to be plotted in this graph. Currently
