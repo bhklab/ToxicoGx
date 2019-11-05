@@ -81,9 +81,7 @@ This function generates a plot visualizing the relationship between gene
 \examples{
 
 if (interactive()) {
-drugTimeMolProfCurve(TGGATESsmall, dose = c("Control", "Low", "Middle"),
-  mDataTypes="rna", drug = drugNames(TGGATESsmall)[1],
-  duration = c("2", "8", "24"), features = "ENSG00000000003_at")
+drugTimeMolProfCurve(TGGATESsmall, dose = c("Control", "Low", "Middle"), mDataTypes="rna", drug = drugNames(TGGATESsmall)[1], duration = c("2", "8", "24"), features = "ENSG00000000003_at")
 }
 
 }

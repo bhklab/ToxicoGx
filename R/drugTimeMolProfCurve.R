@@ -127,23 +127,6 @@ drugTimeMolProfCurve <- function(
   })
   names(plotData) <- vapply(tSet, names, FUN.VALUE = character(1))
 
-  ## Take the average over all replicates in the data
-  if (summarize.replicates) {
-    # Data for each tSet
-    lapply(plotData, function(tSetData) {
-      # Data for each mDataType in tSet
-      lapply(tSetData, function(mDtData) {
-          # Get the sample names for each set of replicates, then take the average of those values
-          lapply(seq.int(1, length(mDtData$data), length(unique(mDtData$data$individual_id))), function(c_idx) {
-            samplenames <- mDtData$phenoInfo[seq.int(c_idx, c_idx + (length(unique(mDTtData$data$individual_id) - 1))), 'samplename']
-            avgs <- lapply(nrow(mDTPlotData$data), function(r_idx) {
-              mean(mDtData$data[r_idx, which(colnames(mDtDatat$data) %in% samplenames)])
-            })
-          })
-      })
-    })
-  }
-
   # Get a list of times per tSet per mDataType per dose level
   # This will also need to be per drug if we extend the function to multiple drugs
   times <- lapply(plotData, function(tSetData) {
