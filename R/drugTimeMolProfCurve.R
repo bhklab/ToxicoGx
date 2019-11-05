@@ -60,6 +60,7 @@
 #' @importFrom graphics plot rect points lines legend
 #' @importFrom grDevices rgb
 #' @importFrom magicaxis magaxis
+#' @importFrom foreach foreach
 #'
 #' @export
 drugTimeMolProfCurve <- function(
@@ -188,21 +189,31 @@ drugTimeMolProfCurve <- function(
   #### SUMMARIZATION ####
 
   # Summarizing replicate values
-  if (summarize.replicates == TRUE) {
-   expression <- lapply(seq_along(tSet), function(t_idx) {
-     lapply(seq_along(dose), function(d_idx) {
-       expressionVals <- NULL
-       responseVect <- unlist(expression[[t_idx]][[d_idx]])
-       for (time in seq_along(unique(duration))) {
-         expressionVals <- c(expressionVals, mean(responseVect[time], responseVect[time + length(unique(duration))]))
-       }
-       expressionVals
+  if (summarize.replicates) {
+   expression <- lapply(seq_along(expression), function(t_idx) {
+     lapply(seq_along(mDataTypes), function(m_idx) {
+       lapply(seq_along(dose), function(d_idx) {
+         lapply(seq_along(features), function(f_idx) {
+            vapply(seq_along(unique(duration)), function(idx) {
+              ## TODO:: Generalize this to n replicates
+                mean(expression[[t_idx]][[m_idx]][[d_idx]][[1]][[f_idx]][[idx]],
+                     expression[[t_idx]][[m_idx]][[d_idx]][[1]][[f_idx]][[idx]]
+                     )
+            }, FUN.VALUE = numeric(1))
+           })
+         })
+       })
+     })
+   # Take unique values of all time replicates and place into a list
+   times <- lapply(times, function(tSet) {
+     lapply(tSet, function(mDataType) {
+      lapply(mDataType, function(dose) {
+        unique(dose)
+      })
      })
    })
-   # Take unique values of all time replicates and place into a list
-   times <- list(unique(unlist(times)))
    legendValues <- lapply(legendValues, function(legendLevel) {
-     lapply(legendLevel, function(legendName) {unique(gsub("_[^_]*$", "", unlist(legendName)))})
+      lapply(legendLevel, function(legendName) {unique(gsub("_[^_]*$", "", unlist(legendName)))})
    })
   }
 
@@ -239,8 +250,8 @@ drugTimeMolProfCurve <- function(
   }
 
   ## SETS PLOT TITLE
-  if(missing(title)){
-    if(!missing(drug) && !missing(cellline)){
+  if (missing(title)) {
+    if (!missing(drug) && !missing(cellline)){
       title <- sprintf("%s:%s", drug, cellline)
     } else {
       title <- "Expression Time Response Curve"
@@ -257,9 +268,9 @@ drugTimeMolProfCurve <- function(
   plot(NA, xlab = "Time (hr)", ylab = "Expression", axes = FALSE, main = title, ylim = expression.range, xlim = time.range, cex = cex, cex.main = cex.main)
   # Adds plot axes
   if (!is.null(x.custom.ticks)) {
-    magicaxis::magaxis(side = 1:2, frame.plot = TRUE, tcl= -.3, majorn= c(x.custom.ticks[1], 3), minorn = c(x.custom.ticks[2], 2))
+    magicaxis::magaxis(side = 1:2, frame.plot = TRUE, tcl = -.3, majorn = c(x.custom.ticks[1], 3), minorn = c(x.custom.ticks[2], 2))
   } else {
-    magicaxis::magaxis(2, frame.plot = TRUE, tcl = -.3, majorn=expression.range[2], minorn=2)
+    magicaxis::magaxis(2, frame.plot = TRUE, tcl = -.3, majorn = expression.range[2], minorn=2)
     #axis(2, labels = seq_len(expression.range[2] + 1), at = seq_len(expression.range[2] + 1))
     axis(1, labels = as.numeric(duration), at = as.numeric(duration))
   }
@@ -299,21 +310,20 @@ drugTimeMolProfCurve <- function(
     }
   } else {
     # Loop over tSet
-    stop("Summarized replicates has net been implemented in this package yet.")
-    for (i in seq_along(times)) {
-      j <- 1
+    for (i in seq_along(times)) { # tSet subset
       for (mDataType in seq_along(mDataTypes)) {
         # Loop over dose level
+        j <- 1
         for (level in seq_along(dose)) {
-          # Loop over replicates per dose level
-          ## TODO:: Generalize this for n replicates
-          # Plot per tSet, per dose level, per replicate points
-          points(times[[i]][[mDataType]][[level]], expression[[i]][[mDataType]][[level]], pch = 1, col = mycol[j], cex = cex + 0.2)
-          # Select plot type
-          lines(times[[i]][[mDataType]], expression[[i]][[level]], lty = 1, lwd = lwd, col = mycol[j])
-          legends <- c(legends, legendValues[[i]][[level]])
-          legends.col <- c(legends.col, mycol[j])
-          pch.val <- c(pch.val, 1)
+            # Plot per tSet, per dose level, per replicate points
+            for (feature in seq_along(features[[mDataType]])) {
+              points(times[[i]][[mDataType]][[level]], expression[[i]][[mDataType]][[level]][[feature]], col = mycol[j], cex = cex)
+              # Select plot type
+              lines(times[[i]][[mDataType]][[level]], expression[[i]][[mDataType]][[level]][[feature]], lwd = lwd, col = mycol[j])
+              legends <- c(legends, legendValues[[i]][[mDataType]][[level]][[feature]])
+              legends.col <- c(legends.col, mycol[j])
+              pch.val <- c(pch.val, feature)
+            }
           j <- j + 1
         }
       }

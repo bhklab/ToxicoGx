@@ -32,7 +32,7 @@ ToxicoSig <- function(Data=array(NA, dim=c(0,0,0)), tSetName='', DateCreated=dat
 #'
 #' @examples
 #' data(TGGATESsmall)
-#' drug.perturbation <- drugPerturbationSig(TGGATESsmall, mDataType="rna", nthread=1, duration = "2",
+#' drug.perturbation <- drugPerturbationSig(TGGATESsmall, mDataType="rna", nthread = 1, duration = "2",
 #'      drugs = head(drugNames(TGGATESsmall)), features = fNames(TGGATESsmall, "rna")[seq_len(2)])
 #' drug.perturbation
 #'
