@@ -4,9 +4,7 @@
 #'
 #' @examples
 #' if (interactive()) {
-#'   ToxicoGx::drugTimeResponseCurve(TGGATESsmall, cellline = "Hepatocyte",
-#'     dose = c("Control", "Low", "Middle"),
-#'     drug = drugNames(TGGATESsmall)[1], duration = c("2", "8", "24"))
+#'   ToxicoGx::drugTimeResponseCurve(TGGATESsmall, cellline = "Hepatocyte", dose = c("Control", "Low", "Middle"), drug = drugNames(TGGATESsmall)[1], duration = c("2", "8", "24"))
 #' }
 #'
 #' @param tSet \code{ToxicoSet} A ToxicoSet or list of ToxicoSets to be plotted in
