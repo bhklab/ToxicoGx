@@ -5,13 +5,16 @@
 \title{Compares gene expression for a specificed set of features over specific
   drug dosages vs time}
 \usage{
-drugTimeMolProfCurve(tSets, duration, cellline, mDataTypes,
+drugTimeMolProfCurve(tSet, duration, cellline, mDataTypes,
   features = NULL, dose, drug, plot.type = "Actual",
   summarize.replicates = FALSE, xlim = c(0, 24), ylim = c(0, 15),
   mycol, x.custom.ticks = NULL, title, lwd = 1.5, cex = 0.7,
   cex.main = 1, legend.loc = "topright", verbose = TRUE)
 }
 \arguments{
+\item{tSet}{\code{ToxicoSet} A ToxicoSet to be plotted in this graph. Currently
+only a single tSet is supported, passing more may results in errors.}
+
 \item{duration}{\code{character} A vector of durations to include in the plot.}
 
 \item{cellline}{\code{character} A vector of cell lines to include in the plot.}
@@ -67,9 +70,6 @@ function from base graphics. Suggested values are either "topleft" or
 
 \item{verbose}{\code{boolean} Should warning messages about the data passed
 in be printed?}
-
-\item{tSet}{\code{ToxicoSet} A ToxicoSet to be plotted in this graph. Currently
-only a single tSet is supported, passing more may results in errors.}
 }
 \value{
 Plot of the viabilities for each drug vs time of exposure

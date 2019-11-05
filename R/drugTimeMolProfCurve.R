@@ -65,7 +65,7 @@
 #'
 #' @export
 drugTimeMolProfCurve <- function(
-  tSets,
+  tSet,
   duration,
   cellline,
   mDataTypes,
@@ -86,20 +86,20 @@ drugTimeMolProfCurve <- function(
   verbose=TRUE
 ) {
 
-  # Place tSets in a list if not already
-  if (!is(tSets, "list")) { tSets <- list(tSets) }
+  # Place tSet in a list if not already
+  if (!is(tSet, "list")) { tSet <- list(tSet) }
 
   ## Tempary warnings until function is finished
-  if (length(tSets) > 1) { warning("Multiple tSet plotting has not been tested in this release...")}
+  if (length(tSet) > 1) { warning("Multiple tSet plotting has not been tested in this release...")}
   if (length(drug) > 1) { stop("This function currently only supports one drug per plot...")}
   if (length(mDataTypes) > 1) {stop("This function currently only supports one molecular data type per plot...")}
   if (length(features) > 1) {warning("Plot scaling for multiple features has not yet been implemented for this release...")}
 
   ## TODO:: Generalize this to work with multiple data types
-  if (missing(mDataTypes)) { mDataTypes <- names(tSets[[1]]@molecularProfiles) }
+  if (missing(mDataTypes)) { mDataTypes <- names(tSet[[1]]@molecularProfiles) }
 
   if (is.null(features)) {
-    features <- lapply(tSets, function(tSet) {
+    features <- lapply(tSet, function(tSet) {
       rownames(featureInfo(tSet, "rna"))[seq_len(5)]
     })
   }
@@ -107,15 +107,15 @@ drugTimeMolProfCurve <- function(
   # Places features in list if not already
   if (!is(features, "list")) { features <- list(features) }
 
-  # Subsetting the tSets based on parameter arguments
-  tSets <- lapply(tSets, function(tSet) {
+  # Subsetting the tSet based on parameter arguments
+  tSet <- lapply(tSet, function(tSet) {
     #if (is.null(features)) { features <- lapply(mDataTypes, function(mDataType) { featureInfo(tSet, mDataType)$gene_id }) }
     ToxicoGx::subsetTo(tSet, mDataType = mDataTypes, drugs = drug,
                        duration = duration, features = unique(unlist(features)))
   })
 
   # Extracting the data required for plotting into a list of data.frames
-  # list of tSets < list of mDataTypes <df of plotData
+  # list of tSet < list of mDataTypes <df of plotData
   plotData <- lapply(tSet, function(tSet) {
     mDataTypesData <- lapply(mDataTypes, function(mDataType) {
       profileMatrix <- molecularProfiles(tSet, mDataType) #
@@ -129,7 +129,7 @@ drugTimeMolProfCurve <- function(
     names(mDataTypesData) <- mDataTypes # Name list items for easy to understand subsetting
     mDataTypesData
   })
-  names(plotData) <- vapply(tSets, names, FUN.VALUE = character(1))
+  names(plotData) <- vapply(tSet, names, FUN.VALUE = character(1))
 
   # Get a list of times per tSet per mDataType per dose level
   # This will also need to be per drug if we extend the function to multiple drugs
@@ -142,7 +142,7 @@ drugTimeMolProfCurve <- function(
     })
     names(mDataTimes) <- mDataTypes; mDataTimes
   })
-  names(times) <- vapply(tSets, function(x) names(x), FUN.VALUE = character(1)) # Get the names for each tSet
+  names(times) <- vapply(tSet, function(x) names(x), FUN.VALUE = character(1)) # Get the names for each tSet
 
   # Assembling the legend names for each line to be plotted
   legendValues <- lapply(plotData, function(tSetData) {
@@ -164,7 +164,7 @@ drugTimeMolProfCurve <- function(
     })
     names(mDataLegends) <- mDataTypes; mDataLegends # Note: FUN.VALUE refers to the type and length of EACH function call, not of the returned vector
   })
-  names(legendValues) <-  vapply(tSets, function(x) names(x), FUN.VALUE = character(1))
+  names(legendValues) <-  vapply(tSet, function(x) names(x), FUN.VALUE = character(1))
 
   # Expression
   expression <- lapply(plotData, function(tSetData) {
@@ -187,13 +187,13 @@ drugTimeMolProfCurve <- function(
     })
     names(mDataExpr) <- mDataTypes; mDataExpr
   })
-  names(expression) <-  vapply(tSets, function(x) names(x), FUN.VALUE = character(1))
+  names(expression) <-  vapply(tSet, function(x) names(x), FUN.VALUE = character(1))
 
   #### SUMMARIZATION ####
 
   # Summarizing replicate values
   if (summarize.replicates == TRUE) {
-   expression <- lapply(seq_along(tSets), function(t_idx) {
+   expression <- lapply(seq_along(tSet), function(t_idx) {
      lapply(seq_along(dose), function(d_idx) {
        expressionVals <- NULL
        responseVect <- unlist(expression[[t_idx]][[d_idx]])
@@ -215,7 +215,7 @@ drugTimeMolProfCurve <- function(
   # Set x and y axis ranges based on time and viability values
   time.range <- as.numeric(c(min(unlist(times)), max(unlist(times))))
   expression.range <- c(floor(min(unlist(expression, recursive = TRUE))), ceiling(max(unlist(expression, recursive = TRUE))))
-  for (i in seq_along(tSets)) {
+  for (i in seq_along(tSet)) {
     ## TODO:: Generalize this to n replicates
     time.range <- c(min(time.range[1], min(unlist(times[[i]], recursive = TRUE), na.rm = TRUE), na.rm = TRUE), max(time.range[2], max(unlist(times[[i]], recursive = TRUE), na.rm = TRUE), na.rm = TRUE))
     expression.range <- c(0, max(expression.range[2], max(unlist(expression[[i]], recursive = TRUE), na.rm = TRUE), na.rm = TRUE))
@@ -278,7 +278,7 @@ drugTimeMolProfCurve <- function(
   }
 
   if (summarize.replicates == FALSE) {
-    # Loop over tSets
+    # Loop over tSet
     for (i in seq_along(times)) { # tSet subset
       for (mDataType in seq_along(mDataTypes)) {
         # Loop over dose level
@@ -302,7 +302,7 @@ drugTimeMolProfCurve <- function(
       }
     }
   } else {
-    # Loop over tSets
+    # Loop over tSet
     stop("Summarized replicates has net been implemented in this package yet.")
     for (i in seq_along(times)) {
       j <- 1
