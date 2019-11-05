@@ -4,30 +4,25 @@
 \alias{drugTimeResponseCurve}
 \title{Compares viabilities at a given dose over different experimental duration}
 \usage{
-drugTimeResponseCurve(tSet, duration = NULL, cellline = NULL,
-  dose = NULL, drug = NULL, plot.type = "Actual",
-  summarize.replicates = TRUE, viability_as_pct = TRUE, xlim = NULL,
-  ylim = NULL, mycol, x.custom.ticks = NULL, title, lwd = 1,
-  cex = 0.5, cex.main = 0.9, legend.loc = "topleft",
-  verbose = TRUE)
+drugTimeResponseCurve(tSet, duration = NULL, cell.lines = NULL,
+  dose = NULL, drug = NULL, summarize.replicates = TRUE,
+  viability_as_pct = TRUE, xlim = NULL, ylim = NULL, mycol,
+  x.custom.ticks = NULL, title, lwd = 1, cex = 0.5, cex.main = 0.9,
+  legend.loc = "topright", verbose = TRUE)
 }
 \arguments{
-\item{tSet}{\code{ToxicoSet} A ToxicoSet or list of ToxicoSets to be plotted in
+\item{tSet}{\code{ToxicoSet} A ToxicoSet to be plotted in
 this graph.}
 
 \item{duration}{\code{character} A vector of durations to include in the plot.}
 
-\item{cellline}{\code{character} A vector of cell lines to include in the plot.}
+\item{cell.lines}{\code{character} A vector of cell lines to include in the plot.}
 
 \item{dose}{\code{character} A vector of dose levels to be included in the
 plot. Default to include all dose levels available for a drug. Must include
 at minimum two dose levels, one of witch is "Control".}
 
 \item{drug}{\code{character} A vector of drugs to be included in this plot.}
-
-\item{plot.type}{\code{character} The type of plot which you would like returned. Options
-are 'Actual' for unfitted curve, 'Fitted' for the fitted curve and 'Both'
-to display 'Actual and 'Fitted' in the sample plot.}
 
 \item{summarize.replicates}{\code{logical} If true will take the average of all
 replicates at each time point per gene and duration. This release has not
@@ -74,9 +69,7 @@ Description of this function
 }
 \examples{
 if (interactive()) {
-  ToxicoGx::drugTimeResponseCurve(TGGATESsmall, cellline = "Hepatocyte",
-    dose = c("Control", "Low", "Middle"),
-    drug = drugNames(TGGATESsmall)[1], duration = c("2", "8", "24"))
+  ToxicoGx::drugTimeResponseCurve(TGGATESsmall, cell.lines = "Hepatocyte", dose = c("Control", "Low", "Middle"), drug = drugNames(TGGATESsmall)[1], duration = c("2", "8", "24"))
 }
 
 }
