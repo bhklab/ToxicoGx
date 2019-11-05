@@ -4,19 +4,17 @@
 #'
 #' @examples
 #' if (interactive()) {
-#'   ToxicoGx::drugTimeResponseCurve(TGGATESsmall, cellline = "Hepatocyte",
-#'     dose = c("Control", "Low", "Middle"),
-#'     drug = drugNames(TGGATESsmall)[1], duration = c("2", "8", "24"))
+#'   ToxicoGx::drugTimeResponseCurve(TGGATESsmall, cell.lines = "Hepatocyte", dose = c("Control", "Low", "Middle"), drug = drugNames(TGGATESsmall)[1], duration = c("2", "8", "24"))
 #' }
 #'
-#' @param tSet \code{ToxicoSet} A ToxicoSet or list of ToxicoSets to be plotted in
+#' @param tSet \code{ToxicoSet} A ToxicoSet to be plotted in
 #'   this graph.
 #' @param dose \code{character} A vector of dose levels to be included in the
 #'   plot. Default to include all dose levels available for a drug. Must include
 #'   at minimum two dose levels, one of witch is "Control".
 #' @param drug \code{character} A vector of drugs to be included in this plot.
 #' @param duration \code{character} A vector of durations to include in the plot.
-#' @param cellline \code{character} A vector of cell lines to include in the plot.
+#' @param cell.lines \code{character} A vector of cell lines to include in the plot.
 #' @param viability_as_pct \code{logical} A vector specifying if viabilities should
 #'   be plotted as a percentage. Defaults to TRUE.
 #' @param xlim \code{numeric} A vector of minimum and maximum values for the x-axis
@@ -31,9 +29,6 @@
 #' @param mycol \code{vector} A vector of length equal to the lenth of the tSet
 #'   argument specifying which RColorBrewer colour to use per tSet. Default
 #'   colours will be used if this parameter is excluded.
-#' @param plot.type \code{character} The type of plot which you would like returned. Options
-#'   are 'Actual' for unfitted curve, 'Fitted' for the fitted curve and 'Both'
-#'   to display 'Actual and 'Fitted' in the sample plot.
 #' @param summarize.replicates \code{logical} If true will take the average of all
 #'  replicates at each time point per gene and duration. This release has not
 #'  yet implemented this feature.
@@ -59,10 +54,9 @@
 drugTimeResponseCurve <- function(
   tSet,
   duration = NULL,
-  cellline = NULL,
+  cell.lines = NULL,
   dose = NULL,
   drug = NULL,
-  plot.type="Actual",
   summarize.replicates = TRUE,
   viability_as_pct = TRUE,
   xlim = NULL,
@@ -73,7 +67,7 @@ drugTimeResponseCurve <- function(
   lwd = 1,
   cex = 0.5,
   cex.main = 0.9,
-  legend.loc = "topleft",
+  legend.loc = "topright",
   verbose=TRUE
 ) {
 
@@ -82,8 +76,9 @@ drugTimeResponseCurve <- function(
     tSet <- list(tSet)
   }
 
-  paramErrorChecker("drugTimeResponseCurve",
-                    tSet = tSet, duration = duration, cell.lines = cellline,
+  ## TODO:: REMOVE ::: BEFORE CRAN SUBMISSION!
+  ToxicoGx:::paramErrorChecker("drugTimeResponseCurve",
+                    tSets = tSet, duration = duration, cell.lines = cell.lines,
                     dose = dose)
 
   ## TODO:: Make this function work with multiple tSet
@@ -182,8 +177,8 @@ drugTimeResponseCurve <- function(
 
   ## SETS PLOT TITLE
   if(missing(title)){
-    if(!missing(drug) && !missing(cellline)){
-      title <- sprintf("%s:%s", drug, cellline)
+    if(!missing(drug) && !missing(cell.lines)){
+      title <- sprintf("%s:%s", drug, cell.lines)
     } else {
       title <- "Drug Time Response Curve"
     }
@@ -224,22 +219,8 @@ drugTimeResponseCurve <- function(
         for (replicate in seq_along(unique(responses[[i]][[level]]))) {
           # Plot per tSet, per dose level, per replicate points
           points(times[[i]][[replicate]], responses[[i]][[level]][[replicate]], pch = replicate, col = mycol[j], cex = cex)
-          # Select plot type
-          switch(plot.type,
-                 "Actual" = {
-                   lines(times[[i]][[replicate]], responses[[i]][[level]][[replicate]], lty = replicate, lwd = lwd, col = mycol[j])
-                 },
-                 "Fitted" = {
-                   log_logistic_params <- logLogisticRegression(conc=times[[i]][[replicate]], viability = responses[[i]][[level]][[replicate]])
-                   x_vals <- .GetSupportVec(times[[i]][[replicate]])
-                   lines(10 ^ x_vals, .Hill(x_vals, pars=c(log_logistic_params$HS, log_logistic_params$E_inf/100, log10(log_logistic_params$EC50))) * 100 ,lty = replicate, lwd = lwd, col = mycol[j])
-                 },
-                 "Both" = {
-                   lines(times[[i]][[replicate]],responses[[i]][[level]][[replicate]],lty=replicate, lwd = lwd, col = mycol[j])
-                   log_logistic_params <- logLogisticRegression(conc = times[[i]][[replicate]], viability = responses[[i]][[level]][[replicate]])
-                   x_vals <- .GetSupportVec(times[[i]][[replicate]])
-                   lines(10 ^ x_vals, .Hill(x_vals, pars = c(log_logistic_params$HS, log_logistic_params$E_inf/100, log10(log_logistic_params$EC50))) * 100, lty=replicate, lwd=lwd, col=mycol[j])
-                 })
+          lines(times[[i]][[replicate]], responses[[i]][[level]][[replicate]], lty = replicate, lwd = lwd, col = mycol[j])
+
           legends <- c(legends, legendValues[[i]][[level]][[replicate]])
           legends.col <- c(legends.col, mycol[j])
           pch.val <- c(pch.val, replicate)
@@ -253,28 +234,11 @@ drugTimeResponseCurve <- function(
       j <- 1
       # Loop over dose level
       for (level in seq_along(dose)) {
-        # Loop over replicates per dose level
-        ## TODO:: Generalize this for n replicate
+
         # Plot per tSet, per dose level, per replicate points
         points(times[[i]], responses[[i]][[level]], pch = 1, col = mycol[j], cex = cex + 0.2)
-        # Select plot type
-        switch(plot.type,
-               "Actual" = {
-                 lines(times[[i]], responses[[i]][[level]], lty = 1, lwd = lwd, col = mycol[j])
-               },
-               "Fitted" = {
-                 #log_logistic_params <- logLogisticRegression(conc = times[[i]], viability=responses[[i]][[level]])
-                 stop("Curve fitting has not been implemented in this function yet. Feature coming soon!")
-                 #x_vals <- .GetSupportVec(times[[i]])
-                 #lines(10 ^ x_vals, .Hill(x_vals, pars = c(log_logistic_params$HS, log_logistic_params$E_inf/100, log10(log_logistic_params$EC50))) * 100 ,lty=1, lwd=lwd, col=mycol[j])
-               },
-               "Both" = {
-                 warning("Curve fitting has not been implemented in this function yet. Feature coming soon!")
-                 lines(times[[i]],responses[[i]][[level]],lty=1, lwd = lwd, col = mycol[j])
-                 #log_logistic_params <- logLogisticRegression(conc = times[[i]], viability = responses[[i]][[level]])
-                 #x_vals <- .GetSupportVec(times[[i]])
-                 #lines(10 ^ x_vals, .Hill(x_vals, pars = c(log_logistic_params$HS, log_logistic_params$E_inf/100, log10(log_logistic_params$EC50))) * 100, lty = 1, lwd=lwd, col=mycol[j])
-               })
+        lines(times[[i]], responses[[i]][[level]], lty = 1, lwd = lwd, col = mycol[j])
+
         legends <- c(legends, legendValues[[i]][[level]])
         legends.col <- c(legends.col, mycol[j])
         pch.val <- c(pch.val, 1)
@@ -282,5 +246,5 @@ drugTimeResponseCurve <- function(
       }
     }
   }
-  legend(legend.loc, legend = legends, col = legends.col, bty="n", cex = cex, pch = pch.val)
+  legend(legend.loc, legend = legends, col = legends.col, bty = "n", inset = c(0,2), xpd = TRUE, cex = cex, pch = pch.val)
 }
