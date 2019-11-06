@@ -4,7 +4,7 @@
 #'
 #' @examples
 #' if (interactive()) {
-#'   ToxicoGx::drugTimeResponseCurve(TGGATESsmall, cellline = "Hepatocyte", dose = c("Control", "Low", "Middle"), drug = drugNames(TGGATESsmall)[1], duration = c("2", "8", "24"))
+#'   ToxicoGx::drugTimeResponseCurve(TGGATESsmall, cell.lines = "Hepatocyte", dose = c("Control", "Low", "Middle"), drug = drugNames(TGGATESsmall)[1], duration = c("2", "8", "24"))
 #' }
 #'
 #' @param tSet \code{ToxicoSet} A ToxicoSet to be plotted in
@@ -88,29 +88,42 @@ drugTimeResponseCurve <- function(
 
   # Subsetting the tSet based on parameter arguments
   tSet <- lapply(tSet, function(tSet) {
-    subsetTo(tSet, mDataType = "rna", drugs = drug, duration = duration)
+    subsetTo(tSet, mDataType = "rna", drugs = drug, duration = duration, cells = cell.lines)
   })
 
   # Extracting the data required for plotting into a list of data.frames
   plotData <- lapply(tSet, function(tSet) {
-    cbind(
-      tSet@sensitivity$raw[,,2][, which(c("Control", "Low", "Middle", "High") %in% dose)],
-      ToxicoGx::sensitivityInfo(tSet)[, c("duration_h", "replicate")]
-    )
+    lapply(cell.lines, function(cell) {
+      lapply(drug, function(drug) {
+        cbind(
+          subset(tSet, drug_id == drug & cell_id == cell)@sensitivity$raw[,,2][, which(c("Control", "Low", "Middle", "High") %in% dose)],
+          ToxicoGx::sensitivityInfo(subset(tSet, drug_id == drug & cell_id == cell))[, c("duration_h", "replicate")]
+        )
+      })
+    })
   })
 
   # Extractiing the duration values for each row of plotData
-  times <- lapply(plotData, function(data) {
-    lapply(seq_along(unique(data$replicate)), function(idx) {
-      as.numeric(data$duration_h)[which(data$replicate == idx)]
+  times <- lapply(plotData, function(tSet) {
+    lapply(cell.lines, function(cell) {
+      lapply(drug, function(drug) {
+        data <- subset(tSet, drug_id == drug & cellid == cell)
+        lapply(seq_along(unique(subset(tSet, drug_id == drug & cell_id == celll)$replicate)), function(idx) {
+          as.numeric(subset(tSet, drug_id == drug & cell_id == cell)$replicate)$duration_h)[which(data$replicate == idx)]
+        })
+      })
     })
   })
 
   # Assembling the legend names for each line to be plotted
-  legendValues <- lapply(seq_along(plotData), function(d_idx){
-    lapply(dose, function(level) {
-      lapply(seq_along(unique(plotData[[d_idx]]$replicate)), function(r_idx) {
-        paste(drug[d_idx], level, r_idx, sep = '_')
+  legendValues <- lapply(seq_along(plotData), function(plotData){
+    lapply(cell.lines, function(cell){
+      lapply(drugs, function(drug){
+        lapply(dose, function(level) {
+          lapply(seq_along(unique(plotData[[d_idx]]$replicate)), function(r_idx) {
+            paste(drug[d_idx], level, r_idx, sep = '_')
+          })
+        })
       })
     })
   })
@@ -127,13 +140,17 @@ drugTimeResponseCurve <- function(
   # Summarizing replicate values
   if (summarize.replicates == TRUE) {
     responses <- lapply(seq_along(tSet), function(t_idx) {
-      lapply(seq_along(dose), function(d_idx) {
-        responseVals <- NULL
-        responseVect <- unlist(responses[[t_idx]][[d_idx]])
-        for (time in seq_along(unique(unlist(times[[t_idx]])))) {
-          responseVals <- c(responseVals, mean(responseVect[time], responseVect[time + length(unique(unlist(times[[t_idx]])))]))
-        }
-        responseVals
+      lapply(seq_along(cell.lines), function(c_idx) {
+        lapply(seq_along(drug), function (dr_idx) {
+          lapply(seq_along(dose), function(d_idx) {
+            responseVals <- NULL
+            responseVect <- unlist(responses[[t_idx]][[d_idx]])
+            for (time in seq_along(unique(unlist(times[[t_idx]])))) {
+              responseVals <- c(responseVals, mean(responseVect[time], responseVect[time + length(unique(unlist(times[[t_idx]])))]))
+            }
+            responseVals
+          })
+        })
       })
     })
     # Take unique values of all time replicates and place into a list
@@ -246,5 +263,5 @@ drugTimeResponseCurve <- function(
       }
     }
   }
-  legend(legend.loc, legend = legends, col = legends.col, bty = "n", inset = c(0,2), xpd = TRUE, cex = cex, pch = pch.val)
+  legend(legend.loc, legend = legends, col = legends.col, bty = "n", cex = cex, pch = pch.val)
 }
