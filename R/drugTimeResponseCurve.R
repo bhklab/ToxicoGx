@@ -130,9 +130,13 @@ drugTimeResponseCurve <- function(
 
   # Extracting the viability values for each row of plotData
   responses <- lapply(plotData, function(data) {
-    lapply(dose, function(level) {
-      lapply(seq_along(unique(data$replicate)), function(idx) {
-        as.vector(data[ , which(c("Control", "Low", "Middle", "High") %in% level)])[which(data$replicate == idx)]
+    lapply(cell.lines, function(cell){
+      lapply(drug, function(drug){
+        lapply(dose, function(level) {
+          lapply(seq_along(unique(data$replicate)), function(idx) {
+            as.vector(data[ , which(c("Control", "Low", "Middle", "High") %in% level)])[which(data$replicate == idx)]
+          })
+        })
       })
     })
   })
