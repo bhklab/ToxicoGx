@@ -91,8 +91,8 @@ drugTimeMolProfCurve <- function(
   if (length(tSet) > 1) { warning("Multiple tSet plotting has not been tested in this release...")}
   if (length(drug) > 1) { stop("This function currently only supports one drug per plot...")}
   if (length(mDataTypes) > 1) {stop("This function currently only supports one molecular data type per plot...")}
-  if (length(features) > 1) { if (length(dose) > 1) {error("To plot more than one feature, please specify only one dose level...")}}
-  if (length(dose) > 1) { if (length(features) > 1)}
+  if (length(features) > 1) { if (length(dose) > 1) { stop("To plot more than one feature, please specify only one dose level...")}}
+  if (length(dose) > 1) { if (length(features) > 1) { stop("To plot more than one dose level, please specify onyl one molecular feature...")}}
 
   ## TODO:: Generalize this to work with multiple data types
   if (missing(mDataTypes)) { mDataTypes <- names(tSet[[1]]@molecularProfiles) }
