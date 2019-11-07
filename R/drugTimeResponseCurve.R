@@ -62,7 +62,7 @@ drugTimeResponseCurve <- function(
   title,
   lwd = 1.5,
   cex = 1,
-  cex.main = 0.9,
+  cex.main = 1.0,
   legend.loc = "bottomright",
   verbose=TRUE
 ) {
@@ -267,7 +267,7 @@ drugTimeResponseCurve <- function(
   if (length(times) > 1) {
     rect(xleft = x1, xright = x2, ybottom = viability.range[1] , ytop = viability.range[2] , col = rgb(240, 240, 240, maxColorValue = 255), border = FALSE)
   }
-  if (summarize.replicates == FALSE) {
+  if (!summarize.replicates) {
     # Loop over tSet
     for (data in seq_along(tSet)) {
       for (cell in cell.lines) {

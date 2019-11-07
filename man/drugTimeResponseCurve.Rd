@@ -7,7 +7,7 @@
 drugTimeResponseCurve(tSet, duration = NULL, cell.lines = NULL,
   dose = NULL, drugs = NULL, summarize.replicates = TRUE,
   xlim = NULL, ylim = NULL, mycol, x.custom.ticks = NULL, title,
-  lwd = 1.5, cex = 1, cex.main = 0.9, legend.loc = "bottomright",
+  lwd = 1.5, cex = 1, cex.main = 1, legend.loc = "bottomright",
   verbose = TRUE)
 }
 \arguments{
