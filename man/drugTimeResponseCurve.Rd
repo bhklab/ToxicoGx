@@ -5,14 +5,14 @@
 \title{Compares viabilities at a given dose over different experimental duration}
 \usage{
 drugTimeResponseCurve(tSet, duration = NULL, cell.lines = NULL,
-  dose = NULL, drug = NULL, summarize.replicates = TRUE,
-  viability_as_pct = TRUE, xlim = NULL, ylim = NULL, mycol,
-  x.custom.ticks = NULL, title, lwd = 1, cex = 0.5, cex.main = 0.9,
-  legend.loc = "topright", verbose = TRUE)
+  dose = NULL, drugs = NULL, summarize.replicates = TRUE,
+  xlim = NULL, ylim = NULL, mycol, x.custom.ticks = NULL, title,
+  lwd = 1.5, cex = 1, cex.main = 0.9, legend.loc = "bottomright",
+  verbose = TRUE)
 }
 \arguments{
 \item{tSet}{\code{ToxicoSet} A ToxicoSet to be plotted in
-this graph.}
+this figure}
 
 \item{duration}{\code{character} A vector of durations to include in the plot.}
 
@@ -22,14 +22,11 @@ this graph.}
 plot. Default to include all dose levels available for a drug. Must include
 at minimum two dose levels, one of witch is "Control".}
 
-\item{drug}{\code{character} A vector of drugs to be included in this plot.}
+\item{drugs}{\code{character} A drugs or pair of drugss to be plotted.}
 
 \item{summarize.replicates}{\code{logical} If true will take the average of all
 replicates at each time point per gene and duration. This release has not
 yet implemented this feature.}
-
-\item{viability_as_pct}{\code{logical} A vector specifying if viabilities should
-be plotted as a percentage. Defaults to TRUE.}
 
 \item{xlim}{\code{numeric} A vector of minimum and maximum values for the x-axis
 of the returned plot.}
@@ -55,21 +52,19 @@ a title wil be generated automatically.}
 \item{cex.main}{\code{numeric} The cex.main parameter passed to plot, controls
 the size of the titles}
 
-\item{legend.loc}{\code{character} The location of the legend as passed to the
-legends function from base graphics. Recommended values are 'topright' or
-'topleft'. Default is 'topleft'.}
+\item{legend.loc}{\code{character} A string specifying the legend location, passed}
 
 \item{verbose}{\code{boolean} Should warning messages about the data passed in be printed?}
 }
 \value{
-Plot of the viabilities for each drug vs time of exposure
+Plot of the viabilities for each drugs vs time of exposure
 }
 \description{
 Description of this function
 }
 \examples{
 if (interactive()) {
-  ToxicoGx::drugTimeResponseCurve(TGGATESsmall, cell.lines = "Hepatocyte", dose = c("Control", "Low", "Middle"), drug = drugNames(TGGATESsmall)[1], duration = c("2", "8", "24"))
+  drugTimeResponseCurve(TGGATESsmall, cell.lines = "Hepatocyte", dose = c("Control", "Low", "Middle"), drugs = drugNames(TGGATESsmall)[6], duration = c("2", "8", "24"))
 }
 
 }
