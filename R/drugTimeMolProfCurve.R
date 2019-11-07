@@ -7,25 +7,26 @@
 #' @examples
 #'
 #' if (interactive()) {
-#' drugTimeMolProfCurve(TGGATESsmall, dose = c("Control", "Low", "Middle"), mDataTypes="rna", drug = drugNames(TGGATESsmall)[1], duration = c("2", "8", "24"), features = "ENSG00000000003_at")
+#' drugGeneResponseCurve(TGGATESsmall, dose = c("Control", "Low", "Middle"), mDataTypes="rna", drug = drugNames(TGGATESsmall)[1], duration = c("2", "8", "24"), features = "ENSG00000000003_at")
 #' }
 #'
 #' @param tSet \code{ToxicoSet} A ToxicoSet to be plotted in this graph. Currently
 #'   only a single tSet is supported, passing more may results in errors.
 #' @param dose \code{character} A vector of dose levels to be included in the
-#'   plot. Default to include all dose levels available for a drug. Must include
-#'   at minimum two dose levels, one of which must be "Control".
+#'   plot. Default to include all dose levels available for a drug. If you specify
+#'   more than two features you may only pass in up to two dose levels.
 #' @param mDataTypes \code{vector} A vector specifying the molecular data types to
 #'   include in this plot. Defaults to the first mDataType if not specified.
 #'   This release version only accepts one mDataType, more to be added in
 #'   forthcoming releases.
 #' @param features \code{character} A vector of feature names to include in the plot.
-#'   Please note that using too many features will have a significant computational
-#'   cost and will likely result in a over crowded plot.
-#' @param drug \code{character} A vector of drugs to be included in this plot. In
-#'   this release, only one drug is supported.
+#'   If you specify more than two dose levels, you may only pass in up to two features.
+#' @param drug \code{character} A drug name to include in this plot.
+#'   See drugNames(tSet) for a list of options.
 #' @param duration \code{character} A vector of durations to include in the plot.
-#' @param cellline \code{character} A vector of cell lines to include in the plot.
+#' @param cell.lines \code{character} A vector of cell lines to include in the plot.
+#'   Currently limited to one cell lines per plot with plans to add support for
+#'   more in upcoming releases.
 #' @param xlim \code{numeric} A vector of minimum and maximum values for the x-axis
 #'   of the returned plot.
 #' @param ylim \code{numeric} A vector of minimum and miximum values for the y-axis
@@ -41,9 +42,6 @@
 #' @param summarize.replicates \code{logical} If true will take the average of all
 #'  replicates at each time point per gene and duration. This release has not
 #'  yet implemented this feature.
-#' @param x.custom.ticks \code{vector} A numeric vector of the distance between major
-#'   and minor ticks on the x-axis. If excluded ticks appear only where duration
-#'   values are specified.
 #' @param lwd \code{numeric} The line width to plot width
 #' @param cex \code{numeric} The cex parameter passed to plot. Controls the size of
 #'   plot points and the font size of the legend and defaults to 0.7.
@@ -63,23 +61,22 @@
 #' @importFrom foreach foreach
 #'
 #' @export
-drugTimeMolProfCurve <- function(
+drugGeneResponseCurve <- function(
   tSet,
   duration,
-  cellline,
+  cell.lines,
   mDataTypes,
   features = NULL,
   dose,
   drug,
-  summarize.replicates = FALSE,
+  summarize.replicates = TRUE,
   xlim=c(0, 24),
   ylim=c(0, 15),
   mycol,
-  x.custom.ticks = NULL,
   title,
   lwd = 1.5,
-  cex = 0.7,
-  cex.main = 1.0,
+  cex = 1,
+  cex.main = 0.9,
   legend.loc = "topright",
   verbose=TRUE
 ) {
@@ -91,8 +88,8 @@ drugTimeMolProfCurve <- function(
   if (length(tSet) > 1) { warning("Multiple tSet plotting has not been tested in this release...")}
   if (length(drug) > 1) { stop("This function currently only supports one drug per plot...")}
   if (length(mDataTypes) > 1) {stop("This function currently only supports one molecular data type per plot...")}
-  if (length(features) > 1) { if (length(dose) > 1) { stop("To plot more than one feature, please specify only one dose level...")}}
-  if (length(dose) > 1) { if (length(features) > 1) { stop("To plot more than one dose level, please specify onyl one molecular feature...")}}
+  if (length(features) > 2) { if (length(dose) > 2) { stop("To plot more than one feature, please specify only up to two dose levels...")}}
+  if (length(dose) > 2) { if (length(features) > 2) { stop("To plot more than one dose level, please specify up to two molecular feature...")}}
 
   ## TODO:: Generalize this to work with multiple data types
   if (missing(mDataTypes)) { mDataTypes <- names(tSet[[1]]@molecularProfiles) }
@@ -103,8 +100,14 @@ drugTimeMolProfCurve <- function(
     })
   }
 
+  if (missing(cell.lines)) {cell.lines <- unique(phenoInfo(tSet[[1]], mDataTypes[1])$cellid)}
+  if (length(cell.lines) > 1) { stop("Only one cell type per plot is currently supported...")}
+
   # Places features in list if not already
-  if (!is(features, "list")) { features <- list(features) }
+  if (!is(features, "list")) {
+    features <- list(features)
+  }
+  names(features) <- vapply(tSet, function(x) names(x), FUN.VALUE = character(1))
 
   # Subsetting the tSet based on parameter arguments
   tSet <- lapply(tSet, function(tSet) {
@@ -115,7 +118,7 @@ drugTimeMolProfCurve <- function(
   # Extracting the data required for plotting into a list of data.frames
   # list of tSet < list of mDataTypes <df of plotData
   plotData <- lapply(tSet, function(tSet) {
-    mDataTypesData <- lapply(mDataTypes, function(mDataType) {
+    m <- lapply(mDataTypes, function(mDataType) {
       profileMatrix <- molecularProfiles(tSet, mDataType)
       relevantFeatureInfo <- featureInfo(tSet, mDataType)[, c("gene_id", "transcript_name") ]
       relevantPhenoInfo <- phenoInfo(tSet, mDataType)[, c("samplename", "cellid", "drugid", "concentration", "dose_level", "duration", "species", "individual_id")]
@@ -124,33 +127,32 @@ drugTimeMolProfCurve <- function(
       names(data) <- c("data", "featureInfo", "phenoInfo", "sensitivityInfo")
       data
     })
-    names(mDataTypesData) <- mDataTypes # Name list items for easy to understand subsetting
-    mDataTypesData
+    names(m) <- mDataTypes; m
   })
   names(plotData) <- vapply(tSet, names, FUN.VALUE = character(1))
 
   # Get a list of times per tSet per mDataType per dose level
   # This will also need to be per drug if we extend the function to multiple drugs
   times <- lapply(plotData, function(tSetData) {
-    mDataTimes <- lapply(mDataTypes, function(mDataType) {
-      doseLevels <- lapply(unique(tSetData[[mDataType]]$phenoInfo$dose_level), function(doseLvl){ ## TODO:: Fix this to only include listed doses
+    m <- lapply(mDataTypes, function(mDataType) {
+      ds <- lapply(unique(tSetData[[mDataType]]$phenoInfo$dose_level), function(doseLvl){ ## TODO:: Fix this to only include listed doses
         as.numeric(unique(tSetData[[mDataType]][["phenoInfo"]][["duration"]][ which(tSetData[[mDataType]]$phenoInfo$dose_level %in% doseLvl)]))
       })
-      names(doseLevels) <- dose; doseLevels
+      names(ds) <- dose; ds
     })
-    names(mDataTimes) <- mDataTypes; mDataTimes
+    names(m) <- mDataTypes; m
   })
   names(times) <- vapply(tSet, function(x) names(x), FUN.VALUE = character(1)) # Get the names for each tSet
 
   # Assembling the legend names for each line to be plotted
   legendValues <- lapply(plotData, function(tSetData) {
-    mDataLegends <- lapply(mDataTypes, function(mDataType) {
-      doseLegends <- lapply(dose, function(doseLvl) {
-        replicateLegends <- lapply(unique(tSetData[[mDataType]]$sensitivityInfo$replicate), function(rep){
+    m <- lapply(mDataTypes, function(mDataType) {
+      ds <- lapply(dose, function(doseLvl) {
+        lapply(unique(tSetData[[mDataType]]$sensitivityInfo$replicate), function(rep){
           legendValues <- vapply(tSetData[[mDataType]]$featureInfo$gene_id, function(feature) {
             paste(
               doseLvl,
-              paste(gsub("_at", "", tSetData[[mDataType]]$featureInfo[feature, "gene_id"])),
+              #paste(gsub("_at", "", tSetData[[mDataType]]$featureInfo[feature, "gene_id"])),
               paste(gsub("-.*", "", tSetData[[mDataType]]$featureInfo[feature, "transcript_name"])),
               rep,
               sep = "_" )
@@ -158,18 +160,18 @@ drugTimeMolProfCurve <- function(
           names(legendValues) <- unique(unlist(features)); legendValues
         })
       })
-      names(doseLegends) <- dose; doseLegends
+      names(ds) <- dose; ds
     })
-    names(mDataLegends) <- mDataTypes; mDataLegends # Note: FUN.VALUE refers to the type and length of EACH function call, not of the returned vector
+    names(m) <- mDataTypes; m # Note: FUN.VALUE refers to the type and length of EACH function call, not of the returned vector
   })
   names(legendValues) <-  vapply(tSet, function(x) names(x), FUN.VALUE = character(1))
 
   # Expression
   expression <- lapply(plotData, function(tSetData) {
-    mDataExpr <- lapply(mDataTypes, function(mDataType) {
-      doseExpr <- lapply(dose, function(doseLvl) {
-        replicateExpr <- lapply(unique(tSetData[[mDataType]]$sensitivityInfo$replicate), function(rep) {
-          featureExpr <- lapply(tSetData[[mDataType]]$featureInfo$gene_id, function(feature) {
+    m <- lapply(mDataTypes, function(mDataType) {
+      ds <- lapply(dose, function(doseLvl) {
+        lapply(unique(tSetData[[mDataType]]$sensitivityInfo$replicate), function(rep) {
+          f <- lapply(tSetData[[mDataType]]$featureInfo$gene_id, function(feature) {
             sensInf <- tSetData[[mDataType]]$sensitivityInfo
             expressionVals <- tSetData[[mDataType]]$data[
               feature, # The feature of interest
@@ -178,44 +180,60 @@ drugTimeMolProfCurve <- function(
             #names(expressionVals) <- sensInf[which(sensInf$replicate == rep) , "duration_h"] # Name based on included durations
             #expressionVals
           })
-          names(featureExpr) <- unique(unlist(features)); featureExpr
+          names(f) <- unique(unlist(features)); f
         })
       })
-      names(doseExpr) <- dose; doseExpr
+      names(ds) <- dose; ds
     })
-    names(mDataExpr) <- mDataTypes; mDataExpr
+    names(m) <- mDataTypes; m
   })
-  names(expression) <-  vapply(tSet, function(x) names(x), FUN.VALUE = character(1))
+  names(expression) <-  vapply(tSet, names, FUN.VALUE = character(1))
 
   #### SUMMARIZATION ####
 
   # Summarizing replicate values
   if (summarize.replicates) {
    expression <- lapply(seq_along(expression), function(t_idx) {
-     lapply(seq_along(mDataTypes), function(m_idx) {
-       lapply(seq_along(dose), function(d_idx) {
-         lapply(seq_along(features), function(f_idx) {
+     m <- lapply(seq_along(mDataTypes), function(m_idx) {
+       ds <- lapply(seq_along(dose), function(d_idx) {
+         f <- lapply(seq_along(features[[t_idx]]), function(f_idx) {
             vapply(seq_along(unique(duration)), function(idx) {
               ## TODO:: Generalize this to n replicates
                 mean(expression[[t_idx]][[m_idx]][[d_idx]][[1]][[f_idx]][[idx]],
-                     expression[[t_idx]][[m_idx]][[d_idx]][[1]][[f_idx]][[idx]]
+                     expression[[t_idx]][[m_idx]][[d_idx]][[2]][[f_idx]][[idx]]
                      )
             }, FUN.VALUE = numeric(1))
            })
+         names(f) <- features[[names(tSet[[t_idx]])]]; f
          })
+       names(ds) <- dose; ds
        })
+     names(m) <- mDataTypes; m
      })
+   names(expression) <- vapply(tSet, names, FUN.VALUE = character(1))
    # Take unique values of all time replicates and place into a list
    times <- lapply(times, function(tSet) {
-     lapply(tSet, function(mDataType) {
-      lapply(mDataType, function(dose) {
+     m <- lapply(tSet, function(mDataType) {
+      ds <- lapply(mDataType, function(dose) {
         unique(dose)
       })
+      names(ds) <- dose; ds
      })
+     names(m) <- mDataTypes; m
    })
-   legendValues <- lapply(legendValues, function(legendLevel) {
-      lapply(legendLevel, function(legendName) {unique(gsub("_[^_]*$", "", unlist(legendName)))})
+   names(times) <- vapply(tSet, names, FUN.VALUE = character(1))
+   legendValues <- lapply(seq_along(legendValues), function(t_idx) {
+     m <- lapply(seq_along(legendValues[[t_idx]]), function(m_idx) {
+       ds <- lapply(seq_along(legendValues[[t_idx]][[m_idx]]), function(ds_idx) {
+         unique(vapply(unlist(legendValues[[t_idx]][[m_idx]][[ds_idx]]), function(label) {
+           gsub("_[^_]*$", "", label)
+         }, FUN.VALUE = character(1)))
+       })
+       names(ds) <- dose; ds
+     })
+     names(m) <- mDataTypes; m
    })
+   names(legendValues) <- vapply(tSet, names, FUN.VALUE = character(1))
   }
 
   #### AXIS RANGES ####
@@ -252,58 +270,71 @@ drugTimeMolProfCurve <- function(
 
   ## SETS PLOT TITLE
   if (missing(title)) {
-    if (!missing(drug) && !missing(cellline)){
-      title <- sprintf("%s:%s", drug, cellline)
-    } else {
-      title <- "Expression Time Response Curve"
-    }
+      title <- sprintf("%s\n%s:%s", "Expression Time Response Curve", paste(drug, collapse = " & "), paste(cell.lines, collapse = " & "))
   }
 
   ## SETS DEFAULT COLOUR PALETTE
   if (missing(mycol)) {
-    mycol <- RColorBrewer::brewer.pal(n = 9, name = "Set1")
+    mycol <- c(RColorBrewer::brewer.pal(n = 9, name = "Set1"), RColorBrewer::brewer.pal(n = 12, name = "Set3"))
     legends.col <- mycol
   }
 
   #### DRAWING THE PLOT ####
-  plot(NA, xlab = "Time (hr)", ylab = "Expression", axes = FALSE, main = title, ylim = expression.range, xlim = time.range, cex = cex, cex.main = cex.main)
+
+  # Reset par after function compeltes
+  opar <- par(no.readonly = TRUE)
+  on.exit(par(opar))
+
+  # Modify par in functions scope
+
+  b <- l <- t <- r <- 0
+  if (grepl("^bottom$", legend.loc)) {b <- 10; inset = c(0, -0.7)}
+  if (grepl(".*left.*", legend.loc)) {l <- 10; inset = c(-0.4, 0)}
+  if (grepl("^top$", legend.loc)) {t <- 10; inset <- c(0, -0.7)}
+  if (grepl(".*right,*", legend.loc)) {r <- 10; inset <- c(-0.3, 0)}
+  par(xpd = T, mar = par()$mar + c(b,l,t,r))
+
+  # Create the plot frame
+  plot(NA, xlab = "Time (hr)", ylab = "Expression", axes = FALSE, main = title,
+       ylim = expression.range, xlim = time.range, cex = cex, cex.main = cex.main)
+  box()
+
   # Adds plot axes
-  if (!is.null(x.custom.ticks)) {
-    magicaxis::magaxis(side = 1:2, frame.plot = TRUE, tcl = -.3, majorn = c(x.custom.ticks[1], 3), minorn = c(x.custom.ticks[2], 2))
-  } else {
-    magicaxis::magaxis(2, frame.plot = TRUE, tcl = -.3, majorn = expression.range[2], minorn=2)
-    #axis(2, labels = seq_len(expression.range[2] + 1), at = seq_len(expression.range[2] + 1))
-    axis(1, labels = as.numeric(duration), at = as.numeric(duration))
-  }
+  axis(1, at = as.numeric(duration), tcl = -0.3)
+  axis(2, at = seq.int(expression.range[1], expression.range[2]), tcl = -0.3)
 
   # Initialize legends variables
   legends <- NULL
   pch.val <- NULL
   legends.col <- NULL
-  # TBD what this does?
-  if (length(times) > 1) {
-    rect(xleft = x1, xright = x2, ybottom = expression.range[1] , ytop = expression.range[2] , col=rgb(240, 240, 240, maxColorValue = 255), border = FALSE)
-  }
 
-  if (summarize.replicates == FALSE) {
+  if (!summarize.replicates) { # i.e., if summarize replicates is false
     # Loop over tSet
+    k <- j <- 1
     for (i in seq_along(times)) { # tSet subset
       for (mDataType in seq_along(mDataTypes)) {
         # Loop over dose level
-        j <- 1
         for (level in seq_along(dose)) {
           # Loop over replicates per dose level
           ## TODO:: Generalize this for n replicates
-          for (replicate in seq_along(expression[[i]][[mDataType]][[level]])) {
+            if (length(seq_along(features[[mDataType]])) > 2 ) { j <- 1 }
             # Plot per tSet, per dose level, per replicate points
             for (feature in seq_along(features[[mDataType]])) {
-              points(times[[i]][[mDataType]][[level]], expression[[i]][[mDataType]][[level]][[replicate]][[feature]], pch = replicate, col = mycol[j], cex = cex)
+              for (replicate in seq_along(expression[[i]][[mDataType]][[level]])) {
+              points(times[[i]][[mDataType]][[level]],
+                     expression[[i]][[mDataType]][[level]][[replicate]][[feature]],
+                     pch = k, col = mycol[j], cex = cex)
               # Select plot type
-              lines(times[[i]][[mDataType]][[level]], expression[[i]][[mDataType]][[level]][[replicate]][[feature]], lty = replicate, lwd = lwd, col = mycol[j])
-              legends <- c(legends, legendValues[[i]][[mDataType]][[level]][[replicate]][feature])
+              lines(times[[i]][[mDataType]][[level]],
+                    expression[[i]][[mDataType]][[level]][[replicate]][[feature]],
+                    lty = replicate, lwd = lwd, col = mycol[j])
+              legends <- c(legends,
+                           legendValues[[i]][[mDataType]][[level]][[replicate]][feature])
               legends.col <- c(legends.col, mycol[j])
-              pch.val <- c(pch.val, feature)
+              pch.val <- c(pch.val, k)
+              k <- k + 1
             }
+            if (length(seq_along(features[[mDataType]])) > 1) { j <- j + 1 }
           }
           j <- j + 1
         }
@@ -311,24 +342,34 @@ drugTimeMolProfCurve <- function(
     }
   } else {
     # Loop over tSet
+    k <- j <- 1
     for (i in seq_along(times)) { # tSet subset
       for (mDataType in seq_along(mDataTypes)) {
         # Loop over dose level
-        j <- 1
         for (level in seq_along(dose)) {
-            # Plot per tSet, per dose level, per replicate points
-            for (feature in seq_along(features[[mDataType]])) {
-              points(times[[i]][[mDataType]][[level]], expression[[i]][[mDataType]][[level]][[feature]], col = mycol[j], cex = cex)
-              # Select plot type
-              lines(times[[i]][[mDataType]][[level]], expression[[i]][[mDataType]][[level]][[feature]], lwd = lwd, col = mycol[j])
-              legends <- c(legends, legendValues[[i]][[mDataType]][[level]][[feature]])
-              legends.col <- c(legends.col, mycol[j])
-              pch.val <- c(pch.val, feature)
-            }
+          if (length(features[[mDataType]] > 1)) {j <- 1 }
+          # Loop over replicates per dose level
+          ## TODO:: Generalize this for n replicates
+          # Plot per tSet, per dose level, per replicate points
+          for (feature in seq_along(features[[mDataType]])) {
+            points(times[[i]][[mDataType]][[level]],
+                   expression[[i]][[mDataType]][[level]][[feature]],
+                   pch = k, col = mycol[j], cex = cex)
+            # Select plot type
+            lines(times[[i]][[mDataType]][[level]],
+                  expression[[i]][[mDataType]][[level]][[feature]],
+                  lty = 1, lwd = lwd, col = mycol[j])
+            legends <- c(legends,
+                         legendValues[[i]][[mDataType]][[level]][feature])
+            legends.col <- c(legends.col, mycol[j])
+            pch.val <- c(pch.val, k)
+            k <- k + 1
+            j <- j + 1
+          }
           j <- j + 1
         }
       }
     }
   }
-  legend(legend.loc, legend = legends, col = legends.col, bty = "n", cex = cex, pch = pch.val)
+  legend(legend.loc, legend = legends, col = legends.col, bty = "L", cex = cex, pch = pch.val, inset = inset)
 }
