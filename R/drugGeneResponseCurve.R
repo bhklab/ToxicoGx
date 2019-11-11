@@ -154,7 +154,7 @@ drugGeneResponseCurve <- function(
             paste(
               doseLvl,
               #paste(gsub("_at", "", tSetData[[mDataType]]$featureInfo[feature, "gene_id"])),
-              paste(gsub("-.*", "", tSetData[[mDataType]]$featureInfo[feature, "transcript_name"])),
+              paste(gsub("-[^-]*$", "", tSetData[[mDataType]]$featureInfo[feature, "transcript_name"])),
               rep,
               sep = "_" )
           }, FUN.VALUE = character(1))
