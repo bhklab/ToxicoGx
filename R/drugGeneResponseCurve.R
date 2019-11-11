@@ -36,9 +36,10 @@
 #' @param legend.loc \code{character} The location of the legend as passed to the plot()
 #'   function from base graphics. Suggested values are either "topleft" or
 #'   "topright", with the latter as the default.
-#' @param mycol \code{vector} A vector of length equal to the number of features
-#'   argument specifying which RColorBrewer colour to use per feature. Default
-#'   colours will be used if this parameter is excluded.
+#' @param mycol `vector`` A vector of length equal to the product of the
+#'   number of drugs, features and doses passed to the function. Takes colour
+#'   arguments as passed to `col` parameter in the `plot()` function.
+#'   Default palette is used when unspecified.
 #' @param summarize.replicates \code{logical} If true will take the average of all
 #'  replicates at each time point per gene and duration. This release has not
 #'  yet implemented this feature.
@@ -111,8 +112,8 @@ drugGeneResponseCurve <- function(
 
   # Subsetting the tSet based on parameter arguments
   tSet <- lapply(tSet, function(tSet) {
-    ToxicoGx::subsetTo(tSet, mDataType = mDataTypes, drugs = drug,
-                       duration = duration, features = unique(unlist(features)))
+    suppressWarnings({ToxicoGx::subsetTo(tSet, mDataType = mDataTypes, drugs = drug,
+                       duration = duration, features = unique(unlist(features)))})
   })
 
   # Extracting the data required for plotting into a list of data.frames
@@ -346,8 +347,8 @@ drugGeneResponseCurve <- function(
     for (i in seq_along(times)) { # tSet subset
       for (mDataType in seq_along(mDataTypes)) {
         # Loop over dose level
+        if (length(features[[i]][[mDataType]]) > 1) {j <- 1 }
         for (level in seq_along(dose)) {
-          if (length(features[[mDataType]] > 1)) {j <- 1 }
           # Loop over replicates per dose level
           ## TODO:: Generalize this for n replicates
           # Plot per tSet, per dose level, per replicate points
@@ -366,7 +367,7 @@ drugGeneResponseCurve <- function(
             k <- k + 1
             j <- j + 1
           }
-          j <- j + 1
+        if (length(features[[i]][[mDataType]]) > 1) {j <- j + 1 }
         }
       }
     }

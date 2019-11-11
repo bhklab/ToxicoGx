@@ -21,9 +21,10 @@
 #'   of the returned plot.
 #' @param title \code{character} A string containing the desired plot name. If excluded
 #'   a title wil be generated automatically.
-#' @param mycol \code{vector} A vector of length equal to the lenth of the tSet
-#'   argument specifying which RColorBrewer colour to use per tSet. Default
-#'   colours will be used if this parameter is excluded.
+#' @param mycol `vector`` A vector of length equal to the product of the
+#'   number of drugs, features and doses passed to the function. Takes colour
+#'   arguments as passed to `col` parameter in the `plot()` function.
+#'   Default palette is used when unspecified.
 #' @param summarize.replicates \code{logical} If true will take the average of all
 #'  replicates at each time point per gene and duration. This release has not
 #'  yet implemented this feature.
@@ -82,7 +83,7 @@ drugTimeResponseCurve <- function(
 
   # Subsetting the tSet based on parameter arguments
   tSet <- lapply(tSet, function(tSet) {
-    try(subsetTo(tSet, mDataType = "rna", drugs = drugs, duration = duration, cells = cell.lines), silent = TRUE)
+    suppressWarnings({subsetTo(tSet, mDataType = "rna", drugs = drugs, duration = duration, cells = cell.lines)})
   })
 
   # Extracting the data required for plotting into a list of data.frames
@@ -246,7 +247,6 @@ drugTimeResponseCurve <- function(
   ## SETS DEFAULT COLOUR PALETTE
   if (missing(mycol)) {
     mycol <- c(RColorBrewer::brewer.pal(n = 9, name = "Set1"), RColorBrewer::brewer.pal(n = 12, name = "Set3"))
-    legends.col <- mycol
   }
 
   #### DRAWING THE PLOT ####

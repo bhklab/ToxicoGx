@@ -34,9 +34,10 @@ of the returned plot.}
 \item{ylim}{\code{numeric} A vector of minimum and miximum values for the y-axis
 of the returned plot.}
 
-\item{mycol}{\code{vector} A vector of length equal to the lenth of the tSet
-argument specifying which RColorBrewer colour to use per tSet. Default
-colours will be used if this parameter is excluded.}
+\item{mycol}{`vector`` A vector of length equal to the product of the
+number of drugs, features and doses passed to the function. Takes colour
+arguments as passed to `col` parameter in the `plot()` function.
+Default palette is used when unspecified.}
 
 \item{x.custom.ticks}{\code{vector} A numeric vector of the distance between major
 and minor ticks on the x-axis. If excluded ticks appear only where duration
