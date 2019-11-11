@@ -36,7 +36,7 @@ paramMissingHandlerTests <- function(funName, tSet, mDataType, ...) {
            #),
     )
 
-  # Assigns values for missing parameters and throws warnings
+  # Assigns values for missing parameters and throws messages
   .checkParamsForMissingTests(
     funName = funName, tSet = tSet, mDataType = mDataType,
     missingChecks = missingChecks, ...
@@ -55,7 +55,7 @@ paramMissingHandlerTests <- function(funName, tSet, mDataType, ...) {
   }
 
   testthat::context(
-    paste("Testing paramMissingHandler returns correct warnings for ")
+    paste("Testing paramMissingHandler returns correct messages for ")
           )
 
   for (missing in missingChecks) {
@@ -63,16 +63,16 @@ paramMissingHandlerTests <- function(funName, tSet, mDataType, ...) {
       missing,
       "cell.lines" = {
       testthat::test
-      warning(paste0(missing, " parameter not specified, defaults to all cell lines in the given tSet!"))
+      message(paste0(missing, " parameter not specified, defaults to all cell lines in the given tSet!"))
       },
       "drugs" = {if (is.null(drugs)) { missingParamValues[[missing]] <- unique(drugNames(tSet));
-      warning(paste0(missing, " parameter not specified, defaults to all drugs in the given tSet!"))}
+      message(paste0(missing, " parameter not specified, defaults to all drugs in the given tSet!"))}
       },
       "features" = {if (is.null(features)) {missingParamValues[[missing]] <- unique(fNames(tSet, mDataType));
-      warning(paste0(missing, " parameter not specified, defaults to all features in the given tSet for the specified mDataType!"))}
+      message(paste0(missing, " parameter not specified, defaults to all features in the given tSet for the specified mDataType!"))}
       },
       "duration" = {if (is.null(duration)) {missingParamValues[[missing]] <- unique(as.character(ToxicoGx::sensitivityInfo(tSet)$duration_h));
-      warning(paste0(missing, " parameter not specified, defaults to all experimental durations in given tSet!"))}
+      message(paste0(missing, " parameter not specified, defaults to all experimental durations in given tSet!"))}
       }
     )
   }
