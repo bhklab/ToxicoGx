@@ -4,10 +4,18 @@
 \alias{drugPerturbationSig}
 \title{Drug perturbation analysis}
 \usage{
-drugPerturbationSig(tSet, mDataType, drugs = NULL, cell.lines = NULL,
-  features = NULL, duration = NULL, dose = NULL, nthread = 1,
+drugPerturbationSig(
+  tSet,
+  mDataType,
+  drugs = NULL,
+  cell.lines = NULL,
+  features = NULL,
+  duration = NULL,
+  dose = NULL,
+  nthread = 1,
   returnValues = c("estimate", "tstat", "pvalue", "fdr"),
-  verbose = FALSE)
+  verbose = FALSE
+)
 }
 \arguments{
 \item{tSet}{\code{ToxicoSet} a ToxicoSet of the perturbation experiment type}

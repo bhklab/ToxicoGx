@@ -16,13 +16,13 @@
 #' @export
 #' @import downloader
 #' @importFrom utils read.table write.table
-availableTSets <- function(saveDir=file.path(".", "tSets"), myfn="availableToxicoSets.csv", verbose=TRUE){
+availableTSets <- function(saveDir=tempdir(), myfn="availableToxicoSets.csv", verbose=TRUE){
 
   if (!file.exists(saveDir)) {
     dir.create(saveDir, recursive = TRUE)
   }
 
-  downloader::download("https://ndownloader.figshare.com/files/18508424?private_link=d286d7386d5f5e778585",
+  downloader::download("https://ndownloader.figshare.com/files/19070666?private_link=d286d7386d5f5e778585",
                        destfile = file.path(saveDir, myfn),
                        quiet = !verbose)
 
@@ -53,7 +53,7 @@ availableTSets <- function(saveDir=file.path(".", "tSets"), myfn="availableToxic
 #' @return A tSet object with the dataset, downloaded from our server
 #' @export
 #' @import downloader
-downloadTSet <- function(name, saveDir = file.path(".", "tSets"), tSetFileName = NULL, verbose = TRUE) {
+downloadTSet <- function(name, saveDir = tempdir(), tSetFileName = NULL, verbose = TRUE) {
 
   tSetTable <- availableTSets(saveDir = saveDir)
 

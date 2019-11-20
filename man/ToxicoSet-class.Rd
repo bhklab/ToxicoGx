@@ -43,18 +43,15 @@
 
 \S4method{phenoInfo}{ToxicoSet,character}(cSet = tSet, mDataType)
 
-\S4method{phenoInfo}{ToxicoSet,character,data.frame}(object,
-  mDataType) <- value
+\S4method{phenoInfo}{ToxicoSet,character,data.frame}(object, mDataType) <- value
 
 \S4method{molecularProfiles}{ToxicoSet,character}(cSet = tSet, mDataType)
 
-\S4method{molecularProfiles}{ToxicoSet,character,matrix}(object,
-  mDataType) <- value
+\S4method{molecularProfiles}{ToxicoSet,character,matrix}(object, mDataType) <- value
 
 \S4method{featureInfo}{ToxicoSet,character}(cSet = tSet, mDataType)
 
-\S4method{featureInfo}{ToxicoSet,character,data.frame}(object,
-  mDataType) <- value
+\S4method{featureInfo}{ToxicoSet,character,data.frame}(object, mDataType) <- value
 
 \S4method{sensitivityInfo}{ToxicoSet}(cSet = tSet)
 

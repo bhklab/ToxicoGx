@@ -4,10 +4,15 @@
 \alias{ToxicoSig}
 \title{ToxicoSig Constructor}
 \usage{
-ToxicoSig(Data = array(NA, dim = c(0, 0, 0)), tSetName = "",
-  DateCreated = date(), SigType = "sensitivity",
-  SessionInfo = sessionInfo(), Call = "No Call Recorded",
-  Arguments = list())
+ToxicoSig(
+  Data = array(NA, dim = c(0, 0, 0)),
+  tSetName = "",
+  DateCreated = date(),
+  SigType = "sensitivity",
+  SessionInfo = sessionInfo(),
+  Call = "No Call Recorded",
+  Arguments = list()
+)
 }
 \arguments{
 \item{Data}{[array] An array contiaining the data for constructing the ToxicoSig object}

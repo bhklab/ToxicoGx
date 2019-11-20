@@ -4,8 +4,19 @@
 \alias{rankGeneDrugPerturbation}
 \title{Rank genes based on drug effect}
 \usage{
-rankGeneDrugPerturbation(data, drug, drug.id, drug.concentration, type, xp,
-  batch, duration, single.type = FALSE, nthread = 1, verbose = FALSE)
+rankGeneDrugPerturbation(
+  data,
+  drug,
+  drug.id,
+  drug.concentration,
+  type,
+  xp,
+  batch,
+  duration,
+  single.type = FALSE,
+  nthread = 1,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{data:}{gene expression data matrix}

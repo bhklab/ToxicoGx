@@ -4,8 +4,7 @@
 \alias{downloadTSet}
 \title{Download a ToxicoSet object}
 \usage{
-downloadTSet(name, saveDir = file.path(".", "tSets"),
-  tSetFileName = NULL, verbose = TRUE)
+downloadTSet(name, saveDir = tempdir(), tSetFileName = NULL, verbose = TRUE)
 }
 \arguments{
 \item{name}{\code{Character} string, the name of the PhamracoSet to download.}

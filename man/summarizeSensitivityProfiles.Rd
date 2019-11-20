@@ -5,10 +5,16 @@
 \title{Takes the sensitivity data from a ToxicoSet, and summarises them into a
 drug vs cell line table}
 \usage{
-summarizeSensitivityProfiles(tSet, duration = NULL, cell.lines = NULL,
-  drugs = NULL, sensitivity.measure = "auc_recomputed",
+summarizeSensitivityProfiles(
+  tSet,
+  duration = NULL,
+  cell.lines = NULL,
+  drugs = NULL,
+  sensitivity.measure = "auc_recomputed",
   summary.stat = c("mean", "median", "first", "last", "max", "min"),
-  fill.missing = TRUE, verbose = TRUE)
+  fill.missing = TRUE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{tSet}{\code{ToxicoSet} The ToxicoSet from which to extract the data}
