@@ -5,11 +5,19 @@
 \title{Takes molecular data from a ToxicoSet, and summarises them
 into one entry per drug and experimental condition.}
 \usage{
-summarizeMolecularProfiles(tSet, mDataType, cell.lines = NULL,
-  drugs = NULL, features = NULL, duration = NULL,
+summarizeMolecularProfiles(
+  tSet,
+  mDataType,
+  cell.lines = NULL,
+  drugs = NULL,
+  features = NULL,
+  duration = NULL,
   dose = c("Control", "Low", "Middle", "High"),
   summary.stat = c("mean", "median", "first", "last"),
-  fill.missing = TRUE, summarize = TRUE, verbose = TRUE)
+  fill.missing = TRUE,
+  summarize = TRUE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{tSet}{\code{ToxicoSet} The ToxicoSet to summarize}

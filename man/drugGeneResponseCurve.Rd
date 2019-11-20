@@ -5,10 +5,25 @@
 \title{Compares gene expression for a specificed set of features over specific
   drug dosages vs time}
 \usage{
-drugGeneResponseCurve(tSet, duration, cell.lines, mDataTypes,
-  features = NULL, dose, drug, summarize.replicates = TRUE,
-  xlim = c(0, 24), ylim = c(0, 15), mycol, title, lwd = 1.5,
-  cex = 1, cex.main = 0.9, legend.loc = "topright", verbose = TRUE)
+drugGeneResponseCurve(
+  tSet,
+  duration,
+  cell.lines,
+  mDataTypes,
+  features = NULL,
+  dose,
+  drug,
+  summarize.replicates = TRUE,
+  xlim = c(0, 24),
+  ylim = c(0, 15),
+  mycol,
+  title,
+  lwd = 1.5,
+  cex = 1,
+  cex.main = 0.9,
+  legend.loc = "topright",
+  verbose = TRUE
+)
 }
 \arguments{
 \item{tSet}{\code{ToxicoSet} A ToxicoSet to be plotted in this graph. Currently

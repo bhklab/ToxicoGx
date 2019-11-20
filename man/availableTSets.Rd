@@ -4,8 +4,11 @@
 \alias{availableTSets}
 \title{Return a table of ToxicoSets available for download}
 \usage{
-availableTSets(saveDir = file.path(".", "tSets"),
-  myfn = "availableToxicoSets.csv", verbose = TRUE)
+availableTSets(
+  saveDir = tempdir(),
+  myfn = "availableToxicoSets.csv",
+  verbose = TRUE
+)
 }
 \arguments{
 \item{saveDir}{\code{character} Directory to save the table of tSets}

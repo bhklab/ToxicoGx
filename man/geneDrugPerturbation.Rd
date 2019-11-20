@@ -4,8 +4,7 @@
 \alias{geneDrugPerturbation}
 \title{Compute gene-drug associations}
 \usage{
-geneDrugPerturbation(x, concentration, type, batch, duration,
-  model = FALSE)
+geneDrugPerturbation(x, concentration, type, batch, duration, model = FALSE)
 }
 \arguments{
 \item{x}{[numeric] Vector of gene expression values}

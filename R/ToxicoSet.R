@@ -1432,7 +1432,7 @@ updateDrugId <- function(tSet, new.ids = vector("character")){
 
   perturbation.info <- array(0, dim=c(length(celln), length(drugn), length(tSet@molecularProfiles)), dimnames=list(celln, drugn, names((tSet@molecularProfiles))))
 
-  for (i in 1:length(tSet@molecularProfiles)) {
+  for (i in seq_along(tSet@molecularProfiles)) {
     if (nrow(Biobase::pData(tSet@molecularProfiles[[i]])) > 0 && all(is.element(c("cellid", "drugid"), colnames(Biobase::pData(tSet@molecularProfiles[[i]]))))) {
       tt <- table(Biobase::pData(tSet@molecularProfiles[[i]])[ , "cellid"], Biobase::pData(tSet@molecularProfiles[[i]])[ , "drugid"])
       perturbation.info[rownames(tt), colnames(tt), names(tSet@molecularProfiles)[i]] <- tt

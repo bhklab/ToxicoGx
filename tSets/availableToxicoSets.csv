@@ -1,4 +1,0 @@
-ToxicoSet.Name,Description,Available.Molecular.Profiles,Date.Updated,URL
-TGGATES_humanLDH,"ToxicoSet of in vitro human primary hepatocyte data with LDH data for viability. Source: Hiroshi Yamada et al., Nucleic Acids Res. 2015",rna,"October 29th, 2019",https://ndownloader.figshare.com/files/18508397?private_link=31c30574f7780e041235
-TGGATES_ratLDH,"ToxicoSet of in vitro rat primary hepatocyte data with LDH data for viability. Source: Hiroshi Yamada et al., Nucleic Acids Res. 2015",rna,"October 29th, 2019",https://ndownloader.figshare.com/files/18508394?private_link=6d58cfdf13bb80954cf8
-TGGATESvignette,"ToxicoSet containing the data necessary to run the example analysis containted in the ToxicoGx package. Source: Hiroshi Yamada et al., Nucleic Acids Res. 2015",rna,"October 29th, 2019",https://ndownloader.figshare.com/files/18508295?private_link=f08fc972ac0a9930abba
