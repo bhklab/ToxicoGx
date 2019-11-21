@@ -22,14 +22,13 @@ availableTSets <- function(saveDir=tempdir(), myfn="availableToxicoSets.csv", ve
     dir.create(saveDir, recursive = TRUE)
   }
 
-  downloader::download("https://ndownloader.figshare.com/files/19070666?private_link=d286d7386d5f5e778585",
+  downloader::download("https://ndownloader.figshare.com/files/19225709?private_link=d286d7386d5f5e778585",
                        destfile = file.path(saveDir, myfn),
                        quiet = !verbose)
 
   tSetTable <- read.csv(file.path(saveDir, myfn), header = TRUE, stringsAsFactors = FALSE)
   return(tSetTable)
 }
-
 
 #' Download a ToxicoSet object
 #'
@@ -55,6 +54,7 @@ availableTSets <- function(saveDir=tempdir(), myfn="availableToxicoSets.csv", ve
 #' @import downloader
 downloadTSet <- function(name, saveDir = tempdir(), tSetFileName = NULL, verbose = TRUE) {
 
+  if (missing(saveDir)) {message("Downloading to temporary folder... Use saveDir parameter to save to a specific path")}
   tSetTable <- availableTSets(saveDir = saveDir)
 
   whichx <- match(name, tSetTable[, 1])
@@ -73,8 +73,7 @@ downloadTSet <- function(name, saveDir = tempdir(), tSetFileName = NULL, verbose
     downloader::download(url = as.character(tSetTable[whichx,"URL"]), destfile = file.path(saveDir, tSetFileName), quiet = !verbose)
   }
 
-  tSet <- load(file.path(saveDir, tSetFileName))
-  return(get(tSet))
+  load(file.path(saveDir, tSetFileName), envir = globalenv())
 }
 
 #' @importFrom utils read.table write.table
