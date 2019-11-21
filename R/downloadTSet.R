@@ -22,7 +22,7 @@ availableTSets <- function(saveDir=tempdir(), myfn="availableToxicoSets.csv", ve
     dir.create(saveDir, recursive = TRUE)
   }
 
-  downloader::download("https://ndownloader.figshare.com/files/19225709?private_link=d286d7386d5f5e778585",
+  downloader::download("https://ndownloader.figshare.com/files/19227647?private_link=d286d7386d5f5e778585",
                        destfile = file.path(saveDir, myfn),
                        quiet = !verbose)
 
