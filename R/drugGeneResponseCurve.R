@@ -61,7 +61,8 @@
 #' @importFrom magicaxis magaxis
 #' @importFrom foreach foreach
 #' @import dplyr
-#' @import dtplyr
+#' @import data.table
+#' @importFrom magrittr %<>%
 #'
 #' @export
 drugGeneResponseCurve <- function(
@@ -94,6 +95,7 @@ drugGeneResponseCurve <- function(
   if (length(features) > 2) { if (length(dose) > 2) { stop("To plot more than one feature, please specify only up to two dose levels...")}}
   if (length(dose) > 2) { if (length(features) > 2) { stop("To plot more than one dose level, please specify up to two molecular feature...")}}
 
+  # Deal with controls (i.e., treated with DMSO)
   if (any(vapply(tSet, function(tSet) { names(tSet) == "drugMatrix"}, FUN.VALUE = logical(1)))) {
     drug <- c("DMSO", drug)
   }
@@ -156,7 +158,6 @@ drugGeneResponseCurve <- function(
       dose_rep <- split(mData$pInfo[, paste(dose_level,unique(individual_id), sep = "_"), by = dose_level],
         by = "dose_level")
       lapply(dose_rep, function(dLevel) {
-          gc()
           paste(gsub("-[^-]*$", "", mData$fInfo[, unique(transcript_name)]), dLevel$V1, sep = "_")
         })
     })
@@ -169,7 +170,8 @@ drugGeneResponseCurve <- function(
   expression <- lapply(plotData, function(tSetData) {
     m <- lapply(tSetData, function(mData) {
       setkey(mData$data, rn)
-      sample_list <- lapply(split(mData$pInfo[, as.character(samplename), by = dose_level], by = "dose_level"), function(dLevel) dLevel$V1)
+      DT <-
+      sample_list <- lapply(split(mData$pInfo[, .(as.character(samplename), individual_id, drugid), by = dose_level], by = "dose_level"), function(dLevel) {dLevel})
       m <- lapply(sample_list, function(smp) {
         lapply(split(mData$data[, c("rn", smp), by = rn, with = FALSE], by = "rn"), function(dLevel) {print(dLevel); as.numeric(unlist(dLevel, use.names = F))[-1]})
       })
