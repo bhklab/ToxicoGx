@@ -60,6 +60,8 @@
 #' @importFrom grDevices rgb
 #' @importFrom magicaxis magaxis
 #' @importFrom foreach foreach
+#' @import dplyr
+#' @import dtplyr
 #'
 #' @export
 drugGeneResponseCurve <- function(
@@ -92,6 +94,10 @@ drugGeneResponseCurve <- function(
   if (length(features) > 2) { if (length(dose) > 2) { stop("To plot more than one feature, please specify only up to two dose levels...")}}
   if (length(dose) > 2) { if (length(features) > 2) { stop("To plot more than one dose level, please specify up to two molecular feature...")}}
 
+  if (any(vapply(tSet, function(tSet) { names(tSet) == "drugMatrix"}, FUN.VALUE = logical(1)))) {
+    drug <- c("DMSO", drug)
+  }
+
   ## TODO:: Generalize this to work with multiple data types
   if (missing(mDataTypes)) { mDataTypes <- names(tSet[[1]]@molecularProfiles) }
 
@@ -116,77 +122,58 @@ drugGeneResponseCurve <- function(
                        duration = duration, features = unique(unlist(features)))})
   })
 
-  # Extracting the data required for plotting into a list of data.frames
-  # list of tSet < list of mDataTypes <df of plotData
+  # Get only the dose levels available for that drug
+  dose <- intersect(dose, unique(phenoInfo(tSet[[1]], "rna")$dose_level))
+
   plotData <- lapply(tSet, function(tSet) {
-    m <- lapply(mDataTypes, function(mDataType) {
-      profileMatrix <- molecularProfiles(tSet, mDataType)
-      relevantFeatureInfo <- featureInfo(tSet, mDataType)[, c("gene_id", "transcript_name") ]
-      relevantPhenoInfo <- phenoInfo(tSet, mDataType)[, c("samplename", "cellid", "drugid", "concentration", "dose_level", "duration", "species", "individual_id")]
-      relevantSensitivityInfo <- ToxicoGx::sensitivityInfo(tSet)[, c("drugid", "duration_h", "replicate", "Control", "Low", "Middle", "High") ]
-      data <- list(profileMatrix, relevantFeatureInfo, relevantPhenoInfo, relevantSensitivityInfo)
-      names(data) <- c("data", "featureInfo", "phenoInfo", "sensitivityInfo")
-      data
+    lapply(mDataTypes, function(mDataType) {
+      mProf <- molecularProfiles(tSet, mDataType)
+      list(
+        "data" = data.table(
+          mProf,
+          keep.rownames = TRUE
+        ),
+        "fInfo" = data.table(featureInfo(tSet, mDataType)),
+        "pInfo" = data.table(phenoInfo(tSet, mDataType))
+      )
     })
-    names(m) <- mDataTypes; m
   })
-  names(plotData) <- vapply(tSet, names, FUN.VALUE = character(1))
 
   # Get a list of times per tSet per mDataType per dose level
   # This will also need to be per drug if we extend the function to multiple drugs
-  times <- lapply(plotData, function(tSetData) {
-    m <- lapply(mDataTypes, function(mDataType) {
-      ds <- lapply(unique(tSetData[[mDataType]]$phenoInfo$dose_level), function(doseLvl){ ## TODO:: Fix this to only include listed doses
-        as.numeric(unique(tSetData[[mDataType]][["phenoInfo"]][["duration"]][ which(tSetData[[mDataType]]$phenoInfo$dose_level %in% doseLvl)]))
-      })
-      names(ds) <- dose; ds
-    })
+  times <- lapply(plotData, function(tData) {
+    m <- lapply(tData, function(mData) {
+        lapply(split(mData$pInfo[, unique(duration), by = dose_level], by = "dose_level"),
+               function(x) { x$V1 })
+               })
     names(m) <- mDataTypes; m
   })
   names(times) <- vapply(tSet, function(x) names(x), FUN.VALUE = character(1)) # Get the names for each tSet
 
   # Assembling the legend names for each line to be plotted
-  legendValues <- lapply(plotData, function(tSetData) {
-    m <- lapply(mDataTypes, function(mDataType) {
-      ds <- lapply(dose, function(doseLvl) {
-        lapply(unique(tSetData[[mDataType]]$sensitivityInfo$replicate), function(rep){
-          legendValues <- vapply(tSetData[[mDataType]]$featureInfo$gene_id, function(feature) {
-            paste(
-              doseLvl,
-              #paste(gsub("_at", "", tSetData[[mDataType]]$featureInfo[feature, "gene_id"])),
-              paste(gsub("-[^-]*$", "", tSetData[[mDataType]]$featureInfo[feature, "transcript_name"])),
-              rep,
-              sep = "_" )
-          }, FUN.VALUE = character(1))
-          names(legendValues) <- unique(unlist(features)); legendValues
+  legendValues <- lapply(plotData, function(tData) {
+    m <- lapply(tData, function(mData) {
+      dose_rep <- split(mData$pInfo[, paste(dose_level,unique(individual_id), sep = "_"), by = dose_level],
+        by = "dose_level")
+      lapply(dose_rep, function(dLevel) {
+          gc()
+          paste(gsub("-[^-]*$", "", mData$fInfo[, unique(transcript_name)]), dLevel$V1, sep = "_")
         })
-      })
-      names(ds) <- dose; ds
     })
     names(m) <- mDataTypes; m # Note: FUN.VALUE refers to the type and length of EACH function call, not of the returned vector
   })
   names(legendValues) <-  vapply(tSet, function(x) names(x), FUN.VALUE = character(1))
 
+
   # Expression
   expression <- lapply(plotData, function(tSetData) {
-    m <- lapply(mDataTypes, function(mDataType) {
-      ds <- lapply(dose, function(doseLvl) {
-        lapply(unique(tSetData[[mDataType]]$sensitivityInfo$replicate), function(rep) {
-          f <- lapply(tSetData[[mDataType]]$featureInfo$gene_id, function(feature) {
-            sensInf <- tSetData[[mDataType]]$sensitivityInfo
-            expressionVals <- tSetData[[mDataType]]$data[
-              feature, # The feature of interest
-              c(sensInf[ which(sensInf$replicate == rep) , doseLvl]) # Gets the sample ids for the given dose level and replicate
-              ]
-            #names(expressionVals) <- sensInf[which(sensInf$replicate == rep) , "duration_h"] # Name based on included durations
-            #expressionVals
-          })
-          names(f) <- unique(unlist(features)); f
-        })
+    m <- lapply(tSetData, function(mData) {
+      setkey(mData$data, rn)
+      sample_list <- lapply(split(mData$pInfo[, as.character(samplename), by = dose_level], by = "dose_level"), function(dLevel) dLevel$V1)
+      m <- lapply(sample_list, function(smp) {
+        lapply(split(mData$data[, c("rn", smp), by = rn, with = FALSE], by = "rn"), function(dLevel) {print(dLevel); as.numeric(unlist(dLevel, use.names = F))[-1]})
       })
-      names(ds) <- dose; ds
     })
-    names(m) <- mDataTypes; m
   })
   names(expression) <-  vapply(tSet, names, FUN.VALUE = character(1))
 
@@ -199,6 +186,7 @@ drugGeneResponseCurve <- function(
        ds <- lapply(seq_along(dose), function(d_idx) {
          f <- lapply(seq_along(features[[t_idx]]), function(f_idx) {
             vapply(seq_along(unique(duration)), function(idx) {
+              for (rep in subset(phenoInf, dose == dose[]))
               ## TODO:: Generalize this to n replicates
                 mean(expression[[t_idx]][[m_idx]][[d_idx]][[1]][[f_idx]][[idx]],
                      expression[[t_idx]][[m_idx]][[d_idx]][[2]][[f_idx]][[idx]]

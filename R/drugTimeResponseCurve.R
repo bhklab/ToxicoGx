@@ -74,8 +74,8 @@ drugTimeResponseCurve <- function(
 
   ## TODO:: REMOVE ::: BEFORE CRAN SUBMISSION!
   ToxicoGx:::paramErrorChecker("drugTimeResponseCurve",
-                    tSets = tSet, drugs = drugs, duration = duration, cell.lines = cell.lines,
-                    dose = dose)
+                    tSets = tSet, drugs = drugs, duration = duration,
+                    cell.lines = cell.lines, dose = dose)
 
   ## TODO:: Make this function work with multiple drugs
   ## TODO:: Throw warning if a dose level or time point is not available for a specific drug
