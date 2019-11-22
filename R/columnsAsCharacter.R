@@ -5,14 +5,32 @@
 # @importFrom dplyr mutate_if
 columnsAsCharacter <- function(tSet) {
   for (mDataType in names(tSet@molecularProfiles)) {
-    phenoInfo(tSet, mDataType) %<>% dplyr::mutate_if(is.factor, as.character)
-    featureInfo(tSet, mDataType) %<>% dplyr::mutate_if(is.factor, as.character)
+    phenoInfo(tSet, mDataType) %<>%
+      tibble::rownames_to_column() %>%
+      dplyr::mutate_if(is.factor, as.character) %>%
+      tibble::column_to_rownames()
+
+    featureInfo(tSet, mDataType) %<>%
+      tibble::rownames_to_column() %>%
+      dplyr::mutate_if(is.factor, as.character) %>%
+      tibble::column_to_rownames()
   }
   if (length(sensitivityInfo(tSet)) > 0) {
-    sensitivityInfo(tSet) %<>% dplyr::mutate_if(is.factor, as.character)
+    sensitivityInfo(tSet) %<>%
+      tibble::rownames_to_column() %>%
+      dplyr::mutate_if(is.factor, as.character) %>%
+      tibble::column_to_rownames()
   }
-  cellInfo(tSet) %<>% dplyr::mutate_if(is.factor, as.character)
-  drugInfo(tSet) %<>% dplyrmutate_if(is.factor, as.character)
+  cellInfo(tSet) %<>%
+    tibble::rownames_to_column() %>%
+    dplyr::mutate_if(is.factor, as.character) %>%
+    tibble::column_to_rownames()
+
+  drugInfo(tSet) %<>%
+    tibble::rownames_to_column() %>%
+    dplyr::mutate_if(is.factor, as.character) %>%
+    tibble::column_to_rownames()
+
   return(tSet)
 }
 
