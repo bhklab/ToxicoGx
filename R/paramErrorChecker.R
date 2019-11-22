@@ -46,8 +46,9 @@ paramErrorChecker <- function(funName, tSet, ...) {
                "sensitivity.measureNotChar"
               ),
            "drugTimeResponseCurve" =
-             c(intersectViabPlotParamChecks, "viabilitiesDiffLenDur",
-               "durationNotChar", "drugsGt2", "cell.linesGt2"
+             c(intersectViabPlotParamChecks, 'tSetsHaveViab',
+               'viabilitiesDiffLenDur', "durationNotChar", "drugsGt2",
+               "cell.linesGt2"
                ),
            "subsetTo" =
              c("returnValuesGt1",
@@ -92,7 +93,10 @@ paramErrorChecker <- function(funName, tSet, ...) {
         # tSet checks
         "tSetNotIs" = {if (!is(tSet, "ToxicoSet")) { stop(paste0(tSet@annotations$name, " is a ", class(tSet), ", not a ToxicoSet.")) }},
         "tSetGt1" = {if (length(tSet) > 1) { stop("You may only pass in one tSet.") }},
+        "tSetHasViab" = {if (length(ToxicoGx::sensitivityInfo(tSet) < 1)) { stop(paste0(names(tSet), ' does not contain sensitivity or perturbation data!')) }},
         # tSets checks
+        ## TODO:: Generalize error checking to multiple tSets for this check
+        "tSetsHaveViab" = {if (!is.null(tSets)) {lapply(tSets, function(tSet) { if (length(ToxicoGx::sensitivityInfo(tSet)) < 1) {stop("The ", paste0(names(tSet), " tSet has no viability data!"))} })}},
         "tSetsNotIs" = {if (!is.null(tSets)) { if (!all(vapply(tSets, function(tSet) { is(tSet, "ToxicoSet") }, FUN.VALUE = logical(1) ))) { stop("One or more arguments to tSets parameter is not a 'ToxicoSet'.")}}},
         # mDataType checks
         "mDataTypeGt1" = {if (length(unlist(mDataType)) > 1) { stop("Please only pass in one molecular data type.") }},
