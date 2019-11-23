@@ -964,7 +964,7 @@ subsetTo <- function(tSet, cell.lines = NULL,
       column_indices <- seq_len(ncol(eset))
     }
 
-    # Selecting indices which match the cells arguemnt
+    # Selecting indices which match the cells argument
     cell_line_index <- NULL
     if (length(cell.lines) != 0) {
       if (!all(cell.lines %in% cellNames(tSet))) {
@@ -975,12 +975,12 @@ subsetTo <- function(tSet, cell.lines = NULL,
 
     # Selecting indexes which match drugs arguement
     drugs_index <- NULL
-    if (tSet@datasetType == "perturbation" || tSet@datasetType == "both"){
+    if (tSet@datasetType == "perturbation" || tSet@datasetType == "both") {
       if (length(drugs) != 0) {
         if (!all(drugs %in% drugNames(tSet))){
           stop("Some of the drug names passed to function did not match to names in the ToxicoSet Please ensure you are using drug names as returned by the drugNames function")
         }
-        drugs_index <- which(Biobase::pData(eset)[["tggates_drugid"]] %in% drugs)
+        drugs_index <- which(Biobase::pData(eset)[["drugid"]] %in% drugs)
       }
     }
 

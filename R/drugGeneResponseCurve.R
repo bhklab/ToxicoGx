@@ -167,64 +167,88 @@ drugGeneResponseCurve <- function(
 
 
   # Expression
-  expression <- lapply(plotData, function(tSetData) {
-    m <- lapply(tSetData, function(mData) {
-      setkey(mData$data, rn)
-      DT <-
-      sample_list <- lapply(split(mData$pInfo[, .(as.character(samplename), individual_id, drugid), by = dose_level], by = "dose_level"), function(dLevel) {dLevel})
-      m <- lapply(sample_list, function(smp) {
-        lapply(split(mData$data[, c("rn", smp), by = rn, with = FALSE], by = "rn"), function(dLevel) {print(dLevel); as.numeric(unlist(dLevel, use.names = F))[-1]})
-      })
-    })
-  })
-  names(expression) <-  vapply(tSet, names, FUN.VALUE = character(1))
+  # expression <- lapply(plotData, function(tSetData) {
+  #   m <- lapply(tSetData, function(mData) {
+  #     setkey(mData$data, rn)
+  #     # Each returned list has the replicates per drug
+  #     sample_list <- lapply(split(mData$pInfo[, as.character(samplename), by = dose_level], by = .("dose_level", "duration"), function(dLevel) {dLevel$V1}),
+  #     lapply(sample_list, function(smp) {
+  #       lapply(split(mData$data[, c("rn", smp), by = rn, with = FALSE], by = "rn"), function(dLevel) {print(dLevel); as.numeric(unlist(dLevel, use.names = F))[-1]})
+  #     })
+  #   })
+  #   names(m) <- mDataTypes; m
+  # })
+  # names(expression) <-  vapply(tSet, names, FUN.VALUE = character(1))
+
+  expression <-
+    list.map(plotData, f(t) ~
+      list.map(t, f(m) ~
+        lapply(split(m$pInfo[, as.character(samplename), by = .(dose_level, duration)], by = "dose_level"), function(i) {
+          lapply((unname(split(i, by = "duration", )) %>% list.map(f(x) ~ x$V1)),
+                 function(s) {
+                   split(m$data[, c("rn", s), by = rn, with = F], by = "rn") %>%
+                     list.map(f(x) ~  as.numeric(unlist(x), use.names = F)[-1])
+             })
+          })
+       )
+    )
+
+  # # Collapse the number of Control replicates in the plot to match the does level with the highest number of replicates
+  if (any(vapply(tSet, function(tSet) { names(tSet) == "drugMatrix"}, FUN.VALUE = logical(1)))) {
+    ex <-
+      list.map(expression, f(t) ~
+        list.map(t, f(m) ~
+          function(m, .name) {
+            print(.name)
+          }
+          )
+        )
+      )
+  }
+  # # Find the non-Control dose level with the highest number of replicates and the average of the control
+  # m <- lapply(expression[["drugMatrix"]], function(mData) {
+  #   len <- max(
+  #     vapply(rlist::list.remove(mData, "Control"), function(dData) {
+  #       length(dData[[1]])
+  #     }, FUN.VALUE = numeric(1))
+  #   )
+  #   avg <- vapply(mData[["Control"]], mean, FUN.VALUE = numeric(1))
+  #   return(c(len, avg))
+  # })
+  # # Assign the average of control to expression
+  # for (mDataType in seq_along(m)) {
+  #   n <- names(expression[["drugMatrix"]][[mDataType]][["Control"]])
+  #   expression[["drugMatrix"]][[mDataType]][["Control"]] <-
+  #     lapply(seq_along(n), function(f) {
+  #       unname(rep(m[[mDataType]][2], m[[mDataType]][[f]][1]))
+  #     })
+  #   # Keep feature names
+  #   names(expression[["drugMatrix"]][[mDataType]][["Control"]]) <- n
+  # }
 
   #### SUMMARIZATION ####
-
-  # Summarizing replicate values
   if (summarize.replicates) {
-   expression <- lapply(seq_along(expression), function(t_idx) {
-     m <- lapply(seq_along(mDataTypes), function(m_idx) {
-       ds <- lapply(seq_along(dose), function(d_idx) {
-         f <- lapply(seq_along(features[[t_idx]]), function(f_idx) {
-            vapply(seq_along(unique(duration)), function(idx) {
-              for (rep in subset(phenoInf, dose == dose[]))
-              ## TODO:: Generalize this to n replicates
-                mean(expression[[t_idx]][[m_idx]][[d_idx]][[1]][[f_idx]][[idx]],
-                     expression[[t_idx]][[m_idx]][[d_idx]][[2]][[f_idx]][[idx]]
-                     )
-            }, FUN.VALUE = numeric(1))
-           })
-         names(f) <- features[[names(tSet[[t_idx]])]]; f
-         })
-       names(ds) <- dose; ds
-       })
-     names(m) <- mDataTypes; m
-     })
-   names(expression) <- vapply(tSet, names, FUN.VALUE = character(1))
-   # Take unique values of all time replicates and place into a list
-   times <- lapply(times, function(tSet) {
-     m <- lapply(tSet, function(mDataType) {
-      ds <- lapply(mDataType, function(dose) {
-        unique(dose)
-      })
-      names(ds) <- dose; ds
-     })
-     names(m) <- mDataTypes; m
-   })
-   names(times) <- vapply(tSet, names, FUN.VALUE = character(1))
-   legendValues <- lapply(seq_along(legendValues), function(t_idx) {
-     m <- lapply(seq_along(legendValues[[t_idx]]), function(m_idx) {
-       ds <- lapply(seq_along(legendValues[[t_idx]][[m_idx]]), function(ds_idx) {
-         unique(vapply(unlist(legendValues[[t_idx]][[m_idx]][[ds_idx]]), function(label) {
-           gsub("_[^_]*$", "", label)
-         }, FUN.VALUE = character(1)))
-       })
-       names(ds) <- dose; ds
-     })
-     names(m) <- mDataTypes; m
-   })
-   names(legendValues) <- vapply(tSet, names, FUN.VALUE = character(1))
+
+    expression <- list.map(expression, f(t) ~
+                    list.map(t, f(m) ~
+                      list.map(m, f(d) ~
+                        list.map(d, f(t) ~
+                          list.map(t, f(f) ~
+                            mean(f)
+                                )
+                              )
+                            )
+                          )
+                        )
+
+    legendValues <- list.map(l, f(x) ~
+                      list.map(x, f(x) ~
+                        list.map(x, f(x) ~
+                          unique(gsub("_[^_]*$", '', x)
+                                 )
+                          )
+                        )
+                      )
   }
 
   #### AXIS RANGES ####
