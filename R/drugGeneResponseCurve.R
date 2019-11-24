@@ -16,7 +16,7 @@
 #'   plot. Default to include all dose levels available for a drug. If you specify
 #'   more than two features you may only pass in up to two dose levels.
 #' @param mDataTypes \code{vector} A vector specifying the molecular data types to
-#'   include in this plot. Defaults to the first mDataType if not specified.
+#'   include in this plot. Defaults to the first mDataType if not specified.ex
 #'   This release version only accepts one mDataType, more to be added in
 #'   forthcoming releases.
 #' @param features \code{character} A vector of feature names to include in the plot.
@@ -203,7 +203,6 @@ drugGeneResponseCurve <- function(
           }
           )
         )
-      )
   }
   # # Find the non-Control dose level with the highest number of replicates and the average of the control
   # m <- lapply(expression[["drugMatrix"]], function(mData) {
