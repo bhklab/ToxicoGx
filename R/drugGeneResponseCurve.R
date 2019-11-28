@@ -59,10 +59,10 @@
 #' @importFrom graphics plot rect points lines legend
 #' @importFrom grDevices rgb
 #' @importFrom magicaxis magaxis
-#' @importFrom foreach foreach
 #' @import dplyr
 #' @import data.table
 #' @importFrom magrittr %<>%
+#' @importFrom rlist list.map list.select list.filter list.search
 #'
 #' @export
 drugGeneResponseCurve <- function(
@@ -152,6 +152,7 @@ drugGeneResponseCurve <- function(
   })
   names(times) <- vapply(tSet, function(x) names(x), FUN.VALUE = character(1)) # Get the names for each tSet
 
+  ## TODO:: Rewrite legendValues to generate after summarization; will remove a bunch of code
   # Assembling the legend names for each line to be plotted
   legendValues <- lapply(plotData, function(tData) {
     m <- lapply(tData, function(mData) {
@@ -165,21 +166,7 @@ drugGeneResponseCurve <- function(
   })
   names(legendValues) <-  vapply(tSet, function(x) names(x), FUN.VALUE = character(1))
 
-
-  # Expression
-  # expression <- lapply(plotData, function(tSetData) {
-  #   m <- lapply(tSetData, function(mData) {
-  #     setkey(mData$data, rn)
-  #     # Each returned list has the replicates per drug
-  #     sample_list <- lapply(split(mData$pInfo[, as.character(samplename), by = dose_level], by = .("dose_level", "duration"), function(dLevel) {dLevel$V1}),
-  #     lapply(sample_list, function(smp) {
-  #       lapply(split(mData$data[, c("rn", smp), by = rn, with = FALSE], by = "rn"), function(dLevel) {print(dLevel); as.numeric(unlist(dLevel, use.names = F))[-1]})
-  #     })
-  #   })
-  #   names(m) <- mDataTypes; m
-  # })
-  # names(expression) <-  vapply(tSet, names, FUN.VALUE = character(1))
-
+  # Get expression values per tSet, mDataType, dose, time, gene and replicate
   expression <-
     list.map(plotData, f(t) ~
       list.map(t, f(m) ~
@@ -193,37 +180,26 @@ drugGeneResponseCurve <- function(
        )
     )
 
-  # # Collapse the number of Control replicates in the plot to match the does level with the highest number of replicates
+  # Collapse the number of Control replicates in the plot to match the does level with the highest number of replicates
   if (any(vapply(tSet, function(tSet) { names(tSet) == "drugMatrix"}, FUN.VALUE = logical(1)))) {
-    ex <-
+    max <- list.flatten(expression) %>% list.map(i ~ if (!grepl('Control.*', .name)) length(i) else 0) %>% unlist() %>% max()
+    expression <-
       list.map(expression, f(t) ~
         list.map(t, f(m) ~
-          function(m, .name) {
-            print(.name)
-          }
+          list.map(m, f(d) ~
+            if (.name == 'Control') list.map(d, f(i) ~ list.map(i, f(s) ~ rep(mean(s), max))) else d
+          )
+        )
+      )
+    legendValues <-
+      list.map(legendValues, t ~
+        list.map(t, m ~
+          list.map(m, d ~
+            if (.name == 'Control') unique(gsub("^[^_]*_[^_]*_.*$", '', d))[seq_len(max)] else unique(gsub("^[^_]*_[^_]*_.*$", '', d))
+            )
           )
         )
   }
-  # # Find the non-Control dose level with the highest number of replicates and the average of the control
-  # m <- lapply(expression[["drugMatrix"]], function(mData) {
-  #   len <- max(
-  #     vapply(rlist::list.remove(mData, "Control"), function(dData) {
-  #       length(dData[[1]])
-  #     }, FUN.VALUE = numeric(1))
-  #   )
-  #   avg <- vapply(mData[["Control"]], mean, FUN.VALUE = numeric(1))
-  #   return(c(len, avg))
-  # })
-  # # Assign the average of control to expression
-  # for (mDataType in seq_along(m)) {
-  #   n <- names(expression[["drugMatrix"]][[mDataType]][["Control"]])
-  #   expression[["drugMatrix"]][[mDataType]][["Control"]] <-
-  #     lapply(seq_along(n), function(f) {
-  #       unname(rep(m[[mDataType]][2], m[[mDataType]][[f]][1]))
-  #     })
-  #   # Keep feature names
-  #   names(expression[["drugMatrix"]][[mDataType]][["Control"]]) <- n
-  # }
 
   #### SUMMARIZATION ####
   if (summarize.replicates) {
@@ -240,11 +216,11 @@ drugGeneResponseCurve <- function(
                           )
                         )
 
-    legendValues <- list.map(l, f(x) ~
+    legendValues <- list.map(legendValues, f(x) ~
                       list.map(x, f(x) ~
                         list.map(x, f(x) ~
                           unique(gsub("_[^_]*$", '', x)
-                                 )
+                            )
                           )
                         )
                       )
@@ -254,11 +230,11 @@ drugGeneResponseCurve <- function(
 
   # Set x and y axis ranges based on time and viability values
   time.range <- as.numeric(c(min(unlist(times)), max(unlist(times))))
-  expression.range <- c(floor(min(unlist(expression, recursive = TRUE))), ceiling(max(unlist(expression, recursive = TRUE))))
+  expression.range <- c(floor(min(unlist(expression))), ceiling(max(unlist(expression))))
   for (i in seq_along(tSet)) {
     ## TODO:: Generalize this to n replicates
-    time.range <- c(min(time.range[1], min(unlist(times[[i]], recursive = TRUE), na.rm = TRUE), na.rm = TRUE), max(time.range[2], max(unlist(times[[i]], recursive = TRUE), na.rm = TRUE), na.rm = TRUE))
-    expression.range <- c(0, max(expression.range[2], max(unlist(expression[[i]], recursive = TRUE), na.rm = TRUE), na.rm = TRUE))
+    time.range <- as.numeric(c(min(time.range[1], min(unlist(times[[i]]), na.rm = TRUE), na.rm = TRUE), max(time.range[2], max(unlist(times[[i]]), na.rm = TRUE), na.rm = TRUE)))
+    expression.range <- c(0, max(expression.range[2], max(unlist(expression[[i]]), na.rm = TRUE), na.rm = TRUE))
   }
   x1 <- 24; x2 <- 0
 
@@ -322,68 +298,73 @@ drugGeneResponseCurve <- function(
   pch.val <- NULL
   legends.col <- NULL
 
-  if (!summarize.replicates) { # i.e., if summarize replicates is false
-    # Loop over tSet
-    k <- j <- 1
-    for (i in seq_along(times)) { # tSet subset
-      for (mDataType in seq_along(mDataTypes)) {
-        # Loop over dose level
-        for (level in seq_along(dose)) {
-          # Loop over replicates per dose level
-          ## TODO:: Generalize this for n replicates
-            if (length(seq_along(features[[mDataType]])) > 2 ) { j <- 1 }
-            # Plot per tSet, per dose level, per replicate points
-            for (feature in seq_along(features[[mDataType]])) {
-              for (replicate in seq_along(expression[[i]][[mDataType]][[level]])) {
-              points(times[[i]][[mDataType]][[level]],
-                     expression[[i]][[mDataType]][[level]][[replicate]][[feature]],
-                     pch = k, col = mycol[j], cex = cex)
-              # Select plot type
-              lines(times[[i]][[mDataType]][[level]],
-                    expression[[i]][[mDataType]][[level]][[replicate]][[feature]],
-                    lty = replicate, lwd = lwd, col = mycol[j])
-              legends <- c(legends,
-                           legendValues[[i]][[mDataType]][[level]][[replicate]][feature])
-              legends.col <- c(legends.col, mycol[j])
-              pch.val <- c(pch.val, k)
-              k <- k + 1
-            }
-            if (length(seq_along(features[[mDataType]])) > 1) { j <- j + 1 }
-          }
-          j <- j + 1
-        }
-      }
-    }
-  } else {
-    # Loop over tSet
-    k <- j <- 1
-    for (i in seq_along(times)) { # tSet subset
-      for (mDataType in seq_along(mDataTypes)) {
-        # Loop over dose level
-        if (length(features[[i]][[mDataType]]) > 1) {j <- 1 }
-        for (level in seq_along(dose)) {
-          # Loop over replicates per dose level
-          ## TODO:: Generalize this for n replicates
-          # Plot per tSet, per dose level, per replicate points
-          for (feature in seq_along(features[[mDataType]])) {
-            points(times[[i]][[mDataType]][[level]],
-                   expression[[i]][[mDataType]][[level]][[feature]],
-                   pch = k, col = mycol[j], cex = cex)
-            # Select plot type
-            lines(times[[i]][[mDataType]][[level]],
-                  expression[[i]][[mDataType]][[level]][[feature]],
-                  lty = 1, lwd = lwd, col = mycol[j])
-            legends <- c(legends,
-                         legendValues[[i]][[mDataType]][[level]][feature])
-            legends.col <- c(legends.col, mycol[j])
-            pch.val <- c(pch.val, k)
-            k <- k + 1
-            j <- j + 1
-          }
-        if (length(features[[i]][[mDataType]]) > 1) {j <- j + 1 }
-        }
-      }
-    }
-  }
-  legend(legend.loc, legend = legends, col = legends.col, bty = "L", cex = cex, pch = pch.val, inset = inset)
+  list.map(expression)
+
+
 }
+
+
+# if (!summarize.replicates) { # i.e., if summarize replicates is false
+#   # Loop over tSet
+#   k <- j <- 1
+#   for (i in seq_along(times)) { # tSet subset
+#     for (mDataType in seq_along(mDataTypes)) {
+#       # Loop over dose level
+#       for (level in seq_along(dose)) {
+#         # Loop over replicates per dose level
+#         ## TODO:: Generalize this for n replicates
+#           if (length(seq_along(features[[mDataType]])) > 2 ) { j <- 1 }
+#           # Plot per tSet, per dose level, per replicate points
+#           for (feature in seq_along(features[[mDataType]])) {
+#             for (replicate in seq_along(expression[[i]][[mDataType]][[level]])) {
+#             points(times[[i]][[mDataType]][[level]],
+#                    expression[[i]][[mDataType]][[level]][[replicate]][[feature]],
+#                    pch = k, col = mycol[j], cex = cex)
+#             # Select plot type
+#             lines(times[[i]][[mDataType]][[level]],
+#                   expression[[i]][[mDataType]][[level]][[replicate]][[feature]],
+#                   lty = replicate, lwd = lwd, col = mycol[j])
+#             legends <- c(legends,
+#                          legendValues[[i]][[mDataType]][[level]][[replicate]][feature])
+#             legends.col <- c(legends.col, mycol[j])
+#             pch.val <- c(pch.val, k)
+#             k <- k + 1
+#           }
+#           if (length(seq_along(features[[mDataType]])) > 1) { j <- j + 1 }
+#         }
+#         j <- j + 1
+#       }
+#     }
+#   }
+# } else {
+#   # Loop over tSet
+#   k <- j <- 1
+#   for (i in seq_along(times)) { # tSet subset
+#     for (mDataType in seq_along(mDataTypes)) {
+#       # Loop over dose level
+#       if (length(features[[i]][[mDataType]]) > 1) {j <- 1 }
+#       for (level in seq_along(dose)) {
+#         # Loop over replicates per dose level
+#         ## TODO:: Generalize this for n replicates
+#         # Plot per tSet, per dose level, per replicate points
+#         for (feature in seq_along(features[[mDataType]])) {
+#           points(times[[i]][[mDataType]][[level]],
+#                  expression[[i]][[mDataType]][[level]][[feature]],
+#                  pch = k, col = mycol[j], cex = cex)
+#           # Select plot type
+#           lines(times[[i]][[mDataType]][[level]],
+#                 expression[[i]][[mDataType]][[level]][[feature]],
+#                 lty = 1, lwd = lwd, col = mycol[j])
+#           legends <- c(legends,
+#                        legendValues[[i]][[mDataType]][[level]][feature])
+#           legends.col <- c(legends.col, mycol[j])
+#           pch.val <- c(pch.val, k)
+#           k <- k + 1
+#           j <- j + 1
+#         }
+#       if (length(features[[i]][[mDataType]]) > 1) {j <- j + 1 }
+#       }
+#     }
+#   }
+# }
+# legend(legend.loc, legend = legends, col = legends.col, bty = "L", cex = cex, pch = pch.val, inset = inset)
