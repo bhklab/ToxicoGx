@@ -36,7 +36,7 @@ Currently limited to one cell lines per plot with plans to add support for
 more in upcoming releases.}
 
 \item{mDataTypes}{\code{vector} A vector specifying the molecular data types to
-include in this plot. Defaults to the first mDataType if not specified.
+include in this plot. Defaults to the first mDataType if not specified.ex
 This release version only accepts one mDataType, more to be added in
 forthcoming releases.}
 
