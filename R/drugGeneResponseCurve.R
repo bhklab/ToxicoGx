@@ -195,7 +195,7 @@ drugGeneResponseCurve <- function(
       list.map(legendValues, t ~
         list.map(t, m ~
           list.map(m, d ~
-            if (.name == 'Control') unique(gsub("^[^_]*_[^_]*_.*$", '', d))[seq_len(max)] else unique(gsub("^[^_]*_[^_]*_.*$", '', d))
+            if (.name == 'Control') d[seq_len(max)] else d
             )
           )
         )
@@ -299,7 +299,6 @@ drugGeneResponseCurve <- function(
   legends.col <- NULL
 
   list.map(expression)
-
 
 }
 
