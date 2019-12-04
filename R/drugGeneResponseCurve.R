@@ -183,8 +183,8 @@ drugGeneResponseCurve <- function(
     plotData <- plotData[, expression := mean(expression), by = .(dose_level, duration)][individual_id == 1]
     plot <- ggplot(as_tibble(plotData),
                    aes(x = sort(as.numeric(duration)),
-                       y = expression, color = dose_level, linetype = Symbol,
-                       group = dose_level))
+                       y = expression, color = dose_level, linetype = Symbol))
+                      #group = dose_level))
     plot <-
       plot +
         labs(
