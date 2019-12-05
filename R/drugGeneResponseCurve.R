@@ -125,7 +125,7 @@ drugGeneResponseCurve <- function(
   })
 
   # Get only the dose levels available for that drug
-  dose <- intersect(dose, unique(phenoInfo(tSet[[1]], "rna")$dose_level))
+  dose <- intersect(dose, as.character(unique(phenoInfo(tSet[[1]], "rna")$dose_level)))
 
   # Gather the plot data
   plotData <- lapply(tSet, function(tSet) {
@@ -161,18 +161,19 @@ drugGeneResponseCurve <- function(
                        by = .(dose_level, duration, Symbol)]
   max_rep <- max(plotData[dose_level != 'Control', unique(individual_id)])
   plotData <- plotData[individual_id %in% seq_len(max_rep), .SD, by = .(dose_level, duration)]
+  plotData <- plotData[dose_level %in% dose, .SD]
 
   #### Rendering the plot ####
   if (summarize.replicates == FALSE) {
     ggplot(as_tibble(plotData),
-           aes(x = sort(as.numeric(duration)),
+           aes(x = as.numeric(duration),
                y = expression,
                color = dose_level,
                linetype = as.factor(individual_id),
                shape = Symbol,
                group = interaction(dose_level, individual_id, Symbol))) +
-      geom_line() +
-      geom_point() +
+      geom_line(size = 1) +
+      geom_point(size = 2) +
       labs(
         title = paste0("Drug Gene Response Curve for ", paste(drug, collapse = " & "), " in ", paste(cell.lines, collapse = " & "), collapse = " & "),
         color = "Dose Level",
@@ -187,7 +188,7 @@ drugGeneResponseCurve <- function(
     plotData <- plotData[, expression := mean(expression), by = .(dose_level, duration, Symbol)][individual_id == 1]
     ggplot(plotData, aes(as.numeric(duration), expression)) +
       geom_line(aes(color = dose_level, linetype = Symbol), size = 1) +
-      geom_point(aes(color = dose_level, shape = interaction(dose_level, Symbol)), size = 2) +
+      geom_point(aes(color = dose_level), size = 2) +
       labs(
           title = paste0("Drug Gene Response Curve for ", paste(drug, collapse = " & "), " in ", paste(cell.lines, collapse = " & "), collapse = " & "),
           color = "Dose Level",
