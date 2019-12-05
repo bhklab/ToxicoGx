@@ -143,7 +143,7 @@ drugGeneResponseCurve <- function(
   })
   names(plotData) <-  vapply(tSet, function(x) names(x), FUN.VALUE = character(1))
 
-  #### DRAWING THE PLOT ####
+  #### Assembling the plot data ####
   d <- plotData[[1]][[1]]$data
   pInfo <- plotData[[1]][[1]]$pInfo
   data <- melt.data.table(d, id.vars = 1, variable.factor = FALSE)
@@ -158,48 +158,45 @@ drugGeneResponseCurve <- function(
   plotData[, dose_level := as.factor(dose_level)]
   plotData[dose_level == "Control",
                        expression := mean(expression),
-                       by = .(dose_level, duration)]
+                       by = .(dose_level, duration, Symbol)]
   max_rep <- max(plotData[dose_level != 'Control', unique(individual_id)])
   plotData <- plotData[individual_id %in% seq_len(max_rep), .SD, by = .(dose_level, duration)]
 
+  #### Rendering the plot ####
   if (summarize.replicates == FALSE) {
-    plot <- ggplot(as_tibble(plotData),
-                   aes(x = sort(as.numeric(duration)),
-                       y = expression, color = dose_level, linetype = as.factor(individual_id),
-                       shape = Symbol,
-                       group = interaction(dose_level, individual_id)))
-    plot <-
-      plot +
-        labs(
-          title = paste0("Drug Gene Response Curve for ", paste(drug, collapse = " & "), " in ", paste(cell.lines, collapse = " & "), collapse = " & "),
-          color = "Dose Level",
-          linetype = "Replicate",
-          shape = "Feature"
-        ) +
+    ggplot(as_tibble(plotData),
+           aes(x = sort(as.numeric(duration)),
+               y = expression,
+               color = dose_level,
+               linetype = as.factor(individual_id),
+               shape = Symbol,
+               group = interaction(dose_level, individual_id, Symbol))) +
+      geom_line() +
+      geom_point() +
+      labs(
+        title = paste0("Drug Gene Response Curve for ", paste(drug, collapse = " & "), " in ", paste(cell.lines, collapse = " & "), collapse = " & "),
+        color = "Dose Level",
+        linetype = "Replicate",
+        shape = "Feature"
+      ) +
       theme(
         plot.title = element_text(hjust = 0.5, size = 14)
-      )
+      ) + xlab("Duration (hrs)") +
+      ylab("Expression")
   } else {
-    plotData <- plotData[, expression := mean(expression), by = .(dose_level, duration)][individual_id == 1]
-    plot <- ggplot(as_tibble(plotData),
-                   aes(x = sort(as.numeric(duration)),
-                       y = expression, color = dose_level, linetype = Symbol))
-                      #group = dose_level))
-    plot <-
-      plot +
-        labs(
+    plotData <- plotData[, expression := mean(expression), by = .(dose_level, duration, Symbol)][individual_id == 1]
+    ggplot(plotData, aes(as.numeric(duration), expression)) +
+      geom_line(aes(color = dose_level, linetype = Symbol), size = 1) +
+      geom_point(aes(color = dose_level, shape = interaction(dose_level, Symbol)), size = 2) +
+      labs(
           title = paste0("Drug Gene Response Curve for ", paste(drug, collapse = " & "), " in ", paste(cell.lines, collapse = " & "), collapse = " & "),
           color = "Dose Level",
           linetype = "Feature"
         ) +
         theme(
           plot.title = element_text(hjust = 0.5, size = 16)
-        )
+        ) +
+      xlab("Duration (hrs)") +
+      ylab("Expression")
   }
-
-  plot +
-    geom_line() +
-    geom_point() +
-    xlab("Duration (hrs)") +
-    ylab("Expression")
 }
