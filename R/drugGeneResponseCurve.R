@@ -186,9 +186,9 @@ drugGeneResponseCurve <- function(
       ylab("Expression")
   } else {
     plotData <- plotData[, expression := mean(expression), by = .(dose_level, duration, Symbol)][individual_id == 1]
-    ggplot(plotData, aes(as.numeric(duration), expression)) +
-      geom_line(aes(color = dose_level, linetype = Symbol), size = 1) +
-      geom_point(aes(color = dose_level), size = 2) +
+    ggplot(plotData, aes(as.numeric(duration), expression, color = dose_level,)) +
+      geom_line(aes(linetype = Symbol), size = 1) +
+      geom_point(size = 2) +
       labs(
           title = paste0("Drug Gene Response Curve for ", paste(drug, collapse = " & "), " in ", paste(cell.lines, collapse = " & "), collapse = " & "),
           color = "Dose Level",
