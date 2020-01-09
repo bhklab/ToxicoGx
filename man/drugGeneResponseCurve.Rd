@@ -21,13 +21,12 @@ drugGeneResponseCurve(
   lwd = 1.5,
   cex = 1,
   cex.main = 0.9,
-  legend.loc = "topright",
   verbose = TRUE
 )
 }
 \arguments{
 \item{tSet}{\code{ToxicoSet} A ToxicoSet to be plotted in this graph. Currently
-only a single tSet is supported, passing more may results in errors.}
+only a single tSet is supported.}
 
 \item{duration}{\code{character} A vector of durations to include in the plot.}
 
@@ -57,31 +56,24 @@ yet implemented this feature.}
 \item{xlim}{\code{numeric} A vector of minimum and maximum values for the x-axis
 of the returned plot.}
 
-\item{ylim}{\code{numeric} A vector of minimum and miximum values for the y-axis
-of the returned plot.}
+\item{ylim}{\code{numeric} A vector of minimum and miximum values for the y-axis}
 
-\item{mycol}{`vector`` A vector of length equal to the product of the
+\item{title}{\code{character} A string containing the desired plot name. If excluded
+a title wil be generated automatically.
 number of drugs, features and doses passed to the function. Takes colour
 arguments as passed to `col` parameter in the `plot()` function.
 Default palette is used when unspecified.}
-
-\item{title}{\code{character} A string containing the desired plot name. If excluded
-a title wil be generated automatically.}
 
 \item{lwd}{\code{numeric} The line width to plot width}
 
 \item{cex}{\code{numeric} The cex parameter passed to plot. Controls the size of
 plot points and the font size of the legend and defaults to 0.7.}
 
-\item{cex.main}{\code{numeric} The cex.main parameter passed to plot,
-controls the size of the titles and defaults to 1.0.}
-
-\item{legend.loc}{\code{character} The location of the legend as passed to the plot()
-function from base graphics. Suggested values are either "topleft" or
-"topright", with the latter as the default.}
-
 \item{verbose}{\code{boolean} Should warning messages about the data passed
 in be printed?}
+
+\item{trunc}{\code{bool} Should the viability values be truncated to lie in
+\code{0-100} before doing the fitting}
 }
 \value{
 Plot of the viabilities for each drug vs time of exposure

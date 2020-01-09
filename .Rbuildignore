@@ -9,3 +9,5 @@
 ^tests
 ^doc$
 ^Meta$
+^packrat/
+^\.Rprofile$

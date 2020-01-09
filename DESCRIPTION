@@ -41,7 +41,7 @@ Imports:
     methods, 
     reshape2, 
     scales
-RoxygenNote: 7.0.0
+RoxygenNote: 7.0.2
 VignetteBuilder: knitr
 Suggests:
     testthat (>= 2.1.0),

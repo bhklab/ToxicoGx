@@ -11,7 +11,7 @@
 #' }
 #'
 #' @param tSet \code{ToxicoSet} A ToxicoSet to be plotted in this graph. Currently
-#'   only a single tSet is supported, passing more may results in errors.
+#'   only a single tSet is supported.
 #' @param dose \code{character} A vector of dose levels to be included in the
 #'   plot. Default to include all dose levels available for a drug. If you specify
 #'   more than two features you may only pass in up to two dose levels.
@@ -27,15 +27,12 @@
 #' @param cell.lines \code{character} A vector of cell lines to include in the plot.
 #'   Currently limited to one cell lines per plot with plans to add support for
 #'   more in upcoming releases.
-# @param xlim \code{numeric} A vector of minimum and maximum values for the x-axis
+#' @param xlim \code{numeric} A vector of minimum and maximum values for the x-axis
 #'   of the returned plot.
-# @param ylim \code{numeric} A vector of minimum and miximum values for the y-axis
+#' @param ylim \code{numeric} A vector of minimum and miximum values for the y-axis
 #   of the returned plot.
-# @param title \code{character} A string containing the desired plot name. If excluded
+#'@param title \code{character} A string containing the desired plot name. If excluded
 #'   a title wil be generated automatically.
-# @param legend.loc \code{character} The location of the legend as passed to the plot()
-#'   function from base graphics. Suggested values are either "topleft" or
-#'   "topright", with the latter as the default.
 # @param mycol `vector`` A vector of length equal to the product of the
 #'   number of drugs, features and doses passed to the function. Takes colour
 #'   arguments as passed to `col` parameter in the `plot()` function.
@@ -43,14 +40,12 @@
 #' @param summarize.replicates \code{logical} If true will take the average of all
 #'  replicates at each time point per gene and duration. This release has not
 #'  yet implemented this feature.
-# @param lwd \code{numeric} The line width to plot width
-# @param cex \code{numeric} The cex parameter passed to plot. Controls the size of
+#' @param lwd \code{numeric} The line width to plot width
+#' @param cex \code{numeric} The cex parameter passed to plot. Controls the size of
 #'   plot points and the font size of the legend and defaults to 0.7.
-# @param cex.main \code{numeric} The cex.main parameter passed to plot,
-#'   controls the size of the titles and defaults to 1.0.
-# @param trunc \code{bool} Should the viability values be truncated to lie in
-#   \code{0-100} before doing the fitting
-# @param verbose \code{boolean} Should warning messages about the data passed
+#' @param trunc \code{bool} Should the viability values be truncated to lie in
+#'   \code{0-100} before doing the fitting
+#' @param verbose \code{boolean} Should warning messages about the data passed
 #'   in be printed?
 #'
 #' @return Plot of the viabilities for each drug vs time of exposure
@@ -81,7 +76,6 @@ drugGeneResponseCurve <- function(
   lwd = 1.5,
   cex = 1,
   cex.main = 0.9,
-  legend.loc = "topright",
   verbose=TRUE
 ) {
 
@@ -89,7 +83,7 @@ drugGeneResponseCurve <- function(
   if (!is(tSet, "list")) { tSet <- list(tSet) }
 
   ## Tempary warnings until function is finished
-  if (length(tSet) > 1) { warning("Multiple tSet plotting has not been tested in this release...")}
+  if (length(tSet) > 1) { stop("This function currently only supports one tSet per plot...")}
   if (length(drug) > 1) { stop("This function currently only supports one drug per plot...")}
   if (length(mDataTypes) > 1) {stop("This function currently only supports one molecular data type per plot...")}
   if (length(features) > 2) { if (length(dose) > 2) { stop("To plot more than one feature, please specify only up to two dose levels...")}}

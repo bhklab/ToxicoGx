@@ -15,31 +15,29 @@
 #' @param drugs \code{character} A drugs or pair of drugss to be plotted.
 #' @param duration \code{character} A vector of durations to include in the plot.
 #' @param cell.lines \code{character} A vector of cell lines to include in the plot.
-# @param xlim \code{numeric} A vector of minimum and maximum values for the x-axis
-#   of the returned plot.
-# @param ylim \code{numeric} A vector of minimum and miximum values for the y-axis
-#   of the returned plot.
-# @param title \code{character} A string containing the desired plot name. If excluded
-#   a title wil be generated automatically.
-# @param mycol `vector`` A vector of length equal to the product of the
-#   number of drugs, features and doses passed to the function. Takes colour
-#   arguments as passed to `col` parameter in the `plot()` function.
-#   Default palette is used when unspecified.
+#' @param xlim \code{numeric} A vector of minimum and maximum values for the x-axis
+#'   of the returned plot.
+#' @param ylim \code{numeric} A vector of minimum and miximum values for the y-axis
+#'   of the returned plot.
+#' @param title \code{character} A string containing the desired plot name. If excluded
+#'   a title wil be generated automatically.
+#' @param mycol \code{vector} A vector of length equal to the product of the
+#'   number of drugs, features and doses passed to the function. Takes colour
+#'   arguments as passed to `col` parameter in the `plot()` function.
+#'   Default palette is used when unspecified.
 #' @param summarize.replicates \code{logical} If true will take the average of all
 #'  replicates at each time point per gene and duration. This release has not
-#  yet implemented this feature.
-# @param x.custom.ticks \code{vector} A numeric vector of the distance between major
+#'  yet implemented this feature.
+# @param x.custom.ticks \code{vector} A numeric vector of the distance be tween major
 #   and minor ticks on the x-axis. If excluded ticks appear only where duration
 #   values are specified.
-# @param legend.loc \code{character} A string specifying the legend location, passed
-#   to the base R \code{legend} function. Defaults to "bottomright".
+# @param legend.loc \code{character} A string specifying the legend location as passed to
+#   the \code(theme(legend.position = ?)) ggplot2 function.
 # @param lwd \code{numeric} The line width to plot width
 # @param cex \code{numeric} The cex parameter passed to plot
 # @param cex.main \code{numeric} The cex.main parameter passed to plot, controls
 # the size of the titles
-# @param trunc \code{bool} Should the viability values be truncated to lie in \code{0-100}
-# before doing the fitting
-# @param verbose \code{boolean} Should warning messages about the data passed in be printed?
+#' @param verbose \code{boolean} Should warning messages about the data passed in be printed?
 #'
 #' @return Plot of the viabilities for each drugs vs time of exposure
 #'
@@ -56,6 +54,10 @@ drugTimeResponseCurve <- function(
   dose = NULL,
   drugs = NULL,
   summarize.replicates = TRUE,
+  title = NULL,
+  xlim = NULL,
+  ylim = NULL,
+  mycol = NULL,
   verbose=TRUE
 ) {
   # Place tSet in a list if not already
@@ -90,8 +92,8 @@ drugTimeResponseCurve <- function(
 
   for (data in plotData) {
     if (summarize.replicates) {
-      data %>% group_by(dose_level, duration_h) %>% mutate(viability = mean(viability))
-      plot <-ggplot(as_tibble(data), aes(as.numeric(duration_h), viability, color = dose_level, shape = as.factor(replicate))) +
+      data %<>% group_by(dose_level, duration_h) %>% mutate(viability = mean(viability))
+      plot <- ggplot(as_tibble(data) %>% filter(replicate == 1), aes(as.numeric(duration_h), viability, color = dose_level)) +
         geom_point() +
         geom_line()
     } else {
@@ -112,6 +114,18 @@ drugTimeResponseCurve <- function(
         xlab("Duration (hrs)") +
         ylab("Viability (%)")
     }
+  }
+  if (!is.null(xlim)) {
+    plot <- plot + xlim(xlim)
+  }
+  if (!is.null(ylim)) {
+    plot <- plot + ylim(ylim)
+  }
+  if (!is.null(title)) {
+    plot <- plot + labs(title = title)
+  }
+  if (!is.null(mycol)) {
+    plot <- plot + scale_fill_manual(values = mycol)
   }
   plot
 }
