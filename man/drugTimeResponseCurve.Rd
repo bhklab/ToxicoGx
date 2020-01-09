@@ -11,15 +11,10 @@ drugTimeResponseCurve(
   dose = NULL,
   drugs = NULL,
   summarize.replicates = TRUE,
+  title = NULL,
   xlim = NULL,
   ylim = NULL,
-  mycol,
-  x.custom.ticks = NULL,
-  title,
-  lwd = 1.5,
-  cex = 1,
-  cex.main = 1,
-  legend.loc = "bottomright",
+  mycol = NULL,
   verbose = TRUE
 )
 }
@@ -41,32 +36,19 @@ at minimum two dose levels, one of witch is "Control".}
 replicates at each time point per gene and duration. This release has not
 yet implemented this feature.}
 
+\item{title}{\code{character} A string containing the desired plot name. If excluded
+a title wil be generated automatically.}
+
 \item{xlim}{\code{numeric} A vector of minimum and maximum values for the x-axis
 of the returned plot.}
 
 \item{ylim}{\code{numeric} A vector of minimum and miximum values for the y-axis
 of the returned plot.}
 
-\item{mycol}{`vector`` A vector of length equal to the product of the
+\item{mycol}{\code{vector} A vector of length equal to the product of the
 number of drugs, features and doses passed to the function. Takes colour
 arguments as passed to `col` parameter in the `plot()` function.
 Default palette is used when unspecified.}
-
-\item{x.custom.ticks}{\code{vector} A numeric vector of the distance between major
-and minor ticks on the x-axis. If excluded ticks appear only where duration
-values are specified.}
-
-\item{title}{\code{character} A string containing the desired plot name. If excluded
-a title wil be generated automatically.}
-
-\item{lwd}{\code{numeric} The line width to plot width}
-
-\item{cex}{\code{numeric} The cex parameter passed to plot}
-
-\item{cex.main}{\code{numeric} The cex.main parameter passed to plot, controls
-the size of the titles}
-
-\item{legend.loc}{\code{character} A string specifying the legend location, passed}
 
 \item{verbose}{\code{boolean} Should warning messages about the data passed in be printed?}
 }
