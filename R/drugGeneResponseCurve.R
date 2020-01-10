@@ -44,6 +44,7 @@
 #'
 #' @import data.table
 #' @import ggplot2
+#' @importFrom tibble as_tibble
 
 #' @export
 drugGeneResponseCurve <- function(
@@ -151,35 +152,28 @@ drugGeneResponseCurve <- function(
                shape = Symbol,
                group = interaction(dose_level, individual_id, Symbol))) +
       geom_line(size = line_width) +
-      geom_point(size = point_size) +
-      labs(
-        title = paste0("Drug Gene Response Curve for ", paste(drug, collapse = " & "), " in ", paste(cell_lines, collapse = " & "), collapse = " & "),
-        color = "Dose Level",
-        linetype = "Replicate",
-        shape = "Feature"
-      ) +
-      theme(
-        plot.title = element_text(hjust = 0.5, size = 14)
-      ) + xlab("Duration (hrs)") +
-      ylab("Expression")
+      geom_point(size = point_size)
   } else {
     plotData <- plotData[, expression := mean(expression), by = .(dose_level, duration, Symbol)][individual_id == 1]
     plot <- ggplot(plotData, aes(as.numeric(duration), expression, color = dose_level,)) +
       geom_line(aes(linetype = Symbol), size = line_width) +
-      geom_point(size = point_size) +
-      labs(
-          title = paste0("Drug Gene Response Curve for ", paste(drug, collapse = " & "), " in ", paste(cell_lines, collapse = " & "), collapse = " & "),
-          color = "Dose Level",
-          linetype = "Feature"
-        ) +
-        theme(
-          plot.title = element_text(hjust = 0.5, size = 16)
-        ) +
-      xlab("Duration (hrs)") +
-      ylab("Expression")
+      geom_point(size = point_size)
   }
+  plot <- plot +
+    labs(
+      title = paste0("Drug Gene Response Curve for ", paste(drug, collapse = " & "), " in ", paste(cell_lines, collapse = " & "), collapse = " & "),
+      color = "Dose Level",
+      linetype = "Replicate",
+      shape = "Feature"
+    ) +
+    theme(
+      plot.title = element_text(hjust = 0.5, size = 14)
+    ) + xlab("Duration (hrs)") +
+    ylab("Expression") +
+    scale_x_continuous(breaks=as.numeric(duration), labels = duration)
+
   if (!is.null(ggplot_args)) {
-    plot + ggplot_args
+    plot <- plot + ggplot_args
   }
   plot
 }

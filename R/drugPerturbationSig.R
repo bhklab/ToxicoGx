@@ -42,6 +42,9 @@
 #' @return \code{ToxicoSig} An object composed of a 3D array with genes in the
 #'   first dimension, drugs in the second, and return values in the third.
 #'
+#' @importFrom tibble as_tibble
+#' @import ggplot2
+#'
 #' @export
 #'
 drugPerturbationSig <- function(
