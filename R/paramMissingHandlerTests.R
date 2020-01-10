@@ -25,7 +25,7 @@ paramMissingHandlerTests <- function(funName, tSet, mDataType, ...) {
 
   ## Interection of missing values for similar functions
   intersectMissingChecks <- c(
-    "cell.lines", "drugs", "features", "duration"
+    "cell_lines", "drugs", "features", "duration"
   )
 
   missingChecks <-
@@ -47,7 +47,7 @@ paramMissingHandlerTests <- function(funName, tSet, mDataType, ...) {
 .checkParamsForMissingTests <- function(
   funName = funName, tSet = tSet, missingChecks, mDataType, ...) {
   # Initialize variable names in the local environment
-  cell.lines <- duration <- drugs <- features <- NULL
+  cell_lines <- duration <- drugs <- features <- NULL
   # Extract named arguments into local environment
   argList <- list(...)
   for (idx in seq_len(length(argList))) { ## TODO:: Make this work with seq_along()
@@ -61,7 +61,7 @@ paramMissingHandlerTests <- function(funName, tSet, mDataType, ...) {
   for (missing in missingChecks) {
     switch(
       missing,
-      "cell.lines" = {
+      "cell_lines" = {
       testthat::test
       message(paste0(missing, " parameter not specified, defaults to all cell lines in the given tSet!"))
       },

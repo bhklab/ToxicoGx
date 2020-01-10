@@ -12,7 +12,7 @@
 #' @param tSet \code{ToxicoSet} The ToxicoSet from which to extract the data
 #' @param sensitivity.measure \code{character} which sensitivity sensitivity.measure to use? Use the
 #'   sensitivityMeasures function to find out what measures are available for each TSet.
-#' @param cell.lines \code{character} The cell lines to be summarized.
+#' @param cell_lines \code{character} The cell lines to be summarized.
 #'    If any cell lines has no data, it will be filled with missing values
 #' @param drugs \code{character} The drugs to be summarized.
 #'   If any drugs has no data, it will be filled with
@@ -35,7 +35,7 @@
 #' @export
 summarizeSensitivityProfiles <- function(tSet,
                                          duration = NULL,
-                                         cell.lines = NULL,
+                                         cell_lines = NULL,
                                          drugs = NULL,
                                          sensitivity.measure="auc_recomputed",
                                          summary.stat = c("mean",
@@ -49,7 +49,7 @@ summarizeSensitivityProfiles <- function(tSet,
   argDefaultList <-
     paramMissingHandler(
       funName = "summarizeSensitivityProfiles", tSet = tSet,
-      cell.lines = cell.lines, drugs = drugs, duration = duration
+      cell_lines = cell_lines, drugs = drugs, duration = duration
     )
   # Assign any missing parameter default values to function environment
   ## TODO:: I think we can do a for loop over index names?
@@ -71,7 +71,7 @@ summarizeSensitivityProfiles <- function(tSet,
 
   pp <- ToxicoGx::sensitivityInfo(tSet)
   ## TODO:: Determine what this supposed to do?
-  #ppRows <- which(pp$cellid %in% cell.lines & pp$drugid %in% drugs & pp$duration_h %in% duration) ### NEEDED to deal with duplicated rownames!!!!!!!
+  #ppRows <- which(pp$cellid %in% cell_lines & pp$drugid %in% drugs & pp$duration_h %in% duration) ### NEEDED to deal with duplicated rownames!!!!!!!
 
   if (sensitivity.measure != "max.conc") {
     #if the sensitivity.measure specified is not "max.conc"
@@ -91,17 +91,17 @@ summarizeSensitivityProfiles <- function(tSet,
   }
 
   #result is a matrix of NA's where # of rows, # columns is as specified:
-  result <- matrix(NA_real_, nrow = length(drugs), ncol = length(cell.lines))
+  result <- matrix(NA_real_, nrow = length(drugs), ncol = length(cell_lines))
   #specify the row, column names of the result matrix
   rownames(result) <- drugs
-  colnames(result) <- cell.lines
+  colnames(result) <- cell_lines
 
 
   ## TODO:: Finish progress bar
   # if(verbose){
 
   #   message(sprintf("Summarizing %s sensitivity data for:\t%s", sensitivity.measure, tSet@annotation$name))
-  #   total <- length(drugs)*length(cell.lines)
+  #   total <- length(drugs)*length(cell_lines)
   #   # create progress bar
   #   pb <- utils::txtProgressBar(min=0, max=total, style=3)
   #   i <- 1
@@ -138,7 +138,7 @@ summarizeSensitivityProfiles <- function(tSet,
   }
 
   pp_dd <- pp_dd[
-    pp_dd[,"cellid"] %in% cell.lines &
+    pp_dd[,"cellid"] %in% cell_lines &
     pp_dd[,"drugid"] %in% drugs &
     pp_dd[,"duration_h"] %in% duration,
 
@@ -146,7 +146,7 @@ summarizeSensitivityProfiles <- function(tSet,
 
   tt <- reshape2::acast(pp_dd, drugid~cellid, fun.aggregate = summary.function,
                         value.var = "sensitivity.measure")
-  # tt <- tt[drugs, cell.lines]
+  # tt <- tt[drugs, cell_lines]
 
 
 

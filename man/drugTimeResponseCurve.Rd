@@ -2,20 +2,19 @@
 % Please edit documentation in R/drugTimeResponseCurve.R
 \name{drugTimeResponseCurve}
 \alias{drugTimeResponseCurve}
-\title{Compares viabilities at a given dose over different experimental duration}
+\title{Compares viabilities at a given dose over different experimental durations}
 \usage{
 drugTimeResponseCurve(
   tSet,
   duration = NULL,
-  cell.lines = NULL,
+  cell_lines = NULL,
   dose = NULL,
   drugs = NULL,
-  summarize.replicates = TRUE,
-  title = NULL,
-  xlim = NULL,
-  ylim = NULL,
-  mycol = NULL,
-  verbose = TRUE
+  summarize_replicates = TRUE,
+  line_width = 1,
+  point_size = 2.5,
+  verbose = TRUE,
+  ggplot_args = NULL
 )
 }
 \arguments{
@@ -24,43 +23,69 @@ this figure}
 
 \item{duration}{\code{character} A vector of durations to include in the plot.}
 
-\item{cell.lines}{\code{character} A vector of cell lines to include in the plot.}
+\item{cell_lines}{\code{character} A vector of cell lines to include in the
+plot.}
 
 \item{dose}{\code{character} A vector of dose levels to be included in the
 plot. Default to include all dose levels available for a drug. Must include
 at minimum two dose levels, one of witch is "Control".}
 
-\item{drugs}{\code{character} A drugs or pair of drugss to be plotted.}
+\item{drugs}{\code{character} A drugs or pair of drugs to be plotted.}
 
-\item{summarize.replicates}{\code{logical} If true will take the average of all
-replicates at each time point per gene and duration. This release has not
-yet implemented this feature.}
+\item{summarize_replicates}{\code{logical} If TRUE will average viability
+across replicates for each unique drug-dose-duration combination.}
 
-\item{title}{\code{character} A string containing the desired plot name. If excluded
-a title wil be generated automatically.}
+\item{line_width}{\code{numeric} A number specifying the thickness of lines
+in the plot, as passed to size in geom_line(). Defaults to 1.}
 
-\item{xlim}{\code{numeric} A vector of minimum and maximum values for the x-axis
-of the returned plot.}
+\item{point_size}{\code{numeric} A number specifying how large points should
+be in the plot, as passed to size in geom_point(). Defaults to 2.5.}
 
-\item{ylim}{\code{numeric} A vector of minimum and miximum values for the y-axis
-of the returned plot.}
+\item{verbose}{\code{boolean} Should warning messages about the data passed
+in be printed?}
 
-\item{mycol}{\code{vector} A vector of length equal to the product of the
-number of drugs, features and doses passed to the function. Takes colour
-arguments as passed to `col` parameter in the `plot()` function.
-Default palette is used when unspecified.}
-
-\item{verbose}{\code{boolean} Should warning messages about the data passed in be printed?}
+\item{ggplot_args}{\code{list} A list of ggplot2 functions which can be
+called using the plot + function() syntax. This allows arbitrary
+customization of the plot including changing the title, axis labels,
+colours, etc. Please see the included examples for basic usage or ggplot2
+documentation for advanced customization. Alternatively, you could assign
+the return value to a variable and add the customization yourself using
+plot + function().}
 }
 \value{
 Plot of the viabilities for each drugs vs time of exposure
 }
 \description{
-Description of this function
+This function generates a plot visualizing the relationship between gene
+  expression, time and dose level for the selected tSet. The plot is generated
+  with ggplot2 and can be customized using ggplot plot + function() syntax.
 }
 \examples{
-if (interactive()) {
-  drugTimeResponseCurve(TGGATESsmall, cell.lines = "Hepatocyte", dose = c("Control", "Low", "Middle"), drugs = drugNames(TGGATESsmall)[6], duration = c("2", "8", "24"))
-}
+  # Default settings
+  plot <- drugTimeResponseCurve(TGGATESsmall, cell_lines = "Hepatocyte",
+  dose = c("Control", "Low", "Middle"), drugs = drugNames(TGGATESsmall)[6],
+  duration = c("2", "8", "24"))
+
+  # Customize title, x/y labels, x/y limits, colour palette and define
+  # custom ticks for x axis using the function argument ggplot2_args
+  customizations <- list(labs(title= 'My Custom Title', ylab = 'The y-axis'),
+                         xlim(c(2, 24)), ylim(c(99,105)),
+                         scale_color_brewer(palette="Set1"),
+                         scale_x_continuous(breaks=c(2, 8, 24),
+                           labels = c("Two", "Eight", "Twenty-Four"))
+                         )
+
+   if(interactive()) {
+      drugTimeResponseCurve(TGGATESsmall, cell_lines = "Hepatocyte",
+        dose = c("Control", "Low", "Middle"),
+        drugs = drugNames(TGGATESsmall)[6], duration = c("2", "8", "24"),
+        ggplot_args = customizations)
+   }
+
+   # Customize the plot using standard ggplot2 syntax
+   if(interactve()) {
+      plot + labs(title= 'My Custom Title', ylab = 'The y-axis') +
+        xlim(c(2, 24)) + ylim(c(99,105)) + scale_color_brewer(palette="Set1")
+   }
 
 }

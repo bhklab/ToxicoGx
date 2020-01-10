@@ -870,7 +870,7 @@ setMethod("dim", signature=signature(x="ToxicoSet"), function(x){
 #'   cells = TGGATESCells[1], duration = "2")
 #'
 #' @param tSet A \code{ToxicoSet} to be subsetted
-#' @param cell.lines A list or vector of cell names as used in the dataset to which
+#' @param cell_lines A list or vector of cell names as used in the dataset to which
 #'   the object will be subsetted. If left blank, then all cells will be left in
 #'   the dataset.
 #' @param drugs A list or vector of drug names as used in the dataset to which
@@ -889,7 +889,7 @@ setMethod("dim", signature=signature(x="ToxicoSet"), function(x){
 #' @importFrom CoreGx unionList
 #' @export
 ## TODO:: Include dose parmater to subset on
-subsetTo <- function(tSet, cell.lines = NULL,
+subsetTo <- function(tSet, cell_lines = NULL,
                      drugs=NULL,
                      molecular.data.cells=NULL,
                      duration=NULL, features=NULL, ...
@@ -923,7 +923,7 @@ subsetTo <- function(tSet, cell.lines = NULL,
   # Get named list of defualt values for missing parameters
   argDefaultList <-
     paramMissingHandler(funName = "subsetTo", tSet = tSet,
-                        drugs = drugs, cell.lines = cell.lines, features = features,
+                        drugs = drugs, cell_lines = cell_lines, features = features,
                         duration = duration)
   # Assign any missing parameter default values to function environment
   if (length(argDefaultList) > 0) {
@@ -934,7 +934,7 @@ subsetTo <- function(tSet, cell.lines = NULL,
 
   # ERROR HANDLING FOR PARAMETERS
   paramErrorChecker(funName = "subsetTo", tSet = tSet,
-                    cell.lines = cell.lines,
+                    cell_lines = cell_lines,
                     drugs = drugs, features = features,
                     duration = duration)
 
@@ -945,7 +945,7 @@ subsetTo <- function(tSet, cell.lines = NULL,
 
   ### the function missing does not work as expected in the context below, because the arguments are passed to the anonymous
   ### function in lapply, so it does not recognize them as missing
-  tSet@molecularProfiles <- lapply(tSet@molecularProfiles, function(eset, cell.lines, drugs, molecular.data.cells, duration, features){
+  tSet@molecularProfiles <- lapply(tSet@molecularProfiles, function(eset, cell_lines, drugs, molecular.data.cells, duration, features){
 
     if (!is.null(features)) {
       eset <- eset[which(Biobase::featureNames(eset) %in% features), ]
@@ -953,24 +953,24 @@ subsetTo <- function(tSet, cell.lines = NULL,
 
     molecular.data.type <- ifelse(length(grep("rna", Biobase::annotation(eset)) > 0), "rna", Biobase::annotation(eset))
     if (length(grep(molecular.data.type, names(molecular.data.cells))) > 0) {
-      cell.lines <- molecular.data.cells[[molecular.data.type]]
+      cell_lines <- molecular.data.cells[[molecular.data.type]]
     }
     column_indices <- NULL
 
-    if (length(cell.lines) == 0 && length(drugs) == 0) {
+    if (length(cell_lines) == 0 && length(drugs) == 0) {
       column_indices <- seq_len(ncol(eset))
     }
-    if (length(cell.lines) == 0 && tSet@datasetType == "sensitivity") {
+    if (length(cell_lines) == 0 && tSet@datasetType == "sensitivity") {
       column_indices <- seq_len(ncol(eset))
     }
 
     # Selecting indices which match the cells argument
     cell_line_index <- NULL
-    if (length(cell.lines) != 0) {
-      if (!all(cell.lines %in% cellNames(tSet))) {
+    if (length(cell_lines) != 0) {
+      if (!all(cell_lines %in% cellNames(tSet))) {
         stop("Some of the cell names passed to function did not match to names in the PharmacoSet. Please ensure you are using cell names as returned by the cellNames function")
       }
-      cell_line_index <- which(Biobase::pData(eset)[["cellid"]] %in% cell.lines)
+      cell_line_index <- which(Biobase::pData(eset)[["cellid"]] %in% cell_lines)
     }
 
     # Selecting indexes which match drugs arguement
@@ -1003,7 +1003,7 @@ subsetTo <- function(tSet, cell.lines = NULL,
     if (!is.null(duration)){
       if (all(!(duration %in% unique(Biobase::pData(eset[,column_indices])$duration)))) {
         # Error when other parameters are passed in
-        if ( !is.null(cell.lines) | !is.null(drugs) | !is.null(molecular.data.cells)) {
+        if ( !is.null(cell_lines) | !is.null(drugs) | !is.null(molecular.data.cells)) {
           stop(paste0(
             "There are no molecular profiles with duration of ",
             duration, " in the tSet with the selected parameters."
@@ -1025,7 +1025,7 @@ subsetTo <- function(tSet, cell.lines = NULL,
     eset <- eset[row_indices, column_indices]
     return(eset)
 
-  }, cell.lines = cell.lines, drugs = drugs, molecular.data.cells = molecular.data.cells, duration = duration, features = features)
+  }, cell_lines = cell_lines, drugs = drugs, molecular.data.cells = molecular.data.cells, duration = duration, features = features)
 
 
   ######
@@ -1047,18 +1047,18 @@ subsetTo <- function(tSet, cell.lines = NULL,
   # Logic if drug or cell parameters are passed to subsetTo
   else if (
     (tSet@datasetType == "sensitivity" | tSet@datasetType == "both") &
-    (length(drugs) != 0 | length(cell.lines) != 0 | !is.null(duration) )
+    (length(drugs) != 0 | length(cell_lines) != 0 | !is.null(duration) )
   ) {
 
     drugs_index <- which(sensitivityInfo(tSet)[, "drugid"] %in% drugs)
-    cell_line_index <- which(sensitivityInfo(tSet)[,"cellid"] %in% cell.lines)
+    cell_line_index <- which(sensitivityInfo(tSet)[,"cellid"] %in% cell_lines)
     if (length(drugs_index) !=0 & length(cell_line_index) !=0 ) {
       if (length(intersect(drugs_index, cell_line_index)) == 0) {
         stop("This Drug - Cell Line combination was not tested together.")
       }
       row_indices <- intersect(drugs_index, cell_line_index)
     } else {
-      if(length(drugs_index)!=0 & length(cell.lines)==0) {
+      if(length(drugs_index)!=0 & length(cell_lines)==0) {
         row_indices <- drugs_index
       } else {
         if(length(cell_line_index)!=0 & length(drugs)==0){
@@ -1073,7 +1073,7 @@ subsetTo <- function(tSet, cell.lines = NULL,
     if(!is.null(duration)){
       if(all(!(duration %in% unique(sensitivityInfo(tSet)[row_indices,]$duration_h)))) {
         # Error when other parameters are passed in
-        if(!is.null(cell.lines) | !is.null(drugs) | !is.null(molecular.data.cells)) {
+        if(!is.null(cell_lines) | !is.null(drugs) | !is.null(molecular.data.cells)) {
           stop(paste0(
             ## TODO:: Is sample the correct way to refer to one treatment/duration combination in TGx experiments?
             "There are no samples with duration of ",
@@ -1094,8 +1094,8 @@ subsetTo <- function(tSet, cell.lines = NULL,
       lapply(sensItemNames, function(sensItemName, drop){
         if (sensItemName == "n") {
           sensItem <- tSet@sensitivity[[sensItemName]]
-          if (!is.null(cell.lines)) {
-            sensItem[which(rownames(sensItem) %in% cell.lines), which(colnames(sensItem) %in% drugs), drop = drop]
+          if (!is.null(cell_lines)) {
+            sensItem[which(rownames(sensItem) %in% cell_lines), which(colnames(sensItem) %in% drugs), drop = drop]
           } else {
             sensItem[ , which(colnames(sensItem) %in% drugs), drop = drop]
           }
@@ -1126,20 +1126,20 @@ subsetTo <- function(tSet, cell.lines = NULL,
   #####
   # SUBSET CELLS SLOT
   #####
-  if (length(cell.lines) == 0) {
-    celll.lines <- union(cell.lines, na.omit(unionList(lapply(tSet@molecularProfiles, function(eSet){unique(Biobase::pData(eSet)[["cellid"]])}))))
+  if (length(cell_lines) == 0) {
+    celll.lines <- union(cell_lines, na.omit(unionList(lapply(tSet@molecularProfiles, function(eSet){unique(Biobase::pData(eSet)[["cellid"]])}))))
     if (tSet@datasetType == "sensitivity" | tSet@datasetType == "both"){
-      cell.lines <- union(cell.lines, sensitivityInfo(tSet)[["cellid"]])
+      cell_lines <- union(cell_lines, sensitivityInfo(tSet)[["cellid"]])
     }
   }
   #####
   # ASSIGN SUBSETS BACK TO TOXICOSET OBJECT
   #####
   drugInfo(tSet) <- drugInfo(tSet)[drugs , , drop=drop]
-  cellInfo(tSet) <- cellInfo(tSet)[cell.lines , , drop=drop]
+  cellInfo(tSet) <- cellInfo(tSet)[cell_lines , , drop=drop]
   tSet@curation$drug <- tSet@curation$drug[drugs , , drop=drop]
-  tSet@curation$cell <- tSet@curation$cell[cell.lines , , drop=drop]
-  tSet@curation$tissue <- tSet@curation$tissue[cell.lines , , drop=drop]
+  tSet@curation$cell <- tSet@curation$cell[cell_lines , , drop=drop]
+  tSet@curation$tissue <- tSet@curation$tissue[cell_lines , , drop=drop]
   return(tSet)
 }
 

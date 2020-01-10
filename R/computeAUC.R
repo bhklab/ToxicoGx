@@ -29,7 +29,7 @@
 #' @param verbose [logical], if true, causes warnings thrown by the function to be printed.
 #' @return Numeric AUC value
 #' @export
-#' @import caTools
+#' @importFrom caTools trapz
 
 computeAUC <- function (concentration,
                         viability,

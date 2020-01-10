@@ -8,7 +8,7 @@ drugPerturbationSig(
   tSet,
   mDataType,
   drugs = NULL,
-  cell.lines = NULL,
+  cell_lines = NULL,
   features = NULL,
   duration = NULL,
   dose = NULL,
@@ -26,7 +26,7 @@ in the analysis, out of dna, rna, rnaseq, snp, cnv (only rna currently supported
 \item{drugs}{\code{character} a vector of drug names for which to compute the
 signatures. Should match the names used in the ToxicoSet.}
 
-\item{cell.lines}{\code{character} a vector of cell names to use in computing the
+\item{cell_lines}{\code{character} a vector of cell names to use in computing the
 signatures. Should match the names used in the ToxicoSet.}
 
 \item{features}{\code{character} a vector of features for which to compute the

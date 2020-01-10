@@ -2,12 +2,15 @@
 #'   drug dosages vs time
 #'
 #' This function generates a plot visualizing the relationship between gene
-#'   expression, time and dose level for the selected tSet.
+#'   expression, time and dose level for the selected tSet. The plot is generated
+#'   with ggplot2 and can be customized using ggplot plot + function() syntax.
 #'
 #' @examples
 #'
 #' if (interactive()) {
-#' drugGeneResponseCurve(TGGATESsmall, dose = c("Control", "Low", "Middle"), mDataTypes="rna", drug = drugNames(TGGATESsmall)[1], duration = c("2", "8", "24"), features = "ENSG00000000003_at")
+#'   drugGeneResponseCurve(TGGATESsmall, dose = c("Control", "Low", "Middle"),
+#'   mDataTypes="rna", drug = drugNames(TGGATESsmall)[1],
+#'   duration = c("2", "8", "24"), features = "ENSG00000000003_at")
 #' }
 #'
 #' @param tSet \code{ToxicoSet} A ToxicoSet to be plotted in this graph. Currently
@@ -24,58 +27,37 @@
 #' @param drug \code{character} A drug name to include in this plot.
 #'   See drugNames(tSet) for a list of options.
 #' @param duration \code{character} A vector of durations to include in the plot.
-#' @param cell.lines \code{character} A vector of cell lines to include in the plot.
-#'   Currently limited to one cell lines per plot with plans to add support for
-#'   more in upcoming releases.
-#' @param xlim \code{numeric} A vector of minimum and maximum values for the x-axis
-#'   of the returned plot.
-#' @param ylim \code{numeric} A vector of minimum and miximum values for the y-axis
-#   of the returned plot.
-#'@param title \code{character} A string containing the desired plot name. If excluded
-#'   a title wil be generated automatically.
-# @param mycol `vector`` A vector of length equal to the product of the
-#'   number of drugs, features and doses passed to the function. Takes colour
-#'   arguments as passed to `col` parameter in the `plot()` function.
-#'   Default palette is used when unspecified.
-#' @param summarize.replicates \code{logical} If true will take the average of all
-#'  replicates at each time point per gene and duration. This release has not
-#'  yet implemented this feature.
-#' @param lwd \code{numeric} The line width to plot width
-#' @param cex \code{numeric} The cex parameter passed to plot. Controls the size of
-#'   plot points and the font size of the legend and defaults to 0.7.
-#' @param trunc \code{bool} Should the viability values be truncated to lie in
-#'   \code{0-100} before doing the fitting
+#' @param summarize_replicates \code{logical} If TRUE will average viability
+#'   across replicates for each unique drug-dose-duration combination.
+#' @param cell_lines \code{character} A vector of cell lines to include in the plot.
+#' @param line_width \code{numeric} A number specifying the thickness of lines
+#'   in the plot, as passed to size in geom_line(). Defaults to 1.
+#' @param point_size \code{numeric} A number specifying how large points should
+#'   be in the plot, as passed to size in geom_point(). Defaults to 2.5.
+#' @param ggplot2_args \code{list} A list of ggplot2 functions which can be called using the plot + function()
+#'   syntax. This allows arbitrary customization of the plot including changing the title, axis labels, colours, etc.
+#'   Please see the included examples for basic usage or ggplot2 documentation for advanced customization.
 #' @param verbose \code{boolean} Should warning messages about the data passed
 #'   in be printed?
 #'
 #' @return Plot of the viabilities for each drug vs time of exposure
 #'
-#' @import RColorBrewer
-#' @importFrom graphics plot rect points lines legend
-#' @importFrom grDevices rgb
-#' @importFrom magicaxis magaxis
-#' @import dplyr
 #' @import data.table
-#' @importFrom magrittr %<>%
-#' @importFrom rlist list.map list.select list.filter list.search
-#'
+#' @import ggplot2
+
 #' @export
 drugGeneResponseCurve <- function(
   tSet,
-  duration,
-  cell.lines,
-  mDataTypes,
+  duration = NULL,
+  cell_lines = NULL,
+  mDataTypes = NULL,
   features = NULL,
-  dose,
-  drug,
-  summarize.replicates = TRUE,
-  xlim=c(0, 24),
-  ylim=c(0, 15),
-  mycol,
-  title,
-  lwd = 1.5,
-  cex = 1,
-  cex.main = 0.9,
+  dose = NULL,
+  drug = NULL,
+  summarize_replicates = TRUE,
+  line_width = 1,
+  point_size = 2.5,
+  ggplot2_args = NULL,
   verbose=TRUE
 ) {
 
@@ -103,8 +85,8 @@ drugGeneResponseCurve <- function(
     })
   }
 
-  if (missing(cell.lines)) {cell.lines <- unique(phenoInfo(tSet[[1]], mDataTypes[1])$cellid)}
-  if (length(cell.lines) > 1) { stop("Only one cell type per plot is currently supported...")}
+  if (missing(cell_lines)) {cell_lines <- unique(phenoInfo(tSet[[1]], mDataTypes[1])$cellid)}
+  if (length(cell_lines) > 1) { stop("Only one cell type per plot is currently supported...")}
 
   # Places features in list if not already
   if (!is(features, "list")) {
@@ -147,7 +129,9 @@ drugGeneResponseCurve <- function(
   fInfo <- data.table(featureInfo(tSet[[1]], "rna"))
   colnames(fInfo)[2] <- "feature"
 
-  plotData <- merge(data, pInfo[, .(samplename, individual_id, drugid, dose_level, duration)], by = "samplename")
+  plotData <- merge(data, pInfo[, .(samplename, individual_id,
+                                    drugid, dose_level, duration)],
+                    by = "samplename")
   plotData <- merge(plotData, fInfo[, .(Symbol, feature)], by = "feature")
   plotData[, dose_level := as.factor(dose_level)]
   plotData[dose_level == "Control",
@@ -158,7 +142,7 @@ drugGeneResponseCurve <- function(
   plotData <- plotData[dose_level %in% dose, .SD]
 
   #### Rendering the plot ####
-  if (summarize.replicates == FALSE) {
+  if (summarize_replicates == FALSE) {
     ggplot(as_tibble(plotData),
            aes(x = as.numeric(duration),
                y = expression,
@@ -166,10 +150,10 @@ drugGeneResponseCurve <- function(
                linetype = as.factor(individual_id),
                shape = Symbol,
                group = interaction(dose_level, individual_id, Symbol))) +
-      geom_line(size = 1) +
-      geom_point(size = 2) +
+      geom_line(size = line_width) +
+      geom_point(size = point_size) +
       labs(
-        title = paste0("Drug Gene Response Curve for ", paste(drug, collapse = " & "), " in ", paste(cell.lines, collapse = " & "), collapse = " & "),
+        title = paste0("Drug Gene Response Curve for ", paste(drug, collapse = " & "), " in ", paste(cell_lines, collapse = " & "), collapse = " & "),
         color = "Dose Level",
         linetype = "Replicate",
         shape = "Feature"
@@ -181,10 +165,10 @@ drugGeneResponseCurve <- function(
   } else {
     plotData <- plotData[, expression := mean(expression), by = .(dose_level, duration, Symbol)][individual_id == 1]
     ggplot(plotData, aes(as.numeric(duration), expression, color = dose_level,)) +
-      geom_line(aes(linetype = Symbol), size = 1) +
-      geom_point(size = 2) +
+      geom_line(aes(linetype = Symbol), size = line_width) +
+      geom_point(size = point_size) +
       labs(
-          title = paste0("Drug Gene Response Curve for ", paste(drug, collapse = " & "), " in ", paste(cell.lines, collapse = " & "), collapse = " & "),
+          title = paste0("Drug Gene Response Curve for ", paste(drug, collapse = " & "), " in ", paste(cell_lines, collapse = " & "), collapse = " & "),
           color = "Dose Level",
           linetype = "Feature"
         ) +

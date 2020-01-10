@@ -8,7 +8,7 @@ drug vs cell line table}
 summarizeSensitivityProfiles(
   tSet,
   duration = NULL,
-  cell.lines = NULL,
+  cell_lines = NULL,
   drugs = NULL,
   sensitivity.measure = "auc_recomputed",
   summary.stat = c("mean", "median", "first", "last", "max", "min"),
@@ -22,7 +22,7 @@ summarizeSensitivityProfiles(
 \item{duration}{\code{numeric} The duration at which to summarize
 the drug-cell combo. This is a required parameter.}
 
-\item{cell.lines}{\code{character} The cell lines to be summarized.
+\item{cell_lines}{\code{character} The cell lines to be summarized.
 If any cell lines has no data, it will be filled with missing values}
 
 \item{drugs}{\code{character} The drugs to be summarized.

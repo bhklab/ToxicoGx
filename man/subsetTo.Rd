@@ -6,7 +6,7 @@
 \usage{
 subsetTo(
   tSet,
-  cell.lines = NULL,
+  cell_lines = NULL,
   drugs = NULL,
   molecular.data.cells = NULL,
   duration = NULL,
@@ -17,7 +17,7 @@ subsetTo(
 \arguments{
 \item{tSet}{A \code{ToxicoSet} to be subsetted}
 
-\item{cell.lines}{A list or vector of cell names as used in the dataset to which
+\item{cell_lines}{A list or vector of cell names as used in the dataset to which
 the object will be subsetted. If left blank, then all cells will be left in
 the dataset.}
 

@@ -10,7 +10,7 @@
 #' data(TGGATESsmall)
 #' summMP <- ToxicoGx::summarizeMolecularProfiles(
 #'   tSet = TGGATESsmall, mDataType = "rna",
-#'   cell.lines=cellNames(TGGATESsmall), drugs = head(drugNames(TGGATESsmall)),
+#'   cell_lines=cellNames(TGGATESsmall), drugs = head(drugNames(TGGATESsmall)),
 #'   features = fNames(TGGATESsmall,"rna")[1:1000], duration = "8",
 #'   dose = c("Control", "High"), summary.stat = "median",
 #'   fill.missing = TRUE, verbose=TRUE
@@ -27,14 +27,14 @@
 #' @param mDataType \code{character} which one of the molecular data types
 #' to use in the analysis, out of all the molecular data types available for the tSet
 #' for example: rna
-#' @param cell.lines \code{character} The cell lines to be summarized.
+#' @param cell_lines \code{character} The cell lines to be summarized.
 #'   If any cell.line has no data, missing values will be created
 #' @param drugs \code{character} The drugs to be summarized
 #' @param features \code{character} A vector of the feature names to include in the summary
 #' @param duration \code{character} A vector of durations to summarize across
 #' @param dose \code{character} The dose level to summarize replicates across
 #' @param summary.stat \code{character} which summary method to use if there are repeated
-#'   cell.lines? Choices are "mean", "median", "first", or "last"
+#'   cell_lines? Choices are "mean", "median", "first", or "last"
 #' @param fill.missing \code{boolean} should the missing cell lines not in the
 #'   molecular data object be filled in with missing values?
 #' @param summarize A flag which when set to FALSE (defaults to TRUE) disables summarizing and
@@ -53,7 +53,7 @@
 summarizeMolecularProfiles <-
   function(tSet,
            mDataType,
-           cell.lines = NULL, # Defaults get set in paramMissingHandler call
+           cell_lines = NULL, # Defaults get set in paramMissingHandler call
            drugs = NULL,
            features = NULL,
            duration = NULL,
@@ -71,7 +71,7 @@ summarizeMolecularProfiles <-
     argDefaultList <-
       paramMissingHandler(
         funName = "summarizeMolecularProfiles", tSet = tSet,
-        mDataType = mDataType, cell.lines = cell.lines, drugs = drugs,
+        mDataType = mDataType, cell_lines = cell_lines, drugs = drugs,
         features = features, duration = duration
       )
 
@@ -86,7 +86,7 @@ summarizeMolecularProfiles <-
     ## ERROR HANDLING FOR PARAMETERS
     paramErrorChecker(
       "summarizeMolecularProfiles", tSet = tSet,
-      mDataType = mDataType, cell.lines = cell.lines, drugs = drugs,
+      mDataType = mDataType, cell_lines = cell_lines, drugs = drugs,
       features = features, duration = duration, dose = dose,
       summary.stat = summary.stat
     )
@@ -97,7 +97,7 @@ summarizeMolecularProfiles <-
     pp <- ToxicoGx::phenoInfo(tSet, mDataType) #phenoData of the tSet
     ff <- ToxicoGx::featureInfo(tSet, mDataType)[features,,drop = F]
 
-    unique.cells <- unique(cell.lines) #unique cell types (row names of the result)
+    unique.cells <- unique(cell_lines) #unique cell types (row names of the result)
     #subset phenoData to include only the experiments requested
     pp2 <- pp[(pp[,"cellid"] %in% unique.cells & pp[,"drugid"] %in% drugs
                & pp[,"duration"] %in% duration & pp[,"dose_level"] %in% dose), , drop = F] #only the phenoData that is relevant to the request input

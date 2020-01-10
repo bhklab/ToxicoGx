@@ -9,7 +9,7 @@ context("Testing if summarizeMolecularProfiles error handling works correctly...
 context("...Checking for correct tSet param errors...")
 test_that("Errors if given more than one tSet as parameter.", { expect_error(
   summarizeMolecularProfiles(
-    c(TGGATESsmall, TGGATESsmall), mDataType = "rna", cell.lines=cellNames(TGGATESsmall),
+    c(TGGATESsmall, TGGATESsmall), mDataType = "rna", cell_lines=cellNames(TGGATESsmall),
     drugs = head(drugNames(TGGATESsmall)),
     features = fNames(TGGATESsmall,"rna"), duration = "8",
     dose = c("Control", "High"), summary.stat = "median",
@@ -22,7 +22,7 @@ test_that("Errors if given more than one tSet as parameter.", { expect_error(
 context("...Checking for correct mDataType param errors...")
 test_that("Errors if given more than one mDataType.", { expect_error(
   summarizeMolecularProfiles(
-    TGGATESsmall, mDataType = c("rna", "cnv"), cell.lines=cellNames(TGGATESsmall),
+    TGGATESsmall, mDataType = c("rna", "cnv"), cell_lines=cellNames(TGGATESsmall),
     drugs = head(drugNames(TGGATESsmall)),
     features = fNames(TGGATESsmall,"rna"), duration = "8",
     dose = c("Control", "High"), summary.stat = "median",
@@ -32,7 +32,7 @@ test_that("Errors if given more than one mDataType.", { expect_error(
 })
 test_that("Errors if given mDataType as type other than character.", { expect_error(
   summarizeMolecularProfiles(
-    TGGATESsmall, mDataType = 1, cell.lines=cellNames(TGGATESsmall),
+    TGGATESsmall, mDataType = 1, cell_lines=cellNames(TGGATESsmall),
     drugs = head(drugNames(TGGATESsmall)),
     features = fNames(TGGATESsmall,"rna"), duration = "8",
     dose = c("Low", "Medium"), summary.stat = "mean",
@@ -42,7 +42,7 @@ test_that("Errors if given mDataType as type other than character.", { expect_er
 })
 test_that("Errors if specified mDataType is not in the tSet.", { expect_error(
   summarizeMolecularProfiles(
-    TGGATESsmall, mDataType = "cnv", cell.lines=cellNames(TGGATESsmall),
+    TGGATESsmall, mDataType = "cnv", cell_lines=cellNames(TGGATESsmall),
     drugs = head(drugNames(TGGATESsmall)),
     features = fNames(TGGATESsmall,"rna"), duration = "8",
     dose = c("Control", "High"), summary.stat = "first",
@@ -51,11 +51,11 @@ test_that("Errors if specified mDataType is not in the tSet.", { expect_error(
   )
 })
 
-# cell.lines
-context("...Checking for correct cell.lines param errors...")
-test_that("Errors if given cell.lines as type other than character.", { expect_error(
+# cell_lines
+context("...Checking for correct cell_lines param errors...")
+test_that("Errors if given cell_lines as type other than character.", { expect_error(
   summarizeMolecularProfiles(
-    TGGATESsmall, mDataType = "rna", cell.lines=5,
+    TGGATESsmall, mDataType = "rna", cell_lines=5,
     drugs = head(drugNames(TGGATESsmall)),
     features = fNames(TGGATESsmall,"rna"), duration = "8",
     dose = c("Control", "High"), summary.stat = "last",
@@ -63,9 +63,9 @@ test_that("Errors if given cell.lines as type other than character.", { expect_e
     )
   )
 })
-test_that("Errors if specified cell.lines are not in the tSet", { expect_error(
+test_that("Errors if specified cell_lines are not in the tSet", { expect_error(
   summarizeMolecularProfiles(
-    TGGATESsmall, mDataType = "rna", cell.lines='NOTINtSET',
+    TGGATESsmall, mDataType = "rna", cell_lines='NOTINtSET',
     drugs = head(drugNames(TGGATESsmall)),
     features = fNames(TGGATESsmall,"rna"), duration = "8",
     dose = c("Control", "High"), summary.stat = "median",
@@ -78,7 +78,7 @@ test_that("Errors if specified cell.lines are not in the tSet", { expect_error(
 context("...Checking for correct drugs param errors...")
 test_that("Errors if given drugs are type other than character.", { expect_error(
   summarizeMolecularProfiles(
-    TGGATESsmall, mDataType = "rna", cell.lines=cellNames(TGGATESsmall),
+    TGGATESsmall, mDataType = "rna", cell_lines=cellNames(TGGATESsmall),
     drugs = 5,
     features = fNames(TGGATESsmall,"rna"), duration = "8",
     dose = c("Control", "High"), summary.stat = "mean",
@@ -88,7 +88,7 @@ test_that("Errors if given drugs are type other than character.", { expect_error
 })
 test_that("Errors if specified drugs are not in the tSet.", { expect_error(
   summarizeMolecularProfiles(
-    TGGATESsmall, mDataType = "rna", cell.lines=cellNames(TGGATESsmall),
+    TGGATESsmall, mDataType = "rna", cell_lines=cellNames(TGGATESsmall),
     drugs = "NOTINtSET",
     features = fNames(TGGATESsmall,"rna"), duration = "8",
     dose = c("Control", "High"), summary.stat = "first",
@@ -101,7 +101,7 @@ test_that("Errors if specified drugs are not in the tSet.", { expect_error(
 context("...Checking for correct features param errors....")
 test_that("Errors if given features as type other than character", { expect_error(
   summarizeMolecularProfiles(
-    TGGATESsmall, mDataType = "rna", cell.lines=cellNames(TGGATESsmall),
+    TGGATESsmall, mDataType = "rna", cell_lines=cellNames(TGGATESsmall),
     drugs = head(drugNames(TGGATESsmall)),
     features = c(5), duration = "8",
     dose = c("Control", "High"), summary.stat = "last",
@@ -111,7 +111,7 @@ test_that("Errors if given features as type other than character", { expect_erro
 })
 test_that("Errors if given features as type other than character", { expect_error(
   summarizeMolecularProfiles(
-    TGGATESsmall, mDataType = "rna", cell.lines=cellNames(TGGATESsmall),
+    TGGATESsmall, mDataType = "rna", cell_lines=cellNames(TGGATESsmall),
     drugs = head(drugNames(TGGATESsmall)),
     features = c(5), duration = "8",
     dose = c("Control", "High"), summary.stat = "median",
@@ -124,7 +124,7 @@ test_that("Errors if given features as type other than character", { expect_erro
 context("...Checking for correct duration param errors")
 test_that("Errors if given duration as type other than character", { expect_error(
   summarizeMolecularProfiles(
-    TGGATESsmall, mDataType = "rna", cell.lines=cellNames(TGGATESsmall),
+    TGGATESsmall, mDataType = "rna", cell_lines=cellNames(TGGATESsmall),
     drugs = head(drugNames(TGGATESsmall)),
     features = c(5), duration = 8,
     dose = c("Control", "High"), summary.stat = "mean",
@@ -134,7 +134,7 @@ test_that("Errors if given duration as type other than character", { expect_erro
 })
 test_that("Errors if given features as type other than character", { expect_error(
   summarizeMolecularProfiles(
-    TGGATESsmall, mDataType = "rna", cell.lines=cellNames(TGGATESsmall),
+    TGGATESsmall, mDataType = "rna", cell_lines=cellNames(TGGATESsmall),
     drugs = head(drugNames(TGGATESsmall)),
     features = c(5), duration = "NOTINtSET",
     dose = c("Control", "High"), summary.stat = "first",
@@ -147,7 +147,7 @@ test_that("Errors if given features as type other than character", { expect_erro
 context("...Checking for correct dose param errors")
 test_that("Errors if given features as type other than character", { expect_error(
   summarizeMolecularProfiles(
-    TGGATESsmall, mDataType = "rna", cell.lines=cellNames(TGGATESsmall),
+    TGGATESsmall, mDataType = "rna", cell_lines=cellNames(TGGATESsmall),
     drugs = head(drugNames(TGGATESsmall)),
     features = c(5), duration = "8",
     dose = c(1, 2), summary.stat = "last",
@@ -157,7 +157,7 @@ test_that("Errors if given features as type other than character", { expect_erro
 })
 test_that("Errors if specified doses are not in the tSet", { expect_error(
   summarizeMolecularProfiles(
-    TGGATESsmall, mDataType = "rna", cell.lines=cellNames(TGGATESsmall),
+    TGGATESsmall, mDataType = "rna", cell_lines=cellNames(TGGATESsmall),
     drugs = head(drugNames(TGGATESsmall)),
     features = c(5), duration = "8",
     dose = "NOTINTtSET", summary.stat = "median",
