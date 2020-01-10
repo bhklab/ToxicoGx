@@ -95,6 +95,7 @@ devtools::install_github("bhklab/ToxicoGx")
 ```{r, message = FALSE, fig.width = 8, fig.height = 5}
 library(PharmacoGx)
 library(ToxicoGx)
+library(ggplot2)
 # Load the tset 
 data(TGGATESsmall)
 ToxicoGx::drugGeneResponseCurve(TGGATESsmall, 
@@ -123,12 +124,13 @@ The HCC signature, already mapped to the gene level, has been included in this p
 library(xtable)
 data("TGGATESsmall")
 # To compute the effect of drug concentration on the molecular profile of the cell
-drug.perturbation <- ToxicoGx::drugPerturbationSig(TGGATESsmall,
+drug.perturbation <- ToxicoGx::drugPerturbationSig(tSet = TGGATESsmall,
                                          mDataType = "rna",
-                                         cells = "Hepatocyte",
+                                         cell_lines = "Hepatocyte",
                                          duration = "24",
                                          dose = c("Control", "Low"),
                                          drugs = c("Omeprazole", "Isoniazid"),
+                                         returnValues=c("estimate","tstat", "pvalue", "fdr"),
                                          verbose = FALSE)
 data(HCC_sig)
 res <- apply(drug.perturbation[,,c("tstat", "fdr")],

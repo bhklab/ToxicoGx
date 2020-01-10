@@ -83,12 +83,12 @@ drugPerturbationSig <- function(
                     drugs = drugs, features = features,
                     duration = duration, dose = dose)
 
-  returnValues <- match.arg(returnValues) # Handle argument matching for return values
+  returnValues <- match.arg(returnValues, several.ok = TRUE)
 
   # SUBSET tSET BASED ON PARAMETERS
   tSetSubsetOnParams <-
-    subsetTo(tSet, mDataType = mDataType, cells = cell_lines, drugs = drugs,
-             features = features, duration = duration)
+    suppressWarnings(subsetTo(tSet, mDataType = mDataType, cells = cell_lines, drugs = drugs,
+             features = features, duration = duration))
 
   # SUBSET SAMPLES BASED ON DOSE
   samples <- rownames(phenoInfo(tSetSubsetOnParams, mDataType)[which(phenoInfo(tSetSubsetOnParams, mDataType)$dose %in% dose),])
