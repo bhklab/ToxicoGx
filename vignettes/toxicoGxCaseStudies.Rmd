@@ -97,9 +97,9 @@ library(PharmacoGx)
 library(ToxicoGx)
 # Load the tset 
 data(TGGATESsmall)
-ToxicoGx::drugGeneResponseCurve(tSets = TGGATESsmall, 
+ToxicoGx::drugGeneResponseCurve(TGGATESsmall, 
                       duration = c("2", "8", "24"), 
-                      cellline = "Hepatocyte", mDataTypes = "rna", 
+                      cell_line = "Hepatocyte", mDataTypes = "rna", 
                       features = "ENSG00000140465_at",
                       dose = c("Control", "Low", "Middle", "High"),
                       drug = "Carbon tetrachloride",

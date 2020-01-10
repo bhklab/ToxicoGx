@@ -34,7 +34,7 @@
 #'   in the plot, as passed to size in geom_line(). Defaults to 1.
 #' @param point_size \code{numeric} A number specifying how large points should
 #'   be in the plot, as passed to size in geom_point(). Defaults to 2.5.
-#' @param ggplot2_args \code{list} A list of ggplot2 functions which can be called using the plot + function()
+#' @param ggplot_args \code{list} A list of ggplot2 functions which can be called using the plot + function()
 #'   syntax. This allows arbitrary customization of the plot including changing the title, axis labels, colours, etc.
 #'   Please see the included examples for basic usage or ggplot2 documentation for advanced customization.
 #' @param verbose \code{boolean} Should warning messages about the data passed
@@ -57,7 +57,7 @@ drugGeneResponseCurve <- function(
   summarize_replicates = TRUE,
   line_width = 1,
   point_size = 2.5,
-  ggplot2_args = NULL,
+  ggplot_args = NULL,
   verbose=TRUE
 ) {
 
@@ -143,7 +143,7 @@ drugGeneResponseCurve <- function(
 
   #### Rendering the plot ####
   if (summarize_replicates == FALSE) {
-    ggplot(as_tibble(plotData),
+    plot <- ggplot(as_tibble(plotData),
            aes(x = as.numeric(duration),
                y = expression,
                color = dose_level,
@@ -164,7 +164,7 @@ drugGeneResponseCurve <- function(
       ylab("Expression")
   } else {
     plotData <- plotData[, expression := mean(expression), by = .(dose_level, duration, Symbol)][individual_id == 1]
-    ggplot(plotData, aes(as.numeric(duration), expression, color = dose_level,)) +
+    plot <- ggplot(plotData, aes(as.numeric(duration), expression, color = dose_level,)) +
       geom_line(aes(linetype = Symbol), size = line_width) +
       geom_point(size = point_size) +
       labs(
@@ -178,4 +178,8 @@ drugGeneResponseCurve <- function(
       xlab("Duration (hrs)") +
       ylab("Expression")
   }
+  if (!is.null(ggplot_args)) {
+    plot + ggplot_args
+  }
+  plot
 }
