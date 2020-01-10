@@ -32,7 +32,7 @@ paramMissingHandler <- function(funName, tSet, mDataType, ...) {
 
   ## Interection of missing values for similar functions
   intersectMissingChecks <- c(
-    "cell.lines", "drugs"
+    "cell_lines", "drugs"
   )
 
   missingChecks <-
@@ -66,7 +66,7 @@ paramMissingHandler <- function(funName, tSet, mDataType, ...) {
 .checkParamsForMissing <- function(
   funName = funName, tSet = tSet, missingChecks, mDataType, ...) {
   # Initialize variable names in the local environment
-  cell.lines <- duration <- drugs <- features <- dose <- NULL
+  cell_lines <- duration <- drugs <- features <- dose <- NULL
   # Extract named arguments into local environment
   argList <- list(...)
   for (idx in seq_len(length(argList))) { ## TODO:: Make this work with seq_along()
@@ -80,7 +80,7 @@ paramMissingHandler <- function(funName, tSet, mDataType, ...) {
   for (missing in missingChecks) {
     switch(
       missing,
-      "cell.lines" = {if (is.null(cell.lines)) { missingParamValues[[missing]] <- unique(cellNames(tSet));
+      "cell_lines" = {if (is.null(cell_lines)) { missingParamValues[[missing]] <- unique(cellNames(tSet));
         warning(paste0(missing, " parameter not specified, defaults to all cell lines in the given tSet!"))}
         },
       "drugs" = {if (is.null(drugs)) { missingParamValues[[missing]] <- unique(drugNames(tSet));

@@ -26,7 +26,7 @@
 #'   in the analysis, out of dna, rna, rnaseq, snp, cnv (only rna currently supported)
 #' @param drugs \code{character} a vector of drug names for which to compute the
 #'   signatures. Should match the names used in the ToxicoSet.
-#' @param cell.lines \code{character} a vector of cell names to use in computing the
+#' @param cell_lines \code{character} a vector of cell names to use in computing the
 #'   signatures. Should match the names used in the ToxicoSet.
 #' @param features \code{character} a vector of features for which to compute the
 #'   signatures. Should match the names used in correspondant molecular data in ToxicoSet.
@@ -47,7 +47,7 @@
 drugPerturbationSig <- function(
   tSet, mDataType,
   drugs = NULL,
-  cell.lines = NULL,
+  cell_lines = NULL,
   features = NULL,
   duration = NULL,
   dose = NULL,
@@ -67,7 +67,7 @@ drugPerturbationSig <- function(
   # Get named list of defualt values for missing parameters
   argDefaultList <-
     paramMissingHandler("drugPerturbationSig", tSet = tSet, mDataType = mDataType,
-                        drugs = drugs, cell.lines = cell.lines, features = features,
+                        drugs = drugs, cell_lines = cell_lines, features = features,
                         duration = duration, dose = dose)
 
   # Assign any missing parameter default values to function environment
@@ -79,7 +79,7 @@ drugPerturbationSig <- function(
 
   # ERROR HANDLING FOR PARAMETERS
   paramErrorChecker("drugPerturbationSig", tSet = tSet,
-                    mDataType = mDataType, cell.lines = cell.lines,
+                    mDataType = mDataType, cell_lines = cell_lines,
                     drugs = drugs, features = features,
                     duration = duration, dose = dose)
 
@@ -87,7 +87,7 @@ drugPerturbationSig <- function(
 
   # SUBSET tSET BASED ON PARAMETERS
   tSetSubsetOnParams <-
-    subsetTo(tSet, mDataType = mDataType, cells = cell.lines, drugs = drugs,
+    subsetTo(tSet, mDataType = mDataType, cells = cell_lines, drugs = drugs,
              features = features, duration = duration)
 
   # SUBSET SAMPLES BASED ON DOSE

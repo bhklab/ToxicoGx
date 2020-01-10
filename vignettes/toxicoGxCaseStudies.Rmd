@@ -100,13 +100,11 @@ data(TGGATESsmall)
 ToxicoGx::drugGeneResponseCurve(tSets = TGGATESsmall, 
                       duration = c("2", "8", "24"), 
                       cellline = "Hepatocyte", mDataTypes = "rna", 
-                      features = "ENSG00000140465_at", 
+                      features = "ENSG00000140465_at",
                       dose = c("Control", "Low", "Middle", "High"),
-                      drug = "carbon tetrachloride", 
-                      plot.type = "Actual",
-                      title = "Effect of Carbon tetra chloride on CYP1A1.",
-                      cex = 0.5, cex.main = 1, legend.loc = "topright", 
-                      verbose = T)
+                      drug = "Carbon tetrachloride",
+                      ggplot_args = list(labs(title="Effect of Carbon tetra chloride on CYP1A1"))
+                      )
 
 ```
 

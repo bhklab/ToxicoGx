@@ -1,8 +1,8 @@
 Package: ToxicoGx
 Type: Package
 Title: Analysis of Large-Scale Toxico-Genomic Data
-Version: 0.0.1
-Date: 2019-10-14
+Version: 0.1.0
+Date: 2020-01-10
 Authors@R: c(
   person("Sisira","Nair", email = "sisira.nair@uhnresearch.ca",
     role = c("aut")),
@@ -33,13 +33,15 @@ Imports:
     SummarizedExperiment,
     Biobase, 
     RColorBrewer,
-    magrittr,
+    ggplot2,
     data.table,
     dplyr,
     caTools,
-    magicaxis, 
-    methods, 
-    reshape2, 
+    downloader,
+    magrittr,
+    methods,
+    reshape2,
+    tidyr,
     scales
 RoxygenNote: 7.0.2
 VignetteBuilder: knitr

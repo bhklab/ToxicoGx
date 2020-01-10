@@ -8,7 +8,7 @@ into one entry per drug and experimental condition.}
 summarizeMolecularProfiles(
   tSet,
   mDataType,
-  cell.lines = NULL,
+  cell_lines = NULL,
   drugs = NULL,
   features = NULL,
   duration = NULL,
@@ -26,7 +26,7 @@ summarizeMolecularProfiles(
 to use in the analysis, out of all the molecular data types available for the tSet
 for example: rna}
 
-\item{cell.lines}{\code{character} The cell lines to be summarized.
+\item{cell_lines}{\code{character} The cell lines to be summarized.
 If any cell.line has no data, missing values will be created}
 
 \item{drugs}{\code{character} The drugs to be summarized}
@@ -38,7 +38,7 @@ If any cell.line has no data, missing values will be created}
 \item{dose}{\code{character} The dose level to summarize replicates across}
 
 \item{summary.stat}{\code{character} which summary method to use if there are repeated
-cell.lines? Choices are "mean", "median", "first", or "last"}
+cell_lines? Choices are "mean", "median", "first", or "last"}
 
 \item{fill.missing}{\code{boolean} should the missing cell lines not in the
 molecular data object be filled in with missing values?}
@@ -62,7 +62,7 @@ one Assay corresponding to a requested drug.
 data(TGGATESsmall)
 summMP <- ToxicoGx::summarizeMolecularProfiles(
   tSet = TGGATESsmall, mDataType = "rna",
-  cell.lines=cellNames(TGGATESsmall), drugs = head(drugNames(TGGATESsmall)),
+  cell_lines=cellNames(TGGATESsmall), drugs = head(drugNames(TGGATESsmall)),
   features = fNames(TGGATESsmall,"rna")[1:1000], duration = "8",
   dose = c("Control", "High"), summary.stat = "median",
   fill.missing = TRUE, verbose=TRUE

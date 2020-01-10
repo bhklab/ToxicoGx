@@ -18,7 +18,7 @@ paramErrorChecker <- function(funName, tSet, ...) {
 
   # Intersection of all function's parameter tests
   intersectParamChecks <- c(
-    "tSetNotIs", "tSetGt1", "cell.linesNotChar","cell.linesNotIn",
+    "tSetNotIs", "tSetGt1", "cell_linesNotChar","cell_linesNotIn",
     "drugsNotChar", "durationNotChar"
   )
   intersectViabPlotParamChecks <- c(
@@ -36,11 +36,11 @@ paramErrorChecker <- function(funName, tSet, ...) {
            "summarizeMolecularProfiles" =
              c(intersectParamChecks, "mDataTypeNotChar", "mDataTypeNotIn",
                "summary.statNotChar", "summary.statNotIn", "summary.statGt1",
-               "durationMissing", "durationNotIn", "cell.linesNotIn"
+               "durationMissing", "durationNotIn", "cell_linesNotIn"
              ),
            "summarizeSensitivityProfiles" =
              c(intersectParamChecks,
-               "durationMissing", "durationNotIn", "cell.linesNotIn",
+               "durationMissing", "durationNotIn", "cell_linesNotIn",
                "drugNotInCellLine", "summary.statNotIn", "summaryStatNotChar",
                "summary.statGt1", "sensitivty.measureGt1",
                "sensitivity.measureNotChar"
@@ -48,11 +48,11 @@ paramErrorChecker <- function(funName, tSet, ...) {
            "drugTimeResponseCurve" =
              c(intersectViabPlotParamChecks, 'tSetsHaveViab',
                'viabilitiesDiffLenDur', "durationNotChar", "drugsGt2",
-               "cell.linesGt2"
+               "cell_linesGt2"
                ),
            "subsetTo" =
              c("returnValuesGt1",
-               "tSetGt1", "tSetNotIs", "cell.linesNotChar", "cell.linesNotIn",
+               "tSetGt1", "tSetNotIs", "cell_linesNotChar", "cell_linesNotIn",
                "drugsNotChar", "drugsNotIn", "featuresNotChar", "featuresNotIn"
                ),
     )
@@ -72,7 +72,7 @@ paramErrorChecker <- function(funName, tSet, ...) {
 .checkParamsForErrors <- function(tSet, funName, paramChecks, ...) {
 
   # Initialize variable names in the local environment
-  cell.lines <- concentrations <- dose <- drugs <- duration <- features <-
+  cell_lines <- concentrations <- dose <- drugs <- duration <- features <-
     mDataType <- summary.stat <- sensitivity.measure <- tSets <- viabilities <- NULL
 
   # Extract named arguments into local environment
@@ -102,15 +102,15 @@ paramErrorChecker <- function(funName, tSet, ...) {
         "mDataTypeGt1" = {if (length(unlist(mDataType)) > 1) { stop("Please only pass in one molecular data type.") }},
         "mDataTypeNotChar" = {if (!is.character(mDataType)) { stop("mDataType must be a string.") }},
         "mDataTypeNotIn" = {if (!(mDataType %in% mDataNames(tSet))) { stop(paste0("The molecular data type(s) ", paste(mDataType[which(!(mDataType %in% mDataNames(tSet)))], collapse = ", " ), " is/are not present in ", tSet@annotation$name, ".")) }},
-        # cell.lines checks
-        "cell.linesNotChar" = {if (!is.character(unlist(cell.lines))) { stop("cell.lines parameter must contain strings.") }},
-        "cell.linesNotIn" = {if (all(!(cell.lines %in% cellNames(tSet)))) { stop(paste0("The cell line(s) ", paste(cell.lines[which(!(cell.lines %in% cellNames(tSet)))], collapse = ", "), " is/are not present in ", tSet@annotation$name, "with the specified parameters.")) }},
-        "cell.linesG" = {if (length(cell.lines) > 2) {stop("This plot currently only supports two cell lines at once!")}},
+        # cell_lines checks
+        "cell_linesNotChar" = {if (!is.character(unlist(cell_lines))) { stop("cell_lines parameter must contain strings.") }},
+        "cell_linesNotIn" = {if (all(!(cell_lines %in% cellNames(tSet)))) { stop(paste0("The cell line(s) ", paste(cell_lines[which(!(cell_lines %in% cellNames(tSet)))], collapse = ", "), " is/are not present in ", tSet@annotation$name, "with the specified parameters.")) }},
+        "cell_linesG" = {if (length(cell_lines) > 2) {stop("This plot currently only supports two cell lines at once!")}},
         # drugs checks
         "drugsNotChar" = {if (!is.character(unlist(drugs))) { stop("drugs parameter must contain strings.") }},
         "drugsNotIn" = {if (all(!(drugs %in% drugNames(tSet)))) { stop(paste0("The drug(s) ", paste(drugs[which(!(drugs %in% drugNames(tSet)))], collapse = ", "), " is/are not present in ", tSet@annotation$name, ".")) }},
         ## TODO:: Test this works correctly once an additional cell line is added to a tSet
-        "drugsIntersectsCellLine" = {if (length(drugs) == 1) { if (!(drugs %in% subset(sensitivityInfo(tSet), cellid == cell.lines, select = drugid)))  {stop(paste0("The drug ", drugs, "is not present for cell line(s)", paste0(cell.lines, collapse = ", ")), "!") }}},
+        "drugsIntersectsCellLine" = {if (length(drugs) == 1) { if (!(drugs %in% subset(sensitivityInfo(tSet), cellid == cell_lines, select = drugid)))  {stop(paste0("The drug ", drugs, "is not present for cell line(s)", paste0(cell_lines, collapse = ", ")), "!") }}},
         "drugsGt2" = {if (length(drugs) > 2) { stop("This plot only supports two drugs at a time!")  }},
         # features checks
         "featuresLt2" = {if (length(fNames(tSet, mDataType)) < 2) { stop("Must include at least 2 features to calculate summary statistics") }},

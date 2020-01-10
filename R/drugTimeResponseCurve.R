@@ -1,64 +1,81 @@
-#' Compares viabilities at a given dose over different experimental duration
+#' Compares viabilities at a given dose over different experimental durations
 #'
-#' Description of this function
+#' This function generates a plot visualizing the relationship between gene
+#'   expression, time and dose level for the selected tSet. The plot is generated
+#'   with ggplot2 and can be customized using ggplot plot + function() syntax.
 #'
 #' @examples
-#' if (interactive()) {
-#'   drugTimeResponseCurve(TGGATESsmall, cell.lines = "Hepatocyte", dose = c("Control", "Low", "Middle"), drugs = drugNames(TGGATESsmall)[6], duration = c("2", "8", "24"))
-#' }
+#'   # Default settings
+#'   plot <- drugTimeResponseCurve(TGGATESsmall, cell_lines = "Hepatocyte",
+#'   dose = c("Control", "Low", "Middle"), drugs = drugNames(TGGATESsmall)[6],
+#'   duration = c("2", "8", "24"))
+#'
+#'   # Customize title, x/y labels, x/y limits, colour palette and define
+#'   # custom ticks for x axis using the function argument ggplot2_args
+#'   customizations <- list(labs(title= 'My Custom Title', ylab = 'The y-axis'),
+#'                          xlim(c(2, 24)), ylim(c(99,105)),
+#'                          scale_color_brewer(palette="Set1"),
+#'                          scale_x_continuous(breaks=c(2, 8, 24),
+#'                            labels = c("Two", "Eight", "Twenty-Four"))
+#'                          )
+#'
+#'    if(interactive()) {
+#'       drugTimeResponseCurve(TGGATESsmall, cell_lines = "Hepatocyte",
+#'         dose = c("Control", "Low", "Middle"),
+#'         drugs = drugNames(TGGATESsmall)[6], duration = c("2", "8", "24"),
+#'         ggplot_args = customizations)
+#'    }
+#'
+#'    # Customize the plot using standard ggplot2 syntax
+#'    if(interactve()) {
+#'       plot + labs(title= 'My Custom Title', ylab = 'The y-axis') +
+#'         xlim(c(2, 24)) + ylim(c(99,105)) + scale_color_brewer(palette="Set1")
+#'    }
 #'
 #' @param tSet \code{ToxicoSet} A ToxicoSet to be plotted in
 #'   this figure
 #' @param dose \code{character} A vector of dose levels to be included in the
 #'   plot. Default to include all dose levels available for a drug. Must include
 #'   at minimum two dose levels, one of witch is "Control".
-#' @param drugs \code{character} A drugs or pair of drugss to be plotted.
+#' @param drugs \code{character} A drugs or pair of drugs to be plotted.
 #' @param duration \code{character} A vector of durations to include in the plot.
-#' @param cell.lines \code{character} A vector of cell lines to include in the plot.
-#' @param xlim \code{numeric} A vector of minimum and maximum values for the x-axis
-#'   of the returned plot.
-#' @param ylim \code{numeric} A vector of minimum and miximum values for the y-axis
-#'   of the returned plot.
-#' @param title \code{character} A string containing the desired plot name. If excluded
-#'   a title wil be generated automatically.
-#' @param mycol \code{vector} A vector of length equal to the product of the
-#'   number of drugs, features and doses passed to the function. Takes colour
-#'   arguments as passed to `col` parameter in the `plot()` function.
-#'   Default palette is used when unspecified.
-#' @param summarize.replicates \code{logical} If true will take the average of all
-#'  replicates at each time point per gene and duration. This release has not
-#'  yet implemented this feature.
-# @param x.custom.ticks \code{vector} A numeric vector of the distance be tween major
-#   and minor ticks on the x-axis. If excluded ticks appear only where duration
-#   values are specified.
-# @param legend.loc \code{character} A string specifying the legend location as passed to
-#   the \code(theme(legend.position = ?)) ggplot2 function.
-# @param lwd \code{numeric} The line width to plot width
-# @param cex \code{numeric} The cex parameter passed to plot
-# @param cex.main \code{numeric} The cex.main parameter passed to plot, controls
-# the size of the titles
-#' @param verbose \code{boolean} Should warning messages about the data passed in be printed?
+#' @param summarize_replicates \code{logical} If TRUE will average viability
+#'   across replicates for each unique drug-dose-duration combination.
+#' @param cell_lines \code{character} A vector of cell lines to include in the
+#'   plot.
+#' @param line_width \code{numeric} A number specifying the thickness of lines
+#'   in the plot, as passed to size in geom_line(). Defaults to 1.
+#' @param point_size \code{numeric} A number specifying how large points should
+#'   be in the plot, as passed to size in geom_point(). Defaults to 2.5.
+#' @param verbose \code{boolean} Should warning messages about the data passed
+#'   in be printed?
+#' @param ggplot_args \code{list} A list of ggplot2 functions which can be
+#'   called using the plot + function() syntax. This allows arbitrary
+#'   customization of the plot including changing the title, axis labels,
+#'   colours, etc. Please see the included examples for basic usage or ggplot2
+#'   documentation for advanced customization. Alternatively, you could assign
+#'   the return value to a variable and add the customization yourself using
+#'   plot + function().
 #'
 #' @return Plot of the viabilities for each drugs vs time of exposure
 #'
-#' @import RColorBrewer
-#' @importFrom graphics plot rect points lines legend axis
-#' @importFrom grDevices rgb
-#' @importFrom magicaxis magaxis
+#' @import ggplot2
+#' @importFrom magrittr %<>%
+#' @importFrom dplyr %>% filter group_by mutate
+#' @importFrom tidyr gather
 #'
 #' @export
 drugTimeResponseCurve <- function(
   tSet,
   duration = NULL,
-  cell.lines = NULL,
+  cell_lines = NULL,
   dose = NULL,
   drugs = NULL,
-  summarize.replicates = TRUE,
-  title = NULL,
-  xlim = NULL,
-  ylim = NULL,
-  mycol = NULL,
-  verbose=TRUE
+  summarize_replicates = TRUE,
+  line_width = 1,
+  point_size = 2.5,
+  verbose=TRUE,
+  ggplot_args=NULL
 ) {
   # Place tSet in a list if not already
   if (!is(tSet, "list")) {
@@ -68,15 +85,15 @@ drugTimeResponseCurve <- function(
   ## TODO:: REMOVE ::: BEFORE CRAN SUBMISSION!
   ToxicoGx:::paramErrorChecker("drugTimeResponseCurve",
                     tSets = tSet, drugs = drugs, duration = duration,
-                    cell.lines = cell.lines, dose = dose)
+                    cell_lines = cell_lines, dose = dose)
 
-  ## TODO:: Make this function work with multiple drugs
-  ## TODO:: Throw warning if a dose level or time point is not available for a specific drug
-  ## TODO:: Add logic to handle viability_as_pct = FALSE?
+  ## TODO:: Throw warning if a dose level or time point is not available for
+    # a specific drug
 
   # Subsetting the tSet based on parameter arguments
   tSet <- lapply(tSet, function(tSet) {
-    suppressWarnings({subsetTo(tSet, mDataType = "rna", drugs = drugs, duration = duration, cells = cell.lines)})
+    suppressWarnings({subsetTo(tSet, mDataType = "rna", drugs = drugs,
+                               duration = duration, cells = cell_lines)})
   })
 
   # Gather data for the plot
@@ -91,20 +108,35 @@ drugTimeResponseCurve <- function(
   })
 
   for (data in plotData) {
-    if (summarize.replicates) {
+    if (summarize_replicates) {
       data %<>% group_by(dose_level, duration_h) %>% mutate(viability = mean(viability))
-      plot <- ggplot(as_tibble(data) %>% filter(replicate == 1), aes(as.numeric(duration_h), viability, color = dose_level)) +
-        geom_point() +
-        geom_line()
+      plot <- ggplot(as_tibble(data) %>% filter(replicate == 1),
+                     aes(as.numeric(duration_h), viability, color = dose_level)) +
+        geom_point(size = 2.5) +
+        geom_line(size = line_width) +
+        labs(
+          title = paste0("Drug Response Curve for ",
+                         paste(drugs, collapse = " & "), " in ",
+                         paste(cell_lines, collapse = " & "), collapse = " & "),
+          color = "Dose Level",
+          shape = "Replicate"
+        ) +
+        theme(
+          plot.title = element_text(hjust = 0.5, size = 14)
+        ) +
+        xlab("Duration (hrs)") +
+        ylab("Viability (%)")
     } else {
       plot <- ggplot(as_tibble(data), aes(as.numeric(duration_h), viability,
                                           color = dose_level,
                                           shape = as.factor(replicate),
                                           linetype = as.factor(replicate))) +
         geom_point(size = 2.5) +
-        geom_line(size = 1) +
+        geom_line(size = line_width) +
         labs(
-          title = paste0("Drug Response Curve for ", paste(drugs, collapse = " & "), " in ", paste(cell.lines, collapse = " & "), collapse = " & "),
+          title = paste0("Drug Response Curve for ",
+                         paste(drugs, collapse = " & "), " in ",
+                         paste(cell_lines, collapse = " & "), collapse = " & "),
           color = "Dose Level",
           shape = "Replicate"
         ) +
@@ -115,211 +147,9 @@ drugTimeResponseCurve <- function(
         ylab("Viability (%)")
     }
   }
-  if (!is.null(xlim)) {
-    plot <- plot + xlim(xlim)
-  }
-  if (!is.null(ylim)) {
-    plot <- plot + ylim(ylim)
-  }
-  if (!is.null(title)) {
-    plot <- plot + labs(title = title)
-  }
-  if (!is.null(mycol)) {
-    plot <- plot + scale_fill_manual(values = mycol)
+  # Pass in any additional ggplot2 customizations
+  if (!(is.null(ggplot_args))) {
+    plot <- plot + ggplot_args
   }
   plot
 }
-
-
-
-#### DEPRICATED ####
-
-# # Extracting the data required for plotting into a list of data.frames
-# plotData <- lapply(tSet, function(tSet) {
-#   c <- lapply(cell.lines, function(cell) {
-#     d <- lapply(drugs, function(drg) {
-#       cbind(
-#         tSet@sensitivity$raw[,,2][
-#           which(rownames(sensitivityInfo(tSet)) %in%
-#                   rownames(subset(sensitivityInfo(tSet), cellid == cell & drugid == drg))),
-#           which(dose %in% c("Control", "Low", "Middle", "High"))],
-#         sensitivityInfo(tSet)[
-#           which(rownames(sensitivityInfo(tSet)) %in%
-#                   rownames(subset(sensitivityInfo(tSet), cellid == cell & drugid == drg))),
-#           c("duration_h", "replicate")
-#           ])
-#     })
-#     names(d) <- drugs; d
-#   })
-#   names(c) <- cell.lines; c
-# })
-# names(plotData) <- vapply(tSet, names, FUN.VALUE = character(1))
-#
-# # Summarizing replicate values
-# if (summarize.replicates == TRUE) {
-#   ## TODO:: Make this work in one lapply statement for all values
-#   responses <- lapply(responses, function(data) {
-#     c <- lapply(cell.lines, function(cell) {
-#       d <- lapply(drugs, function(drg) {
-#         ds <- lapply(dose, function(level) {
-#           ## TODO:: Generalize to n replicates
-#           v <- vapply(seq_along(unique(duration)), function(t) {
-#             mean(c(data[[cell]][[drg]][[level]][[1]][t],
-#                    data[[cell]][[drg]][[level]][[2]][t]))
-#           }, FUN.VALUE = numeric(1))
-#           v[!is.na(v)] # Remove NA values if mesaurements are missing for a t
-#         })
-#         names(ds) <- dose; ds
-#       })
-#       names(d) <- drugs; d
-#     })
-#     names(c) <- cell.lines; c
-#   })
-#   names(responses) <- vapply(tSet, names, FUN.VALUE = character(1))
-#
-#   # Match time values to summarized replicates
-#   times <- lapply(times, function(data){
-#     c <- lapply(cell.lines, function(cell) {
-#       d <- lapply(drugs, function(drg){
-#         unique(unlist(data[[cell]][[drg]]))
-#       })
-#       names(d) <- drugs; d
-#     })
-#     names(c) <- cell.lines; c
-#   })
-#   names(times) <- vapply(tSet, names, FUN.VALUE = character(1))
-#
-#   # Truncate replicate from the legend labels
-#   legendValues <- lapply(legendValues, function(data){
-#     c <- lapply(cell.lines, function(cell) {
-#       d <- lapply(drugs, function(drg) {
-#         ds <- lapply(dose, function(level) {
-#           unique(gsub("_[^_]*$", "", unlist(data[[cell]][[drg]][[level]])))
-#         })
-#         names(ds) <- dose; ds
-#       })
-#       names(d) <- drugs; d
-#     })
-#     names(c) <- cell.lines; c
-#   })
-#   names(legendValues) <- vapply(tSet, names, FUN.VALUE = character(1))
-# }
-
-#   # Set x and y axis ranges based on time and viability values
-#   time.range <- c(min(unlist(unlist(times))), max(unlist(unlist(times))))
-#   viability.range <- c(min(unlist(responses, recursive = TRUE)), max(unlist(responses, recursive = TRUE)))
-#   for (i in seq_along(tSet)) {
-#     ## TODO:: Generalize this to n replicates
-#     time.range <- c(min(time.range[1], min(unlist(times[[i]], recursive = TRUE), na.rm = TRUE), na.rm = TRUE), max(time.range[2], max(unlist(times[[i]], recursive = TRUE), na.rm = TRUE), na.rm = TRUE))
-#     viability.range <- c(0, max(viability.range[2], max(unlist(responses[[i]], recursive = TRUE), na.rm = TRUE), na.rm = TRUE))
-#   }
-#   x1 <- 24; x2 <- 0
-#
-#   ## FINDS INTERSECTION OF RANGES IF MORE THAN ONE tSet PLOTTED
-#   if (length(times) > 1) {
-#     common.ranges <- .getCommonConcentrationRange(times)
-#
-#     for (i in seq_along(times)) {
-#       x1 <- min(x1, min(common.ranges[[i]]))
-#       x2 <- max(x2, max(common.ranges[[i]]))
-#     }
-#   }
-#
-#   # SETS CUSTOM RANGE FOR X-AXIS IF PASSED AS ARGUMENT
-#   if (!is.null(xlim)) {
-#     time.range <- xlim
-#   }
-#
-#   ## SETS CUSTOM RANGE FOR Y-AXIS IF PASSED AS ARGUMENT
-#   if (!is.null(ylim)) {
-#     viability.range <- ylim
-#   }
-#
-#   ## SETS PLOT TITLE
-#   if (missing(title)) {
-#     if (!missing(drugs) && !missing(cell.lines)){
-#       title <- sprintf("%s\n%s:%s", "Drug Time Response Curve", paste(drugs, collapse = " & "), paste(cell.lines, collapse = " & "))
-#     } else {
-#       title <- "Drug Time Response Curve"
-#     }
-#   }
-#
-#   ## SETS DEFAULT COLOUR PALETTE
-#   if (missing(mycol)) {
-#     mycol <- c(RColorBrewer::brewer.pal(n = 9, name = "Set1"), RColorBrewer::brewer.pal(n = 12, name = "Set3"))
-#   }
-#
-#   #### DRAWING THE PLOT ####
-#   plot(NA, xlab = "Time (hr)", ylab = "% Viability", axes = FALSE, main = title, ylim = viability.range, xlim = time.range, cex = cex, cex.main = cex.main)
-#   # Adds plot axes
-#   if (!is.null(x.custom.ticks)) {
-#     magicaxis::magaxis(side = 1:2, frame.plot = TRUE, tcl = -.3, majorn = c(x.custom.ticks[1], 3), minorn = c(x.custom.ticks[2], 2))
-#   } else {
-#     magicaxis::magaxis(side = 2, frame.plot = TRUE, tcl = -.3, majorn = c(3), minorn = c(2))
-#     axis(1, labels = as.numeric(duration), at = as.numeric(duration))
-#   }
-#
-#   # Initialize legends variables
-#   legends <- NULL
-#   pch.val <- NULL
-#   legends.col <- NULL
-#   # TBD what this dose
-#   if (length(times) > 1) {
-#     rect(xleft = x1, xright = x2, ybottom = viability.range[1] , ytop = viability.range[2] , col = rgb(240, 240, 240, maxColorValue = 255), border = FALSE)
-#   }
-#   if (!summarize.replicates) {
-#     # Loop over tSet
-#     for (data in seq_along(tSet)) {
-#       for (cell in cell.lines) {
-#         if (length(drugs) > 1) {j <- 1}
-#         for (drg in drugs) {
-#           if (length(drugs) == 1) {j <- 1}
-#           # Loop over dose level
-#           for (level in dose) {
-#             # Loop over replicates per dose level
-#             ## TODO:: Generalize this for n replicates
-#             for (replicate in seq_along(responses[[data]][[cell]][[drg]][[level]])) {
-#               # Plot per tSet, per dose level, per replicate points
-#               points(times[[data]][[cell]][[drg]][[replicate]],
-#                      responses[[data]][[cell]][[drg]][[level]][[replicate]],
-#                      pch = j, col = mycol[j], cex = cex)
-#               lines(times[[data]][[cell]][[drg]][[replicate]],
-#                     responses[[data]][[cell]][[drg]][[level]][[replicate]],
-#                     lty = replicate, lwd = lwd, col = mycol[j])
-#               legends <- c(legends, legendValues[[data]][[cell]][[drg]][[level]][[replicate]])
-#               legends.col <- c(legends.col, mycol[j])
-#               pch.val <- c(pch.val, j)
-#             }
-#             j <- j + 1
-#           }
-#           j <- j + 1
-#         }
-#       }
-#     }
-#   } else {
-#     # Loop over tSet
-#     for (data in seq_along(tSet)) {
-#       for (cell in cell.lines) {
-#         if (length(drugs) > 1) { j <- 1 }
-#         for (drg in drugs) {
-#           if (length(drugs) == 1 ) { j <- 1 }
-#           # Loop over dose level
-#           for (level in dose) {
-#             points(times[[data]][[cell]][[drg]],
-#                    responses[[data]][[cell]][[drg]][[level]],
-#                    pch = j, col = mycol[j], cex = cex)
-#             lines(times[[data]][[cell]][[drg]],
-#                   responses[[data]][[cell]][[drg]][[level]],
-#                   lty = which(cell.lines %in% cell), lwd = lwd, col = mycol[j])
-#             legends <- c(legends, legendValues[[data]][[cell]][[drg]][[level]])
-#             legends.col <- c(legends.col, mycol[j])
-#             pch.val <- c(pch.val, which(dose %in% level))
-#             j <- j + 1
-#           }
-#           j <- j + 1
-#         }
-#       }
-#     }
-#   }
-#   legend(legend.loc, legend = legends, col = legends.col, bty = "n", cex = cex, pch = pch.val)
-# }
