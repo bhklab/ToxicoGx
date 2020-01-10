@@ -16,7 +16,7 @@ drugGeneResponseCurve(
   summarize_replicates = TRUE,
   line_width = 1,
   point_size = 2.5,
-  ggplot2_args = NULL,
+  ggplot_args = NULL,
   verbose = TRUE
 )
 }
@@ -43,13 +43,16 @@ more than two features you may only pass in up to two dose levels.}
 \item{drug}{\code{character} A drug name to include in this plot.
 See drugNames(tSet) for a list of options.}
 
+\item{summarize_replicates}{\code{logical} If TRUE will average viability
+across replicates for each unique drug-dose-duration combination.}
+
 \item{line_width}{\code{numeric} A number specifying the thickness of lines
 in the plot, as passed to size in geom_line(). Defaults to 1.}
 
 \item{point_size}{\code{numeric} A number specifying how large points should
 be in the plot, as passed to size in geom_point(). Defaults to 2.5.}
 
-\item{ggplot2_args}{\code{list} A list of ggplot2 functions which can be called using the plot + function()
+\item{ggplot_args}{\code{list} A list of ggplot2 functions which can be called using the plot + function()
 syntax. This allows arbitrary customization of the plot including changing the title, axis labels, colours, etc.
 Please see the included examples for basic usage or ggplot2 documentation for advanced customization.}
 

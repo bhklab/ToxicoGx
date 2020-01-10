@@ -112,41 +112,32 @@ drugTimeResponseCurve <- function(
       data %<>% group_by(dose_level, duration_h) %>% mutate(viability = mean(viability))
       plot <- ggplot(as_tibble(data) %>% filter(replicate == 1),
                      aes(as.numeric(duration_h), viability, color = dose_level)) +
-        geom_point(size = 2.5) +
-        geom_line(size = line_width) +
-        labs(
-          title = paste0("Drug Response Curve for ",
-                         paste(drugs, collapse = " & "), " in ",
-                         paste(cell_lines, collapse = " & "), collapse = " & "),
-          color = "Dose Level",
-          shape = "Replicate"
-        ) +
-        theme(
-          plot.title = element_text(hjust = 0.5, size = 14)
-        ) +
-        xlab("Duration (hrs)") +
-        ylab("Viability (%)")
+        geom_point(size = point_size) +
+        geom_line(size = line_width)
     } else {
       plot <- ggplot(as_tibble(data), aes(as.numeric(duration_h), viability,
                                           color = dose_level,
                                           shape = as.factor(replicate),
                                           linetype = as.factor(replicate))) +
-        geom_point(size = 2.5) +
-        geom_line(size = line_width) +
-        labs(
-          title = paste0("Drug Response Curve for ",
-                         paste(drugs, collapse = " & "), " in ",
-                         paste(cell_lines, collapse = " & "), collapse = " & "),
-          color = "Dose Level",
-          shape = "Replicate"
-        ) +
-        theme(
-          plot.title = element_text(hjust = 0.5, size = 14)
-        ) +
-        xlab("Duration (hrs)") +
-        ylab("Viability (%)")
+        geom_point(size = point_size) +
+        geom_line(size = line_width)
     }
   }
+
+  plot <- plot + labs(
+    title = paste0("Drug Response Curve for ",
+                   paste(drugs, collapse = " & "), " in ",
+                   paste(cell_lines, collapse = " & "), collapse = " & "),
+    color = "Dose Level",
+    shape = "Replicate"
+  ) +
+    theme(
+      plot.title = element_text(hjust = 0.5, size = 14)
+    ) +
+    xlab("Duration (hrs)") +
+    ylab("Viability (%)") +
+    scale_x_continuous(breaks=as.numeric(duration), labels = duration)
+
   # Pass in any additional ggplot2 customizations
   if (!(is.null(ggplot_args))) {
     plot <- plot + ggplot_args
