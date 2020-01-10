@@ -128,7 +128,7 @@ drug.perturbation <- ToxicoGx::drugPerturbationSig(TGGATESsmall,
                                          cells = "Hepatocyte",
                                          duration = "24",
                                          dose = c("Control", "Low"),
-                                         drugs = c("omeprazole", "isoniazid"),
+                                         drugs = c("Omeprazole", "Isoniazid"),
                                          verbose = FALSE)
 data(HCC_sig)
 res <- apply(drug.perturbation[,,c("tstat", "fdr")],
@@ -143,7 +143,7 @@ res <-  cbind(res,"FDR" = p.adjust(res[,2], method = "fdr"))
 res <- res[order(res[,3]),]
 xtable::xtable(res,
        caption = 'Connectivity Score results for HCC and TG-GATEs PHH gene
-       signature.')
+       signature')
 ```
 
 In the above table, omeprazole showed a positive connectivity score in contrast to isoniazid. This observation aligns with the trends reported in the paper. The above example is to demonstrate the ease with which drug perturbation analysis can be done using ToxicoGx package.
