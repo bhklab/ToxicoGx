@@ -7,9 +7,9 @@
 drugNames(object) <- value
 }
 \arguments{
-\item{object}{A \code{ToxicoSet} object.}
+\item{object}{A \code{ToxicoSet} object to modify}
 
-\item{value}{A \code{data.frame} of replacement values.}
+\item{value}{A \code{character} vector of replacement drug names}
 }
 \value{
 Updated \code{ToxicoSet}
@@ -20,4 +20,5 @@ A generic for the drugNames replacement method
 \examples{
 data(TGGATESsmall)
 drugNames(TGGATESsmall) <- drugNames(TGGATESsmall)
+
 }

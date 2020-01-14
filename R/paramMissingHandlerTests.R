@@ -62,7 +62,6 @@ paramMissingHandlerTests <- function(funName, tSet, mDataType, ...) {
     switch(
       missing,
       "cell_lines" = {
-      testthat::test
       message(paste0(missing, " parameter not specified, defaults to all cell lines in the given tSet!"))
       },
       "drugs" = {if (is.null(drugs)) { missingParamValues[[missing]] <- unique(drugNames(tSet));
