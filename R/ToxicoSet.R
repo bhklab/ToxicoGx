@@ -254,8 +254,10 @@ setReplaceMethod("drugInfo", signature = signature(object = "ToxicoSet",value = 
 #' data(TGGATESsmall)
 #' phenoInfo <- phenoInfo(TGGATESsmall, mDataType="rna")
 #'
-#' @inheritParams cellInfo
-#' @inheritParams phenoInfo
+#' @param tSet A \code{ToxicoSet} object #'
+#' @param cSet Parameter name for parent method inherited from CoreGx
+#' @param mDataType \code{character} A string specifying the type of molecular
+#'   data to list the phenotype information for.
 #'
 #' @return a \code{data.frame} with the experiment info
 #'
@@ -279,7 +281,8 @@ setMethod("phenoInfo",
 #' data(TGGATESsmall)
 #' phenoInfo(TGGATESsmall, mDataType="rna") <- phenoInfo(TGGATESsmall, mDataType="rna")
 #'
-#' @inheritParams cellInfo<-
+#' @param object A \code{ToxicoSet} object.
+#' @param value A \code{data.frame} of replacement values.
 #' @param mDataType A \code{character} with the type of molecular data to return/update
 #'
 #' @return The updated \code{ToxicoSet}
@@ -303,7 +306,9 @@ setReplaceMethod("phenoInfo", signature = signature(object="ToxicoSet", mDataTyp
 #' data(TGGATESsmall)
 #' TGGATES_mProf <- molecularProfiles(TGGATESsmall, "rna")[1:10,]
 #'
-#' @inheritParams phenoInfo
+#' @param object A \code{ToxicoSet} object.
+#' @param value A \code{character} vector of replacement values.
+#' @param mDataType \code{character} A string specifying the type of molecular #'   data to list the phenotype information for.
 #'
 #' @describeIn ToxicoSet Return the given type of molecular data from the ToxicoSet
 #'
@@ -323,7 +328,10 @@ setMethod("molecularProfiles",
 #' @examples
 #' molecularProfiles(TGGATESsmall, "rna") <- molecularProfiles(TGGATESsmall, "rna")
 #'
-#' @inheritParams phenoInfo<-
+#' @param object A \code{ToxicoSet} object.
+#' @param value A \code{matrix} of replacement values.
+#' @param mDataType \code{character} A string specifying the type of molecular
+#'   data to list the phenotype information for.
 #'
 #' @return Updated \code{ToxicoSet}
 #'
@@ -342,7 +350,10 @@ setReplaceMethod("molecularProfiles", signature = signature(object = "ToxicoSet"
 #' data(TGGATESsmall)
 #' featureInfo <- featureInfo(TGGATESsmall, "rna")[1:10,]
 #'
-#' @inheritParams phenoInfo
+#' @param tSet A \code{ToxicoSet} object #'
+#' @param cSet Parameter name for parent method inherited from CoreGx
+#' @param mDataType \code{character} A string specifying the type of molecular
+#'   data to list the phenotype information for.
 #'
 #' @describeIn ToxicoSet Return the feature info for the given molecular data
 #'
@@ -363,7 +374,12 @@ setMethod("featureInfo",
 #' data(TGGATESsmall)
 #' featureInfo(TGGATESsmall, "rna") <- featureInfo(TGGATESsmall, "rna")
 #'
-#' @inheritParams phenoInfo<-
+#'
+#' @param object A \code{ToxicoSet} object
+#' @param value A \code{data.frame} of replacement values
+#' @param mDataType \code{character} A string specifying the type of molecular
+#'   data
+#'
 #'
 #' @return Updated \code{ToxicoSet}
 #'
@@ -386,7 +402,8 @@ setReplaceMethod("featureInfo", signature = signature(object="ToxicoSet", mDataT
 #' @examples
 #' sensInf<- sensitivityInfo(TGGATESsmall)[1:10,]
 #'
-#' @inheritParams cellInfo
+#' @param tSet A \code{ToxicoSet} object
+#' @param cSet Parameter name for parent method inherited from CoreGx
 #'
 #' @return a \code{data.frame} with the experiment info
 #'
@@ -410,7 +427,8 @@ setMethod(sensitivityInfo,
 #' data(TGGATESsmall)
 #' sensitivityInfo(TGGATESsmall) <- sensitivityInfo(TGGATESsmall)
 #'
-#' @inheritParams cellInfo<-
+#' @param object A \code{ToxicoSet} object
+#' @param value A \code{data.frame} of replacement values
 #'
 #' @return Updated \code{ToxicoSet}
 #'setGeneric("sensitivityInfo<-", function(object, value) standardGeneric("sensitivityInfo<-"))
@@ -434,7 +452,8 @@ setReplaceMethod("sensitivityInfo", signature = signature(object="ToxicoSet",val
 #' data(TGGATESsmall)
 #' sensProf <- sensitivityProfiles(TGGATESsmall)
 #'
-#' @inheritParams cellInfo
+#' @param tSet A \code{ToxicoSet} object
+#' @param cSet Parameter name for parent method inherited from CoreGx
 #'
 #' @return a \code{data.frame} with the experiment info
 #'setGeneric("sensitivityProfiles", function(tSet) standardGeneric("sensitivityProfiles"))
@@ -457,7 +476,8 @@ setMethod(sensitivityProfiles,
 #' @examples
 #' sensitivityProfiles(TGGATESsmall) <- sensitivityProfiles(TGGATESsmall)
 #'
-#' @inheritParams cellInfo<-
+#' @param object A \code{ToxicoSet} object
+#' @param value A \code{data.frame} of replacement values
 #'
 #' @return Updated \code{ToxicoSet}
 #'setGeneric("sensitivityProfiles<-", function(object, value) standardGeneric("sensitivityProfiles<-"))
@@ -486,7 +506,8 @@ setReplaceMethod("sensitivityProfiles", signature = signature(object="ToxicoSet"
 #' @examples
 #' sensitivityMeasures(TGGATESsmall)
 #'
-#' @inheritParams cellInfo
+#' @param tSet A \code{ToxicoSet} object
+#' @param cSet Parameter name for parent method inherited from CoreGx
 #'
 #' @return A \code{character} vector of all the available sensitivity measures
 #'
@@ -510,7 +531,9 @@ setMethod(sensitivityMeasures,
 #' data(TGGATESsmall)
 #' drugName <- drugNames(TGGATESsmall)[1:10]
 #'
-#' @inheritParams drugInfo
+#' @param tSet A \code{ToxicoSet} object from which to retrieve the included
+#'   drug names
+#'
 #' @return A vector of the drug names used in the ToxicoSet
 setGeneric("drugNames", function(tSet) standardGeneric("drugNames"))
 #' @describeIn ToxicoSet Return the names of the drugs used in the ToxicoSet
@@ -528,7 +551,10 @@ setMethod(drugNames,
 #' @examples
 #' data(TGGATESsmall)
 #' drugNames(TGGATESsmall) <- drugNames(TGGATESsmall)
-#' @inheritParams drugInfo<-
+#'
+#' @param object A \code{ToxicoSet} object to modify
+#' @param value A \code{character} vector of replacement drug names
+#'
 #' @return Updated \code{ToxicoSet}
 setGeneric("drugNames<-", function(object, value) standardGeneric("drugNames<-"))
 #' @describeIn ToxicoSet Update the drug names used in the dataset
@@ -545,7 +571,8 @@ setReplaceMethod("drugNames", signature = signature(object="ToxicoSet",value="ch
 #' @examples
 #' cellNames(TGGATESsmall)
 #'
-#' @inheritParams cellInfo
+#' @param tSet A \code{ToxicoSet} object
+#' @param cSet Parameter name for parent method inherited from CoreGx
 #'
 #' @return A vector of the cell names used in the ToxicoSet
 # setGeneric("cellNames", function(tSet) standardGeneric("cellNames"))
@@ -569,7 +596,8 @@ setMethod("cellNames",
 #' data(TGGATESsmall)
 #' cellNames(TGGATESsmall) <- cellNames(TGGATESsmall)
 #'
-#' @inheritParams drugInfo<-
+#' @param object A \code{ToxicoSet} object to modify
+#' @param value A \code{character} of replacement cell line names
 #'
 #' @return Updated \code{ToxicoSet}
 #'
@@ -590,7 +618,10 @@ setReplaceMethod("cellNames", signature = signature(object="ToxicoSet",value="ch
 #' @examples
 #' fNames(TGGATESsmall, "rna")[1:10]
 #'
-#' @inheritParams phenoInfo
+#' @param tSet A \code{ToxicoSet} object
+#' @param cSet Parameter name for parent method inherited from CoreGx
+#' @param mDataType \code{character} A string specifying the type of molecular
+#'   data to list the phenotype information for.
 #'
 #' @return A \code{character} vector of the feature names
 #'
@@ -614,7 +645,7 @@ setMethod("fNames",
 # data(TGGATESsmall)
 # cellNames(TGGATESsmall) <- cellNames(TGGATESsmall)
 #
-# @inheritParams phenoInfo<-
+# @param mDataType \code{character} A string specifying the type of molecular #'   data to list the phenotype information for.
 # @param value A \code{character} vector of the new feature names
 # @return Updated \code{ToxicoSet}
 # @describeIn ToxicoSet Update the feature names used in the dataset
@@ -630,7 +661,8 @@ setMethod("fNames",
 #' @examples
 #' dateCreated(TGGATESsmall)
 #'
-#' @inheritParams cellInfo
+#' @param tSet A \code{ToxicoSet} object
+#' @param cSet Parameter name for parent method inherited from CoreGx
 #'
 #' @return The date the ToxicoSet was created
 #'
@@ -654,7 +686,8 @@ setMethod(dateCreated,
 #' tSetName <- cSetName
 #' tSetName(TGGATESsmall)
 #'
-#' @inheritParams cellInfo
+#' @param tSet A \code{ToxicoSet} object
+#' @param cSet Parameter name for parent method inherited from CoreGx
 #'
 #' @return The name of the ToxicoSet
 #'
@@ -677,7 +710,8 @@ tSetName <- cSetName
 #' @examples
 #' pertNumber(TGGATESsmall)
 #'
-#' @inheritParams cellInfo
+#' @param tSet A \code{ToxicoSet} object
+#' @param cSet Parameter name for parent method inherited from CoreGx
 #'
 #' @return A 3D \code{array} with the number of perturbation experiments per radiation type and cell line, and data type
 # setGeneric("pertNumber", function(tSet) standardGeneric("pertNumber"))
@@ -702,7 +736,8 @@ setMethod(pertNumber,
 #' @examples
 #' sensNumber(TGGATESsmall)
 #'
-#' @inheritParams cellInfo
+#' @param tSet A \code{ToxicoSet} object
+#' @param cSet Parameter name for parent method inherited from CoreGx
 #'
 #' @return A \code{data.frame} with the number of sensitivity experiments per drug and cell line
 #'
@@ -725,7 +760,8 @@ setMethod(sensNumber,
 #' @examples
 #' pertNumber(TGGATESsmall) <- pertNumber(TGGATESsmall)
 #'
-#' @inheritParams cellInfo<-
+#' @param object A \code{ToxicoSet} object to modify
+#' @param value An \code{array} of replacement values
 ## TODO:: Remove duplicate param names from CoreGx; this documentation is incorrect as is
 # @param value A new 3D \code{array} with the number of perturbation experiments per drug and cell line, and data type
 #'
@@ -750,7 +786,8 @@ setReplaceMethod('pertNumber', signature = signature(object="ToxicoSet",value="a
 #' @examples
 #' sensNumber(TGGATESsmall) <- sensNumber(TGGATESsmall)
 #'
-#' @inheritParams cellInfo<-
+#' @param object A \code{ToxicoSet} object to modify
+#' @param value A \code{matrix} of replacement values
 #'
 #' @return The updated \code{ToxicoSet}
 #'
@@ -768,7 +805,7 @@ setReplaceMethod('sensNumber', signature = signature(object="ToxicoSet",value="m
 
 #' Show a ToxicoSet
 #'
-#' @inheritParams drugInfo<-
+#' @param object A \code{ToxicoSet} object to print a summary for
 #'
 #' @examples
 #' TGGATESsmall
@@ -800,7 +837,8 @@ setMethod("show", signature=signature(object="ToxicoSet"),
 #' @examples
 #' mDataNames(TGGATESsmall)
 #'
-#' @inheritParams CoreGx::cellInfo
+#' @param tSet A \code{ToxicoSet} object
+#' @param cSet Parameter name for parent method inherited from CoreGx
 #'
 #' @return Vector of names of the molecular data types
 # Imports generic

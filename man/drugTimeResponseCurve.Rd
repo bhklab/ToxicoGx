@@ -61,6 +61,8 @@ This function generates a plot visualizing the relationship between gene
   with ggplot2 and can be customized using ggplot plot + function() syntax.
 }
 \examples{
+  library(ggplot2)
+
   # Default settings
   plot <- drugTimeResponseCurve(TGGATESsmall, cell_lines = "Hepatocyte",
   dose = c("Control", "Low", "Middle"), drugs = drugNames(TGGATESsmall)[6],
@@ -83,7 +85,7 @@ This function generates a plot visualizing the relationship between gene
    }
 
    # Customize the plot using standard ggplot2 syntax
-   if(interactve()) {
+   if(interactive()) {
       plot + labs(title= 'My Custom Title', ylab = 'The y-axis') +
         xlim(c(2, 24)) + ylim(c(99,105)) + scale_color_brewer(palette="Set1")
    }

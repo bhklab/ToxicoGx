@@ -90,13 +90,14 @@
 \arguments{
 \item{cSet}{Parameter name for parent method inherited from CoreGx}
 
-\item{object}{A \code{ToxicoSet} object}
+\item{object}{A \code{ToxicoSet} object to modify}
 
-\item{value}{A \code{data.frame} of replacement values}
+\item{value}{A \code{matrix} of replacement values}
 
 \item{tSet}{A \code{ToxicoSet} object}
 
-\item{mDataType}{A \code{character} with the type of molecular data to return/update}
+\item{mDataType}{\code{character} A string specifying the type of molecular
+data to list the phenotype information for.}
 }
 \value{
 An object of the ToxicoSet class
@@ -284,6 +285,7 @@ featureInfo <- featureInfo(TGGATESsmall, "rna")[1:10,]
 
 data(TGGATESsmall)
 featureInfo(TGGATESsmall, "rna") <- featureInfo(TGGATESsmall, "rna")
+
 
 sensInf<- sensitivityInfo(TGGATESsmall)[1:10,]
 

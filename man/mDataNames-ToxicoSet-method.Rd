@@ -7,7 +7,9 @@
 \S4method{mDataNames}{ToxicoSet}(cSet = tSet)
 }
 \arguments{
-\item{cSet}{The \code{CoreSet} to retrieve cell info from}
+\item{cSet}{Parameter name for parent method inherited from CoreGx}
+
+\item{tSet}{A \code{ToxicoSet} object}
 }
 \value{
 Vector of names of the molecular data types

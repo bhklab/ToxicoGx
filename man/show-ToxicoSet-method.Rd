@@ -7,7 +7,7 @@
 \S4method{show}{ToxicoSet}(object)
 }
 \arguments{
-\item{object}{A \code{ToxicoSet} object.}
+\item{object}{A \code{ToxicoSet} object to print a summary for}
 }
 \value{
 Prints the ToxicoSet object to the output stream, and returns invisible NULL.

@@ -25,7 +25,7 @@ Description: Contains a set of functions to perform large-scale analysis of
   to annotation, visualization and statistical analysis of toxico-genomic data.
   This package is in early release, and more features will be added over the
   next few months.
-License: MIT
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Depends: R (>= 3.5.0), CoreGx
@@ -35,6 +35,7 @@ Imports:
     RColorBrewer,
     ggplot2,
     data.table,
+    tibble,
     dplyr,
     caTools,
     downloader,

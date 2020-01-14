@@ -8,7 +8,7 @@
 #' @export
 #'
 warn_verbose <- function(warning) {
-  if (verbose == True) {
+  if (verbose == TRUE) {
     warning(warning)
   }
 }
@@ -21,7 +21,7 @@ warn_verbose <- function(warning) {
 #' @export
 #'
 msg_verbose <- function(message) {
-  if (verbose == True) {
+  if (verbose == TRUE) {
     message(message)
   }
 }

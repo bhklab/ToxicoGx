@@ -86,7 +86,7 @@ summarizeSensitivityProfiles <- function(tSet,
 
     }
     ##dd contains the sensitivity Info of the tSet
-    dd <- ToxcioGx::sensitivityInfo(tSet)
+    dd <- ToxicoGx::sensitivityInfo(tSet)
 
   }
 
