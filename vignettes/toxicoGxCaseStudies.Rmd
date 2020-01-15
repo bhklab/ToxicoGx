@@ -76,7 +76,6 @@ opts_chunk$set(cache = 3, cache.path = "output/cache/")
 ## Plots
 opts_chunk$set(fig.path = "output/figures/")
 
-
 ```
 
 ## Plotting gene expression changes from TG-GATEs dataset
@@ -86,9 +85,8 @@ For plotting the gene expression under same conditions using the package, the fi
 To plot, the function drugGeneResponseCurve has been used wherein mandatory inputs such as dataset, drug name, cell-line, molecular type, gene name, dose and time points should be specified.
 
 ```{r, message = FALSE, results = 'hide'}
-devtools::install_github("bhklab/ToxicoGx")
+devtools::install_github('bhklab/ToxicoGx')
 ```
-
 
 **Plot time dependent dose response of Carbon tetra chloride on CYP1A1 gene**
 ```{r, message = FALSE, fig.width = 8, fig.height = 3}
@@ -123,7 +121,7 @@ The HCC signature, already mapped to the gene level, has been included in this p
 
 ```{r, results = 'asis'}
 library(xtable)
-data("TGGATESsmall")
+#ata("TGGATESsmall")
 # To compute the effect of drug concentration on the molecular profile of the cell
 drug.perturbation <- ToxicoGx::drugPerturbationSig(tSet = TGGATESsmall,
                                          mDataType = "rna",
@@ -139,7 +137,8 @@ res <- apply(drug.perturbation[,,c("tstat", "fdr")],
                return(PharmacoGx::connectivityScore(x = x,
                                         y = HCC[,2,drop = FALSE],
                                         method = "fgsea", nperm = 100))
-             }, HCC = HCC_sig)
+             },
+             HCC = HCC_sig[1:199,])
 rownames(res) <- c("Connectivity", "P Value")
 res <- t(res)
 res <-  cbind(res,"FDR" = p.adjust(res[,2], method = "fdr"))
