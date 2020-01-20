@@ -50,8 +50,8 @@ Suggests:
     testthat (>= 2.1.0),
     rmarkdown,
     knitr,
-    knitcitations,
     tinytex,
+    knitcitations,
     devtools,
     PharmacoGx,
     xtable
