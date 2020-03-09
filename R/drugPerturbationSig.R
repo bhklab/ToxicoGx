@@ -88,16 +88,33 @@ drugPerturbationSig <- function(
 
   returnValues <- match.arg(returnValues, several.ok = TRUE)
 
+  # Add DMSO for the drugMatrix
+  if (names(tSet) == 'drugMatrix') {
+    if (!('DMSO' %in% drugs)) {
+      drugs1 <- c('DMSO', drugs)
+    if (!('Control' %in% dose)) {
+      dose <- c('Control', dose)
+      }
+    }
+  } else {
+    drugs1 <- drugs
+  }
+
   # SUBSET tSET BASED ON PARAMETERS
   tSetSubsetOnParams <-
-    suppressWarnings(subsetTo(tSet, mDataType = mDataType, cells = cell_lines, drugs = drugs,
+    suppressWarnings(subsetTo(tSet, mDataType = mDataType, cells = cell_lines, drugs = drugs1,
              features = features, duration = duration))
 
   # SUBSET SAMPLES BASED ON DOSE
   samples <- rownames(phenoInfo(tSetSubsetOnParams, mDataType)[which(phenoInfo(tSetSubsetOnParams, mDataType)$dose %in% dose),])
 
   # LOOP OVER DRUGS TO CALCULATE PER DRUG SUMMARY STATISTICS
-  mcres <- lapply(drugs, function(x, exprs, sampleinfo) {
+  mcres <- lapply(drugs[drugs != 'DMSO'], function(x, exprs, sampleinfo) {
+
+    # Add DMSO for the drugMatrix since it is the only control
+    if (names(tSet) == 'drugMatrix') {
+        x <- c('DMSO', drugs)
+    }
 
     # Subset to correct drugs
     exprs <- exprs[which(sampleinfo[ , "drugid"] %in% x),]
@@ -111,7 +128,7 @@ drugPerturbationSig <- function(
                      Adding another dose level will likely generate results."))
     }
     res <- NULL
-    i <- x
+    i <- x[x != 'DMSO']
 
     ## using a linear model (x ~ concentration + cell + batch + duration)
     res <- ToxicoGx::rankGeneDrugPerturbation(
