@@ -91,18 +91,16 @@ drugPerturbationSig <- function(
   # Add DMSO for the drugMatrix
   if (names(tSet) == 'drugMatrix') {
     if (!('DMSO' %in% drugs)) {
-      drugs1 <- c('DMSO', drugs)
+      drugs <- c('DMSO', drugs)
+    }
     if (!('Control' %in% dose)) {
       dose <- c('Control', dose)
-      }
     }
-  } else {
-    drugs1 <- drugs
   }
 
   # SUBSET tSET BASED ON PARAMETERS
   tSetSubsetOnParams <-
-    suppressWarnings(subsetTo(tSet, mDataType = mDataType, cells = cell_lines, drugs = drugs1,
+    suppressWarnings(subsetTo(tSet, mDataType = mDataType, cells = cell_lines, drugs = drugs,
              features = features, duration = duration))
 
   # SUBSET SAMPLES BASED ON DOSE
@@ -113,9 +111,8 @@ drugPerturbationSig <- function(
 
     # Add DMSO for the drugMatrix since it is the only control
     if (names(tSet) == 'drugMatrix') {
-        x <- c('DMSO', drugs)
+        x <- c('DMSO', x)
     }
-
     # Subset to correct drugs
     exprs <- exprs[which(sampleinfo[ , "drugid"] %in% x),]
     sampleinfo <- sampleinfo[which(sampleinfo[ , "drugid"] %in% x),]
