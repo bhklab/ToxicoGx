@@ -76,7 +76,7 @@ rankGeneDrugPerturbation <-
           cat(sprintf("type %s: batch %i/%i -> %i vs %i\n", utype[bb], bb, length(ubatch), length(xpix), length(ctrlix)))
         }
         ## transformation of drug concentrations values
-        conc <- drug.concentration * 10^6
+        conc <- drug.concentration / 10^6
         inpumat <- rbind(inpumat, data.frame("treated"=c(rep(1, length(xpix)), rep(0, length(ctrlix))), "type"=c(type[xpix], type[ctrlix]), "batch"=paste("batch", c(batch[xpix], batch[ctrlix]), sep=""), "concentration"=c(conc[xpix], conc[ctrlix]), "duration"= c(duration[xpix], duration[ctrlix])))
       }
     }
