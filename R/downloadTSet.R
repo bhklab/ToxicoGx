@@ -22,7 +22,7 @@ availableTSets <- function(saveDir=tempdir(), myfn="availableToxicoSets.csv", ve
     dir.create(saveDir, recursive = TRUE)
   }
 
-  downloader::download("https://ndownloader.figshare.com/files/19347956?private_link=d286d7386d5f5e778585",
+  downloader::download("https://zenodo.org/record/3712423/files/availableTSets.csv?download=1",
                        destfile = file.path(saveDir, myfn),
                        quiet = !verbose)
 
@@ -39,7 +39,7 @@ availableTSets <- function(saveDir=tempdir(), myfn="availableToxicoSets.csv", ve
 #'
 #' @examples
 #' if (interactive()){
-#' downloadtSet("TGGATESvignette")
+#' drugMatrix <- downloadtSet("drugMatrix")
 #' }
 #'
 #' @param name \code{Character} string, the name of the PhamracoSet to download.
@@ -67,13 +67,14 @@ downloadTSet <- function(name, saveDir = tempdir(), tSetFileName = NULL, verbose
   }
 
   if (is.null(tSetFileName)) {
-    tSetFileName <- paste0(tSetTable[whichx,"ToxicoSet.Name"], ".rda")
+    tSetFileName <- paste0(tSetTable[whichx,"ToxicoSet.Name"], ".rds")
   }
   if (!file.exists(file.path(saveDir, tSetFileName))) {
-    downloader::download(url = as.character(tSetTable[whichx,"URL"]), destfile = file.path(saveDir, tSetFileName), quiet = !verbose)
+    downloader::download(url = as.character(tSetTable[whichx,"URL"]), destfile = file.path(saveDir, tSetFileName), quiet = !verbose, mode='wb')
   }
 
-  load(file.path(saveDir, tSetFileName), envir = globalenv())
+  tSet <- readRDS(file.path(saveDir, tSetFileName))
+  return(tSet)
 }
 
 #' @importFrom utils read.table write.table

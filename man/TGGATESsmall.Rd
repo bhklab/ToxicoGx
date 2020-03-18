@@ -4,7 +4,9 @@
 \name{TGGATESsmall}
 \alias{TGGATESsmall}
 \title{TGGATESsmall dataset}
-\format{ToxicoSet object}
+\format{
+ToxicoSet object
+}
 \usage{
 data(TGGATESsmall)
 }

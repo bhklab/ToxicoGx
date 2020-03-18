@@ -4,7 +4,9 @@
 \name{HCC_sig}
 \alias{HCC_sig}
 \title{HCC_sig dataset}
-\format{character}
+\format{
+character
+}
 \usage{
 data(HCC_sig)
 }
