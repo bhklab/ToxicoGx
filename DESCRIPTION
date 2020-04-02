@@ -29,10 +29,10 @@ LazyData: true
 Depends: R (>= 4.0), CoreGx
 Imports:
     data.table,
+    testthat,
     SummarizedExperiment,
     S4Vectors,
-    Biobase, 
-    RColorBrewer,
+    Biobase,
     ggplot2,
     tibble,
     dplyr,
@@ -46,7 +46,6 @@ Imports:
 RoxygenNote: 7.1.0
 VignetteBuilder: knitr
 Suggests:
-    testthat (>= 2.1.0),
     rmarkdown,
     knitr,
     tinytex,
