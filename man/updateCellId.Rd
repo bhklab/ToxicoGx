@@ -7,9 +7,9 @@
 updateCellId(tSet, new.ids = vector("character"))
 }
 \arguments{
-\item{tSet}{[object] A ToxicoSet object to be updates}
+\item{tSet}{A \code{ToxicoSet} object to be updates}
 
-\item{new.ids}{[character] A character vector of ids to update with}
+\item{new.ids}{A \code{character} vector of ids to update with}
 }
 \description{
 A function to update cell ids
@@ -17,5 +17,6 @@ A function to update cell ids
 \examples{
 data(TGGATESsmall)
 updateCellId(TGGATESsmall, new.ids = cellNames(TGGATESsmall))
+
 }
 \keyword{internal}

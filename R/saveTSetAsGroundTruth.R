@@ -30,13 +30,13 @@
   parallel::mclapply(names(tSet@molecularProfiles),
                      function(dataType) {
                        # To test molecularProfiles() against
-                       saveRDS(Biobase::exprs(tSet@molecularProfiles[[dataType]]) , file = paste0(path, dataType, ".molecularProfiles.", name, ".rds"))
+                       saveRDS(SummarizedExperiment::assay(tSet@molecularProfiles[[dataType]], 1) , file = paste0(path, dataType, ".molecularProfiles.", name, ".rds"))
                        # To test phenoInfo() against
-                       saveRDS(Biobase::pData(tSet@molecularProfiles[[dataType]]) , file = paste0(path, dataType, ".phenoInfo.", name, ".rds"))
+                       saveRDS(SummarizedExperiment::colData(tSet@molecularProfiles[[dataType]]) , file = paste0(path, dataType, ".phenoInfo.", name, ".rds"))
                        # To test fNames() against
-                       saveRDS(rownames(Biobase::fData(tSet@molecularProfiles[[dataType]])), file = paste0(path, dataType, ".fNames.", name, ".rds"))
+                       saveRDS(rownames(SummarizedExperiment::rowData(tSet@molecularProfiles[[dataType]])), file = paste0(path, dataType, ".fNames.", name, ".rds"))
                        # To test featureInfo() against
-                       saveRDS(Biobase::fData(tSet@molecularProfiles[[dataType]]), file = paste0(path, dataType, ".featureInfo.", name, ".rds"))
+                       saveRDS(SummarizedExperiment::rowData(tSet@molecularProfiles[[dataType]]), file = paste0(path, dataType, ".featureInfo.", name, ".rds"))
                      })
 
   # To test cellInfo() against

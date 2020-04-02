@@ -158,7 +158,7 @@ drugPerturbationSig <- function(
   }
 
   # CREATE TOXICOSIG OBJECT
-  drug.perturbation <- ToxicoGx::ToxicoSig(drug.perturbation, tSetName = cSetName(tSet), Call = as.character(match.call()), SigType = 'Perturbation')
+  drug.perturbation <- ToxicoGx::ToxicoSig(drug.perturbation, tSetName = name(tSet), Call = as.character(match.call()), SigType = 'Perturbation')
 
   # RETURN TOXICOSIG OBJECT
   return(drug.perturbation)

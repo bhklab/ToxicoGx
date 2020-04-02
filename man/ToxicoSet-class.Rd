@@ -10,8 +10,9 @@
 \alias{drugInfo<-,ToxicoSet,data.frame-method}
 \alias{phenoInfo,ToxicoSet,character-method}
 \alias{phenoInfo<-,ToxicoSet,character,data.frame-method}
-\alias{molecularProfiles,ToxicoSet,character-method}
-\alias{molecularProfiles<-,ToxicoSet,character,matrix-method}
+\alias{molecularProfiles,ToxicoSet-method}
+\alias{molecularProfiles<-,ToxicoSet,character,character,matrix-method}
+\alias{molecularProfiles<-,ToxicoSet,character,missing,matrix-method}
 \alias{featureInfo,ToxicoSet,character-method}
 \alias{featureInfo<-,ToxicoSet,character,data.frame-method}
 \alias{sensitivityInfo,ToxicoSet-method}
@@ -25,79 +26,82 @@
 \alias{cellNames,ToxicoSet-method}
 \alias{cellNames<-,ToxicoSet,character-method}
 \alias{fNames,ToxicoSet,character-method}
+\alias{fNames<-,ToxicoSet,character,ANY-method}
 \alias{dateCreated,ToxicoSet-method}
-\alias{cSetName,ToxicoSet-method}
+\alias{name,ToxicoSet-method}
 \alias{pertNumber,ToxicoSet-method}
 \alias{sensNumber,ToxicoSet-method}
 \alias{pertNumber<-,ToxicoSet,array-method}
 \alias{sensNumber<-,ToxicoSet,matrix-method}
 \title{Class to contain Toxico-genomic Data}
 \usage{
-\S4method{cellInfo}{ToxicoSet}(cSet = tSet)
+\S4method{cellInfo}{ToxicoSet}(object)
 
 \S4method{cellInfo}{ToxicoSet,data.frame}(object) <- value
 
-\S4method{drugInfo}{ToxicoSet}(tSet)
+\S4method{drugInfo}{ToxicoSet}(object)
 
 \S4method{drugInfo}{ToxicoSet,data.frame}(object) <- value
 
-\S4method{phenoInfo}{ToxicoSet,character}(cSet = tSet, mDataType)
+\S4method{phenoInfo}{ToxicoSet,character}(object, mDataType)
 
 \S4method{phenoInfo}{ToxicoSet,character,data.frame}(object, mDataType) <- value
 
-\S4method{molecularProfiles}{ToxicoSet,character}(cSet = tSet, mDataType)
+\S4method{molecularProfiles}{ToxicoSet}(object, mDataType, assay)
 
-\S4method{molecularProfiles}{ToxicoSet,character,matrix}(object, mDataType) <- value
+\S4method{molecularProfiles}{ToxicoSet,character,character,matrix}(object, mDataType, assay) <- value
 
-\S4method{featureInfo}{ToxicoSet,character}(cSet = tSet, mDataType)
+\S4method{molecularProfiles}{ToxicoSet,character,missing,matrix}(object, mDataType, assay) <- value
+
+\S4method{featureInfo}{ToxicoSet,character}(object, mDataType)
 
 \S4method{featureInfo}{ToxicoSet,character,data.frame}(object, mDataType) <- value
 
-\S4method{sensitivityInfo}{ToxicoSet}(cSet = tSet)
+\S4method{sensitivityInfo}{ToxicoSet}(object)
 
 \S4method{sensitivityInfo}{ToxicoSet,data.frame}(object) <- value
 
-\S4method{sensitivityProfiles}{ToxicoSet}(cSet = tSet)
+\S4method{sensitivityProfiles}{ToxicoSet}(object)
 
 \S4method{sensitivityProfiles}{ToxicoSet,data.frame}(object) <- value
 
 \S4method{sensitivityProfiles}{ToxicoSet,matrix}(object) <- value
 
-\S4method{sensitivityMeasures}{ToxicoSet}(cSet = tSet)
+\S4method{sensitivityMeasures}{ToxicoSet}(object)
 
-\S4method{drugNames}{ToxicoSet}(tSet)
+\S4method{drugNames}{ToxicoSet}(object)
 
 \S4method{drugNames}{ToxicoSet,character}(object) <- value
 
-\S4method{cellNames}{ToxicoSet}(cSet = tSet)
+\S4method{cellNames}{ToxicoSet}(object)
 
 \S4method{cellNames}{ToxicoSet,character}(object) <- value
 
-\S4method{fNames}{ToxicoSet,character}(cSet = tSet, mDataType)
+\S4method{fNames}{ToxicoSet,character}(object, mDataType)
 
-\S4method{dateCreated}{ToxicoSet}(cSet = tSet)
+\S4method{fNames}{ToxicoSet,character,ANY}(object, mDataType) <- value
 
-\S4method{cSetName}{ToxicoSet}(cSet = tSet)
+\S4method{dateCreated}{ToxicoSet}(object)
 
-\S4method{pertNumber}{ToxicoSet}(cSet = tSet)
+\S4method{name}{ToxicoSet}(object)
 
-\S4method{sensNumber}{ToxicoSet}(cSet = tSet)
+\S4method{pertNumber}{ToxicoSet}(object)
+
+\S4method{sensNumber}{ToxicoSet}(object)
 
 \S4method{pertNumber}{ToxicoSet,array}(object) <- value
 
 \S4method{sensNumber}{ToxicoSet,matrix}(object) <- value
 }
 \arguments{
-\item{cSet}{Parameter name for parent method inherited from CoreGx}
-
 \item{object}{A \code{ToxicoSet} object to modify}
 
 \item{value}{A \code{matrix} of replacement values}
 
-\item{tSet}{A \code{ToxicoSet} object}
-
 \item{mDataType}{\code{character} A string specifying the type of molecular
 data to list the phenotype information for.}
+
+\item{assay}{\code{character} Name or index of the assay data to return}
 }
 \value{
 An object of the ToxicoSet class
@@ -106,7 +110,7 @@ a \code{data.frame} with the cell annotations
 
 Updated \code{ToxicoSet}
 
-a \code{data.frame} with the experiment info
+a \code{Dframe} with the experiment info
 
 The updated \code{ToxicoSet}
 
@@ -117,13 +121,10 @@ Updated \code{ToxicoSet}
 a \code{data.frame} with the experiment info
 
 Updated \code{ToxicoSet}
-setGeneric("sensitivityInfo<-", function(object, value) standardGeneric("sensitivityInfo<-"))
 
 a \code{data.frame} with the experiment info
-setGeneric("sensitivityProfiles", function(tSet) standardGeneric("sensitivityProfiles"))
 
 Updated \code{ToxicoSet}
-setGeneric("sensitivityProfiles<-", function(object, value) standardGeneric("sensitivityProfiles<-"))
 
 A \code{character} vector of all the available sensitivity measures
 
@@ -133,13 +134,17 @@ Updated \code{ToxicoSet}
 
 A \code{character} vector of the feature names
 
+Updated \code{ToxicoSet}
+
 The date the ToxicoSet was created
 
 The name of the ToxicoSet
 
-A 3D \code{array} with the number of perturbation experiments per radiation type and cell line, and data type
+A 3D \code{array} with the number of perturbation experiments per
+  radiation type and cell line, and data type
 
-A \code{data.frame} with the number of sensitivity experiments per drug and cell line
+A \code{data.frame} with the number of sensitivity experiments per
+  drug and cell line
 
 The updated \code{ToxicoSet}
 
@@ -149,65 +154,86 @@ The updated \code{ToxicoSet}
 A description which has yet to be added to this class. This is just a place
 holder.
 
-A generic for cellInfo method
+Get the cell line annotations in a ToxicoSet
 
 Generic for cellInfo replace method
 
-Generic for phenoInfo method
+Get the phenotype annotations for cell lines with the specificed molecular
+  data type
 
-Generic for phenoInfo replace method
+Set the phenotype annotations for cell lines with the selected molecular
+  data type.
 
-Generic for molecularProfiles method
+Get the molecular profile data associated with the specific molecular data
 
-Generic for molecularProfiles replace method
+Set the molecular profile data assciated with the specificied molecular
+  data type
 
-Generic for featureInfo replace method
+Set the feature annotations for a specficied molecular data type
 
-Generic for sensitivityInfo method
+Get the annotations for the sensitivity experiments in the ToxicoSet
 
-A generic for the sensitivityInfo replacement method
+Set the annotations for sensitivity experiments in this ToxicSet
 
-Generic for sensitivityProfiles method
+Get the data for sensitivty experiments on cell lines in a ToxicoSet
 
-A generic for the sensitivityProfiles replacement method
+Set the data for sensitivity experiments on cell lines in a ToxicoSet
 
-A generic for the sensitivityMeasures  method
+Get the avilable measurments for sensitivity experiments in a ToxicoSet
 
-A generic for the cellNames method
+Get names of cell lines in a ToxicoSet object
 
-A generic for the cellNames replacement method
+Set the cell line names in a ToxcioSet object
 
-A generic for the fNames method
+Get the feature names in a ToxicoSet object for the specified molecular data
+  type
 
-A generic for the dateCreated method
+Set the feature names in a ToxicoSet object for the specified molecular
+  data type
 
-A generic for the tSetName method
+Get the date a ToxicoSet object was created
 
-A generic for the pertNumber method
+Get the name of a ToxicoSet object
 
-A generic for the sensNumber method
+Get an array of the number of pertubration experiments per drug and cell
+  line in a ToxicoSet object
 
-A generic for the pertNumber method
+Get the number of sensitivity experiments per drug and cell line in a
+  ToxicoSet
 
-A generic for the sensNumber method
+Set the number of perturbation experiments per drug and cell line and
+  molecular data type in a ToxicoSet object
+
+Set the number of sensitivity experiments per drug and cell line in a
+  ToxicoSet object
 }
 \section{Methods (by generic)}{
 \itemize{
-\item \code{cellInfo}: Returns the annotations for all the cell lines tested on in the ToxicoSet
+\item \code{cellInfo}: Returns the annotations for all the cell lines tested
+on in the ToxicoSet
 
-\item \code{cellInfo<-}: Update the cell line annotations
+\item \code{cellInfo<-}: Returns the annotations for all the cell lines tested
+on in the ToxicoSet
 
-\item \code{drugInfo}: Returns the annotations for all the drugs tested in the ToxicoSet
+\item \code{drugInfo}: Returns the annotations for all the drugs tested in
+the ToxicoSet
 
 \item \code{drugInfo<-}: Update the drug annotations
 
-\item \code{phenoInfo}: Return the experiment info from the given type of molecular data in ToxicoSet
+\item \code{phenoInfo}: Return the experiment info from the given type of
+molecular data in ToxicoSet
 
-\item \code{phenoInfo<-}: Update the the given type of molecular data experiment info in the ToxicoSet
+\item \code{phenoInfo<-}: Update the the given type of molecular data experiment
+info in the ToxicoSet
 
-\item \code{molecularProfiles}: Return the given type of molecular data from the ToxicoSet
+\item \code{molecularProfiles}: Return the given type of molecular data from the
+ToxicoSet
 
-\item \code{molecularProfiles<-}: Update the given type of molecular data from the ToxicoSet
+\item \code{molecularProfiles<-}: Update the given type of molecular data from the
+ToxicoSet
+
+\item \code{molecularProfiles<-}: Update the given type of molecular data from the
+ToxicoSet
 
 \item \code{featureInfo}: Return the feature info for the given molecular data
 
@@ -217,7 +243,8 @@ A generic for the sensNumber method
 
 \item \code{sensitivityInfo<-}: Update the sensitivity experiment info
 
-\item \code{sensitivityProfiles}: Return the phenotypic data for the drug dose sensitivity
+\item \code{sensitivityProfiles}: Return the phenotypic data for the drug dose
+sensitivity
 
 \item \code{sensitivityProfiles<-}: Update the phenotypic data for the drug dose
 sensitivity
@@ -238,9 +265,11 @@ summaries, for example, whether there are IC50 values available
 
 \item \code{fNames}: Return the feature names used in the dataset
 
+\item \code{fNames<-}: Update the feature names used in the dataset
+
 \item \code{dateCreated}: Return the date the ToxicoSet was created
 
-\item \code{cSetName}: Return the name of the ToxicoSet
+\item \code{name}: Return the name of the ToxicoSet
 
 \item \code{pertNumber}: Return the summary of available perturbation
 experiments
@@ -258,8 +287,38 @@ experiments
 \section{Slots}{
 
 \describe{
+\item{\code{annotation}}{A \code{list} of annotation data about the ToxicoSet,
+including the \code{$name} and the session information for how the object
+was creating, detailing the exact versions of R and all the packages used}
+
+\item{\code{molecularProfiles}}{A \code{list} containing \code{SummarizedExperiment}
+type object for holding data for RNA, DNA, SNP and CNV
+measurements, with associated \code{fData} and \code{pData}
+containing the row and column metadata}
+
+\item{\code{cell}}{A \code{data.frame} containing the annotations for all the cell
+lines profiled in the data set, across all data types}
+
 \item{\code{drug}}{A \code{data.frame} containg the annotations for all the drugs
-profiled in the in the dataset, across all data types}
+profiled in the data set, across all data types}
+
+\item{\code{sensitivity}}{A \code{list} containing all the data for the sensitivity
+experiments, including \code{$info}, a \code{data.frame} containing the
+experimental info,\code{$raw} a 3D \code{array} containing raw data,
+\code{$profiles}, a \code{data.frame} containing sensitivity profiles
+statistics, and \code{$n}, a \code{data.frame} detailing the number of
+experiments for each cell-drug pair}
+
+\item{\code{perturbation}}{A \code{list} containting \code{$n}, a \code{data.frame}
+summarizing the available perturbation data,}
+
+\item{\code{curation}}{A \code{list} containing mappings for \code{$drug},
+\code{cell}, \code{tissue} names  used in the data set to universal
+identifiers used between different ToxicoSet objects}
+
+\item{\code{datasetType}}{A \code{character} string of 'sensitivity',
+'perturbation', or both detailing what type of data can be found in the
+ToxicoSet, for proper processing of the data}
 }}
 
 \examples{
@@ -273,19 +332,20 @@ data(TGGATESsmall)
 phenoInfo <- phenoInfo(TGGATESsmall, mDataType="rna")
 
 data(TGGATESsmall)
-phenoInfo(TGGATESsmall, mDataType="rna") <- phenoInfo(TGGATESsmall, mDataType="rna")
+phenoInfo(TGGATESsmall, mDataType="rna") <-
+  phenoInfo(TGGATESsmall, mDataType="rna")
 
 data(TGGATESsmall)
 TGGATES_mProf <- molecularProfiles(TGGATESsmall, "rna")[1:10,]
 
-molecularProfiles(TGGATESsmall, "rna") <- molecularProfiles(TGGATESsmall, "rna")
+molecularProfiles(TGGATESsmall, "rna") <-
+  molecularProfiles(TGGATESsmall, "rna")
 
 data(TGGATESsmall)
 featureInfo <- featureInfo(TGGATESsmall, "rna")[1:10,]
 
 data(TGGATESsmall)
 featureInfo(TGGATESsmall, "rna") <- featureInfo(TGGATESsmall, "rna")
-
 
 sensInf<- sensitivityInfo(TGGATESsmall)[1:10,]
 
@@ -306,10 +366,12 @@ cellNames(TGGATESsmall) <- cellNames(TGGATESsmall)
 
 fNames(TGGATESsmall, "rna")[1:10]
 
+data(TGGATESsmall)
+cellNames(TGGATESsmall) <- cellNames(TGGATESsmall)
+
 dateCreated(TGGATESsmall)
 
-tSetName <- cSetName
-tSetName(TGGATESsmall)
+name(TGGATESsmall)
 
 pertNumber(TGGATESsmall)
 

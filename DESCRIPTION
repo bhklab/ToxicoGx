@@ -1,7 +1,7 @@
 Package: ToxicoGx
 Type: Package
 Title: Analysis of Large-Scale Toxico-Genomic Data
-Version: 0.1.2
+Version: 0.99.0
 Date: 2020-03-17
 Authors@R: c(
   person("Sisira","Nair", email = "sisira.nair@uhnresearch.ca",
@@ -19,13 +19,14 @@ Authors@R: c(
   person("Benjamin","Haibe-Kains", email = "benjamin.haibe.kains@utoronto.ca",
     role = c("aut","cre"))
   )
-Description: Contains a set of functions to perform large-scale analysis of toxicogenomic data, providing a 
-  standardized data structure to hold information relevant to annotation, visualization and statistical 
-  analysis of toxicogenomic data.
+Description: Contains a set of functions to perform large-scale analysis of 
+  toxicogenomic data, providing a standardized data structure to hold 
+  information relevant to annotation, visualization and statistical analysis of 
+  toxicogenomic data.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Depends: R (>= 3.5.0), CoreGx
+Depends: R (>= 4.0), CoreGx
 Imports:
     SummarizedExperiment,
     Biobase, 
