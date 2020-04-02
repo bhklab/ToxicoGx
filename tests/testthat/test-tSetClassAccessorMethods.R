@@ -30,10 +30,10 @@ test_that("@annotation slot accessors produce expected results", {
 
   context("External validation...")
   expect_equal_to_reference(TGGATESsmall@annotation, "annotation.TGGATESsmall.rds")
-  expect_equal_to_reference(tSetName(TGGATESsmall), "name.TGGATESsmall.rds")
+  expect_equal_to_reference(name(TGGATESsmall), "name.TGGATESsmall.rds")
 
   context("Internal validation...")
-  expect_equal(tSetName(TGGATESsmall), TGGATESsmall@annotation$name)
+  expect_equal(name(TGGATESsmall), TGGATESsmall@annotation$name)
 })
 
 # @molecularProfile Slot
