@@ -10,7 +10,7 @@
 #' if (interactive()) {
 #'   drugGeneResponseCurve(TGGATESsmall, dose = c("Control", "Low", "Middle"),
 #'   mDataTypes="rna", drug = drugNames(TGGATESsmall)[1],
-#'   duration = c("2", "8", "24"), features = "ENSG00000000003_at")
+#'   duration = c("2", "8", "24"), features = "ENSG00000002726_at")
 #' }
 #'
 #' @param tSet \code{ToxicoSet} A ToxicoSet to be plotted in this graph. Currently
@@ -49,7 +49,7 @@
 #' @import data.table
 #' @import ggplot2
 #' @importFrom tibble as_tibble
-
+#'
 #' @export
 drugGeneResponseCurve <- function(
   tSet,
@@ -117,12 +117,12 @@ drugGeneResponseCurve <- function(
           mProf,
           keep.rownames = TRUE
         ),
-        "pInfo" = data.table(phenoInfo(tSet, mDataType))
+        "pInfo" = data.table(as.data.frame(phenoInfo(tSet, mDataType)))
       )
     })
     names(m) <- mDataTypes; m
   })
-  names(plotData) <-  vapply(tSet, function(x) names(x), FUN.VALUE = character(1))
+  names(plotData) <-  vapply(tSet, function(x) name(x), FUN.VALUE = character(1))
 
   #### Assembling the plot data ####
   d <- plotData[[1]][[1]]$data
@@ -131,7 +131,7 @@ drugGeneResponseCurve <- function(
   colnames(data) <- c("feature", "samplename", "expression")
   data[, samplename := as.numeric(samplename)]
   pInfo[, samplename := as.numeric(samplename)]
-  fInfo <- data.table(featureInfo(tSet[[1]], "rna"))
+  fInfo <- data.table(as.data.frame(featureInfo(tSet[[1]], "rna")))
   colnames(fInfo)[2] <- "feature"
 
   plotData <- merge(data, pInfo[, .(samplename, individual_id,

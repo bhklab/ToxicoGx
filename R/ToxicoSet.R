@@ -1134,7 +1134,7 @@ subsetTo <- function(object, cell_lines = NULL,
     drugs_index <- NULL
     if (object@datasetType == "perturbation" || object@datasetType == "both") {
       if (length(drugs) != 0) {
-        if (!all(drugs %in% drugNames(tSet))){
+        if (!all(drugs %in% drugNames(object))){
           stop("Some of the drug names passed to function did not match to names in the ToxicoSet Please ensure you are using drug names as returned by the drugNames function")
         }
         drugs_index <- which(SummarizedExperiment::colData(SE)[["drugid"]] %in% drugs)
