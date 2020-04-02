@@ -24,11 +24,6 @@
     lapply(eSets,
            function(eSet){
 
-             # Change rownames from probes to EnsemblGeneId for rna data type
-             if (grepl("^rna$", Biobase::annotation(eSet))) {
-               rownames(eSet) <- Biobase::fData(eSet)$EnsemblGeneId
-             }
-
              # Build summarized experiment from eSet
              SE <- SummarizedExperiment::SummarizedExperiment(
                ## TODO:: Do we want to pass an environment for better memory efficiency?

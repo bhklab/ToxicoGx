@@ -28,7 +28,6 @@
 \alias{fNames,ToxicoSet,character-method}
 \alias{fNames<-,ToxicoSet,character,ANY-method}
 \alias{dateCreated,ToxicoSet-method}
-\alias{name,ToxicoSet-method}
 \alias{pertNumber,ToxicoSet-method}
 \alias{sensNumber,ToxicoSet-method}
 \alias{pertNumber<-,ToxicoSet,array-method}
@@ -83,8 +82,6 @@
 
 \S4method{dateCreated}{ToxicoSet}(object)
 
-\S4method{name}{ToxicoSet}(object)
-
 \S4method{pertNumber}{ToxicoSet}(object)
 
 \S4method{sensNumber}{ToxicoSet}(object)
@@ -138,8 +135,6 @@ Updated \code{ToxicoSet}
 
 The date the ToxicoSet was created
 
-The name of the ToxicoSet
-
 A 3D \code{array} with the number of perturbation experiments per
   radiation type and cell line, and data type
 
@@ -192,8 +187,6 @@ Set the feature names in a ToxicoSet object for the specified molecular
   data type
 
 Get the date a ToxicoSet object was created
-
-Get the name of a ToxicoSet object
 
 Get an array of the number of pertubration experiments per drug and cell
   line in a ToxicoSet object
@@ -268,8 +261,6 @@ summaries, for example, whether there are IC50 values available
 \item \code{fNames<-}: Update the feature names used in the dataset
 
 \item \code{dateCreated}: Return the date the ToxicoSet was created
-
-\item \code{name}: Return the name of the ToxicoSet
 
 \item \code{pertNumber}: Return the summary of available perturbation
 experiments
@@ -370,8 +361,6 @@ data(TGGATESsmall)
 cellNames(TGGATESsmall) <- cellNames(TGGATESsmall)
 
 dateCreated(TGGATESsmall)
-
-name(TGGATESsmall)
 
 pertNumber(TGGATESsmall)
 

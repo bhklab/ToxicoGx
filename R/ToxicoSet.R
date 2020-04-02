@@ -28,6 +28,7 @@
 #' @slot datasetType A \code{character} string of 'sensitivity',
 #'   'perturbation', or both detailing what type of data can be found in the
 #'   ToxicoSet, for proper processing of the data
+#'
 #' @return An object of the ToxicoSet class
 #'
 #' @importClassesFrom CoreGx CoreSet
@@ -177,8 +178,10 @@ ToxicoSet <-  function(name,
 #'
 #' @return \code{character} A string of the tSet's name
 #'
+#' @importFrom CoreGx name
+#' @importFrom methods callNextMethod
 #' @export
-setMethod('name', "ToxicoSet", function(object) {
+setMethod(name, "ToxicoSet", function(object) {
   callNextMethod(object)
 })
 
@@ -265,7 +268,7 @@ setGeneric("drugInfo", function(object) standardGeneric("drugInfo"))
 #' @describeIn ToxicoSet Returns the annotations for all the drugs tested in
 #'   the ToxicoSet
 #' @export
-setMethod(drugInfo, "ToxicoSet", function(object) {
+setMethod("drugInfo", signature("ToxicoSet"), function(object) {
   object@drug
 })
 
@@ -313,7 +316,7 @@ setReplaceMethod("drugInfo", signature = signature(object = "ToxicoSet",value = 
 #'
 #' @export
 setMethod("phenoInfo",
-          signature = c("ToxicoSet", "character"),
+          signature("ToxicoSet", "character"),
           function(object, mDataType)
 {
   callNextMethod(object, mDataType)
@@ -371,7 +374,7 @@ setReplaceMethod("phenoInfo",
 #' @importFrom CoreGx molecularProfiles
 #' @importFrom methods callNextMethod
 #' @export
-setMethod('molecularProfiles', "ToxicoSet", function(object, mDataType, assay){
+setMethod("molecularProfiles", signature("ToxicoSet"), function(object, mDataType, assay){
   callNextMethod(object, mDataType, assay)
 })
 
@@ -484,9 +487,10 @@ setReplaceMethod("featureInfo",
 #'
 #' @describeIn ToxicoSet Return the drug dose sensitivity experiment info
 #'
-#' @importMethodsFrom CoreGx sensitivityInfo
+#' @importFrom CoreGx sensitivityInfo
+#' @importFrom methods callNextMethod
 #' @export
-setMethod('sensitivityInfo',
+setMethod("sensitivityInfo",
           "ToxicoSet",
           function(object)
 {
@@ -536,7 +540,7 @@ setReplaceMethod("sensitivityInfo",
 #'
 #' @importFrom CoreGx sensitivityProfiles
 #' @export
-setMethod(sensitivityProfiles,
+setMethod("sensitivityProfiles",
           "ToxicoSet",
           function(object)
 {
@@ -598,7 +602,7 @@ setReplaceMethod("sensitivityProfiles",
 #' @importFrom CoreGx sensitivityMeasures
 #' @importFrom methods callNextMethod
 #' @export
-setMethod(sensitivityMeasures,
+setMethod("sensitivityMeasures",
           "ToxicoSet",
           function(object)
 {
@@ -670,7 +674,7 @@ setReplaceMethod("drugNames",
 #' @importFrom methods callNextMethod
 #' @export
 setMethod("cellNames",
-          "ToxicoSet",
+          signature("ToxicoSet"),
           function(object)
 {
   callNextMethod(object)
@@ -771,37 +775,12 @@ setReplaceMethod("fNames",
 #' @importFrom CoreGx dateCreated
 #' @importFrom methods callNextMethod
 #' @export
-setMethod(dateCreated,
+setMethod("dateCreated",
           signature("ToxicoSet"),
           function(object)
 {
   callNextMethod(object)
 })
-
-
-#' name Getter
-#'
-#' Get the name of a ToxicoSet object
-#'
-#' @examples
-#' name(TGGATESsmall)
-#'
-#' @param object A \code{ToxicoSet} object
-#'
-#' @return The name of the ToxicoSet
-#'
-#' @describeIn ToxicoSet Return the name of the ToxicoSet
-#'
-#' @importFrom CoreGx name
-#'
-#' @export
-setMethod("name",
-          signature = c("ToxicoSet"),
-          function(object)
-{
-  callNextMethod(cSet)
-})
-
 
 #' pertNumber Getter
 #'
@@ -822,8 +801,8 @@ setMethod("name",
 #' @importMethodsFrom CoreGx pertNumber
 #' @importFrom methods callNextMethod
 #' @export
-setMethod('pertNumber',
-          "ToxicoSet",
+setMethod("pertNumber",
+          signature("ToxicoSet"),
           function(object)
 {
   callNextMethod(object)
@@ -849,7 +828,7 @@ setMethod('pertNumber',
 #' @importFrom CoreGx sensNumber
 #' @importFrom methods callNextMethod
 #' @export
-setMethod('sensNumber',
+setMethod("sensNumber",
           "ToxicoSet",
           function(object)
 {
@@ -920,6 +899,7 @@ setReplaceMethod('sensNumber',
 #'
 #' @return Prints the ToxicoSet object to the output stream, and returns
 #'   invisible NULL.
+#'
 #' @export
 setMethod("show", signature=signature(object="ToxicoSet"),
           function(object) {
