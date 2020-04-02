@@ -76,7 +76,7 @@ This function generates a plot visualizing the relationship between gene
 if (interactive()) {
   drugGeneResponseCurve(TGGATESsmall, dose = c("Control", "Low", "Middle"),
   mDataTypes="rna", drug = drugNames(TGGATESsmall)[1],
-  duration = c("2", "8", "24"), features = "ENSG00000000003_at")
+  duration = c("2", "8", "24"), features = "ENSG00000002726_at")
 }
 
 }

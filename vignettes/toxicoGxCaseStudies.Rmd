@@ -99,7 +99,7 @@ ToxicoGx::drugGeneResponseCurve(TGGATESsmall,
 
 ```
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, out.width="500px"}
 knitr::include_graphics('CS1_published.png')
 ```
 
