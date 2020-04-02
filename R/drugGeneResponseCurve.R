@@ -46,7 +46,7 @@
 #'
 #' @return Plot of the viabilities for each drug vs time of exposure
 #'
-#' @import data.table
+#' @importFrom data.table data.table melt.data.table `:=`
 #' @import ggplot2
 #' @importFrom tibble as_tibble
 #'
