@@ -22,21 +22,25 @@
 #'   include in this plot. Defaults to the first mDataType if not specified.ex
 #'   This release version only accepts one mDataType, more to be added in
 #'   forthcoming releases.
-#' @param features \code{character} A vector of feature names to include in the plot.
-#'   If you specify more than two dose levels, you may only pass in up to two features.
+#' @param features \code{character} A vector of feature names to include in the
+#'   plot. If you specify more than two dose levels, you may only pass in up to
+#'   two features.
 #' @param drug \code{character} A drug name to include in this plot.
 #'   See drugNames(tSet) for a list of options.
 #' @param duration \code{character} A vector of durations to include in the plot.
 #' @param summarize_replicates \code{logical} If TRUE will average viability
 #'   across replicates for each unique drug-dose-duration combination.
-#' @param cell_lines \code{character} A vector of cell lines to include in the plot.
+#' @param cell_lines \code{character} A vector of cell lines to include in the
+#'   plot.
 #' @param line_width \code{numeric} A number specifying the thickness of lines
 #'   in the plot, as passed to size in geom_line(). Defaults to 1.
 #' @param point_size \code{numeric} A number specifying how large points should
 #'   be in the plot, as passed to size in geom_point(). Defaults to 2.5.
-#' @param ggplot_args \code{list} A list of ggplot2 functions which can be called using the plot + function()
-#'   syntax. This allows arbitrary customization of the plot including changing the title, axis labels, colours, etc.
-#'   Please see the included examples for basic usage or ggplot2 documentation for advanced customization.
+#' @param ggplot_args \code{list} A list of ggplot2 functions which can be
+#'   called using the plot + function() syntax. This allows arbitrary
+#'   customization of the plot including changing the title, axis labels,
+#'   colours, etc. Please see the included examples for basic usage or ggplot2
+#'   documentation for advanced customization.
 #' @param verbose \code{boolean} Should warning messages about the data passed
 #'   in be printed?
 #'
