@@ -46,10 +46,9 @@ affiliation:
 - affil: Vector Institute, Toronto, ON, Canada
   affilnum: 5
 vignette: |
-  %\VignetteEngine{knitr::rmarkdown} %\VignetteIndexEntry{ToxicoGx: An R Platform for Integrated Toxicogenomics Data Analysis}
+  %\VignetteEngine{knitr::rmarkdown} 
+  %\VignetteIndexEntry{ToxicoGx: An R Platform for Integrated Toxicogenomics Data Analysis}
 ---
-
-
 
 ```{r setup, include = FALSE, cache = FALSE, message = FALSE}
 
@@ -90,7 +89,7 @@ library(ggplot2)
 data(TGGATESsmall)
 ToxicoGx::drugGeneResponseCurve(TGGATESsmall, 
                       duration = c("2", "8", "24"), 
-                      cell_line = "Hepatocyte", mDataTypes = "rna", 
+                      cell_lines = "Hepatocyte", mDataTypes = "rna", 
                       features = "ENSG00000140465_at",
                       dose = c("Control", "Low", "Middle", "High"),
                       drug = "Carbon tetrachloride",

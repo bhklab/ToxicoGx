@@ -28,11 +28,12 @@ Encoding: UTF-8
 LazyData: true
 Depends: R (>= 4.0), CoreGx
 Imports:
+    data.table,
     SummarizedExperiment,
+    S4Vectors,
     Biobase, 
     RColorBrewer,
     ggplot2,
-    data.table,
     tibble,
     dplyr,
     caTools,

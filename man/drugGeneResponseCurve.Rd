@@ -26,15 +26,17 @@ only a single tSet is supported.}
 
 \item{duration}{\code{character} A vector of durations to include in the plot.}
 
-\item{cell_lines}{\code{character} A vector of cell lines to include in the plot.}
+\item{cell_lines}{\code{character} A vector of cell lines to include in the
+plot.}
 
 \item{mDataTypes}{\code{vector} A vector specifying the molecular data types to
 include in this plot. Defaults to the first mDataType if not specified.ex
 This release version only accepts one mDataType, more to be added in
 forthcoming releases.}
 
-\item{features}{\code{character} A vector of feature names to include in the plot.
-If you specify more than two dose levels, you may only pass in up to two features.}
+\item{features}{\code{character} A vector of feature names to include in the
+plot. If you specify more than two dose levels, you may only pass in up to
+two features.}
 
 \item{dose}{\code{character} A vector of dose levels to be included in the
 plot. Default to include all dose levels available for a drug. If you specify
@@ -52,9 +54,11 @@ in the plot, as passed to size in geom_line(). Defaults to 1.}
 \item{point_size}{\code{numeric} A number specifying how large points should
 be in the plot, as passed to size in geom_point(). Defaults to 2.5.}
 
-\item{ggplot_args}{\code{list} A list of ggplot2 functions which can be called using the plot + function()
-syntax. This allows arbitrary customization of the plot including changing the title, axis labels, colours, etc.
-Please see the included examples for basic usage or ggplot2 documentation for advanced customization.}
+\item{ggplot_args}{\code{list} A list of ggplot2 functions which can be
+called using the plot + function() syntax. This allows arbitrary
+customization of the plot including changing the title, axis labels,
+colours, etc. Please see the included examples for basic usage or ggplot2
+documentation for advanced customization.}
 
 \item{verbose}{\code{boolean} Should warning messages about the data passed
 in be printed?}
