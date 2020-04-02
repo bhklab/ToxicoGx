@@ -1,6 +1,7 @@
 #' @importFrom parallel makeCluster stopCluster parSapply
 .calculateSensitivitiesStar <-
-  function (pSets = list(), exps=NULL, cap=NA, na.rm=TRUE, area.type=c("Fitted","Actual"), nthread=1) {
+  function (pSets = list(), exps=NULL,
+            cap=NA, na.rm=TRUE, area.type=c("Fitted","Actual"), nthread=1) {
 
     if (missing(area.type)) {
       area.type <- "Fitted"
@@ -147,14 +148,16 @@
 }
 
 ## calculate residual of fit
-.residual<-function(x, y, n, pars, scale = 0.07, family = c("normal", "Cauchy"), trunc = FALSE) {
+## FIXME:: Why is this different from CoreGx?
+## FIXME:: Is this the same as PharmacoGx?
+.residual <- function(x, y, n, pars, scale = 0.07, family = c("normal", "Cauchy"), trunc = FALSE) {
   family <- match.arg(family)
-  Cauchy_flag = (family == "Cauchy")
+  Cauchy_flag = (family == "Cauchy") # Why?!
   if (Cauchy_flag == FALSE) {
     # return(sum((.Hill(x, pars) - y) ^ 2))
     diffs <- .Hill(x, pars)-y
     if (trunc == FALSE) {
-      return(sum(-log(.dmednnormals(diffs, n, scale))))
+      return(sum(-log(CoreGx::.dmednnormals(diffs, n, scale))))
     } else {
       down_truncated <- abs(y) >= 1
       up_truncated <- abs(y) <= 0
@@ -163,7 +166,7 @@
       # function becomes discrete
       # For down_truncated, 1-cdf(diffs) = cdf(-diffs)
 
-      return(sum(-log(.dmednnormals(diffs[!(down_truncated | up_truncated)], n, scale))) + sum(-log(.edmednnormals(-diffs[up_truncated | down_truncated], n, scale))))
+      return(sum(-log(CoreGx::.dmednnormals(diffs[!(down_truncated | up_truncated)], n, scale))) + sum(-log(CoreGx::.edmednnormals(-diffs[up_truncated | down_truncated], n, scale))))
 
     }
 
@@ -171,7 +174,7 @@
     diffs <- .Hill(x, pars)-y
     if (trunc == FALSE) {
       # return(sum(-log(6 * scale / (pi * (scale ^ 2 + diffs ^ 2)) * (1 / 2 + 1 / pi * atan(diffs / scale)) * (1 / 2 - 1 / pi * atan(diffs / scale)))))
-      return(sum(-log(.dmedncauchys(diffs, n, scale))))
+      return(sum(-log(CoreGx::.dmedncauchys(diffs, n, scale))))
     } else {
       down_truncated <- abs(y) >= 1
       up_truncated <- abs(y) <= 0
@@ -180,7 +183,7 @@
       # function becomes discrete
       # For down_truncated, 1-cdf(diffs) = cdf(-diffs)
 
-      return(sum(-log(.dmedncauchys(diffs[!(down_truncated | up_truncated)], n, scale))) + sum(-log(.edmedncauchys(-diffs[up_truncated | down_truncated], n, scale))))
+      return(sum(-log(CoreGx::.dmedncauchys(diffs[!(down_truncated | up_truncated)], n, scale))) + sum(-log(CoreGx::.edmedncauchys(-diffs[up_truncated | down_truncated], n, scale))))
 
       # return(sum(log(6 * scale / (pi * (scale ^ 2 + diffs ^ 2)) * (1 / 2 + 1 / pi * atan(diffs[setdiff(1:length(y), union(down_truncated, up_truncated))] / scale))
       # * (1 / 2 - 1 / pi * atan(diffs[setdiff(1:length(y), union(down_truncated, up_truncated))] / scale))),
@@ -190,7 +193,10 @@
   }
 }
 
-## generate an initial guess for dose-response curve parameters by evaluating the residuals at different lattice points of the search space
+## generate an initial guess for dose-response curve parameters by evaluating
+## the residuals at different lattice points of the search space
+## FIXME:: Why is this different from CoreGx?
+## FIXME:: Is this the same as PharmacoGx?
 .meshEval<-function(log_conc,
                     viability,
                     lower_bounds = c(0, 0, -6),
@@ -237,13 +243,7 @@
   return(guess)
 }
 
-## get vector of interpolated concentrations for graphing purposes
-.GetSupportVec <- function(x, output_length = 1001) {
-  return(seq(from = min(x), to = max(x), length.out = output_length))
-}
 ######## TODO ADD computationg from  being passed in params
-
-
 #  Fits dose-response curves to data given by the user
 #  and returns the AUC of the fitted curve, normalized to the length of the concentration range.
 #
@@ -306,7 +306,7 @@
                                        conc_as_log = TRUE,
                                        viability_as_pct = FALSE,
                                        trunc = trunc))
-  x <- .GetSupportVec(log_conc)
+  x <- CoreGx::.getSupportVec(log_conc)
   return(1 - trapz(x, .Hill(x, pars)) / (log_conc[length(log_conc)] - log_conc[1]))
 }
 #This function is being used in computeSlope
