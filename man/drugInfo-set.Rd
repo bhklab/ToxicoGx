@@ -2,7 +2,7 @@
 % Please edit documentation in R/ToxicoSet.R
 \name{drugInfo<-}
 \alias{drugInfo<-}
-\title{drugInfo<- Generic}
+\title{drugInfo<- Setter method}
 \usage{
 drugInfo(object) <- value
 }
@@ -15,7 +15,7 @@ drugInfo(object) <- value
 Updated \code{ToxicoSet}
 }
 \description{
-Generic for drugInfo replace method
+Set the drug annotations in a ToxicoSet object
 }
 \examples{
 data(TGGATESsmall)

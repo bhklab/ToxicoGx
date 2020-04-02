@@ -4,18 +4,17 @@
 \alias{mDataNames,ToxicoSet-method}
 \title{mDataNames}
 \usage{
-\S4method{mDataNames}{ToxicoSet}(cSet = tSet)
+\S4method{mDataNames}{ToxicoSet}(object)
 }
 \arguments{
-\item{cSet}{Parameter name for parent method inherited from CoreGx}
-
-\item{tSet}{A \code{ToxicoSet} object}
+\item{object}{A \code{ToxicoSet} object}
 }
 \value{
 Vector of names of the molecular data types
 }
 \description{
-Returns the molecular data names for the ToxicoSet.
+Returns the names of the molecular data types available in a ToxicoSet
+  object
 }
 \examples{
 mDataNames(TGGATESsmall)

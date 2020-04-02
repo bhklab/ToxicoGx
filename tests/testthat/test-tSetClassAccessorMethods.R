@@ -64,13 +64,13 @@ test_that("@molecularProfiles slot accessors produce expected results", {
 
                        context("Internal validation...")
                        expect_equal(molecularProfiles(TGGATESsmall, name),
-                                    Biobase::exprs(TGGATESsmall@molecularProfiles[[name]]))
+                                    SummarizedExperiment::assay(TGGATESsmall@molecularProfiles[[name]], 1))
                        expect_equal(featureInfo(TGGATESsmall, name),
-                                    Biobase::fData(TGGATESsmall@molecularProfiles[[name]]))
+                                    SummarizedExperiment::rowData(TGGATESsmall@molecularProfiles[[name]]))
                        expect_equal(fNames(TGGATESsmall, name),
-                                    rownames(Biobase::fData(TGGATESsmall@molecularProfiles[[name]])))
+                                    rownames(SummarizedExperiment::rowData(TGGATESsmall@molecularProfiles[[name]])))
                        expect_equal(phenoInfo(TGGATESsmall, name),
-                                    Biobase::pData(TGGATESsmall@molecularProfiles[[name]]))
+                                    SummarizedExperiment::colData(TGGATESsmall@molecularProfiles[[name]]))
                        })
 })
 
@@ -149,7 +149,7 @@ test_that("subsetTo() class method produces expected results", {
                      function(name) {
                        context(paste0("Testing subsetTo on molecularProfile for ", name))
                        ## TODO:: Generalize duration arguement so that it uses the first unique duration value in tSet (replace "8" with this)
-                       expect_equal(all(Biobase::pData(
+                       expect_equal(all(SummarizedExperiment::colData(
                          ToxicoGx::subsetTo(TGGATESsmall, duration = "8")@molecularProfiles[[name]])$duration %in% "8"),
                          TRUE)
                        # Tests that subsetting sensitivity on duration works

@@ -2,18 +2,18 @@
 % Please edit documentation in R/ToxicoSet.R
 \name{drugInfo}
 \alias{drugInfo}
-\title{drugInfo Generic}
+\title{drugInfo Getter}
 \usage{
-drugInfo(tSet)
+drugInfo(object)
 }
 \arguments{
-\item{tSet}{A \code{ToxicoSet} object}
+\item{object}{A \code{ToxicoSet} object}
 }
 \value{
 a \code{data.frame} with the drug annotations
 }
 \description{
-The generic for drugInfo method
+Get the drug annotations in a ToxicoSet object
 }
 \examples{
 data(TGGATESsmall)

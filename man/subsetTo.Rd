@@ -5,7 +5,7 @@
 \title{A function to subset a ToxicoSet to data containing only specified drugs, cells and genes}
 \usage{
 subsetTo(
-  tSet,
+  object,
   cell_lines = NULL,
   drugs = NULL,
   molecular.data.cells = NULL,
@@ -15,7 +15,7 @@ subsetTo(
 )
 }
 \arguments{
-\item{tSet}{A \code{ToxicoSet} to be subsetted}
+\item{object}{A \code{ToxicoSet} to be subsetted}
 
 \item{cell_lines}{A list or vector of cell names as used in the dataset to which
 the object will be subsetted. If left blank, then all cells will be left in
@@ -36,7 +36,7 @@ is not specified.}
 which the object will be subsetted. If left blank that all features will
 be left in.}
 
-\item{...}{Other arguments passed by other function within the package}
+\item{...}{Other arguments passed to other functions within the package}
 }
 \value{
 A ToxicoSet with only the selected drugs and cells

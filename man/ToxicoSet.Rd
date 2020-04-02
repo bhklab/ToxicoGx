@@ -24,40 +24,42 @@ ToxicoSet(
 \arguments{
 \item{name}{A \code{character} string detailing the name of the dataset}
 
-\item{molecularProfiles}{A \code{list} of ExpressionSet objects containing
-molecular profiles}
+\item{molecularProfiles}{A \code{list} of SummarizedExperiment objects containing
+molecular profiles for each molecular data type.}
 
 \item{cell}{A \code{data.frame} containing the annotations for all the cell
 lines profiled in the data set, across all data types}
 
-\item{drug}{A \code{data.frame} containing the annotations for all the drugs
-profiled in the data set, across all data types}
+\item{drug}{A \code{data.frame} containing the annotations for all the drugs}
 
 \item{sensitivityInfo}{A \code{data.frame} containing the information for the
 sensitivity experiments}
 
 \item{sensitivityRaw}{A 3 Dimensional \code{array} contaning the raw drug
-dose – response data for the sensitivity experiments}
+dose response data for the sensitivity experiments}
 
-\item{sensitivityProfiles}{\code{data.frame} containing drug sensitivity profile
+\item{sensitivityProfiles}{\code{data.frame} containing drug sensitivity profile 
 statistics such as IC50 and AUC}
 
-\item{sensitivityN, perturbationN}{A \code{data.frame} summarizing the
+\item{sensitivityN}{A \code{data.frame} summarizing the
+available sensitivity/perturbation data}
+
+\item{perturbationN}{A \code{data.frame} summarizing the
 available sensitivity/perturbation data}
 
 \item{curationCell, curationDrug, curationTissue}{A \code{data.frame} mapping
 the names for cells, drugs, and tissues used in the data set to universal
 identifiers used between different ToxicoSet objects}
 
-\item{datasetType}{A \code{character} string of "sensitivity",
-"perturbation", or both detailing what type of data can be found in the
-ToxicoSet, for proper processing of the data}
+\item{datasetType}{A \code{character} string of 'sensitivity',
+'preturbation', or both detailing what type of data can be found in the
+CoreSet, for proper processing of the data}
 
-\item{verify}{\code{boolean} Should the function verify the ToxicoSet and
+\item{verify}{\code{boolean} Should the function verify the CoreSet and
 print out any errors it finds after construction?}
 }
 \value{
-An object of class ToxicoSet
+An object of class \code{ToxicoSet}
 }
 \description{
 A constructor that simplifies the process of creating ToxicoSets, as well

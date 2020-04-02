@@ -4,10 +4,10 @@
 \alias{drugNames}
 \title{drugNames Generic}
 \usage{
-drugNames(tSet)
+drugNames(object)
 }
 \arguments{
-\item{tSet}{A \code{ToxicoSet} object from which to retrieve the included
+\item{object}{A \code{ToxicoSet} object from which to retrieve the included
 drug names}
 }
 \value{

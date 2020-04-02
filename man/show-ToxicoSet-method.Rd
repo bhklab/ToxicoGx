@@ -10,7 +10,8 @@
 \item{object}{A \code{ToxicoSet} object to print a summary for}
 }
 \value{
-Prints the ToxicoSet object to the output stream, and returns invisible NULL.
+Prints the ToxicoSet object to the output stream, and returns
+  invisible NULL.
 }
 \description{
 Show a ToxicoSet
