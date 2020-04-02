@@ -42,82 +42,71 @@ computeAUC <- function (concentration,
                         #, ...
 ) {
 
-  if (missing(concentration)){
-
-    stop("The concentration values to integrate over must always be provided.")
-
-  }
-  if (missing(area.type)) {
-    area.type <- "Fitted"
-  } else {
-    area.type <- match.arg(area.type)
-  }
-  if (area.type == "Fitted" && missing(Hill_fit)) {
-
-    Hill_fit <- logLogisticRegression(concentration,
-                                      viability,
-                                      conc_as_log = conc_as_log,
-                                      viability_as_pct = viability_as_pct,
-                                      trunc = trunc,
-                                      verbose = verbose)
-    cleanData <- sanitizeInput(conc=concentration,
-                               Hill_fit=Hill_fit,
-                               conc_as_log = conc_as_log,
-                               viability_as_pct = viability_as_pct,
-                               trunc = trunc,
-                               verbose = verbose)
-    pars <- cleanData[["Hill_fit"]]
-    concentration <- cleanData[["log_conc"]]
-  } else if (area.type == "Fitted" && !missing(Hill_fit)){
-
-    cleanData <- sanitizeInput(conc = concentration,
-                               viability = viability,
-                               Hill_fit = Hill_fit,
-                               conc_as_log = conc_as_log,
-                               viability_as_pct = viability_as_pct,
-                               trunc = trunc,
-                               verbose = verbose)
-    pars <- cleanData[["Hill_fit"]]
-    concentration <- cleanData[["log_conc"]]
-  } else if (area.type == "Actual" && !missing(viability)){
-    cleanData <- sanitizeInput(conc = concentration,
-                               viability = viability,
-                               conc_as_log = conc_as_log,
-                               viability_as_pct = viability_as_pct,
-                               trunc = trunc,
-                               verbose = verbose)
-    concentration <- cleanData[["log_conc"]]
-    viability <- cleanData[["viability"]]
-  } else if (area.type == "Actual" && missing(viability)){
-
-    stop("To calculate the actual area using a trapezoid integral, the raw viability values are needed!")
-  }
-
-  if (length(concentration) < 2) {
-    return(NA)
-  }
-
-  a <- min(concentration)
-  b <- max(concentration)
-  if (area.type == "Actual") {
-    trapezoid.integral <- caTools::trapz(concentration, viability)
-    AUC <- 1 - trapezoid.integral / (b - a)
-  }
-  else {
-    if(pars[2]==1){
-      AUC <- 0
-    }else if(pars[1]==0){
-      AUC <- (1-pars[2])/2
-    } else {
-      AUC <- as.numeric((1 - pars[2]) / (pars[1] * (b - a)) * log10((1 + (10 ^ (b - pars[3])) ^ pars[1]) / (1 + (10 ^ (a - pars[3])) ^ pars[1])))
+    if (missing(concentration)){
+        stop("The concentration values to integrate over must always be provided.")
     }
-  }
-
-  if(viability_as_pct){
-
-    AUC <- AUC*100
-
-  }
-
-  return(AUC)
+    if (missing(area.type)) {
+        area.type <- "Fitted"
+    } else {
+        area.type <- match.arg(area.type)
+    }
+    if (area.type == "Fitted" && missing(Hill_fit)) {
+        Hill_fit <- logLogisticRegression(concentration,
+                                          viability,
+                                          conc_as_log = conc_as_log,
+                                          viability_as_pct = viability_as_pct,
+                                          trunc = trunc,
+                                          verbose = verbose)
+        cleanData <- sanitizeInput(conc=concentration,
+                                   Hill_fit=Hill_fit,
+                                   conc_as_log = conc_as_log,
+                                   viability_as_pct = viability_as_pct,
+                                   trunc = trunc,
+                                  verbose = verbose)
+        pars <- cleanData[["Hill_fit"]]
+        concentration <- cleanData[["log_conc"]]
+    } else if (area.type == "Fitted" && !missing(Hill_fit)){
+        cleanData <- sanitizeInput(conc = concentration,
+                                   viability = viability,
+                                   Hill_fit = Hill_fit,
+                                   conc_as_log = conc_as_log,
+                                   viability_as_pct = viability_as_pct,
+                                   trunc = trunc,
+                                   verbose = verbose)
+        pars <- cleanData[["Hill_fit"]]
+        concentration <- cleanData[["log_conc"]]
+     } else if (area.type == "Actual" && !missing(viability)){
+        cleanData <- sanitizeInput(conc = concentration,
+                                   viability = viability,
+                                   conc_as_log = conc_as_log,
+                                   viability_as_pct = viability_as_pct,
+                                   trunc = trunc,
+                                   verbose = verbose)
+        concentration <- cleanData[["log_conc"]]
+        viability <- cleanData[["viability"]]
+    } else if (area.type == "Actual" && missing(viability)){
+        stop("To calculate the actual area using a trapezoid integral, the raw viability values are needed!")
+    }
+    if (length(concentration) < 2) {
+        return(NA)
+    }
+    a <- min(concentration)
+    b <- max(concentration)
+    if (area.type == "Actual") {
+        trapezoid.integral <- caTools::trapz(concentration, viability)
+        AUC <- 1 - trapezoid.integral / (b - a)
+    }
+    else {
+        if(pars[2]==1){
+            AUC <- 0
+      }else if(pars[1]==0){
+          AUC <- (1-pars[2])/2
+      } else {
+          AUC <- as.numeric((1 - pars[2]) / (pars[1] * (b - a)) * log10((1 + (10 ^ (b - pars[3])) ^ pars[1]) / (1 + (10 ^ (a - pars[3])) ^ pars[1])))
+      }
+    }
+    if(viability_as_pct){
+      AUC <- AUC*100
+    }
+    return(AUC)
 }

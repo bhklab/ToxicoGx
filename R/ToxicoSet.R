@@ -29,38 +29,40 @@
 #' methods. For a much more detailed instruction on creating ToxicoSets, please
 #' see the "CreatingToxicoSet" vignette.
 #'
-#' @param name A \code{character} string detailing the name of the dataset
-#' @param molecularProfiles A \code{list} of ExpressionSet objects containing
-#'   molecular profiles
-#' @param cell A \code{data.frame} containing the annotations for all the cell
-#'   lines profiled in the data set, across all data types
-#' @param drug A \code{data.frame} containing the annotations for all the drugs
-#'   profiled in the data set, across all data types
-#' @param sensitivityInfo A \code{data.frame} containing the information for the
-#'   sensitivity experiments
-#' @param sensitivityRaw A 3 Dimensional \code{array} contaning the raw drug
-#'   dose – response data for the sensitivity experiments
-#' @param sensitivityProfiles \code{data.frame} containing drug sensitivity profile
-#'   statistics such as IC50 and AUC
-#' @param sensitivityN,perturbationN A \code{data.frame} summarizing the
-#'   available sensitivity/perturbation data
-#' @param curationCell,curationDrug,curationTissue A \code{data.frame} mapping
-#'   the names for cells, drugs, and tissues used in the data set to universal
-#'   identifiers used between different ToxicoSet objects
-#' @param datasetType A \code{character} string of "sensitivity",
-#'   "perturbation", or both detailing what type of data can be found in the
-#'   ToxicoSet, for proper processing of the data
-#' @param verify \code{boolean} Should the function verify the ToxicoSet and
-#'   print out any errors it finds after construction?
+#' @inherit CoreGx::CoreSet
+#' @inheritParams CoreGx::CoreSet
 #'
-#' @return An object of class ToxicoSet
+# @param name A \code{character} string detailing the name of the dataset
+# @param molecularProfiles A \code{list} of ExpressionSet objects containing
+#   molecular profiles
+# @param cell A \code{data.frame} containing the annotations for all the cell
+#   lines profiled in the data set, across all data types
+#' @param drug A \code{data.frame} containing the annotations for all the drugs
+#   profiled in the data set, across all data types
+# @param sensitivityInfo A \code{data.frame} containing the information for the
+#   sensitivity experiments
+# @param sensitivityRaw A 3 Dimensional \code{array} contaning the raw drug
+#   dose – response data for the sensitivity experiments
+# @param sensitivityProfiles \code{data.frame} containing drug sensitivity profile
+#   statistics such as IC50 and AUC
+# @param sensitivityN,perturbationN A \code{data.frame} summarizing the
+#   available sensitivity/perturbation data
+# @param curationCell,curationDrug,curationTissue A \code{data.frame} mapping
+#   the names for cells, drugs, and tissues used in the data set to universal
+#   identifiers used between different ToxicoSet objects
+# @param datasetType A \code{character} string of "sensitivity",
+#   "perturbation", or both detailing what type of data can be found in the
+#   ToxicoSet, for proper processing of the data
+# @param verify \code{boolean} Should the function verify the ToxicoSet and
+#   print out any errors it finds after construction?
+#'
+#' @return An object of class \code{ToxicoSet}
 #'
 #' @import methods
 #' @importFrom utils sessionInfo
 #' @importFrom stats na.omit
-#'
+#' @importFrom CoreGx CoreSet
 #' @export
-#'
 ToxicoSet <-  function(name,
                        molecularProfiles=list(),
                        cell=data.frame(),
@@ -76,6 +78,7 @@ ToxicoSet <-  function(name,
                        datasetType=c("sensitivity", "perturbation", "both"),
                        verify = TRUE)
 {
+  ##TOOD:: Abstract as much of this contstructor as possible to CoreGx!
   datasetType <- match.arg(datasetType)
 
   annotation <- list()
@@ -121,7 +124,14 @@ ToxicoSet <-  function(name,
     perturbation$info <- "Not a perturbation dataset."
   }
 
-  tSet  <- .ToxicoSet(annotation=annotation, molecularProfiles=molecularProfiles, cell=as.data.frame(cell), drug=as.data.frame(drug), datasetType=datasetType, sensitivity=sensitivity, perturbation=perturbation, curation=curation)
+  tSet  <- .ToxicoSet(annotation=annotation,
+                      molecularProfiles=molecularProfiles,
+                      cell=as.data.frame(cell),
+                      drug=as.data.frame(drug),
+                      datasetType=datasetType,
+                      sensitivity=sensitivity,
+                      perturbation=perturbation,
+                      curation=curation)
   if (verify) { checkTSetStructure(tSet)}
   if(length(sensitivityN) == 0 & datasetType %in% c("sensitivity", "both")) {
     tSet@sensitivity$n <- .summarizeSensitivityNumbers(tSet)
@@ -132,54 +142,59 @@ ToxicoSet <-  function(name,
   return(tSet)
 }
 
-## TODO:: Implement this in CoreGx
-#' tSet Name
+#' name Getter method
 #'
 #' Retrieves the name of a tSet
 #'
 #' @examples
-#' names(TGGATESsmall)
+#' name(TGGATESsmall)
 #'
-#' @param tSet [ToxicoSet] A ToxcioSet object
-#' @param x [param] The named parameter from the base R names function. For
-#'   internal use only.
+#' @param object \code{ToxicoSet} A ToxcioSet object
 #'
-#' @return [character] A string of the tSet's name
+#' @return \code{character} A string of the tSet's name
 #'
 #' @export
-setMethod(names,
-          "ToxicoSet",
-          function(x=tSet) {
-            x@annotation$name
-          })
+setMethod('name', "ToxicoSet", function(object) {
+  callNextMethod(object)
+})
 
-
-## TODO:: Find more elegant solution to 'No visibile global function definition'
-tSet <- NULL
-
-#' cellInfo Generic
+#' name Setter method
 #'
-#' A generic for cellInfo method
+#' Sets the name of a tSet
+#'
+#' @examples
+#' name(TGGATESsmall) <- "TGGATESsmall"
+#'
+#' @param object A \code{ToxicoSet}object
+#'
+#' @return \code{character} A string of the tSet's name
+#'
+#' @export
+setReplaceMethod('name', "ToxicoSet", function(object, value) {
+  callNextMethod(object, value)
+})
+
+#' cellInfo Getter
+#'
+#' Get the cell line annotations in a ToxicoSet
 #'
 #' @examples
 #' data(TGGATESsmall)
 #' cellInfo <- cellInfo(TGGATESsmall)
 #'
-#' @param tSet A \code{ToxicoSet} object
-#' @param cSet Parameter name for parent method inherited from CoreGx
+#' @param object A \code{ToxicoSet} object
 #'
 #' @return a \code{data.frame} with the cell annotations
 #'
+#' @describeIn ToxicoSet Returns the annotations for all the cell lines tested
+#'   on in the ToxicoSet
+#'
 #' @importFrom CoreGx cellInfo
-#'
-#' @describeIn ToxicoSet Returns the annotations for all the cell lines tested on in the ToxicoSet
-#'
+#' @importFrom methods callNextMethod
 #' @export
-setMethod(cellInfo,
-          "ToxicoSet",
-          function(cSet=tSet){
-            callNextMethod(cSet)
-          })
+setMethod(cellInfo, "ToxicoSet", function(object){
+  callNextMethod(object)
+})
 
 #' cellInfo Replace Method
 #'
@@ -194,40 +209,45 @@ setMethod(cellInfo,
 #'
 #' @return Updated \code{ToxicoSet}
 #'
+#' @describeIn ToxicoSet Returns the annotations for all the cell lines tested
+#'   on in the ToxicoSet
+#'
 #' @importFrom CoreGx cellInfo<-
-#'
-#' @describeIn ToxicoSet Update the cell line annotations
-#'
+#' @importFrom methods callNextMethod
 #' @export
-setReplaceMethod("cellInfo", signature = signature(object = "ToxicoSet", value = "data.frame"), function(object, value){
-  if (is.null(rownames(value))){
-    stop("Please provide the cell_id as rownames for the cell line annotations")
-  }
-  object <- callNextMethod(object, value)
-  object
+setReplaceMethod("cellInfo",
+                 signature = signature(object = "ToxicoSet",
+                                       value = "data.frame"),
+                 function(object, value)
+{
+  callNextMethod(object, value)
 })
 
-#' drugInfo Generic
+##TODO:: Abstract this method to CoreGx
+#' drugInfo Getter
 #'
-#' The generic for drugInfo method
+#' Get the drug annotations in a ToxicoSet object
 #'
 #' @examples
 #' data(TGGATESsmall)
 #' drugInfo <- drugInfo(TGGATESsmall)
 #'
-#' @param tSet A \code{ToxicoSet} object
+#' @param object A \code{ToxicoSet} object
 #'
 #' @return a \code{data.frame} with the drug annotations
-setGeneric("drugInfo", function(tSet) standardGeneric("drugInfo"))
-#' @describeIn ToxicoSet Returns the annotations for all the drugs tested in the ToxicoSet
+#'
+setGeneric("drugInfo", function(object) standardGeneric("drugInfo"))
+#' @describeIn ToxicoSet Returns the annotations for all the drugs tested in
+#'   the ToxicoSet
 #' @export
-setMethod(drugInfo, "ToxicoSet", function(tSet){
-  tSet@drug
+setMethod(drugInfo, "ToxicoSet", function(object) {
+  object@drug
 })
 
-#' drugInfo<- Generic
+
+#' drugInfo<- Setter method
 #'
-#' Generic for drugInfo replace method
+#' Set the drug annotations in a ToxicoSet object
 #'
 #' @examples
 #' data(TGGATESsmall)
@@ -246,61 +266,69 @@ setReplaceMethod("drugInfo", signature = signature(object = "ToxicoSet",value = 
   object
 })
 
-#' phenoInfo Generic
+#' phenoInfo Getter
 #'
-#' Generic for phenoInfo method
+#' Get the phenotype annotations for cell lines with the specificed molecular
+#'   data type
 #'
 #' @examples
 #' data(TGGATESsmall)
 #' phenoInfo <- phenoInfo(TGGATESsmall, mDataType="rna")
 #'
-#' @param tSet A \code{ToxicoSet} object #'
-#' @param cSet Parameter name for parent method inherited from CoreGx
+#' @param object A \code{ToxicoSet} object
 #' @param mDataType \code{character} A string specifying the type of molecular
 #'   data to list the phenotype information for.
 #'
-#' @return a \code{data.frame} with the experiment info
+#' @return a \code{Dframe} with the experiment info
+#'
+#' @describeIn ToxicoSet Return the experiment info from the given type of
+#'   molecular data in ToxicoSet
 #'
 #' @importFrom CoreGx phenoInfo
 #'
-#' @describeIn ToxicoSet Return the experiment info from the given type of molecular data in ToxicoSet
-#'
 #' @export
-#'
 setMethod("phenoInfo",
           signature = c("ToxicoSet", "character"),
-          function(cSet=tSet, mDataType){
-            callNextMethod(cSet, mDataType)
-          })
+          function(object, mDataType)
+{
+  callNextMethod(object, mDataType)
+})
 
-#' phenoInfo<- Generic
+#' phenoInfo<- Setter
 #'
-#' Generic for phenoInfo replace method
+#' Set the phenotype annotations for cell lines with the selected molecular
+#'   data type.
 #'
 #' @examples
 #' data(TGGATESsmall)
-#' phenoInfo(TGGATESsmall, mDataType="rna") <- phenoInfo(TGGATESsmall, mDataType="rna")
+#' phenoInfo(TGGATESsmall, mDataType="rna") <-
+#'   phenoInfo(TGGATESsmall, mDataType="rna")
 #'
 #' @param object A \code{ToxicoSet} object.
-#' @param value A \code{data.frame} of replacement values.
 #' @param mDataType A \code{character} with the type of molecular data to return/update
+#' @param value A \code{data.frame}, \code{DataFrame} or \code{DFrame} of
+#'   replacement values.
 #'
 #' @return The updated \code{ToxicoSet}
 #'
+#' @describeIn ToxicoSet Update the the given type of molecular data experiment
+#'   info in the ToxicoSet
+#'
 #' @importMethodsFrom CoreGx phenoInfo<-
-#'
-#' @describeIn ToxicoSet Update the the given type of molecular data experiment info in the ToxicoSet
-#'
+#' @importFrom methods callNextMethod
 #' @export
-#'
-setReplaceMethod("phenoInfo", signature = signature(object="ToxicoSet", mDataType ="character", value="data.frame"), function(object, mDataType, value) {
-  object <- callNextMethod(object, mDataType, value)
-  object
+setReplaceMethod("phenoInfo",
+                 signature = signature(object="ToxicoSet",
+                                       mDataType ="character",
+                                       value="data.frame"),
+                 function(object, mDataType, value)
+  {
+  callNextMethod(object, mDataType, value)
 })
 
-#' molecularProfiles Generic
+#' molecularProfiles Getter
 #'
-#' Generic for molecularProfiles method
+#' Get the molecular profile data associated with the specific molecular data
 #'
 #' @examples
 #' data(TGGATESsmall)
@@ -308,25 +336,29 @@ setReplaceMethod("phenoInfo", signature = signature(object="ToxicoSet", mDataTyp
 #'
 #' @param object A \code{ToxicoSet} object.
 #' @param value A \code{character} vector of replacement values.
-#' @param mDataType \code{character} A string specifying the type of molecular #'   data to list the phenotype information for.
+#' @param mDataType \code{character} A string specifying the type of molecular
+#'    data to list the phenotype information for.
 #'
-#' @describeIn ToxicoSet Return the given type of molecular data from the ToxicoSet
+#' @describeIn ToxicoSet Return the given type of molecular data from the
+#'   ToxicoSet
 #'
 #' @importMethodsFrom CoreGx molecularProfiles
-#'
 #' @export
 setMethod("molecularProfiles",
           signature("ToxicoSet", "character"),
-          function(cSet=tSet, mDataType){
-            callNextMethod(cSet, mDataType)
-          })
+          function(object, mDataType)
+  {
+  callNextMethod(object, mDataType)
+})
 
-#' molecularProfiles<- Generic
+#' molecularProfiles<- Setter
 #'
-#' Generic for molecularProfiles replace method
+#' Set the molecular profile data assciated with the specificied molecular
+#'   data type
 #'
 #' @examples
-#' molecularProfiles(TGGATESsmall, "rna") <- molecularProfiles(TGGATESsmall, "rna")
+#' molecularProfiles(TGGATESsmall, "rna") <-
+#'   molecularProfiles(TGGATESsmall, "rna")
 #'
 #' @param object A \code{ToxicoSet} object.
 #' @param value A \code{matrix} of replacement values.
@@ -337,91 +369,95 @@ setMethod("molecularProfiles",
 #'
 #' @importMethodsFrom CoreGx molecularProfiles<-
 #'
-#' @describeIn ToxicoSet Update the given type of molecular data from the ToxicoSet
+#' @describeIn ToxicoSet Update the given type of molecular data from the
+#'    ToxicoSet
 #'
 #' @export
-setReplaceMethod("molecularProfiles", signature = signature(object = "ToxicoSet", mDataType = "character", value = "matrix"), function(object, mDataType, value) {
+setReplaceMethod("molecularProfiles",
+                 signature = signature(object = "ToxicoSet",
+                                       mDataType = "character",
+                                       value = "matrix"),
+                 function(object, mDataType, value)
+{
   callNextMethod(object, mDataType, value)
 })
 
-#' Generic for featureInfo method
+#' Getter for featureInfo method
 #'
 #' @examples
 #' data(TGGATESsmall)
 #' featureInfo <- featureInfo(TGGATESsmall, "rna")[1:10,]
 #'
-#' @param tSet A \code{ToxicoSet} object #'
-#' @param cSet Parameter name for parent method inherited from CoreGx
+#' @param object A \code{ToxicoSet} object #'
 #' @param mDataType \code{character} A string specifying the type of molecular
 #'   data to list the phenotype information for.
 #'
 #' @describeIn ToxicoSet Return the feature info for the given molecular data
 #'
 #' @importFrom CoreGx featureInfo
-#'
+#' @importFrom methods callNextMethod
 #' @export
 setMethod("featureInfo",
           signature("ToxicoSet", "character"),
-          function(cSet=tSet, mDataType){
-            callNextMethod(cSet, mDataType)
-          })
+          function(object, mDataType)
+{
+  callNextMethod(object, mDataType)
+})
 
-#' featureInfo<- Generic
+#' featureInfo<- Setter
 #'
-#' Generic for featureInfo replace method
+#' Set the feature annotations for a specficied molecular data type
 #'
 #' @examples
 #' data(TGGATESsmall)
 #' featureInfo(TGGATESsmall, "rna") <- featureInfo(TGGATESsmall, "rna")
-#'
 #'
 #' @param object A \code{ToxicoSet} object
 #' @param value A \code{data.frame} of replacement values
 #' @param mDataType \code{character} A string specifying the type of molecular
 #'   data
 #'
-#'
 #' @return Updated \code{ToxicoSet}
 #'
 #' @describeIn ToxicoSet Replace the gene info for the molecular data
 #'
 #' @importMethodsFrom CoreGx featureInfo<-
-#'
+#' @importFrom methods callNextMethod
 #' @export
-setReplaceMethod("featureInfo", signature = signature(object="ToxicoSet", mDataType ="character",value="data.frame"), function(object, mDataType, value){
-
-  # if(mDataType %in% names(object@molecularProfiles)){Biobase::fData(object@molecularProfiles[[mDataType]]) <- value}
-  object <- callNextMethod(object, mDataType, value)
-  object
+setReplaceMethod("featureInfo",
+                 signature = signature(object="ToxicoSet",
+                                       mDataType ="character",
+                                       value="data.frame"),
+                 function(object, mDataType, value)
+{
+  callNextMethod(object, mDataType, value)
 })
 
-#' sensitivityInfo Generic
+#' sensitivityInfo Getter
 #'
-#' Generic for sensitivityInfo method
+#' Get the annotations for the sensitivity experiments in the ToxicoSet
 #'
 #' @examples
 #' sensInf<- sensitivityInfo(TGGATESsmall)[1:10,]
 #'
-#' @param tSet A \code{ToxicoSet} object
-#' @param cSet Parameter name for parent method inherited from CoreGx
+#' @param object A \code{ToxicoSet} object
 #'
 #' @return a \code{data.frame} with the experiment info
 #'
 #' @describeIn ToxicoSet Return the drug dose sensitivity experiment info
 #'
 #' @importMethodsFrom CoreGx sensitivityInfo
-#'
 #' @export
-setMethod(sensitivityInfo,
+setMethod('sensitivityInfo',
           "ToxicoSet",
-          function(cSet=tSet){
-            callNextMethod(cSet)
-          })
+          function(object)
+{
+  callNextMethod(object)
+})
 
-#' sensitivityInfo<- Generic
+#' sensitivityInfo<- Setter
 #'
-#' A generic for the sensitivityInfo replacement method
-#'
+#' Set the annotations for sensitivity experiments in this ToxicSet
 #'
 #' @examples
 #' data(TGGATESsmall)
@@ -430,48 +466,49 @@ setMethod(sensitivityInfo,
 #' @param object A \code{ToxicoSet} object
 #' @param value A \code{data.frame} of replacement values
 #'
-#' @return Updated \code{ToxicoSet}
-#'setGeneric("sensitivityInfo<-", function(object, value) standardGeneric("sensitivityInfo<-"))
-#' @importMethodsFrom CoreGx sensitivityInfo<-
-#'
 #' @describeIn ToxicoSet Update the sensitivity experiment info
 #'
+#' @return Updated \code{ToxicoSet}
+#'
+#' @importMethodsFrom CoreGx sensitivityInfo<-
 #' @export
-setReplaceMethod("sensitivityInfo", signature = signature(object="ToxicoSet",value="data.frame"), function(object, value){
-  # object@sensitivity$info <- value
-  object <- callNextMethod(object, value)
-  object
+setReplaceMethod("sensitivityInfo",
+                 signature = signature(object="ToxicoSet",
+                                       value="data.frame"),
+                 function(object, value)
+{
+  callNextMethod(object, value)
 })
 
 
-#' sensitivityProfiles Generic
+#' sensitivityProfiles Getter
 #'
-#' Generic for sensitivityProfiles method
+#' Get the data for sensitivty experiments on cell lines in a ToxicoSet
 #'
 #' @examples
 #' data(TGGATESsmall)
 #' sensProf <- sensitivityProfiles(TGGATESsmall)
 #'
-#' @param tSet A \code{ToxicoSet} object
-#' @param cSet Parameter name for parent method inherited from CoreGx
+#' @param object A \code{ToxicoSet} object
 #'
 #' @return a \code{data.frame} with the experiment info
-#'setGeneric("sensitivityProfiles", function(tSet) standardGeneric("sensitivityProfiles"))
 #'
-#' @describeIn ToxicoSet Return the phenotypic data for the drug dose sensitivity
+#' @describeIn ToxicoSet Return the phenotypic data for the drug dose
+#'   sensitivity
 #'
 #' @importFrom CoreGx sensitivityProfiles
-#'
 #' @export
 setMethod(sensitivityProfiles,
           "ToxicoSet",
-          function(cSet=tSet){
-            callNextMethod(cSet)
-          })
+          function(object)
+{
+  callNextMethod(object)
+})
 
-#' sensitivityProfiles<- Generic
+
+#' sensitivityProfiles<-
 #'
-#' A generic for the sensitivityProfiles replacement method
+#' Set the data for sensitivity experiments on cell lines in a ToxicoSet
 #'
 #' @examples
 #' sensitivityProfiles(TGGATESsmall) <- sensitivityProfiles(TGGATESsmall)
@@ -480,34 +517,40 @@ setMethod(sensitivityProfiles,
 #' @param value A \code{data.frame} of replacement values
 #'
 #' @return Updated \code{ToxicoSet}
-#'setGeneric("sensitivityProfiles<-", function(object, value) standardGeneric("sensitivityProfiles<-"))
+#'
 #' @importFrom CoreGx sensitivityProfiles<-
+#'
 #' @describeIn ToxicoSet Update the phenotypic data for the drug dose
 #'   sensitivity
 #' @export
-setReplaceMethod("sensitivityProfiles", signature = signature(object="ToxicoSet",value="data.frame"), function(object, value){
-  object <- callNextMethod(object, value)
-  object
+setReplaceMethod("sensitivityProfiles",
+                 signature = signature(object="ToxicoSet",
+                                       value="data.frame"),
+                 function(object, value)
+{
+  callNextMethod(object, value)
 })
 #' @describeIn ToxicoSet Update the phenotypic data for the drug dose
 #'   sensitivity
 #'
-## TODO:: Find out how to document overloaded methods (to include multiple parameter types)
+## TODO:: Find out how to document overloaded methods (to include multiple zparameter types)
 #' @export
-setReplaceMethod("sensitivityProfiles", signature = signature(object="ToxicoSet",value="matrix"), function(object, value){
-  object <- callNextMethod(object, value)
-  object
+setReplaceMethod("sensitivityProfiles",
+                 signature = signature(object="ToxicoSet",
+                                       value="matrix"),
+                 function(object, value)
+{
+  callNextMethod(object, value)
 })
 
-#' sensitivityMeasures Generic
+#' sensitivityMeasures Getter
 #'
-#' A generic for the sensitivityMeasures  method
+#' Get the avilable measurments for sensitivity experiments in a ToxicoSet
 #'
 #' @examples
 #' sensitivityMeasures(TGGATESsmall)
 #'
-#' @param tSet A \code{ToxicoSet} object
-#' @param cSet Parameter name for parent method inherited from CoreGx
+#' @param object A \code{ToxicoSet} object
 #'
 #' @return A \code{character} vector of all the available sensitivity measures
 #'
@@ -515,14 +558,16 @@ setReplaceMethod("sensitivityProfiles", signature = signature(object="ToxicoSet"
 #'   summaries, for example, whether there are IC50 values available
 #'
 #' @importFrom CoreGx sensitivityMeasures
-#'
+#' @importFrom methods callNextMethod
 #' @export
 setMethod(sensitivityMeasures,
           "ToxicoSet",
-          function(cSet=tSet){
-            callNextMethod(cSet)
-          })
+          function(object)
+{
+  callNextMethod(object)
+})
 
+##TODO:: Abstract this method to CoreGx
 #' drugNames Generic
 #'
 #' A generic for the drugNames method
@@ -531,19 +576,21 @@ setMethod(sensitivityMeasures,
 #' data(TGGATESsmall)
 #' drugName <- drugNames(TGGATESsmall)[1:10]
 #'
-#' @param tSet A \code{ToxicoSet} object from which to retrieve the included
+#' @param object A \code{ToxicoSet} object from which to retrieve the included
 #'   drug names
 #'
 #' @return A vector of the drug names used in the ToxicoSet
-setGeneric("drugNames", function(tSet) standardGeneric("drugNames"))
+setGeneric("drugNames", function(object) standardGeneric("drugNames"))
 #' @describeIn ToxicoSet Return the names of the drugs used in the ToxicoSet
 #' @export
 setMethod(drugNames,
           "ToxicoSet",
-          function(tSet){
-            rownames(drugInfo(tSet))
-          })
+          function(tSet)
+{
+  rownames(drugInfo(tSet))
+})
 
+##TODO:: Abstract this method to CoreGx
 #' drugNames<- Generic
 #'
 #' A generic for the drugNames replacement method
@@ -559,38 +606,41 @@ setMethod(drugNames,
 setGeneric("drugNames<-", function(object, value) standardGeneric("drugNames<-"))
 #' @describeIn ToxicoSet Update the drug names used in the dataset
 #' @export
-setReplaceMethod("drugNames", signature = signature(object="ToxicoSet",value="character"), function(object, value){
+setReplaceMethod("drugNames",
+                 signature = signature(object="ToxicoSet",
+                                       value="character"),
+                 function(object, value)
+{
   object <- updateDrugId(object, value)
   return(object)
 })
 
-#' cellNames Generic
+#' cellNames Getter
 #'
-#' A generic for the cellNames method
+#' Get names of cell lines in a ToxicoSet object
 #'
 #' @examples
 #' cellNames(TGGATESsmall)
 #'
-#' @param tSet A \code{ToxicoSet} object
-#' @param cSet Parameter name for parent method inherited from CoreGx
+#' @param object A \code{ToxicoSet} object
 #'
 #' @return A vector of the cell names used in the ToxicoSet
-# setGeneric("cellNames", function(tSet) standardGeneric("cellNames"))
 #'
 #' @describeIn ToxicoSet Return the cell names used in the dataset
 #'
 #' @importFrom CoreGx cellNames
-#'
+#' @importFrom methods callNextmethod
 #' @export
 setMethod("cellNames",
           "ToxicoSet",
-          function(cSet=tSet){
-            callNextMethod(cSet)
-          })
+          function(object)
+{
+  callNextMethod(object)
+})
 
-#' cellNames<- Generic
+#' cellNames<- Setter
 #'
-#' A generic for the cellNames replacement method
+#' Set the cell line names in a ToxcioSet object
 #'
 #' @examples
 #' data(TGGATESsmall)
@@ -601,93 +651,104 @@ setMethod("cellNames",
 #'
 #' @return Updated \code{ToxicoSet}
 #'
-#' @importMethodsFrom CoreGx cellNames<-
-#'
 #' @describeIn ToxicoSet Update the cell names used in the dataset
 #'
+#' @importMethodsFrom CoreGx cellNames<-
 #' @export
-setReplaceMethod("cellNames", signature = signature(object="ToxicoSet",value="character"), function(object, value){
-  object <- callNextMethod(object, value)
-  return(object)
+setReplaceMethod("cellNames",
+                 signature = signature(object="ToxicoSet",
+                                       value="character"),
+                 function(object, value)
+{
+  callNextMethod(object, value)
 })
 
-#' fNames Generic
+#' fNames Getter
 #'
-#' A generic for the fNames method
+#' Get the feature names in a ToxicoSet object for the specified molecular data
+#'   type
 #'
 #' @examples
 #' fNames(TGGATESsmall, "rna")[1:10]
 #'
-#' @param tSet A \code{ToxicoSet} object
-#' @param cSet Parameter name for parent method inherited from CoreGx
+#' @param object A \code{ToxicoSet} object
 #' @param mDataType \code{character} A string specifying the type of molecular
-#'   data to list the phenotype information for.
+#'   data to list the phenotype information for
 #'
 #' @return A \code{character} vector of the feature names
 #'
 #' @describeIn ToxicoSet Return the feature names used in the dataset
 #'
 #' @importFrom CoreGx fNames
-#'
+#' @importFrom methods callNextMethod
 #' @export
 setMethod("fNames",
           signature("ToxicoSet", "character"),
-          function(cSet=tSet, mDataType){
-            callNextMethod(cSet, mDataType)
-          })
+          function(object, mDataType)
+{
+  callNextMethod(object, mDataType)
+})
 
-###TODO:: Define this method in CoreGx and import it; doesn't work here because no generic defined
-# fNames<- Generic
-#
-# A generic for the feature name replacement method
-#
-#@examples
-# data(TGGATESsmall)
-# cellNames(TGGATESsmall) <- cellNames(TGGATESsmall)
-#
-# @param mDataType \code{character} A string specifying the type of molecular #'   data to list the phenotype information for.
-# @param value A \code{character} vector of the new feature names
-# @return Updated \code{ToxicoSet}
-# @describeIn ToxicoSet Update the feature names used in the dataset
-# @export
-#setReplaceMethod("fNames", signature = signature(object="ToxicoSet",value="character",mDataType="character"), function(object, value){
-#      rownames(featureInfo(object, mDataType)) <- value
-#})
-
-#' dateCreated Generic
+#' fNames<- Setter
 #'
-#' A generic for the dateCreated method
+#' Set the feature names in a ToxicoSet object for the specified molecular
+#'   data type
+#'
+#'@examples
+#' data(TGGATESsmall)
+#' cellNames(TGGATESsmall) <- cellNames(TGGATESsmall)
+#'
+#' @param object A \code{ToxicoSet} object
+#' @param mDataType \code{character} A string specifying the type of molecular
+#'   data to list the phenotype information for.
+#' @param value A \code{character} vector of the new feature names
+#'
+#' @return Updated \code{ToxicoSet}
+#'
+#' @describeIn ToxicoSet Update the feature names used in the dataset
+#'
+#' @importFrom CoreGx fNames<-
+#' @importFrom methods callNextMethod
+#' @export
+setReplaceMethod("fNames",
+                 signature("ToxicoSet", "character"),
+                 function(object, mDataType, value)
+{
+  callNextMethod(object, mDataType, value)
+})
+
+#' dateCreated Getter
+#'
+#' Get the date a ToxicoSet object was created
 #'
 #' @examples
 #' dateCreated(TGGATESsmall)
 #'
-#' @param tSet A \code{ToxicoSet} object
-#' @param cSet Parameter name for parent method inherited from CoreGx
+#' @param object A \code{ToxicoSet} object
 #'
 #' @return The date the ToxicoSet was created
 #'
 #' @describeIn ToxicoSet Return the date the ToxicoSet was created
 #'
 #' @importFrom CoreGx dateCreated
-#'
+#' @importFrom methods callNextMethod
 #' @export
 setMethod(dateCreated,
-          signature = c("ToxicoSet"),
-          function(cSet=tSet) {
-            callNextMethod(cSet)
-          })
+          signature("ToxicoSet"),
+          function(object)
+{
+  callNextMethod(object)
+})
 
 
-#' tSetName Generic
+#' name Getter
 #'
-#' A generic for the tSetName method
+#' Get the name of a ToxicoSet object
 #'
 #' @examples
-#' tSetName <- cSetName
-#' tSetName(TGGATESsmall)
+#' name(TGGATESsmall)
 #'
-#' @param tSet A \code{ToxicoSet} object
-#' @param cSet Parameter name for parent method inherited from CoreGx
+#' @param object A \code{ToxicoSet} object
 #'
 #' @return The name of the ToxicoSet
 #'
@@ -696,92 +757,97 @@ setMethod(dateCreated,
 #' @importFrom CoreGx cSetName
 #'
 #' @export
-setMethod("cSetName",
+setMethod("name",
           signature = c("ToxicoSet"),
-          function(cSet=tSet){
-            callNextMethod(cSet)
-          })
-tSetName <- cSetName
+          function(object)
+{
+  callNextMethod(cSet)
+})
 
-#' pertNumber Generic
+
+#' pertNumber Getter
 #'
-#' A generic for the pertNumber method
+#' Get an array of the number of pertubration experiments per drug and cell
+#'   line in a ToxicoSet object
 #'
 #' @examples
 #' pertNumber(TGGATESsmall)
 #'
-#' @param tSet A \code{ToxicoSet} object
-#' @param cSet Parameter name for parent method inherited from CoreGx
+#' @param object A \code{ToxicoSet} object
 #'
-#' @return A 3D \code{array} with the number of perturbation experiments per radiation type and cell line, and data type
-# setGeneric("pertNumber", function(tSet) standardGeneric("pertNumber"))
+#' @return A 3D \code{array} with the number of perturbation experiments per
+#'   radiation type and cell line, and data type
 #'
 #' @describeIn ToxicoSet Return the summary of available perturbation
 #'   experiments
 #'
 #' @importMethodsFrom CoreGx pertNumber
-#'
+#' @importFrom methods callNextMethod
 #' @export
-setMethod(pertNumber,
+setMethod('pertNumber',
           "ToxicoSet",
-          function(cSet=tSet){
-            callNextMethod(cSet)
-          })
+          function(object)
+{
+  callNextMethod(object)
+})
 
 
-#' sensNumber Generic
+#' sensNumber Getter
 #'
-#' A generic for the sensNumber method
+#' Get the number of sensitivity experiments per drug and cell line in a
+#'   ToxicoSet
 #'
 #' @examples
 #' sensNumber(TGGATESsmall)
 #'
-#' @param tSet A \code{ToxicoSet} object
-#' @param cSet Parameter name for parent method inherited from CoreGx
+#' @param object A \code{ToxicoSet} object
 #'
-#' @return A \code{data.frame} with the number of sensitivity experiments per drug and cell line
+#' @return A \code{data.frame} with the number of sensitivity experiments per
+#'   drug and cell line
 #'
 #' @describeIn ToxicoSet Return the summary of available sensitivity
 #'   experiments
 #'
 #' @importFrom CoreGx sensNumber
-#'
+#' @importFrom methods callNextMethod
 #' @export
-setMethod(sensNumber,
+setMethod('sensNumber',
           "ToxicoSet",
-          function(cSet=tSet){
-            callNextMethod(cSet)
-          })
+          function(object)
+{
+  callNextMethod(object)
+})
 
-#' pertNumber<- Generic
+#' pertNumber<- Setter
 #'
-#' A generic for the pertNumber method
+#' Set the number of perturbation experiments per drug and cell line and
+#'   molecular data type in a ToxicoSet object
 #'
 #' @examples
 #' pertNumber(TGGATESsmall) <- pertNumber(TGGATESsmall)
 #'
 #' @param object A \code{ToxicoSet} object to modify
 #' @param value An \code{array} of replacement values
-## TODO:: Remove duplicate param names from CoreGx; this documentation is incorrect as is
-# @param value A new 3D \code{array} with the number of perturbation experiments per drug and cell line, and data type
 #'
 #' @return The updated \code{ToxicoSet}
-#'
-#' @importMethodsFrom CoreGx pertNumber<-
 #'
 #' @describeIn ToxicoSet Update the summary of available perturbation
 #'   experiments
 #'
+#' @importMethodsFrom CoreGx pertNumber<-
 #' @export
-setReplaceMethod('pertNumber', signature = signature(object="ToxicoSet",value="array"), function(object, value){
-  object <- callNextMethod(object, value)
-  object
-
+setReplaceMethod('pertNumber',
+                 signature = signature(object="ToxicoSet",
+                                       value="array"),
+                 function(object, value)
+{
+  callNextMethod(object, value)
 })
 
-#' sensNumber<- Generic
+#' sensNumber<- Setter
 #'
-#' A generic for the sensNumber method
+#' Set the number of sensitivity experiments per drug and cell line in a
+#'   ToxicoSet object
 #'
 #' @examples
 #' sensNumber(TGGATESsmall) <- sensNumber(TGGATESsmall)
@@ -791,18 +857,22 @@ setReplaceMethod('pertNumber', signature = signature(object="ToxicoSet",value="a
 #'
 #' @return The updated \code{ToxicoSet}
 #'
-#' @importMethodsFrom CoreGx sensNumber<-
-#'
 #' @describeIn ToxicoSet Update the summary of available sensitivity
 #'   experiments
 #'
+#' @importMethodsFrom CoreGx sensNumber<-
+#' @importFrom methods callNextMethod
 #' @export
-setReplaceMethod('sensNumber', signature = signature(object="ToxicoSet",value="matrix"), function(object, value){
-  object <- callNextMethod(object, value)
-  object
-
+setReplaceMethod('sensNumber',
+                 signature = signature(object="ToxicoSet",
+                                       value="matrix"),
+                 function(object, value)
+{
+  callNextMethod(object, value)
 })
 
+##TODO:: Implement a limited show method in CoreGx which can be extended
+##  here
 #' Show a ToxicoSet
 #'
 #' @param object A \code{ToxicoSet} object to print a summary for
@@ -810,47 +880,60 @@ setReplaceMethod('sensNumber', signature = signature(object="ToxicoSet",value="m
 #' @examples
 #' TGGATESsmall
 #'
-#' @return Prints the ToxicoSet object to the output stream, and returns invisible NULL.
+#' @return Prints the ToxicoSet object to the output stream, and returns
+#'   invisible NULL.
 #' @export
 setMethod("show", signature=signature(object="ToxicoSet"),
           function(object) {
-            cat("Name: ", tSetName(object), "\n")
+            cat("Name: ", name(object), "\n")
             cat("Date Created: ", dateCreated(object), "\n")
             cat("Number of cell lines: ", nrow(cellInfo(object)), "\n")
             cat("Number of drugs: ", nrow(drugInfo(object)), "\n")
-            if("dna" %in% names(object@molecularProfiles)){cat("DNA: \n");cat("\tDim: ", dim(molecularProfiles(object, mDataType="dna")), "\n")}
-            if("rna" %in% names(object@molecularProfiles)){cat("RNA: \n");cat("\tDim: ", dim(molecularProfiles(object, mDataType="rna")), "\n")}
-            if("rnaseq" %in% names(object@molecularProfiles)){cat("RNASeq: \n");cat("\tDim: ", dim(molecularProfiles(object, mDataType="rnaseq")), "\n")}
-            if("snp" %in% names(object@molecularProfiles)){cat("SNP: \n");cat("\tDim: ", dim(molecularProfiles(object, mDataType="snp")), "\n")}
-            if("cnv" %in% names(object@molecularProfiles)){cat("CNV: \n");cat("\tDim: ", dim(molecularProfiles(object, mDataType="cnv")), "\n")}
+            if("dna" %in% names(object@molecularProfiles)){cat("DNA: \n");
+              cat("\tDim: ", dim(molecularProfiles(object, mDataType="dna")),
+                "\n")}
+            if("rna" %in% names(object@molecularProfiles)){cat("RNA: \n");
+              cat("\tDim: ", dim(molecularProfiles(object, mDataType="rna")),
+                "\n")}
+            if("rnaseq" %in% names(object@molecularProfiles)){cat("RNASeq: \n");
+              cat("\tDim: ", dim(molecularProfiles(object, mDataType="rnaseq")),
+                "\n")}
+            if("snp" %in% names(object@molecularProfiles)){cat("SNP: \n");
+              cat("\tDim: ", dim(molecularProfiles(object, mDataType="snp")),
+                "\n")}
+            if("cnv" %in% names(object@molecularProfiles)){cat("CNV: \n");
+              cat("\tDim: ", dim(molecularProfiles(object, mDataType="cnv")),
+                "\n")}
             cat("Drug pertubation: \n")
-            cat("\tPlease look at pertNumber(tSet) to determine number of experiments for each drug-cell combination.\n")
+            cat("\tPlease look at pertNumber(tSet) to determine number of
+              experiments for each drug-cell combination.\n")
             cat("Drug sensitivity: \n")
             cat("\tNumber of Experiments: ",nrow(sensitivityInfo(object)),"\n")
-            cat("\tPlease look at sensNumber(tSet) to determine number of experiments for each drug-cell combination.\n")
+            cat("\tPlease look at sensNumber(tSet) to determine number of
+              experiments for each drug-cell combination.\n")
           })
 
 #' mDataNames
 #'
-#' Returns the molecular data names for the ToxicoSet.
+#' Returns the names of the molecular data types available in a ToxicoSet
+#'   object
 #'
 #' @examples
 #' mDataNames(TGGATESsmall)
 #'
-#' @param tSet A \code{ToxicoSet} object
-#' @param cSet Parameter name for parent method inherited from CoreGx
+#' @param object A \code{ToxicoSet} object
 #'
 #' @return Vector of names of the molecular data types
-# Imports generic
+#'
 #' @importFrom CoreGx mDataNames cellInfo<-
 #' @export
 setMethod(
   "mDataNames",
-  signature = c("ToxicoSet"),
-  definition = function(cSet=tSet){
-    callNextMethod(cSet)
-  }
-)
+  signature("ToxicoSet"),
+  function(object)
+{
+    callNextMethod(object)
+})
 
 #'`[`
 #'
@@ -882,10 +965,12 @@ setMethod(`[`, "ToxicoSet", function(x, i, j, ..., drop = FALSE){
 #' @param x ToxicoSet
 #' @return A named vector with the number of Cells and Drugs in the ToxicoSet
 #' @export
-setMethod("dim", signature=signature(x="ToxicoSet"), function(x){
-
+setMethod(
+  "dim",
+  signature("ToxicoSet"),
+  function(x)
+{
   return(c(Cells=length(cellNames(x)), Drugs=length(drugNames(x))))
-
 })
 
 #### subsetTo ####
@@ -1165,7 +1250,7 @@ subsetTo <- function(tSet, cell_lines = NULL,
   # SUBSET CELLS SLOT
   #####
   if (length(cell_lines) == 0) {
-    celll.lines <- union(cell_lines, na.omit(unionList(lapply(tSet@molecularProfiles, function(eSet){unique(Biobase::pData(eSet)[["cellid"]])}))))
+    cell_lines <- union(cell_lines, na.omit(unionList(lapply(tSet@molecularProfiles, function(eSet){unique(Biobase::pData(eSet)[["cellid"]])}))))
     if (tSet@datasetType == "sensitivity" | tSet@datasetType == "both"){
       cell_lines <- union(cell_lines, sensitivityInfo(tSet)[["cellid"]])
     }
@@ -1187,145 +1272,21 @@ subsetTo <- function(tSet, cell_lines = NULL,
 
 
 
-
-
-
-
 ### TODO:: Add updating of sensitivity Number tables
 #' A function to update cell ids
 #' @examples
 #' data(TGGATESsmall)
 #' updateCellId(TGGATESsmall, new.ids = cellNames(TGGATESsmall))
-#' @param tSet [object] A ToxicoSet object to be updates
-#' @param new.ids [character] A character vector of ids to update with
+#'
+#' @param tSet A \code{ToxicoSet} object to be updates
+#' @param new.ids A \code{character} vector of ids to update with
+#'
+#' @importFrom CoreGx updateCellId
 #' @keywords internal
 #' @export
 updateCellId <- function(tSet, new.ids = vector("character")){
-
-  if (length(new.ids)!=nrow(cellInfo(tSet))){
-    stop("Wrong number of cell identifiers")
-  }
-
-  if(tSet@datasetType=="sensitivity"|tSet@datasetType=="both"){
-    myx <- match(sensitivityInfo(tSet)[,"cellid"],rownames(cellInfo(tSet)))
-    sensitivityInfo(tSet)[,"cellid"] <- new.ids[myx]
-
-  }
-
-
-  tSet@molecularProfiles <- lapply(tSet@molecularProfiles, function(eset){
-
-    myx <- match(Biobase::pData(eset)[["cellid"]], rownames(cellInfo(tSet)))
-    Biobase::pData(eset)[["cellid"]]  <- new.ids[myx]
-    return(eset)
-  })
-
-  if(any(duplicated(new.ids))){
-    warning("Duplicated ids passed to updateCellId. Merging old ids into the same identifier")
-
-    if(ncol(sensNumber(tSet))>0){
-      sensMatch <- match(rownames(sensNumber(tSet)), rownames(cellInfo(tSet)))
-    }
-    if(dim(pertNumber(tSet))[[2]]>0){
-      pertMatch <- match(dimnames(pertNumber(tSet))[[1]], rownames(cellInfo(tSet)))
-    }
-    curMatch <- match(rownames(tSet@curation$cell),rownames(cellInfo(tSet)))
-
-    duplId <- unique(new.ids[duplicated(new.ids)])
-    for(id in duplId){
-
-      if (ncol(sensNumber(tSet))>0){
-        myx <- which(new.ids[sensMatch] == id)
-        sensNumber(tSet)[myx[1],] <- apply(sensNumber(tSet)[myx,], 2, sum)
-        sensNumber(tSet) <- sensNumber(tSet)[-myx[-1],]
-        # sensMatch <- sensMatch[-myx[-1]]
-      }
-      if (dim(pertNumber(tSet))[[1]]>0){
-        myx <- which(new.ids[pertMatch] == id)
-        pertNumber(tSet)[myx[1],,] <- apply(pertNumber(tSet)[myx,,], c(1,3), sum)
-        pertNumber(tSet) <- pertNumber(tSet)[-myx[-1],,]
-        # pertMatch <- pertMatch[-myx[-1]]
-      }
-
-      myx <- which(new.ids[curMatch] == id)
-      tSet@curation$cell[myx[1],] <- apply(tSet@curation$cell[myx,], 2, paste, collapse="///")
-      tSet@curation$cell <- tSet@curation$cell[-myx[-1],]
-      tSet@curation$tissue[myx[1],] <- apply(tSet@curation$tissue[myx,], 2, paste, collapse="///")
-      tSet@curation$tissue <- tSet@curation$tissue[-myx[-1],]
-      # curMatch <- curMatch[-myx[-1]]
-
-      myx <- which(new.ids == id)
-      cellInfo(tSet)[myx[1],] <- apply(cellInfo(tSet)[myx,], 2, paste, collapse="///")
-      cellInfo(tSet) <- cellInfo(tSet)[-myx[-1],]
-      new.ids <- new.ids[-myx[-1]]
-      if(ncol(sensNumber(tSet))>0){
-        sensMatch <- match(rownames(sensNumber(tSet)), rownames(cellInfo(tSet)))
-      }
-      if(dim(pertNumber(tSet))[[1]]>0){
-        pertMatch <- match(dimnames(pertNumber(tSet))[[1]], rownames(cellInfo(tSet)))
-      }
-      curMatch <- match(rownames(tSet@curation$cell),rownames(cellInfo(tSet)))
-    }
-  } else {
-    if (dim(pertNumber(tSet))[[1]]>0){
-      pertMatch <- match(dimnames(pertNumber(tSet))[[1]], rownames(cellInfo(tSet)))
-    }
-    if (ncol(sensNumber(tSet))>0){
-      sensMatch <- match(rownames(sensNumber(tSet)), rownames(cellInfo(tSet)))
-    }
-    curMatch <- match(rownames(tSet@curation$cell),rownames(cellInfo(tSet)))
-  }
-
-  if (dim(pertNumber(tSet))[[1]]>0){
-    dimnames(pertNumber(tSet))[[1]] <- new.ids[pertMatch]
-  }
-  if (ncol(sensNumber(tSet))>0){
-    rownames(sensNumber(tSet)) <- new.ids[sensMatch]
-  }
-  rownames(tSet@curation$cell) <- new.ids[curMatch]
-  rownames(tSet@curation$tissue) <- new.ids[curMatch]
-  rownames(cellInfo(tSet)) <- new.ids
-
-  return(tSet)
+  CoreGx::updateCellId(tSet, new.ids)
 }
-
-
-
-
-
-# updateFeatureNames <- function(tSet, new.ids = vector("character")){
-#
-#   if (length(new.ids)!=nrow(cellInfo(tSet))){
-#     stop("Wrong number of cell identifiers")
-#   }
-#
-#   if(tSet@datasetType=="sensitivity"|tSet@datasetType=="both"){
-#     myx <- match(sensitivityInfo(tSet)[,"cellid"],rownames(cellInfo(tSet)))
-#     sensitivityInfo(tSet)[,"cellid"] <- new.ids[myx]
-#
-#   }
-#
-#   tSet@molecularProfiles <- lapply(tSet@molecularProfiles, function(eset){
-#
-#     myx <- match(pData(eset)[["cellid"]],rownames(cellInfo(tSet)))
-#     pData(eset)[["cellid"]]  <- new.ids[myx]
-#     return(eset)
-#       })
-#   myx <- match(rownames(tSet@curation$cell),rownames(cellInfo(tSet)))
-#   rownames(tSet@curation$cell) <- new.ids[myx]
-#   rownames(tSet@curation$tissue) <- new.ids[myx]
-#   if (dim(pertNumber(tSet))[[1]]>0){
-#     myx <- match(dimnames(pertNumber(tSet))[[1]], rownames(cellInfo(tSet)))
-#     dimnames(pertNumber(tSet))[[1]] <- new.ids[myx]
-#   }
-#   if (nrow(sensNumber(tSet))>0){
-#     myx <- match(rownames(sensNumber(tSet)), rownames(cellInfo(tSet)))
-#     rownames(sensNumber(tSet)) <- new.ids[myx]
-#   }
-#   rownames(cellInfo(tSet)) <- new.ids
-#   return(tSet)
-#
-# }
 
 ### TODO:: Add updating of sensitivity Number tables
 #' A function to update drug ids
@@ -1342,7 +1303,7 @@ updateDrugId <- function(tSet, new.ids = vector("character")){
     stop("Wrong number of drug identifiers")
   }
 
-  if(tSet@datasetType=="sensitivity"|tSet@datasetType=="both"){
+  if(tSet@datasetType=="sensitivity" | tSet@datasetType=="both"){
     myx <- match(sensitivityInfo(tSet)[,"drugid"],rownames(drugInfo(tSet)))
     sensitivityInfo(tSet)[,"drugid"] <- new.ids[myx]
 
@@ -1610,3 +1571,38 @@ checkTSetStructure <-
       }
     }
   }
+
+
+# updateFeatureNames <- function(tSet, new.ids = vector("character")){
+#
+#   if (length(new.ids)!=nrow(cellInfo(tSet))){
+#     stop("Wrong number of cell identifiers")
+#   }
+#
+#   if(tSet@datasetType=="sensitivity"|tSet@datasetType=="both"){
+#     myx <- match(sensitivityInfo(tSet)[,"cellid"],rownames(cellInfo(tSet)))
+#     sensitivityInfo(tSet)[,"cellid"] <- new.ids[myx]
+#
+#   }
+#
+#   tSet@molecularProfiles <- lapply(tSet@molecularProfiles, function(eset){
+#
+#     myx <- match(pData(eset)[["cellid"]],rownames(cellInfo(tSet)))
+#     pData(eset)[["cellid"]]  <- new.ids[myx]
+#     return(eset)
+#       })
+#   myx <- match(rownames(tSet@curation$cell),rownames(cellInfo(tSet)))
+#   rownames(tSet@curation$cell) <- new.ids[myx]
+#   rownames(tSet@curation$tissue) <- new.ids[myx]
+#   if (dim(pertNumber(tSet))[[1]]>0){
+#     myx <- match(dimnames(pertNumber(tSet))[[1]], rownames(cellInfo(tSet)))
+#     dimnames(pertNumber(tSet))[[1]] <- new.ids[myx]
+#   }
+#   if (nrow(sensNumber(tSet))>0){
+#     myx <- match(rownames(sensNumber(tSet)), rownames(cellInfo(tSet)))
+#     rownames(sensNumber(tSet)) <- new.ids[myx]
+#   }
+#   rownames(cellInfo(tSet)) <- new.ids
+#   return(tSet)
+#
+# }
