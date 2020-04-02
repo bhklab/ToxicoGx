@@ -68,8 +68,7 @@ return values in the third.
 \examples{
 if (interactive()) {
 data(TGGATESsmall)
-drug.perturbation <- drugPerturbationSig(TGGATESsmall, mDataType="rna",
- features = head(fNames(TGGATESsmall, "rna")), nthread=1)
+drug.perturbation <- drugPerturbationSig(TGGATESsmall, mDataType="rna", features = head(fNames(TGGATESsmall, "rna")), nthread=1)
 }
 
 }
