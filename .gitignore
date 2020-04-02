@@ -10,3 +10,4 @@ testWriting.R
 doc
 Meta
 packrat/lib*/
+vignettes/output
