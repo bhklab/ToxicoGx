@@ -1,21 +1,18 @@
-#' tSet molecularProfiles from eSets to SEs
-#'
-#' Converts all ExpressionSet objects within the molecularProfiles slot of a
-#'   ToxicoSet to SummarizedExperiments
-#'
-#' @param tSet \code{S4} A ToxicoSet containing molecular data in ExpressionSets
-#'
-#' @return \code{S4} A ToxicoSet containing molecular data in a SummarizedExperiments
-#'
+# tSet molecularProfiles from eSets to SEs
+#
+# Converts all ExpressionSet objects within the molecularProfiles slot of a
+#   ToxicoSet to SummarizedExperiments
+#
+# @param tSet \code{S4} A ToxicoSet containing molecular data in ExpressionSets
+#
+# @return \code{S4} A ToxicoSet containing molecular data in a SummarizedExperiments
+#
 #' @importFrom parallel mclapply
 #' @importFrom SummarizedExperiment assay assays assayNames
 #' @importClassesFrom SummarizedExperiment SummarizedExperiment Assays
 #' @importFrom Biobase exprs fData pData annotation protocolData
 #' @importFrom S4Vectors SimpleList DataFrame
 #' @importFrom stats setNames
-#'
-#' @export
-#' @keywords internal
 .convertTsetMolecularProfilesToSE <- function(tSet) {
 
   eSets <- tSet@molecularProfiles # Extract eSet data
@@ -52,22 +49,22 @@
   tSet
 }
 
-##' Validate tSet molecularProfiles Conversion
-##'
-##' Checks that all the information contained in an ExpressionSet molecularProfile
-##'   was successfully tranferred to the SummarizedExperiment molecularProfile
-##'
-##' @param tSet_new \code{S4} a tSet containing molecularProfiles as SummarizedExperiments
-##' @param tSet_old \code{S4} a tSet containing molecularProfiles as ExpressionSets
-##'
-##' @return \code{message} Any slots which are not the same
-##'
-##' @importFrom testthat expect_equal test_that
-##' @import SummarizedExperiment
-##' @import Biobase
-##'
-##' @export
-##' @keywords internal
+# Validate tSet molecularProfiles Conversion
+#
+# Checks that all the information contained in an ExpressionSet molecularProfile
+#   was successfully tranferred to the SummarizedExperiment molecularProfile
+#
+# @param tSet_new \code{S4} a tSet containing molecularProfiles as SummarizedExperiments
+# @param tSet_old \code{S4} a tSet containing molecularProfiles as ExpressionSets
+#
+# @return \code{message} Any slots which are not the same
+#
+#' @importFrom testthat expect_equal test_that
+#' @import SummarizedExperiment
+#' @import Biobase
+#
+# @export
+# @keywords internal
 .validateTsetMolecularProfilesToSEConversion <- function(tSet_old, tSet_new) {
 
   # Testing that tSets are in correct order
@@ -185,19 +182,16 @@
 }
 
 ##TODO:: Determine why CCLEsmall is 3x larger in memory after conversion?
-#' Utility function to resave all datasets after modifying converttSetMolecularProfiles
-#'
-#' Converts all example dastasets specificed as an argument from
-#'   molecularProfiles as ExpressionSet to molecularProfiles as
-#'   SummarizedExperiment and saves them in the data folder
-#'
-#' @param datasets \code{character} A list of the example datasets to update
-#'
-#' @return \code{none} Works by side effects alone to resave all example
-#'   datasets in a package to have SummarizedExperiments for molecularProfiles
-#'
-#' @export
-#' @keywords internal
+# Utility function to resave all datasets after modifying converttSetMolecularProfiles
+#
+# Converts all example dastasets specificed as an argument from
+#   molecularProfiles as ExpressionSet to molecularProfiles as
+#   SummarizedExperiment and saves them in the data folder
+#
+# @param datasets \code{character} A list of the example datasets to update
+#
+# @return \code{none} Works by side effects alone to resave all example
+#   datasets in a package to have SummarizedExperiments for molecularProfiles
 .resaveAllExampleDatasets <- function(datasets) {
   for (dataset in datasets) {
     dataDir <- paste0(grep('data', list.dirs(), value=TRUE))

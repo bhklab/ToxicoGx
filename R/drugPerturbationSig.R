@@ -128,7 +128,7 @@ drugPerturbationSig <- function(
     i <- x[x != 'DMSO']
 
     ## using a linear model (x ~ concentration + cell + batch + duration)
-    res <- ToxicoGx::rankGeneDrugPerturbation(
+    res <- rankGeneDrugPerturbation(
       data = exprs, drug = x, drug.id = as.character(sampleinfo[ , "drugid"]),
       drug.concentration = as.numeric(sampleinfo[ , "concentration"]),
       type = as.character(sampleinfo[ , "cellid"]),
