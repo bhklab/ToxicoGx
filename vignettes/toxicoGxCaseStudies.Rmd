@@ -1,52 +1,19 @@
 ---
 title: 'ToxicoGx: An R Platform for Integrated Toxicogenomics Data Analysis'
+
 author:
-- affilnum: 1
-  name: Sisira Kadambat Nair
-- affilnum: 2
-  name: Esther Yoo
-- affilnum: 1
-  name: Christopher Eeles
-- affilnum: 1
-  name: Amy Tang
-- affilnum: 1
-  name: Nehme El-Hachem
-- affilnum: 1, 2, 5
-  name: Petr Smirnov
-- affilnum: 1, 2, 3, 4, 5
-  name: Benjamin Haibe-Kains
-capsize: normalsize
-output:
-  pdf_document:
-    fig_caption: yes
-    fig_height: 7
-    fig_width: 7
-    includes:
-      in_header: header.tex
-    keep_tex: no
-    template: manuscript.latex
-  html_document: null
-  word_document: null
-csl: ecology.csl
-documentclass: article
-fontsize: 10pt
-geometry: margin=0.5in
-classoption: a4paper
-spacing: singlespacing
-affiliation:
-- affil: Princess Margaret Cancer Centre, University Health Network, Toronto, ON,
-    Canada
-  affilnum: 1
-- affil: Department of Medical Biophysics, University of Toronto, Toronto, ON, Canada
-  affilnum: 2
-- affil: Department of Computer Science, University of Toronto, Toronto, ON, Canada
-  affilnum: 3
-- affil: Ontario Institute of Cancer Research, Toronto, ON, Canada
-  affilnum: 4
-- affil: Vector Institute, Toronto, ON, Canada
-  affilnum: 5
-vignette: |
-  %\VignetteEngine{knitr::rmarkdown} 
+- name: Sisira Kadambat Nair
+- name: Esther Yoo
+- name: Christopher Eeles
+- name: Amy Tang
+- name: Nehme El-Hachem
+- name: Petr Smirnov
+- name: Benjamin Haibe-Kains
+
+output: distill::distill_article
+
+vignette: >
+  %\VignetteEngine{knitr::knitr} 
   %\VignetteIndexEntry{ToxicoGx: An R Platform for Integrated Toxicogenomics Data Analysis}
 ---
 
