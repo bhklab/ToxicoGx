@@ -1,13 +1,12 @@
-#' Coerce pSet to tSet
-#'
-#' Forces a \code{PharmacoSet} class objects to be a \code{ToxicoSet} object.
-#'
-#' @param pSet A \code{PharmacoSet} class object.
-#'
-#' @return A \code{ToxicoSet} class object containing all data from the pSet.
-#'
-#'
-#' @export
+# Coerce pSet to tSet
+#
+# Forces a \code{PharmacoSet} class objects to be a \code{ToxicoSet} object.
+#
+# @param pSet A \code{PharmacoSet} class object.
+#
+# @return A \code{ToxicoSet} class object containing all data from the pSet.
+#
+# @export
 pharmacoSettoToxicoSet <-
           function(pSet) {
             tSet <- ToxicoSet(

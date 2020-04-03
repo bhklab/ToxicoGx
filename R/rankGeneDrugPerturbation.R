@@ -1,23 +1,29 @@
-#' Rank genes based on drug effect
-#'
-#' A helper function called from within `drugPerturbationSig`. This is intended
-#'   for developer use only; if you aren't debugging the package, this should
-#'   not be used.
-#'
-#' @param data: gene expression data matrix
-#' @param drug: single or vector of drug(s) of interest; if a vector of drugs is provided, they will be considered as being the same drug and will be jointly analyszed
-#' @param drug.id: drug used in each experiment
-#' @param drug.concentration: drug concentration used in each experiment
-#' @param type: cell or tissue type for each experiment
-#' @param xp: type of experiment (perturbation or control)
-#' @param batch: experiment batches
-#' @param duration: The duration of the experiment, in a consistent unit
-#' @param single.type: Should the statitsics be computed for each cell/tissue type separately?
-#' @param nthread: number of parallel threads (bound to the maximum number of cores available)
-#'
-#' @return [list] of \code{data.frame}s with the statistics for each gene, for each type
-#' @keywords internal
-#' @export
+# Rank genes based on drug effect
+#
+# A helper function called from within `drugPerturbationSig`. This is intended
+#   for developer use only; if you aren't debugging the package, this should
+#   not be used.
+#
+# @param data: gene expression data matrix
+# @param drug: single or vector of drug(s) of interest; if a vector of drugs is
+#    provided, they will be considered as being the same drug and will be
+#    jointly analyszed
+# @param drug.id: drug used in each experiment
+# @param drug.concentration: drug concentration used in each experiment
+# @param type: cell or tissue type for each experiment
+# @param xp: type of experiment (perturbation or control)
+# @param batch: experiment batches
+# @param duration: The duration of the experiment, in a consistent unit
+# @param single.type: Should the statitsics be computed for each cell/tissue
+#   type separately?
+# @param nthread: number of parallel threads (bound to the maximum number of
+#   cores available)
+#
+# @return [list] of \code{data.frame}s with the statistics for each gene, for
+#   each type
+#
+# @keywords internal
+# @export
 rankGeneDrugPerturbation <-
   function(data, drug, drug.id, drug.concentration, type, xp, batch, duration,
            single.type=FALSE, nthread=1, verbose=FALSE) {

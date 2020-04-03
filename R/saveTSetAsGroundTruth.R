@@ -1,11 +1,10 @@
-#' Generate data to test a tSet object and class accessor methods
-#'
-#' Unit tests in this package will assume that this data is the ground truth
-#'   and any deviation from these files represents a breakdown in the curation
-#'   and/or accessor methods of the tSet object
-#'
-#' @param tSet A \code{ToxicoSet} object to be used as ground truth for tests
-#'
+# Generate data to test a tSet object and class accessor methods
+#
+# Unit tests in this package will assume that this data is the ground truth
+#   and any deviation from these files represents a breakdown in the curation
+#   and/or accessor methods of the tSet object
+#
+# @param tSet A \code{ToxicoSet} object to be used as ground truth for tests
 .saveTSetAsGroundTruth <- function(tSet) {
   # Get tSet name for file names
   name <- tSet@annotation$name

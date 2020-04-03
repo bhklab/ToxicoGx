@@ -25,4 +25,15 @@ geneDrugPerturbation(x, concentration, type, batch, duration, model = FALSE)
 \description{
 Function computing gene-drug associations from perturbation data
 }
+\examples{
+ToxicoGx::drugPerturbationSig(tSet = TGGATESsmall,
+  mDataType="rna",
+  cell_lines="Hepatocyte",
+  duration="24",
+  dose=c("Control", "Low"),
+  drugs=c("Omeprazole", "Isoniazid"),
+  returnValues=c("estimate","tstat", "pvalue", "fdr"),
+  verbose=FALSE)
+
+}
 \keyword{internal}

@@ -11,6 +11,9 @@ updateCellId(tSet, new.ids = vector("character"))
 
 \item{new.ids}{A \code{character} vector of ids to update with}
 }
+\value{
+\code{none} Updates the cell ids in the ToxicoSet
+}
 \description{
 A function to update cell ids
 }

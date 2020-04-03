@@ -11,11 +11,15 @@ updateDrugId(tSet, new.ids = vector("character"))
 
 \item{new.ids}{[character] A character vector of ids to update with}
 }
+\value{
+\code{none} Updates the drug ids in the ToxicoSet
+}
 \description{
 A function to update drug ids
 }
 \examples{
 data(TGGATESsmall)
 updateDrugId(TGGATESsmall, new.ids = drugNames(TGGATESsmall))
+
 }
 \keyword{internal}
