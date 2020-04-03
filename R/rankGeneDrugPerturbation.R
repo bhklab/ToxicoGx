@@ -116,7 +116,8 @@ rankGeneDrugPerturbation <-
         if(nthread > 1) {
           ## parallel threads
           splitix <- parallel::splitIndices(nx=ncol(data), ncl=nthread)
-          splitix <- splitix[sapply(splitix, length) > 0]
+          ##TODO:: Can we reimplement this without using length?
+          splitix <- splitix[vapply(splitix, length, FUN.VALUE=numeric(1)) > 0]
           mcres <- parallel::mclapply(splitix, function(x, data, inpumat) {
             res <- t(apply(data[rownames(inpumat), x, drop=FALSE], 2, ToxicoGx::geneDrugPerturbation, concentration=inpumat[ , "concentration"], type=inpumat[ , "type"], batch=inpumat[ , "batch"], duration=inpumat[,"duration"]))
             return(res)

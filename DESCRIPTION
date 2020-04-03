@@ -28,8 +28,6 @@ Encoding: UTF-8
 LazyData: true
 Depends: R (>= 4.0), CoreGx
 Imports:
-    data.table,
-    testthat,
     SummarizedExperiment,
     S4Vectors,
     Biobase,
@@ -42,7 +40,11 @@ Imports:
     methods,
     reshape2,
     tidyr,
-    scales
+    data.table,
+    testthat,
+    scales,
+    graphics,
+    grDevices
 RoxygenNote: 7.1.0
 VignetteBuilder: knitr
 Suggests:
@@ -53,3 +55,4 @@ Suggests:
     devtools,
     PharmacoGx,
     xtable
+biocViews: GeneExpression, Pharmacogenetics, Pharmacogenomics, Software

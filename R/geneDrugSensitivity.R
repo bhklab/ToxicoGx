@@ -30,12 +30,13 @@ geneDrugSensitivity <- function(x, type, batch, drugpheno, interaction.typexgene
 
   colnames(drugpheno) <- paste("drugpheno", 1:ncol(drugpheno), sep=".")
 
-  drugpheno <- data.frame(sapply(drugpheno, function(x) {
+  drugpheno <- data.frame(vapply(drugpheno, function(x) {
     if (!is.factor(x)) {
       x[is.infinite(x)] <- NA
     }
     return(list(x))
-  }, USE.NAMES=FALSE), check.names=FALSE)
+  }, USE.NAMES=FALSE), check.names=FALSE,
+  FUN.VALUE=list(1))
 
   ccix <- complete.cases(x, type, batch, drugpheno)
   nn <- sum(ccix)

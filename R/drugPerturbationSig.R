@@ -146,14 +146,15 @@ drugPerturbationSig <- function(
 
   # ASSEMBLE RESULTS TO BE INCLUDED IN TOXICOSIG OBJECT
   res <- do.call(c, mcres)
-  res <- res[!sapply(res, is.null)]
+  res <- res[!vapply(res, is.null, FUN.VALUE=logical(1))]
   drug.perturbation <- array(NA, dim = c(nrow(featureInfo(tSet, mDataType)[features,, drop = FALSE]), length(res), ncol(res[[1]])), dimnames = list(rownames(featureInfo(tSet, mDataType)[features,,drop = FALSE]), names(res), colnames(res[[1]])))
   for (j in seq_len(ncol(res[[1]]))) {
-    ttt <- sapply(res, function(x, j, k) {
+    ttt <- vapply(res, function(x, j, k) {
       xx <- array(NA, dim = length(k), dimnames = list(k))
       xx[rownames(x)] <- x[ , j, drop = FALSE]
       return(xx)
-    }, j = j, k = rownames(featureInfo(tSet, mDataType)[features,, drop = FALSE]))
+    }, j = j, k = rownames(featureInfo(tSet, mDataType)[features,, drop = FALSE]),
+    FUN.VALUE=numeric(dim(drug.perturbation)[1]))
     drug.perturbation[rownames(featureInfo(tSet, mDataType)[features,, drop = FALSE]), names(res), j] <- ttt
   }
 
