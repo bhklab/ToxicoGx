@@ -1048,7 +1048,7 @@ subsetTo <- function(object, cell_lines = NULL,
   adArgs = list(...)
   if ("exps" %in% names(adArgs)) {
     exps <- adArgs[["exps"]]
-    if(class(exps) == "data.frame"){
+    if(is(exps, "data.frame")) {
       exps2 <- exps[[name(object)]]
       names(exps2) <- rownames(exps)
       exps <- exps2
@@ -1577,15 +1577,15 @@ checkTSetStructure <-
       print("rownames of curation drug slot should be the same as drug slot (curated drug ids)")
     }
 
-    if(class(tSet@cell) != "data.frame") {
+    if(!is(tSet@cell, "data.frame")) {
       warning("cell slot class type should be dataframe")
     }
-    if(class(tSet@drug) != "data.frame") {
+    if(!is(tSet@drug, "data.frame")) {
       warning("drug slot class type should be dataframe")
     }
     if(tSet@datasetType %in% c("sensitivity", "both"))
     {
-      if(class(tSet@sensitivity$info) != "data.frame") {
+      if(!is(tSet@sensitivity$info, "data.frame")) {
         warning("sensitivity info slot class type should be dataframe")
       }
       if("cellid" %in% colnames(tSet@sensitivity$info)) {

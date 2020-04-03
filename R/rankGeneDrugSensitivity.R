@@ -5,7 +5,7 @@
 #################################################
 ## Rank genes based on drug effect in the Connectivity Map
 ##
-## inputs:    
+## inputs:
 ##      - data: gene expression data matrix
 ##            - drugpheno: sensititivity values fo thr drug of interest
 ##            - type: cell or tissue type for each experiment
@@ -32,7 +32,7 @@ rankGeneDrugSensitivity <- function (data, drugpheno, type, batch, single.type=F
 
     drugpheno <- data.frame(drugpheno)
 
-  } else if(class(drugpheno)!="data.frame"){
+  } else if(!is(drugpheno, "data.frame")) {
     drugpheno <- as.data.frame(drugpheno)
 
   }
@@ -47,7 +47,7 @@ rankGeneDrugSensitivity <- function (data, drugpheno, type, batch, single.type=F
     stop("length of drugpheno, type, duration, and batch should be equal to the number of rows of data!")
   }
   rownames(drugpheno) <- names(type) <- names(batch) <- rownames(data)
-  
+
   res <- NULL
   utype <- sort(unique(as.character(type)))
   ltype <- list("all"=utype)
@@ -80,14 +80,14 @@ rankGeneDrugSensitivity <- function (data, drugpheno, type, batch, single.type=F
     }
   } else {
     nc  <- c("estimate", "se", "n", "pvalue", "fdr")
-  }  
-    
+  }
 
-  
+
+
   for (ll in 1:length(ltype)) {
     iix <- !is.na(type) & is.element(type, ltype[[ll]])
     # ccix <- complete.cases(data[iix, , drop=FALSE], drugpheno[iix,,drop=FALSE], type[iix], batch[iix]) ### HACK???
-    
+
     # ccix <- sapply(seq_len(NROW(data[iix,,drop=FALSE])), function(x) {
     #   return(any(!is.na(data[iix,,drop=FALSE][x,])) && any(!is.na(drugpheno[iix,,drop=FALSE][x,])) && any(!is.na(type[iix][x])) && any(!is.na(batch[iix][x])))
     # })

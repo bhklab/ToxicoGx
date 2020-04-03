@@ -21,7 +21,7 @@
 
   # Validate annotation slot is unchanged
   saveRDS(tSet@annotation , file = paste0(path, "annotation.", name, ".rds"))
-  # To test tSetName() against
+  # To test name() against
   saveRDS(tSet@annotation$name, file = paste0(path, "name.", name, ".rds"))
 
   # To test mDataNames() against

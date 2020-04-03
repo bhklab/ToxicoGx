@@ -82,12 +82,12 @@ downloadTSet <- function(name, saveDir = tempdir(), tSetFileName = NULL, verbose
 
   if (file.exists(outfn)) {
     tSetTable <- read.table(outfn, as.is = TRUE)
-    newrow <- c(tSetName(tSet), tSet@datasetType, paste(names(tSet@molecularProfiles), collapse = "/"), tSet@annotation$dateCreated, NA)
+    newrow <- c(name(tSet), tSet@datasetType, paste(names(tSet@molecularProfiles), collapse = "/"), tSet@annotation$dateCreated, NA)
     tSetTable <- rbind(tSetTable, newrow)
     rownames(tSetTable) <- tSetTable[, 1]
     write.table(tSetTable, file = outfn)
   } else {
-    newrow <- c(tSetName(tSet), tSet@datasetType, paste(names(tSet@molecularProfiles), collapse = "/"), tSet@annotation$dateCreated, NA)
+    newrow <- c(name(tSet), tSet@datasetType, paste(names(tSet@molecularProfiles), collapse = "/"), tSet@annotation$dateCreated, NA)
     tSetTable <- t(matrix(newrow))
     colnames(tSetTable) <- c("ToxicoSet.Name","Description", "Available.Molecular.Profiles","Date.Updated","URL")
     rownames(tSetTable) <- tSetTable[,1]
