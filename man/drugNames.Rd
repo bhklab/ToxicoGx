@@ -18,6 +18,6 @@ A generic for the drugNames method
 }
 \examples{
 data(TGGATESsmall)
-drugName <- drugNames(TGGATESsmall)[1:10]
+drugName <- drugNames(TGGATESsmall)[seq_len(10)]
 
 }

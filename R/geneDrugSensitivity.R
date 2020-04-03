@@ -28,7 +28,7 @@ geneDrugSensitivity <- function(x, type, batch, drugpheno, interaction.typexgene
 
   standardize <- match.arg(standardize)
 
-  colnames(drugpheno) <- paste("drugpheno", 1:ncol(drugpheno), sep=".")
+  colnames(drugpheno) <- paste("drugpheno", seq_len(ncol(drugpheno)), sep=".")
 
   drugpheno <- data.frame(vapply(drugpheno, function(x) {
     if (!is.factor(x)) {
@@ -44,7 +44,7 @@ geneDrugSensitivity <- function(x, type, batch, drugpheno, interaction.typexgene
   if(length(table(drugpheno)) > 2){
      if(ncol(drugpheno)>1){
       ##### FIX NAMES!!!
-      rest <- lapply(1:ncol(drugpheno), function(i){
+      rest <- lapply(seq_len(ncol(drugpheno)), function(i){
 
         est <- paste("estimate", i, sep=".")
         se <-  paste("se", i, sep=".")
@@ -90,7 +90,7 @@ geneDrugSensitivity <- function(x, type, batch, drugpheno, interaction.typexgene
     xx <- x[ccix]
   }
   if(ncol(drugpheno)>1){
-    ff0 <- paste("cbind(", paste(paste("drugpheno", 1:ncol(drugpheno), sep="."), collapse=","), ")", sep="")
+    ff0 <- paste("cbind(", paste(paste("drugpheno", seq_len(ncol(drugpheno)), sep="."), collapse=","), ")", sep="")
   } else {
     ff0 <- sprintf("drugpheno.1")
   }
@@ -188,7 +188,7 @@ rr0 <- tryCatch(try(lm(formula(paste(ff0, "~ . -x", sep=" ")), data=dd)),
     } else {
       if(ncol(drugpheno)>1){
         rrc <- summary(stats::manova(rr1))
-        rest <- lapply(1:ncol(drugpheno), function(i) {
+        rest <- lapply(seq_len(ncol(drugpheno)), function(i) {
           est <- paste("estimate", i, sep=".")
           se <-  paste("se", i, sep=".")
           tstat <- paste("tstat", i, sep=".")

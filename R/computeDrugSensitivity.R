@@ -18,7 +18,7 @@
       trunc <- FALSE
     }
 
-    for(i in 1:nrow(exps)) {
+    for(i in seq_len(nrow(exps))) {
       ranges <- list()
       for (study in names(pSets)) {
         ranges[[study]] <- as.numeric(pSets[[study]]@sensitivity$raw[exps[i,study], ,"Dose"])
@@ -126,14 +126,14 @@
 {
   min.dose <- 0
   max.dose <- 10^100
-  for(i in 1:length(doses))
+  for(i in seq_along(doses))
   {
     min.dose <- max(min.dose, min(as.numeric(doses[[i]]), na.rm = TRUE), na.rm = TRUE)
     max.dose <- min(max.dose, max(as.numeric(doses[[i]]), na.rm = TRUE), na.rm = TRUE)
   }
 
   common.ranges <- list()
-  for(i in 1:length(doses))
+  for(i in seq_along(doses))
   {
     common.ranges[[i]] <- doses[[i]][
       which.min(abs(as.numeric(doses[[i]])-min.dose)):max(
@@ -185,8 +185,8 @@
 
       return(sum(-log(CoreGx::.dmedncauchys(diffs[!(down_truncated | up_truncated)], n, scale))) + sum(-log(CoreGx::.edmedncauchys(-diffs[up_truncated | down_truncated], n, scale))))
 
-      # return(sum(log(6 * scale / (pi * (scale ^ 2 + diffs ^ 2)) * (1 / 2 + 1 / pi * atan(diffs[setdiff(1:length(y), union(down_truncated, up_truncated))] / scale))
-      # * (1 / 2 - 1 / pi * atan(diffs[setdiff(1:length(y), union(down_truncated, up_truncated))] / scale))),
+      # return(sum(log(6 * scale / (pi * (scale ^ 2 + diffs ^ 2)) * (1 / 2 + 1 / pi * atan(diffs[setdiff(seq_along(y), union(down_truncated, up_truncated))] / scale))
+      # * (1 / 2 - 1 / pi * atan(diffs[setdiff(seq_alongs(y), union(down_truncated, up_truncated))] / scale))),
       # -log(1 / 2 - 3 / (2 * pi) * atan((1 - diffs[down_truncated] - y[down_truncated]) / scale) + 2 / pi ^ 3 * (atan((1 - diffs[down_truncated] - y[down_truncated]) / scale)) ^ 3),
       # -log(-1 / 2 + 3 / (2 * pi) * atan((-diffs[up_truncated] - y[up_truncated]) / scale) - 2 / pi ^ 3 * (atan((- diffs[up_truncated] - y[up_truncated]) / scale)) ^ 3)))
     }

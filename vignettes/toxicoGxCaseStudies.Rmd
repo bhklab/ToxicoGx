@@ -129,7 +129,7 @@ res <- apply(drug.perturbation[,,c("tstat", "fdr")],
                                         y = HCC[,2,drop = FALSE],
                                         method = "fgsea", nperm = 100))
              },
-             HCC = HCC_sig[1:199,])
+             HCC = HCC_sig[seq_len(199),])
 rownames(res) <- c("Connectivity", "P Value")
 res <- t(res)
 res <-  cbind(res,"FDR" = p.adjust(res[,2], method = "fdr"))
