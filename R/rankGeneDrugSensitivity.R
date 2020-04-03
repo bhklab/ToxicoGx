@@ -88,9 +88,9 @@ rankGeneDrugSensitivity <- function (data, drugpheno, type, batch, single.type=F
     iix <- !is.na(type) & is.element(type, ltype[[ll]])
     # ccix <- complete.cases(data[iix, , drop=FALSE], drugpheno[iix,,drop=FALSE], type[iix], batch[iix]) ### HACK???
 
-    # ccix <- sapply(seq_len(NROW(data[iix,,drop=FALSE])), function(x) {
+    # ccix <- vapply(seq_len(NROW(data[iix,,drop=FALSE])), function(x) {
     #   return(any(!is.na(data[iix,,drop=FALSE][x,])) && any(!is.na(drugpheno[iix,,drop=FALSE][x,])) && any(!is.na(type[iix][x])) && any(!is.na(batch[iix][x])))
-    # })
+    # }, FUN.VALUE=logical(1))
 
     data.not.all.na <- apply(data[iix,,drop=FALSE], 1, function(x) {
       any(!is.na(x))
@@ -98,12 +98,12 @@ rankGeneDrugSensitivity <- function (data, drugpheno, type, batch, single.type=F
     drugpheno.not.all.na <- apply(drugpheno[iix,,drop=FALSE], 1, function(x) {
       any(!is.na(x))
     })
-    type.not.all.na <- sapply(type[iix], function(x) {
+    type.not.all.na <- vapply(type[iix], function(x) {
       !is.na(x)
-    })
-    batch.not.all.na <- sapply(batch[iix], function(x) {
+    }, FUN.VALUE=logical(1))
+    batch.not.all.na <- vapply(batch[iix], function(x) {
       !is.na(x)
-    })
+    }, FUN.VALUE=logical(1))
 
     ccix <- data.not.all.na & drugpheno.not.all.na & type.not.all.na & batch.not.all.na
 
@@ -115,7 +115,8 @@ rankGeneDrugSensitivity <- function (data, drugpheno, type, batch, single.type=F
       res <- c(res, rest)
     } else {
       splitix <- parallel::splitIndices(nx=ncol(data), ncl=nthread)
-      splitix <- splitix[sapply(splitix, length) > 0]
+      ##TODO:: Can we reimpement this without length?
+      splitix <- splitix[vapply(splitix, length, FUN.VALUE=numeric(1)) > 0]
       mcres <- parallel::mclapply(splitix, function(x, data, type, batch, drugpheno, standardize) {
         res <- t(apply(data[ , x, drop=FALSE], 2, geneDrugSensitivity, type=type, batch=batch, drugpheno=drugpheno, verbose=verbose, standardize=standardize))
         return(res)
