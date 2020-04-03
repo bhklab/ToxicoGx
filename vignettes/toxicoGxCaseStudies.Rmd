@@ -112,7 +112,7 @@ The HCC signature, already mapped to the gene level, has been included in this p
 
 ```{r, results = 'asis'}
 library(xtable)
-#ata("TGGATESsmall")
+data("TGGATESsmall")
 # To compute the effect of drug concentration on the molecular profile of the cell
 drug.perturbation <- ToxicoGx::drugPerturbationSig(tSet = TGGATESsmall,
                                          mDataType = "rna",
