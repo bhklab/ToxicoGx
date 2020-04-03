@@ -17,8 +17,7 @@
 #' @examples
 #' if (interactive()) {
 #' data(TGGATESsmall)
-#' drug.perturbation <- drugPerturbationSig(TGGATESsmall, mDataType="rna",
-#'  features = head(fNames(TGGATESsmall, "rna")), nthread=1)
+#' drug.perturbation <- drugPerturbationSig(TGGATESsmall, mDataType="rna", features = head(fNames(TGGATESsmall, "rna")), nthread=1)
 #' }
 #'
 #' @param tSet \code{ToxicoSet} a ToxicoSet of the perturbation experiment type
@@ -58,7 +57,6 @@ drugPerturbationSig <- function(
   returnValues=c("estimate","tstat", "pvalue", "fdr"),
   verbose=FALSE
 ){
-
   # ALLOCATE CORES FOR PARALLEL PROCESSING
   availcore <- parallel::detectCores()
   if ( nthread > availcore) {
@@ -80,6 +78,9 @@ drugPerturbationSig <- function(
     }
   }
 
+  ##TODO:: Fix variable names output from paramMissingHandler
+  if ('durations' %in% ls()) { duration <- durations }
+
   # ERROR HANDLING FOR PARAMETERS
   paramErrorChecker("drugPerturbationSig", tSet = tSet,
                     mDataType = mDataType, cell_lines = cell_lines,
@@ -100,11 +101,10 @@ drugPerturbationSig <- function(
 
   # SUBSET tSET BASED ON PARAMETERS
   tSetSubsetOnParams <-
-    suppressWarnings(subsetTo(tSet, mDataType = mDataType, cells = cell_lines, drugs = drugs,
-             features = features, duration = duration))
+    suppressWarnings(subsetTo(tSet, mDataType = mDataType, cells = cell_lines, drugs = drugs, features = features, duration = duration))
 
   # SUBSET SAMPLES BASED ON DOSE
-  samples <- rownames(phenoInfo(tSetSubsetOnParams, mDataType)[which(phenoInfo(tSetSubsetOnParams, mDataType)$dose %in% dose),])
+  samples <- rownames(phenoInfo(tSetSubsetOnParams, mDataType)[which(phenoInfo(tSetSubsetOnParams, mDataType)$dose_level %in% dose),])
 
   # LOOP OVER DRUGS TO CALCULATE PER DRUG SUMMARY STATISTICS
   mcres <- lapply(drugs[drugs != 'DMSO'], function(x, exprs, sampleinfo) {
@@ -140,8 +140,8 @@ drugPerturbationSig <- function(
     res <- list(res)
     names(res) <- i
     return(res)
-  }, exprs = t(molecularProfiles(tSetSubsetOnParams, mDataType)[features, samples, drop=FALSE]),
-     sampleinfo = phenoInfo(tSetSubsetOnParams, mDataType)[which(phenoInfo(tSetSubsetOnParams, mDataType)$samplename %in% samples), ]
+  }, exprs = t(as.data.frame(molecularProfiles(tSetSubsetOnParams, mDataType)[features, samples, drop=FALSE])),
+     sampleinfo = as.data.frame(phenoInfo(tSetSubsetOnParams, mDataType)[which(phenoInfo(tSetSubsetOnParams, mDataType)$samplename %in% samples), ])
   )
 
   # ASSEMBLE RESULTS TO BE INCLUDED IN TOXICOSIG OBJECT
