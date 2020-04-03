@@ -11,7 +11,7 @@
 #' summMP <- ToxicoGx::summarizeMolecularProfiles(
 #'   tSet = TGGATESsmall, mDataType = "rna",
 #'   cell_lines=cellNames(TGGATESsmall), drugs = head(drugNames(TGGATESsmall)),
-#'   features = fNames(TGGATESsmall,"rna")[1:100], duration = "8",
+#'   features = fNames(TGGATESsmall,"rna")[seq_len(100)], duration = "8",
 #'   dose = c("Control", "High"), summary.stat = "median",
 #'   fill.missing = TRUE, verbose=TRUE
 #'   )
@@ -93,26 +93,27 @@ summarizeMolecularProfiles <-
 
     ##### FUNCTION LOGIC BEGINS #####
 
-    dd <- ToxicoGx::molecularProfiles(tSet, mDataType)[features, , drop = F] #expression matrix of the tSet
+    dd <- ToxicoGx::molecularProfiles(tSet, mDataType)[features, , drop = FALSE] #expression matrix of the tSet
     pp <- ToxicoGx::phenoInfo(tSet, mDataType) #phenoData of the tSet
-    ff <- ToxicoGx::featureInfo(tSet, mDataType)[features,,drop = F]
+    ff <- ToxicoGx::featureInfo(tSet, mDataType)[features,,drop = FALSE]
 
     unique.cells <- unique(cell_lines) #unique cell types (row names of the result)
     #subset phenoData to include only the experiments requested
     pp2 <- pp[(pp[,"cellid"] %in% unique.cells & pp[,"drugid"] %in% drugs
-               & pp[,"duration"] %in% duration & pp[,"dose_level"] %in% dose), , drop = F] #only the phenoData that is relevant to the request input
-    dd2 <- dd[features,rownames(pp2), drop = F] #only the gene expression data that is relevant to the request input
+               & pp[,"duration"] %in% duration & pp[,"dose_level"] %in% dose), , drop = FALSE] #only the phenoData that is relevant to the request input
+    dd2 <- dd[features,rownames(pp2), drop = FALSE] #only the gene expression data that is relevant to the request input
 
     #vector of experimental conditions requested for each drug
     a <- paste(expand.grid(dose,duration)[,1], expand.grid(dose, duration)[,2], sep = ";")
     #b <- expand.grid(dose,duration)
 
-    ddt <- dd[,NA][,c(1:length(a)), drop = F]
+    ##TODO:: Do we really need this c() wrapper around seq_along()?
+    ddt <- dd[,NA][,c(seq_along(a)), drop = FALSE]
     ppt <- pp[FALSE,]
 
     exp.list <- list()
     cnt <- 0
-    blank <- ddt[,1,drop = F]
+    blank <- ddt[,1,drop = FALSE]
 
     #lapply(drugs, function(drug){
     for (drug in drugs) {
@@ -128,8 +129,8 @@ summarizeMolecularProfiles <-
 
         pp3 <- pp2[(pp2[,"dose_level"] == curr_dose
                     & pp2[,"duration"] == curr_dur
-                    & pp2[,"drugid"] == drug), , drop = F]
-        dd3 <- dd2[features,rownames(pp3), drop = F]
+                    & pp2[,"drugid"] == drug), , drop = FALSE]
+        dd3 <- dd2[features,rownames(pp3), drop = FALSE]
 
         if (ncol(dd3) > 1){ #if there are replicates
           switch(summary.stat, #ddr, ppr contains gene expression data, phenoData, for replicates
@@ -156,7 +157,7 @@ summarizeMolecularProfiles <-
           ppt <- rbind(ppt,pp3)
         }
       }#)
-      ddt <- ddt[,-(seq_len(length(a))), drop = F] #ddt contains the final expression matrix for a single drug
+      ddt <- ddt[,-(seq_len(length(a))), drop = FALSE] #ddt contains the final expression matrix for a single drug
       colnames(ddt) <- a
 
       exp.list[[cnt]] <- ddt
@@ -173,7 +174,7 @@ summarizeMolecularProfiles <-
         if (verbose == TRUE) {
           message(j)
         }
-        pp4 <- apply(ppt[ppt[,"dose_level"] == i & ppt[,"duration"] == j,,drop = F], 2, function(x) {
+        pp4 <- apply(ppt[ppt[,"dose_level"] == i & ppt[,"duration"] == j,,drop = FALSE], 2, function(x) {
           x <- paste(unique(as.character(x[!is.na(x)])), collapse = "///")
           #if (is.na(x)){x <- paste("Exp ",,sep="")}
           return(x)

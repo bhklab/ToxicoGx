@@ -360,7 +360,7 @@ setReplaceMethod("phenoInfo",
 #'
 #' @examples
 #' data(TGGATESsmall)
-#' TGGATES_mProf <- molecularProfiles(TGGATESsmall, "rna")[1:10,]
+#' TGGATES_mProf <- molecularProfiles(TGGATESsmall, "rna")[seq_len(10),]
 #'
 #' @param object A \code{ToxicoSet} object.
 #' @param mDataType \code{character} A string specifying the type of molecular
@@ -427,7 +427,7 @@ setReplaceMethod("molecularProfiles",
 #'
 #' @examples
 #' data(TGGATESsmall)
-#' featureInfo <- featureInfo(TGGATESsmall, "rna")[1:10,]
+#' featureInfo <- featureInfo(TGGATESsmall, "rna")[seq_len(10),]
 #'
 #' @param object A \code{ToxicoSet} object #'
 #' @param mDataType \code{character} A string specifying the type of molecular
@@ -479,7 +479,7 @@ setReplaceMethod("featureInfo",
 #' Get the annotations for the sensitivity experiments in the ToxicoSet
 #'
 #' @examples
-#' sensInf<- sensitivityInfo(TGGATESsmall)[1:10,]
+#' sensInf<- sensitivityInfo(TGGATESsmall)[seq_len(10),]
 #'
 #' @param object A \code{ToxicoSet} object
 #'
@@ -616,7 +616,7 @@ setMethod("sensitivityMeasures",
 #'
 #' @examples
 #' data(TGGATESsmall)
-#' drugName <- drugNames(TGGATESsmall)[1:10]
+#' drugName <- drugNames(TGGATESsmall)[seq_len(10)]
 #'
 #' @param object A \code{ToxicoSet} object from which to retrieve the included
 #'   drug names
@@ -711,7 +711,7 @@ setReplaceMethod("cellNames",
 #'   type
 #'
 #' @examples
-#' fNames(TGGATESsmall, "rna")[1:10]
+#' fNames(TGGATESsmall, "rna")[seq_len(10)]
 #'
 #' @param object A \code{ToxicoSet} object
 #' @param mDataType \code{character} A string specifying the type of molecular
@@ -956,7 +956,7 @@ setMethod(
 #'`[`
 #'
 #' @examples
-#' tSet <- TGGATESsmall[cellNames(TGGATESsmall), drugNames(TGGATESsmall)[1:3]]
+#' tSet <- TGGATESsmall[cellNames(TGGATESsmall), drugNames(TGGATESsmall)[seq_len(3)]]
 #'
 #'@param x tSet
 #'@param i Cell lines to keep in tSet
@@ -1507,7 +1507,7 @@ updateDrugId <- function(tSet, new.ids = vector("character")){
 checkTSetStructure <-
   function(tSet, plotDist=FALSE, result.dir=".") {
     if(!file.exists(result.dir) & plotDist) { dir.create(result.dir, showWarnings=FALSE, recursive=TRUE) }
-    for( i in 1:length(tSet@molecularProfiles)) {
+    for( i in seq_along(tSet@molecularProfiles)) {
       profile <- tSet@molecularProfiles[[i]]
       nn <- names(tSet@molecularProfiles)[i]
       if((S4Vectors::metadata(profile)$annotation == "rna" | S4Vectors::metadata(profile)$annotation == "rnaseq") & plotDist)

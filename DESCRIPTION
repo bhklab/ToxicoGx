@@ -44,7 +44,10 @@ Imports:
     testthat,
     scales,
     graphics,
-    grDevices
+    grDevices,
+    parallel,
+    stats,
+    utils
 RoxygenNote: 7.1.0
 VignetteBuilder: knitr
 Suggests:

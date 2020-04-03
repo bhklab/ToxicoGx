@@ -100,7 +100,7 @@ rankGeneDrugPerturbation <-
       names(ltype)[-1] <- utype
     }
 
-    for(ll in 1:length(ltype)) {
+    for(ll in seq_along(ltype)) {
 
       ## select the type of cell line/tissue of interest
       inpumat2 <- inpumat[!is.na(inpumat[ , "type"]) & is.element(inpumat[ , "type"], ltype[[ll]]), , drop=FALSE]

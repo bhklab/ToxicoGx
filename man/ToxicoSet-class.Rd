@@ -327,18 +327,18 @@ phenoInfo(TGGATESsmall, mDataType="rna") <-
   phenoInfo(TGGATESsmall, mDataType="rna")
 
 data(TGGATESsmall)
-TGGATES_mProf <- molecularProfiles(TGGATESsmall, "rna")[1:10,]
+TGGATES_mProf <- molecularProfiles(TGGATESsmall, "rna")[seq_len(10),]
 
 molecularProfiles(TGGATESsmall, "rna") <-
   molecularProfiles(TGGATESsmall, "rna")
 
 data(TGGATESsmall)
-featureInfo <- featureInfo(TGGATESsmall, "rna")[1:10,]
+featureInfo <- featureInfo(TGGATESsmall, "rna")[seq_len(10),]
 
 data(TGGATESsmall)
 featureInfo(TGGATESsmall, "rna") <- featureInfo(TGGATESsmall, "rna")
 
-sensInf<- sensitivityInfo(TGGATESsmall)[1:10,]
+sensInf<- sensitivityInfo(TGGATESsmall)[seq_len(10),]
 
 data(TGGATESsmall)
 sensitivityInfo(TGGATESsmall) <- sensitivityInfo(TGGATESsmall)
@@ -355,7 +355,7 @@ cellNames(TGGATESsmall)
 data(TGGATESsmall)
 cellNames(TGGATESsmall) <- cellNames(TGGATESsmall)
 
-fNames(TGGATESsmall, "rna")[1:10]
+fNames(TGGATESsmall, "rna")[seq_len(10)]
 
 data(TGGATESsmall)
 cellNames(TGGATESsmall) <- cellNames(TGGATESsmall)
