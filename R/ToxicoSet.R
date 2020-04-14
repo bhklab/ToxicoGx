@@ -1083,7 +1083,15 @@ subsetTo <- function(object, cell_lines = NULL,
                     cell_lines = cell_lines,
                     drugs = drugs, features = features,
                     duration = duration)
-
+  
+  ##TODO:: Add a value to tSet which indicates the experimental design!
+  ##FIXME:: Don't hard code object names!
+  if (tSet@annotation$name == "drugMatrix") {
+    if (!('DMSO' %in% drugs)) {
+      drugs <- c(drugs, 'DMSO')
+    }
+  }
+  
   ######
   # SUBSETTING MOLECULAR PROFILES SLOT
   ######
