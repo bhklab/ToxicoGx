@@ -71,7 +71,9 @@
   print("Checking is tSet structures are correct")
 
   testthat::expect_true(
-    all(vapply(tSet_old@molecularProfiles, function(x) { is(x, "ExpressionSet") }, FUN.VALUE = logical(1))),
+    all(vapply(tSet_old@molecularProfiles,
+               function(x) { is(x, "ExpressionSet") },
+               FUN.VALUE = logical(1))),
     info = "Old tSet doesn't contain ExpressionSet objects, maybe argument order is wrong?"
   )
 
@@ -88,7 +90,7 @@
       testthat::expect_true(
         all(
           as.list(assayData(tSet_old@molecularProfiles[[i]]))[[j]] ==
-            assay(tSet_new@molecularProfiles[[i]], j),
+            as.list(assays(tSet_new@molecularProfiles[[i]]))[[j]],
           na.rm = TRUE
         ),
         info = "The assay data is not equivalent"

@@ -12,3 +12,4 @@ Meta
 packrat/lib*/
 vignettes/output
 *.Rproj
+scripts
