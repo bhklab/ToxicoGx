@@ -16,9 +16,9 @@
 #' @keywords internal
 .convertTsetMolecularProfilesToSE <- function(tSet) {
 
-  eSets <- molecularProfiles(tSet) # Extract eSet data
+  eSets <- molecularProfilesSlot(tSet) # Extract eSet data
 
-  molecularProfiles(tSet) <-
+  molecularProfilesSlot(tSet) <-
     lapply(eSets,
            function(eSet){
 

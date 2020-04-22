@@ -7,7 +7,7 @@
 \S4method{name}{ToxicoSet}(object)
 }
 \arguments{
-\item{object}{\code{ToxicoSet} A ToxcioSet object}
+\item{object}{\code{ToxicoSet} A ToxicoSet object}
 }
 \value{
 \code{character} A string of the tSet's name

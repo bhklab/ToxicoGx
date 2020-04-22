@@ -20,6 +20,7 @@
 \alias{sensitivityRaw,ToxicoSet-method}
 \alias{sensitivityRaw<-,ToxicoSet,array-method}
 \alias{sensitivitySlot,ToxicoSet-method}
+\alias{sensitivitySlot<-,ToxicoSet,list-method}
 \alias{sensitivityInfo,ToxicoSet-method}
 \alias{sensitivityInfo<-,ToxicoSet,data.frame-method}
 \alias{sensitivityProfiles,ToxicoSet-method}
@@ -33,6 +34,7 @@
 \alias{fNames,ToxicoSet,character-method}
 \alias{fNames<-,ToxicoSet,character,ANY-method}
 \alias{dateCreated,ToxicoSet-method}
+\alias{datasetType,ToxicoSet-method}
 \alias{datasetType<-,ToxicoSet-method}
 \alias{pertNumber,ToxicoSet-method}
 \alias{sensNumber,ToxicoSet-method}
@@ -76,6 +78,8 @@
 
 \S4method{sensitivitySlot}{ToxicoSet}(object)
 
+\S4method{sensitivitySlot}{ToxicoSet,list}(object, ...) <- value
+
 \S4method{sensitivityInfo}{ToxicoSet}(object)
 
 \S4method{sensitivityInfo}{ToxicoSet,data.frame}(object) <- value
@@ -101,6 +105,8 @@
 \S4method{fNames}{ToxicoSet,character,ANY}(object, mDataType) <- value
 
 \S4method{dateCreated}{ToxicoSet}(object)
+
+\S4method{datasetType}{ToxicoSet}(object)
 
 \S4method{datasetType}{ToxicoSet}(object) <- value
 
@@ -129,6 +135,9 @@
 data to list the phenotype information for.}
 
 \item{assay}{\code{character} Name or index of the assay data to return}
+
+\item{...}{A \code{list} containing fall through arguments; this allows
+addition of new parameters to methods for this generic}
 }
 \value{
 An object of the ToxicoSet class
@@ -217,7 +226,7 @@ Get the avilable measurments for sensitivity experiments in a ToxicoSet
 
 Get names of cell lines in a ToxicoSet object
 
-Set the cell line names in a ToxcioSet object
+Set the cell line names in a TocicoSet object
 
 Get the feature names in a ToxicoSet object for the specified molecular data
   type
@@ -283,6 +292,9 @@ and updated copty
 
 \item \code{sensitivitySlot}: Retrieves the contents of the sensitivity slot
 
+\item \code{sensitivitySlot<-}: Set the raw dose and viability data for an tSet and return
+and updated copy
+
 \item \code{sensitivityInfo}: Return the drug dose sensitivity experiment info
 
 \item \code{sensitivityInfo<-}: Update the sensitivity experiment info
@@ -312,6 +324,9 @@ summaries, for example, whether there are IC50 values available
 \item \code{fNames<-}: Update the feature names used in the dataset
 
 \item \code{dateCreated}: Return the date the ToxicoSet was created
+
+\item \code{datasetType}: Update the dataset type of an tSet and return a copy of
+the updated object
 
 \item \code{datasetType<-}: Update the dataset type of an tSet and return a copy of
 the updated object
@@ -410,6 +425,9 @@ data(TGGATESsmall)
 sensitivitySlot(TGGATESsmall)
 
 data(TGGATESsmall)
+sensitivitySlot(TGGATESsmall) <- sensitivitySlot(TGGATESsmall)
+
+data(TGGATESsmall)
 sensInf<- sensitivityInfo(TGGATESsmall)[seq_len(10),]
 
 data(TGGATESsmall)
@@ -433,6 +451,9 @@ data(TGGATESsmall)
 cellNames(TGGATESsmall) <- cellNames(TGGATESsmall)
 
 dateCreated(TGGATESsmall)
+
+data(TGGATESsmall)
+datasetType(TGGATESsmall)
 
 pertNumber(TGGATESsmall)
 

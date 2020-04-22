@@ -178,7 +178,7 @@ ToxicoSet <-  function(name,
 #' @examples
 #' name(TGGATESsmall)
 #'
-#' @param object \code{ToxicoSet} A ToxcioSet object
+#' @param object \code{ToxicoSet} A ToxicoSet object
 #'
 #' @return \code{character} A string of the tSet's name
 #'
@@ -592,7 +592,7 @@ setGeneric("sensitivitySlot<-", function(object, ..., value) standardGeneric("se
 
 #' sensitivity Slot Setter
 #'
-#' @describeIn ToxcioSet Set the raw dose and viability data for an tSet and return
+#' @describeIn ToxicoSet Set the raw dose and viability data for an tSet and return
 #'   and updated copy
 #'
 #' @examples
@@ -820,7 +820,7 @@ setMethod("cellNames",
 
 #' cellNames<- Setter
 #'
-#' Set the cell line names in a ToxcioSet object
+#' Set the cell line names in a TocicoSet object
 #'
 #' @examples
 #' data(TGGATESsmall)
@@ -945,7 +945,7 @@ setGeneric("datasetType", function(object, ...) standardGeneric("datasetType"))
 #' @param ... A \code{list} containing fall through arguments; this allows
 #'   addition of new parameters to methods for this generic
 #'
-#' @describeIn ToxcioSet Update the dataset type of an tSet and return a copy of
+#' @describeIn ToxicoSet Update the dataset type of an tSet and return a copy of
 #'     the updated object
 #' @export
 setMethod("datasetType", signature("ToxicoSet"), function(object) {
