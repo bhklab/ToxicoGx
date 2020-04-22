@@ -37,7 +37,6 @@
 #' @return An object of the ToxicoSet class
 #'
 #' @importClassesFrom CoreGx CoreSet
-#' @export
 .ToxicoSet <- setClass("ToxicoSet", slots = list(drug="data.frame"),
                        contains="CoreSet")
 
@@ -55,39 +54,37 @@
 #' methods. For a much more detailed instruction on creating ToxicoSets, please
 #' see the "CreatingToxicoSet" vignette.
 #'
-#' @inherit CoreGx::CoreSet
-#' @inheritParams CoreGx::CoreSet
-#'
-# @param name A \code{character} string detailing the name of the dataset
-# @param molecularProfiles A \code{list} of ExpressionSet objects containing
-#   molecular profiles
-# @param cell A \code{data.frame} containing the annotations for all the cell
-#   lines profiled in the data set, across all data types
+#' @param name A \code{character} string detailing the name of the dataset
+#' @param molecularProfiles A \code{list} of ExpressionSet objects containing
+#'   molecular profiles
+#' @param cell A \code{data.frame} containing the annotations for all the cell
+#'   lines profiled in the data set, across all data types
 #' @param drug A \code{data.frame} containing the annotations for all the drugs
-#   profiled in the data set, across all data types
-# @param sensitivityInfo A \code{data.frame} containing the information for the
-#   sensitivity experiments
-# @param sensitivityRaw A 3 Dimensional \code{array} contaning the raw drug
-#   dose – response data for the sensitivity experiments
-# @param sensitivityProfiles \code{data.frame} containing drug sensitivity profile
-#   statistics such as IC50 and AUC
-# @param sensitivityN,perturbationN A \code{data.frame} summarizing the
-#   available sensitivity/perturbation data
+#'   profiled in the data set, across all data types
+#' @param sensitivityInfo A \code{data.frame} containing the information for the
+#'   sensitivity experiments
+#' @param sensitivityRaw A 3 Dimensional \code{array} contaning the raw drug
+#'   dose – response data for the sensitivity experiments
+#' @param sensitivityProfiles \code{data.frame} containing drug sensitivity profile
+#'   statistics such as IC50 and AUC
+#' @param sensitivityN,perturbationN A \code{data.frame} summarizing the
+#'   available sensitivity/perturbation data
 #' @param curationCell,curationDrug,curationTissue A \code{data.frame} mapping
 #'   the names for cells, drugs, and tissues used in the data set to universal
 #'   identifiers used between different ToxicoSet objects
-# @param datasetType A \code{character} string of "sensitivity",
-#   "perturbation", or both detailing what type of data can be found in the
-#   ToxicoSet, for proper processing of the data
-# @param verify \code{boolean} Should the function verify the ToxicoSet and
-#   print out any errors it finds after construction?
+#' @param datasetType A \code{character} string of "sensitivity",
+#'   "perturbation", or both detailing what type of data can be found in the
+#'   ToxicoSet, for proper processing of the data
+#' @param verify \code{boolean} Should the function verify the ToxicoSet and
+#'   print out any errors it finds after construction?
 #'
 #' @return An object of class \code{ToxicoSet}
 #'
 #' @import methods
 #' @importFrom utils sessionInfo
 #' @importFrom stats na.omit
-#' @importFrom SummarizedExperiment rowData colData assay assays assayNames Assays
+#' @importFrom SummarizedExperiment rowData colData assay assays
+#'   assayNames Assays rowData<- colData<-
 #' @importFrom S4Vectors DataFrame SimpleList metadata
 #' @importFrom CoreGx CoreSet
 #' @export
@@ -582,6 +579,7 @@ setMethod("sensitivitySlot", signature("ToxicoSet"), function(object) {
 #' data(TGGATESsmall)
 #' sensitivitySlot(TGGATESsmall) <- sensitivitySlot(TGGATESsmall)
 #'
+#' @docType methods
 #' @param object A \code{ToxicoSet} to extract the raw sensitivity data from
 #' @param ... A \code{list} to allow new parameters in specific methods
 #' @param value A \code{list} of new sensitivity slot data for the tSet
@@ -911,13 +909,10 @@ setMethod("dateCreated",
 })
 
 ##TODO:: Export this to CoreGx
+
 #' datasetType Generic
 #'
 #' A generic for retrieving the dataset type of an tSet object
-#'
-#' @examples
-#' data(TGGATESsmall)
-#' datasetType(TGGATESsmall)
 #'
 #' @param object A \code{ToxicoSet} from which to retrieve the dataset type
 #' @param ... A \code{list} containing fall through arguments; this allows
@@ -927,7 +922,17 @@ setMethod("dateCreated",
 #'
 #' @export
 setGeneric("datasetType", function(object, ...) standardGeneric("datasetType"))
-#' @inheritParams datasetType
+
+#' datasetType Getter
+#'
+#' @examples
+#' data(TGGATESsmall)
+#' datasetType(TGGATESsmall)
+#'
+#' @param object A \code{ToxicoSet} from which to retrieve the dataset type
+#' @param ... A \code{list} containing fall through arguments; this allows
+#'   addition of new parameters to methods for this generic
+#'
 #' @describeIn ToxcioSet Update the dataset type of an tSet and return a copy of
 #'     the updated object
 #' @export
@@ -1724,14 +1729,8 @@ updateDrugId <- function(tSet, new.ids = vector("character")){
     stop ("Data type must be either sensitivity or both")
   }
 
-  ## unique drug identifiers
-  # drugn <- sort(unique(tSet@sensitivity$info[ , "drugid"]))
-
   ## consider all drugs
   drugn <- rownames(tSet@drug)
-
-  ## unique drug identifiers
-  # celln <- sort(unique(tSet@sensitivity$info[ , "cellid"]))
 
   ## consider all cell lines
   celln <- rownames(tSet@cell)
@@ -1795,7 +1794,6 @@ updateDrugId <- function(tSet, new.ids = vector("character")){
 #' @export
 #' @importFrom graphics hist
 #' @importFrom grDevices dev.off pdf
-
 checkTSetStructure <-
   function(tSet, plotDist=FALSE, result.dir=".") {
     if(!file.exists(result.dir) & plotDist) { dir.create(result.dir, showWarnings=FALSE, recursive=TRUE) }
@@ -1907,38 +1905,3 @@ checkTSetStructure <-
       }
     }
   }
-
-
-# updateFeatureNames <- function(tSet, new.ids = vector("character")){
-#
-#   if (length(new.ids)!=nrow(cellInfo(tSet))){
-#     stop("Wrong number of cell identifiers")
-#   }
-#
-#   if(tSet@datasetType=="sensitivity"|tSet@datasetType=="both"){
-#     myx <- match(sensitivityInfo(tSet)[,"cellid"],rownames(cellInfo(tSet)))
-#     sensitivityInfo(tSet)[,"cellid"] <- new.ids[myx]
-#
-#   }
-#
-#   tSet@molecularProfiles <- lapply(tSet@molecularProfiles, function(eset){
-#
-#     myx <- match(pData(eset)[["cellid"]],rownames(cellInfo(tSet)))
-#     pData(eset)[["cellid"]]  <- new.ids[myx]
-#     return(eset)
-#       })
-#   myx <- match(rownames(tSet@curation$cell),rownames(cellInfo(tSet)))
-#   rownames(tSet@curation$cell) <- new.ids[myx]
-#   rownames(tSet@curation$tissue) <- new.ids[myx]
-#   if (dim(pertNumber(tSet))[[1]]>0){
-#     myx <- match(dimnames(pertNumber(tSet))[[1]], rownames(cellInfo(tSet)))
-#     dimnames(pertNumber(tSet))[[1]] <- new.ids[myx]
-#   }
-#   if (nrow(sensNumber(tSet))>0){
-#     myx <- match(rownames(sensNumber(tSet)), rownames(cellInfo(tSet)))
-#     rownames(sensNumber(tSet)) <- new.ids[myx]
-#   }
-#   rownames(cellInfo(tSet)) <- new.ids
-#   return(tSet)
-#
-# }

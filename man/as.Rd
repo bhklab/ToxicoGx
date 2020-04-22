@@ -4,14 +4,14 @@
 \alias{as}
 \title{Define an S4 Generic for the methods::as function}
 \usage{
-as(object, value)
+as(object, ..., value)
 }
 \arguments{
 \item{object}{An object to coerce to a different class}
 
-\item{value}{The type to coerce the object to}
-
 \item{...}{To allow new parameters for this generc}
+
+\item{value}{The type to coerce the object to}
 }
 \description{
 This will allow creation of new definitons for object conversions

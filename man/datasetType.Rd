@@ -18,8 +18,3 @@ A \code{character} vector containing the dataset type
 \description{
 A generic for retrieving the dataset type of an tSet object
 }
-\examples{
-data(TGGATESsmall)
-datasetType(TGGATESsmall)
-
-}

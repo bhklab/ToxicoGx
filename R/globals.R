@@ -14,7 +14,7 @@ utils::globalVariables(c('cellid','drugid','read.csv','samplename','.',
 #' @param value The type to coerce the object to
 #'
 #' @export
-setGeneric('as', function(object, value) methods::as(object, ..., value))
+setGeneric('as', function(object, ..., value) methods::as(object, ..., value))
 
 #' Coerce a SummarizedExperiment object to an ExpressionSet
 #'
