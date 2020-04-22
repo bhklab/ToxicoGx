@@ -50,7 +50,14 @@
   }
 
 ## This function computes AUC for the whole raw sensitivity data of a pset
-.calculateFromRaw <- function(raw.sensitivity, cap=NA, nthread=1, family=c("normal", "Cauchy"), scale = 0.07, n = 1){
+.calculateFromRaw <- function(raw.sensitivity, cap=NA, nthread=1,
+                              family=c("normal", "Cauchy"), scale = 0.07,
+                              n = 1) {
+  # Set multicore options
+  op <- options()
+  options(mc.cores=nthread)
+  on.exit(options(op))
+
   family <- match.arg(family)
 
   AUC <- vector(length=dim(raw.sensitivity)[1])
@@ -58,8 +65,6 @@
 
   IC50 <- vector(length=dim(raw.sensitivity)[1])
   names(IC50) <- dimnames(raw.sensitivity)[[1]]
-
-  #pars <- logLogisticRegression(raw.sensitivity[exp, , "Dose"], raw.sensitivity[exp, , "Viability"], conc_as_log=FALSE, viability_as_pct=TRUE, trunc=trunc)
 
   if (!is.na(cap)) {trunc <- TRUE}else{trunc <- FALSE}
 
@@ -69,7 +74,6 @@
         NA
       } else{
         logLogisticRegression(raw.sensitivity[exp, , "Dose"], raw.sensitivity[exp, , "Viability"], trunc=trunc, conc_as_log=FALSE, viability_as_pct=TRUE, family=family, scale=scale, median_n=n)
-        #computeAUC(concentration=raw.sensitivity[exp, , "Dose"], Hill_fit=Hill_fit, trunc=trunc, conc_as_log=FALSE, viability_as_pct=TRUE)
       }
     },raw.sensitivity=raw.sensitivity, family = family, scale = scale, n = n)
     names(pars) <- dimnames(raw.sensitivity)[[1]]
@@ -88,29 +92,28 @@
       }
     }, pars=pars))
   } else {
-    pars <- parallel::mclapply(names(AUC), function(exp, raw.sensitivity, family, scale, n, trunc) {
+    pars <- BiocParallel::bplapply(names(AUC), function(exp, raw.sensitivity, family, scale, n, trunc) {
       if(length(grep("///", raw.sensitivity[exp, , "Dose"])) > 0 | all(is.na(raw.sensitivity[exp, , "Dose"]))) {
         NA
       } else{
         logLogisticRegression(raw.sensitivity[exp, , "Dose"], raw.sensitivity[exp, , "Viability"], trunc=trunc, conc_as_log=FALSE, viability_as_pct=TRUE, family=family, scale=scale, median_n=n)
-        #computeAUC(concentration=raw.sensitivity[exp, , "Dose"], Hill_fit=Hill_fit, trunc=trunc, conc_as_log=FALSE, viability_as_pct=TRUE)
       }
-    },raw.sensitivity=raw.sensitivity, family = family, scale = scale, n = n, trunc = trunc, mc.cores = nthread)
+    },raw.sensitivity=raw.sensitivity, family = family, scale = scale, n = n, trunc = trunc)
     names(pars) <- dimnames(raw.sensitivity)[[1]]
-    AUC <- unlist(parallel::mclapply(names(pars), function(exp, raw.sensitivity, pars, trunc) {
+    AUC <- unlist(BiocParallel::bplapply(names(pars), function(exp, raw.sensitivity, pars, trunc) {
       if(any(is.na(pars[[exp]]))) {
         NA
       } else{
         computeAUC(concentration=raw.sensitivity[exp, , "Dose"], Hill_fit=pars[[exp]], trunc=trunc, conc_as_log=FALSE, viability_as_pct=TRUE)
       }
-    },raw.sensitivity=raw.sensitivity, pars=pars, trunc = trunc, mc.cores = nthread))
-    IC50 <- unlist(parallel::mclapply(names(pars), function(exp, pars, trunc) {
+    },raw.sensitivity=raw.sensitivity, pars=pars, trunc = trunc))
+    IC50 <- unlist(BiocParallel::bplapply(names(pars), function(exp, pars, trunc) {
       if(any(is.na(pars[[exp]]))) {
         NA
       } else{
         computeIC50(Hill_fit=pars[[exp]], trunc=trunc, conc_as_log=FALSE, viability_as_pct=TRUE)
       }
-    }, pars=pars, trunc = trunc, mc.cores = nthread))
+    }, pars=pars, trunc = trunc))
   }
 
   names(AUC) <- dimnames(raw.sensitivity)[[1]]

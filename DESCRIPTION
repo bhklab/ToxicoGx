@@ -53,6 +53,7 @@ RoxygenNote: 7.1.0
 VignetteBuilder: knitr
 Suggests:
     rmarkdown,
+    testthat,
     BiocStyle,
     knitr,
     tinytex,

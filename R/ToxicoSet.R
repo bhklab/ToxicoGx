@@ -1,7 +1,12 @@
 #' Class to contain Toxico-genomic Data
 #'
-#' A description which has yet to be added to this class. This is just a place
-#' holder.
+#' The ToxicoSet (tSet) class was development to contain and organise large
+#' ToxicGenomic datasets as well as provide useful tools for interacting with
+#' this data. Functions are included for exploring the relationship between
+#' survival fraction and gene expression in cultured human and rat tissues
+#' during exposure to a wide ranges of compounds. Features include plotting dose
+#' and exposure time curves, calculating AUC, fitting linear models and
+#' computing sensitivity signatures.
 #'
 #' @slot annotation A \code{list} of annotation data about the ToxicoSet,
 #'    including the \code{$name} and the session information for how the object
@@ -33,8 +38,8 @@
 #'
 #' @importClassesFrom CoreGx CoreSet
 #' @export
-.ToxicoSet <- setClass("ToxicoSet", slots = list(drug = "data.frame"),
-                       contains = "CoreSet")
+.ToxicoSet <- setClass("ToxicoSet", slots = list(drug="data.frame"),
+                       contains="CoreSet")
 
 # The default constructor above does a poor job of explaining the required
 # structure of a ToxicoSet. The constructor function defined below guides the
@@ -110,7 +115,6 @@ ToxicoSet <-  function(name,
   annotation$sessionInfo <- sessionInfo()
   annotation$call <- match.call()
 
-    #molecularProfiles <- list("dna"=dna, "rna"=rna, "snp"=snp, "cnv"=cnv)
     for (i in seq_len(length(molecularProfiles))){
         if (!is(molecularProfiles[[i]], "SummarizedExperiment")) {
             stop(sprintf("Please provide the %s data as a SummarizedExperiment", names(molecularProfiles[i])))
@@ -124,27 +128,30 @@ ToxicoSet <-  function(name,
 
   sensitivity <- list()
 
-  if (!all(rownames(sensitivityInfo) == rownames(sensitivityProfiles) & rownames(sensitivityInfo) == dimnames(sensitivityRaw)[[1]])){
+  if (!all(rownames(sensitivityInfo) == rownames(sensitivityProfiles) &
+           rownames(sensitivityInfo) == dimnames(sensitivityRaw)[[1]])) {
     stop("Please ensure all the row names match between the sensitivity data.")
   }
 
-  sensitivity$info <- as.data.frame(sensitivityInfo, stringsAsFactors = FALSE)
+  sensitivity$info <- as.data.frame(sensitivityInfo, stringsAsFactors=FALSE)
   sensitivity$raw <- sensitivityRaw
-  sensitivity$profiles <- as.data.frame(sensitivityProfiles, stringsAsFactors = FALSE)
+  sensitivity$profiles <- as.data.frame(sensitivityProfiles, stringsAsFactors=FALSE)
   sensitivity$n <- sensitivityN
 
+  ### TODO:: Make sure to fix the curation to check for matching row names to
+  ### the radiation and cell line matrices
   curation <- list()
-  # curation$radiation <- as.data.frame(curationDrug, stringsAsFactors = FALSE)
   curation$cell <- as.data.frame(curationCell, stringsAsFactors = FALSE)
   curation$drug <- as.data.frame(curationDrug, stringsAsFactors = FALSE)
   curation$tissue <- as.data.frame(curationTissue, stringsAsFactors = FALSE)
-  ### TODO:: Make sure to fix the curation to check for matching row names to the radiation and cell line matrices!!!!!!
-
 
   perturbation <- list()
   perturbation$n <- perturbationN
   if (datasetType == "perturbation" || datasetType == "both") {
-    perturbation$info <- "The metadata for the perturbation experiments is available for each molecular type by calling the appropriate info function. \n For example, for RNA transcriptome perturbations, the metadata can be accessed using rnaInfo(tSet)."
+    perturbation$info <- "The metadata for the perturbation experiments is
+      available for each molecular type by calling the appropriate info function.
+      \n For example, for RNA transcriptome perturbations, the metadata can be
+      accessed using rnaInfo(tSet)."
   } else {
     perturbation$info <- "Not a perturbation dataset."
   }
@@ -159,10 +166,10 @@ ToxicoSet <-  function(name,
                       curation=curation)
   if (verify) { checkTSetStructure(tSet)}
   if(length(sensitivityN) == 0 & datasetType %in% c("sensitivity", "both")) {
-    tSet@sensitivity$n <- .summarizeSensitivityNumbers(tSet)
+    sensNumber(tSet) <- .summarizeSensitivityNumbers(tSet)
   }
   if(length(perturbationN) == 0  & datasetType %in% c("perturbation", "both")) {
-    tSet@perturbation$n <- .summarizePerturbationNumbers(tSet)
+    pertNumber(tSet) <- .summarizePerturbationNumbers(tSet)
   }
   return(tSet)
 }
@@ -184,23 +191,6 @@ ToxicoSet <-  function(name,
 setMethod(name, "ToxicoSet", function(object) {
   callNextMethod(object)
 })
-
-##TODO:: Uncomment this on next CoreGx rebuild
-# name Setter method
-#
-# Sets the name of a tSet
-#
-# @examples
-# name(TGGATESsmall) <- "TGGATESsmall"
-#
-# @param object A \code{ToxicoSet}object
-#
-# @return \code{character} A string of the tSet's name
-#
-# @export
-#setReplaceMethod('name', "ToxicoSet", function(object, value) {
-#  callNextMethod(object, value)
-#})
 
 #' cellInfo Getter
 #'
@@ -226,7 +216,7 @@ setMethod(cellInfo, "ToxicoSet", function(object){
 
 #' cellInfo Replace Method
 #'
-#' Generic for cellInfo replace method
+#' Set cell line annotations for a ToxicoSet object
 #'
 #' @examples
 #' data(TGGATESsmall)
@@ -423,13 +413,56 @@ setReplaceMethod("molecularProfiles",
   callNextMethod(object, mDataType, assay, value)
 })
 
+#' molecularProfilesSlot Getter
+#'
+#' @describeIn ToxicoSet Get contents of molecularProfiles slot
+#'
+#' @examples
+#' data(TGGATESsmall)
+#' molecularProfilesSlot(TGGATESsmall)
+#'
+#' @param object A \code{ToxicoSet} from which to return a list of all availble
+#'   SummarizedExperiment objects
+#'
+#' @return A \code{list} containing the molecularProfiles from a tSet
+#'
+#' @importFrom CoreGx molecularProfilesSlot
+#' @importFrom methods callNextMethod
+#' @export
+setMethod("molecularProfilesSlot", signature("ToxicoSet"), function(object) {
+  callNextMethod(object)
+})
+
+#' molecularProfilesSlot<- Setter
+#'
+#' @describeIn ToxicoSet Update the molecular profiles slot of a ToxicoSet and
+#'    returns the updated copy
+#'
+#' @examples
+#' data(TGGATESsmall)
+#' molecularProfilesSlot(TGGATESsmall) <- molecularProfilesSlot(TGGATESsmall)
+#'
+#' @param object A \code{ToxicoSet} object for which values will be replaced
+#' @param value A \code{list} containing molecular profiles as SummarizedExperiments
+#'
+#' @return A copy of the \code{ToxicoSet} with the molecularProfiles slot updated
+#'
+#' @importFrom CoreGx molecularProfilesSlot<-
+#' @importFrom methods callNextMethod
+#' @export
+setReplaceMethod("molecularProfilesSlot", signature("ToxicoSet"),
+                 function(object, value) {
+                   callNextMethod(object, value)
+                 })
+
+
 #' Getter for featureInfo method
 #'
 #' @examples
 #' data(TGGATESsmall)
 #' featureInfo <- featureInfo(TGGATESsmall, "rna")[seq_len(10),]
 #'
-#' @param object A \code{ToxicoSet} object #'
+#' @param object A \code{ToxicoSet} object
 #' @param mDataType \code{character} A string specifying the type of molecular
 #'   data to list the phenotype information for.
 #'
@@ -474,11 +507,106 @@ setReplaceMethod("featureInfo",
   callNextMethod(object, mDataType, value)
 })
 
+##TODO:: Migrate this to CoreGx
+#' sensitivityRaw Generic
+#'
+#' @examples
+#' data(TGGATESsmall)
+#' sensitivityRaw(TGGATESsmall)
+#'
+#' @param object A \code{ToxicoSet} to extract the raw sensitivity data from
+#' @param ... A \code{list} to allow new parameters in specific methods
+#'
+#' @return A \code{array} containing the raw sensitivity data
+#'
+#' @export
+setGeneric("sensitivityRaw", function(object, ...) standardGeneric("sensitivityRaw"))
+#' @describeIn ToxicoSet Retrive the raw dose and viability data from an tSet
+#' @inheritParams sensitivityRaw
+#' @export
+setMethod("sensitivityRaw", signature("ToxicoSet"), function(object) {
+  object@sensitivity$raw
+})
+
+##TODO:: Migrate this to CoreGx
+#' sensitivityRaw<- Replacement Generic
+#'
+#' @examples
+#' data(TGATESsmall)
+#' sensitivityRaw(TGGATESsmall) <- sensitivityRaw(TGGATESsmall)
+#'
+#' @param object A \code{ToxicoSet} to extract the raw sensitivity data from
+#' @param ... A \code{list} to allow new parameters in specific methods
+#' @param value A \code{array} containing the raw dose and viability data for
+#'   the tSet
+#'
+#' @return A copy of the \code{ToxicoSet} containing the updated sensitivty data
+#'
+#' @export
+setGeneric("sensitivityRaw<-", function(object, ..., value) standardGeneric("sensitivityRaw<-"))
+#' @describeIn ToxicoSet Set the raw dose and viability data for a tSet and return
+#'   and updated copty
+#' @inheritParams sensitivityRaw<-
+#' @export
+setReplaceMethod("sensitivityRaw", signature("ToxicoSet", "array"),
+                 function(object, value) {
+                   object@sensitivity$raw <- value
+                   object
+                 })
+
+##TODO:: Migrate this to CoreGx
+#' sensitivitySlot Generic
+#'
+#' @examples
+#' data(TGGATESsmall)
+#' sensitivitySlot(TGGATESsmall)
+#'
+#' @param object A \code{ToxicoSet} to extract the raw sensitivity data from
+#' @param ... A \code{list} to allow new parameters in specific methods
+#'
+#' @return A \code{list} of the sensitivity slot contents
+#'
+#' @export
+setGeneric("sensitivitySlot", function(object, ...) standardGeneric("sensitivitySlot"))
+#' @describeIn ToxicoSet Retrieve the contents of the sensitivity slot
+#' @inheritParams sensitivitySlot
+#' @export
+setMethod("sensitivitySlot", signature("ToxicoSet"), function(object) {
+  object@sensitivity
+})
+
+##TODO:: Migrate this to CoreGx
+#' sensitivitySlot<- Replacement Generic
+#'
+#' @examples
+#' data(TGGATESsmall)
+#' sensitivitySlot(TGGATESsmall) <- sensitivitySlot(TGGATESsmall)
+#'
+#' @param object A \code{ToxicoSet} to extract the raw sensitivity data from
+#' @param ... A \code{list} to allow new parameters in specific methods
+#' @param value A \code{list} of new sensitivity slot data for the tSet
+#'
+#' @return A copy of the \code{ToxicoSet} containing the updated sensitivty slot
+#'
+#' @export
+setGeneric("sensitivitySlot<-", function(object, ..., value) standardGeneric("sensitivitySlot<-"))
+#' @describeIn ToxcioSet Set the raw dose and viability data for an tSet and return
+#'   and updated copy
+#' @inheritParams sensitivitySlot<-
+#' @export
+setReplaceMethod("sensitivitySlot", signature("ToxicoSet", "list"),
+                 function(object, value) {
+                   ##TODO:: Implement error handinlg for this slot
+                   object@sensitivity <- value
+                   object
+                 })
+
 #' sensitivityInfo Getter
 #'
 #' Get the annotations for the sensitivity experiments in the ToxicoSet
 #'
 #' @examples
+#' data(TGGATESsmall)
 #' sensInf<- sensitivityInfo(TGGATESsmall)[seq_len(10),]
 #'
 #' @param object A \code{ToxicoSet} object
@@ -782,6 +910,60 @@ setMethod("dateCreated",
   callNextMethod(object)
 })
 
+##TODO:: Export this to CoreGx
+#' datasetType Generic
+#'
+#' A generic for retrieving the dataset type of an tSet object
+#'
+#' @examples
+#' data(TGGATESsmall)
+#' datasetType(TGGATESsmall)
+#'
+#' @param object A \code{ToxicoSet} from which to retrieve the dataset type
+#' @param ... A \code{list} containing fall through arguments; this allows
+#'   addition of new parameters to methods for this generic
+#'
+#' @return A \code{character} vector containing the dataset type
+#'
+#' @export
+setGeneric("datasetType", function(object, ...) standardGeneric("datasetType"))
+#' @inheritParams datasetType
+#' @describeIn ToxcioSet Update the dataset type of an tSet and return a copy of
+#'     the updated object
+#' @export
+setMethod("datasetType", signature("ToxicoSet"), function(object) {
+  ##TODO:: Add error handling to this function
+  object@datasetType
+})
+
+
+##TODO:: Export this to CoreGx
+#' datasetType<- Replacement Generic
+#'
+#' A generic for updating the dataset type of a ToxicoSet object
+#'
+#' @examples
+#' data(TGGATESsmall)
+#' datasetType(TGGATESsmall)
+#'
+#' @param object A \code{ToxicoSet} from which to retrieve the dataset type
+#' @param value A \code{character} vector containing the dataset type
+#'
+#' @return A \code{ToxicoSet} with the datasetType slot updated
+#'
+#' @export
+setGeneric("datasetType<-",  function(object, value) standardGeneric("datasetType<-"))
+#' @inheritParams datasetType<-
+#' @describeIn ToxicoSet Update the dataset type of an tSet and return a copy of
+#'     the updated object
+#' @export
+setReplaceMethod("datasetType", signature("ToxicoSet"), function(object, value) {
+  ##TODO:: Add error handling to this function
+  object@datasetType <- value
+  object
+})
+
+
 #' pertNumber Getter
 #'
 #' Get an array of the number of pertubration experiments per drug and cell
@@ -907,19 +1089,19 @@ setMethod("show", signature=signature(object="ToxicoSet"),
             cat("Date Created: ", dateCreated(object), "\n")
             cat("Number of cell lines: ", nrow(cellInfo(object)), "\n")
             cat("Number of drugs: ", nrow(drugInfo(object)), "\n")
-            if("dna" %in% names(object@molecularProfiles)){cat("DNA: \n");
+            if("dna" %in% names(molecularProfilesSlot(object))){cat("DNA: \n");
               cat("\tDim: ", dim(molecularProfiles(object, mDataType="dna")),
                 "\n")}
-            if("rna" %in% names(object@molecularProfiles)){cat("RNA: \n");
+            if("rna" %in% names(molecularProfilesSlot(object))){cat("RNA: \n");
               cat("\tDim: ", dim(molecularProfiles(object, mDataType="rna")),
                 "\n")}
-            if("rnaseq" %in% names(object@molecularProfiles)){cat("RNASeq: \n");
+            if("rnaseq" %in% names(molecularProfilesSlot(object))){cat("RNASeq: \n");
               cat("\tDim: ", dim(molecularProfiles(object, mDataType="rnaseq")),
                 "\n")}
-            if("snp" %in% names(object@molecularProfiles)){cat("SNP: \n");
+            if("snp" %in% names(molecularProfilesSlot(object))){cat("SNP: \n");
               cat("\tDim: ", dim(molecularProfiles(object, mDataType="snp")),
                 "\n")}
-            if("cnv" %in% names(object@molecularProfiles)){cat("CNV: \n");
+            if("cnv" %in% names(molecularProfilesSlot(object))){cat("CNV: \n");
               cat("\tDim: ", dim(molecularProfiles(object, mDataType="cnv")),
                 "\n")}
             cat("Drug pertubation: \n")
@@ -953,6 +1135,100 @@ setMethod(
     callNextMethod(object)
 })
 
+##TODO:: Export to CoreGx
+##FIXME:: How do I import generics from BiocGenerics?
+#' annotation Slot Getter
+#'
+#' @param object A \code{ToxicoSet}
+#' @param ... A \code{list} to allow definition of new parameters on this generic
+#'
+#' @return A \code{list} of named annotaiton
+#'
+#' @examples
+#' data(TGGATESsmall)
+#' annotation(TGGATESsmall)
+#'
+#' @export
+setGeneric("annotation", function(object, ...) standardGeneric("annotation"))
+#' @describeIn ToxicoSet Retrieve the annotations slot form an tSet
+#' @inheritParams annotation<-
+#' @export
+setMethod('annotation', signature("ToxicoSet"), function(object) {
+  object@annotation
+})
+
+##TODO:: Export to CoreGx
+##FIXME:: How do I import generics from BiocGenerics?
+#' annotation<- Slot Setter
+#'
+#' @param object A \code{ToxicoSet}
+#' @param ... A \code{list} to allow definition of new parameters on this generic
+#' @param value A \code{list} of annotations to add to the annotatiosn slot of
+#'   an tSet
+#'
+#' @return A copy of the \code{ToxicoSet} with the updated annotation slot
+#'
+#' @examples
+#' data(TGGATESsmall)
+#' annotation(TGGATESsmall) <- annotation(TGGATESsmall)
+#'
+#' @export
+setGeneric("annotation<-", function(object, ..., value) standardGeneric("annotation<-"))
+#' @describeIn ToxicoSet Update the annotation slot of a tSet
+#' @inheritParams annotation<-
+#' @export
+setReplaceMethod("annotation", signature("ToxicoSet", "list"), function(object, value) {
+  object@annotation <- value
+  object
+})
+
+##TODO:: Export to CoreGx
+#' curation Slot Getter
+#'
+#' @param object A \code{ToxicoSet}
+#' @param ... A \code{list} to allow definition of new parameters on this generic
+#'
+#' @return A \code{list} of unique cell and tissue identifiers to check validity
+#'   of an tSet
+#'
+#' @examples
+#' data(TGGATESsmall)
+#' curation(TGGATESsmall)
+#'
+#' @export
+setGeneric("curation", function(object, ...) standardGeneric("curation"))
+#' @describeIn ToxicoSet Retrieve the curation slot form an tSet
+#' @inheritParams curation
+#' @export
+setMethod('curation', signature("ToxicoSet"), function(object) {
+  object@curation
+})
+
+##TODO:: Export to CoreGx
+##FIXME:: How do I import generics from BiocGenerics?
+#' curation<- Slot Setter
+#'
+#' @param object A \code{ToxicoSet}
+#' @param ... A \code{list} to allow definition of new parameters on this generic
+#' @param value A \code{list} of curations for the cell and tissues types in the
+#'   tSet object
+#'
+#' @return A copy of the \code{ToxicoSet} with the updated curation slot
+#'
+#' @examples
+#' data(TGGATESsmall)
+#' curation(TGGATESsmall) <- curation(TGGATESsmall)
+#'
+#' @export
+setGeneric("curation<-", function(object, ..., value) standardGeneric("curation<-"))
+#' @describeIn ToxicoSet Update the annotation slot of a tSet
+#' @inheritParams annotation<-
+#' @export
+setReplaceMethod("curation", signature("ToxicoSet", "list"), function(object, value) {
+  object@curation <- value
+  object
+})
+
 #'`[`
 #'
 #' @examples
@@ -966,11 +1242,13 @@ setMethod(
 #'@return Returns the subsetted tSet
 #'@export
 setMethod(`[`, "ToxicoSet", function(x, i, j, ..., drop = FALSE){
-  if(is.character(i)&&is.character(j)){
+  if(is.character(i) && is.character(j)) {
     return(subsetTo(x, cells=i, drugs=j,  molecular.data.cells=i))
   }
-  else if(is.numeric(i) && is.numeric(j) && (as.integer(i)==i) && (as.integer(j)==j)){
-    return(subsetTo(x, cells=cellNames(x)[i], drugs=drugNames(x)[j],  molecular.data.cells=cellNames(x)[i]))
+  else if(is.numeric(i) && is.numeric(j) &&
+           (as.integer(i)==i) && (as.integer(j)==j)) {
+    return(subsetTo(x, cells=cellNames(x)[i], drugs=drugNames(x)[j],
+                    molecular.data.cells=cellNames(x)[i]))
   }
 })
 
@@ -1066,7 +1344,7 @@ subsetTo <- function(object, cell_lines = NULL,
   }
 
   ## MISSING VALUE HANDLING FOR PARAMETERS
-  # Get named list of defualt values for missing parameters
+  # Get named list of default values for missing parameters
   argDefaultList <-
     paramMissingHandler(funName = "subsetTo", tSet = object,
                         drugs = drugs, cell_lines = cell_lines, features = features,
@@ -1083,15 +1361,15 @@ subsetTo <- function(object, cell_lines = NULL,
                     cell_lines = cell_lines,
                     drugs = drugs, features = features,
                     duration = duration)
-  
+
   ##TODO:: Add a value to tSet which indicates the experimental design!
   ##FIXME:: Don't hard code object names!
-  if (tSet@annotation$name == "drugMatrix") {
+  if (name(object) == "drugMatrix") {
     if (!('DMSO' %in% drugs)) {
       drugs <- c(drugs, 'DMSO')
     }
   }
-  
+
   ######
   # SUBSETTING MOLECULAR PROFILES SLOT
   ######
@@ -1099,8 +1377,8 @@ subsetTo <- function(object, cell_lines = NULL,
 
   ### the function missing does not work as expected in the context below, because the arguments are passed to the anonymous
   ### function in lapply, so it does not recognize them as missing
-  object@molecularProfiles <-
-    lapply(object@molecularProfiles,
+  molecularProfilesSlot(object) <-
+    lapply(molecularProfilesSlot(object),
       function(SE, cell_lines, drugs, molecular.data.cells, duration, features){
 
     if (!is.null(features)) {
@@ -1123,7 +1401,7 @@ subsetTo <- function(object, cell_lines = NULL,
     if (length(cell_lines) == 0 && length(drugs) == 0) {
       column_indices <- seq_len(ncol(SE))
     }
-    if (length(cell_lines) == 0 && object@datasetType == "sensitivity") {
+    if (length(cell_lines) == 0 && datasetType(object) == "sensitivity") {
       column_indices <- seq_len(ncol(SE))
     }
 
@@ -1140,7 +1418,7 @@ subsetTo <- function(object, cell_lines = NULL,
 
     # Selecting indexes which match drugs arguement
     drugs_index <- NULL
-    if (object@datasetType == "perturbation" || object@datasetType == "both") {
+    if (datasetType(object) == "perturbation" || datasetType(object) == "both") {
       if (length(drugs) != 0) {
         if (!all(drugs %in% drugNames(object))){
           stop("Some of the drug names passed to function did not match to names in the ToxicoSet Please ensure you are using drug names as returned by the drugNames function")
@@ -1201,21 +1479,21 @@ subsetTo <- function(object, cell_lines = NULL,
   # SUBSET SENSITIVITY SLOT
   ######
   # Logic if any "..." arguments are passed to subsetTo
-  if ((object@datasetType == "sensitivity" | object@datasetType == "both") & length(exps) != 0) {
-    object@sensitivity$info <- object@sensitivity$info[exps, , drop=drop]
-    rownames(object@sensitivity$info) <- names(exps)
-    if (length(object@sensitivity$raw) > 0) {
-      object@sensitivity$raw <- object@sensitivity$raw[exps, , , drop=drop]
-      dimnames(object@sensitivity$raw)[[1]] <- names(exps)
+  if ((datasetType(object) == "sensitivity" | datasetType(object) == "both") & length(exps) != 0) {
+    sensitivityInfo(object) <- sensitivityInfo(object)[exps, , drop=drop]
+    rownames(sensitivityInfo(object)) <- names(exps)
+    if (length(sensitivityRaw(object)) > 0) {
+      sensitivityRaw(object) <- sensitivityRaw(object)[exps, , , drop=drop]
+      dimnames(sensitivityRaw(object))[[1]] <- names(exps)
     }
-    object@sensitivity$profiles <- object@sensitivity$profiles[exps, , drop=drop]
-    rownames(object@sensitivity$profiles) <- names(exps)
+    sensitivityProfiles(object) <- sensitivityProfiles(object)[exps, , drop=drop]
+    rownames(sensitivityProfiles(object)) <- names(exps)
 
-    object@sensitivity$n <- .summarizeSensitivityNumbers(object)
+    sensNumber(object) <- .summarizeSensitivityNumbers(object)
   }
   # Logic if drug or cell parameters are passed to subsetTo
   else if (
-    (object@datasetType == "sensitivity" | object@datasetType == "both") &
+    (datasetType(object) == "sensitivity" | datasetType(object) == "both") &
     (length(drugs) != 0 | length(cell_lines) != 0 | !is.null(duration) )
   ) {
 
@@ -1258,11 +1536,11 @@ subsetTo <- function(object, cell_lines = NULL,
       duration_indices <- which(sensitivityInfo(object)$duration_h %in% duration)
       row_indices <- intersect(row_indices, duration_indices)
     }
-    sensItemNames <- names(object@sensitivity)
+    sensItemNames <- names(sensitivitySlot(object))
     sensitivityVals <-
       lapply(sensItemNames, function(sensItemName, drop){
         if (sensItemName == "n") {
-          sensItem <- object@sensitivity[[sensItemName]]
+          sensItem <- sensitivitySlot(object)[[sensItemName]]
           if (!is.null(cell_lines)) {
             sensItem[which(rownames(sensItem) %in% cell_lines),
                      which(colnames(sensItem) %in% drugs), drop = drop]
@@ -1270,7 +1548,7 @@ subsetTo <- function(object, cell_lines = NULL,
             sensItem[ , which(colnames(sensItem) %in% drugs), drop = drop]
           }
         } else {
-          sensItem <- object@sensitivity[[sensItemName]]
+          sensItem <- sensitivitySlot(object)[[sensItemName]]
           if (length(dim(sensItem)) == 3) {
             sensItem[row_indices, , , drop = drop]
           } else {
@@ -1279,18 +1557,18 @@ subsetTo <- function(object, cell_lines = NULL,
         }
       }, drop = drop)
     names(sensitivityVals) <- sensItemNames
-    object@sensitivity <- sensitivityVals
+    sensitivitySlot(object) <- sensitivityVals
   }
 
   #####
   # SUBSET DRUG SLOT
   #####
   if (length(drugs) == 0) {
-    if (object@datasetType == "sensitivity" | object@datasetType == "both"){
+    if (datasetType(object) == "sensitivity" | datasetType(object) == "both"){
       drugs <- unique(sensitivityInfo(object)[["drugid"]])
     }
-    if(object@datasetType == "perturbation" | object@datasetType == "both"){
-      drugs <- union(drugs, na.omit(.unionList(lapply(object@molecularProfiles, function(SE){unique(SummarizedExperiment::colData(SE)[["drugid"]])}))))
+    if(datasetType(object) == "perturbation" | datasetType(object) == "both"){
+      drugs <- union(drugs, na.omit(.unionList(lapply(molecularProfilesSlot(object), function(SE){unique(SummarizedExperiment::colData(SE)[["drugid"]])}))))
     }
   }
 
@@ -1298,8 +1576,8 @@ subsetTo <- function(object, cell_lines = NULL,
   # SUBSET CELLS SLOT
   #####
   if (length(cell_lines) == 0) {
-    cell_lines <- union(cell_lines, na.omit(.unionList(lapply(object@molecularProfiles, function(SE){unique(SummarizedExperiment::colData(SE)[["cellid"]])}))))
-    if (object@datasetType == "sensitivity" | object@datasetType == "both"){
+    cell_lines <- union(cell_lines, na.omit(.unionList(lapply(molecularProfilesSlot(object), function(SE){unique(SummarizedExperiment::colData(SE)[["cellid"]])}))))
+    if (datasetType(object) == "sensitivity" | datasetType(object) == "both"){
       cell_lines <- union(cell_lines, sensitivityInfo(object)[["cellid"]])
     }
   }

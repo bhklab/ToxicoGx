@@ -13,8 +13,13 @@
 \alias{molecularProfiles,ToxicoSet-method}
 \alias{molecularProfiles<-,ToxicoSet,character,character,matrix-method}
 \alias{molecularProfiles<-,ToxicoSet,character,missing,matrix-method}
+\alias{molecularProfilesSlot,ToxicoSet-method}
+\alias{molecularProfilesSlot<-,ToxicoSet,ANY-method}
 \alias{featureInfo,ToxicoSet,character-method}
 \alias{featureInfo<-,ToxicoSet,character,data.frame-method}
+\alias{sensitivityRaw,ToxicoSet-method}
+\alias{sensitivityRaw<-,ToxicoSet,array-method}
+\alias{sensitivitySlot,ToxicoSet-method}
 \alias{sensitivityInfo,ToxicoSet-method}
 \alias{sensitivityInfo<-,ToxicoSet,data.frame-method}
 \alias{sensitivityProfiles,ToxicoSet-method}
@@ -28,10 +33,15 @@
 \alias{fNames,ToxicoSet,character-method}
 \alias{fNames<-,ToxicoSet,character,ANY-method}
 \alias{dateCreated,ToxicoSet-method}
+\alias{datasetType<-,ToxicoSet-method}
 \alias{pertNumber,ToxicoSet-method}
 \alias{sensNumber,ToxicoSet-method}
 \alias{pertNumber<-,ToxicoSet,array-method}
 \alias{sensNumber<-,ToxicoSet,matrix-method}
+\alias{annotation,ToxicoSet-method}
+\alias{annotation<-,ToxicoSet,list-method}
+\alias{curation,ToxicoSet-method}
+\alias{curation<-,ToxicoSet,list-method}
 \title{Class to contain Toxico-genomic Data}
 \usage{
 \S4method{cellInfo}{ToxicoSet}(object)
@@ -52,9 +62,19 @@
 
 \S4method{molecularProfiles}{ToxicoSet,character,missing,matrix}(object, mDataType, assay) <- value
 
+\S4method{molecularProfilesSlot}{ToxicoSet}(object)
+
+\S4method{molecularProfilesSlot}{ToxicoSet,ANY}(object) <- value
+
 \S4method{featureInfo}{ToxicoSet,character}(object, mDataType)
 
 \S4method{featureInfo}{ToxicoSet,character,data.frame}(object, mDataType) <- value
+
+\S4method{sensitivityRaw}{ToxicoSet}(object)
+
+\S4method{sensitivityRaw}{ToxicoSet,array}(object) <- value
+
+\S4method{sensitivitySlot}{ToxicoSet}(object)
 
 \S4method{sensitivityInfo}{ToxicoSet}(object)
 
@@ -82,6 +102,8 @@
 
 \S4method{dateCreated}{ToxicoSet}(object)
 
+\S4method{datasetType}{ToxicoSet}(object) <- value
+
 \S4method{pertNumber}{ToxicoSet}(object)
 
 \S4method{sensNumber}{ToxicoSet}(object)
@@ -89,6 +111,14 @@
 \S4method{pertNumber}{ToxicoSet,array}(object) <- value
 
 \S4method{sensNumber}{ToxicoSet,matrix}(object) <- value
+
+\S4method{annotation}{ToxicoSet}(object)
+
+\S4method{annotation}{ToxicoSet,list}(object) <- value
+
+\S4method{curation}{ToxicoSet}(object)
+
+\S4method{curation}{ToxicoSet,list}(object) <- value
 }
 \arguments{
 \item{object}{A \code{ToxicoSet} object to modify}
@@ -112,6 +142,10 @@ a \code{Dframe} with the experiment info
 The updated \code{ToxicoSet}
 
 Updated \code{ToxicoSet}
+
+A \code{list} containing the molecularProfiles from a tSet
+
+A copy of the \code{ToxicoSet} with the molecularProfiles slot updated
 
 Updated \code{ToxicoSet}
 
@@ -146,12 +180,17 @@ The updated \code{ToxicoSet}
 The updated \code{ToxicoSet}
 }
 \description{
-A description which has yet to be added to this class. This is just a place
-holder.
+The ToxicoSet (tSet) class was development to contain and organise large
+ToxicGenomic datasets as well as provide useful tools for interacting with
+this data. Functions are included for exploring the relationship between
+survival fraction and gene expression in cultured human and rat tissues
+during exposure to a wide ranges of compounds. Features include plotting dose
+and exposure time curves, calculating AUC, fitting linear models and
+computing sensitivity signatures.
 
 Get the cell line annotations in a ToxicoSet
 
-Generic for cellInfo replace method
+Set cell line annotations for a ToxicoSet object
 
 Get the phenotype annotations for cell lines with the specificed molecular
   data type
@@ -228,9 +267,21 @@ ToxicoSet
 \item \code{molecularProfiles<-}: Update the given type of molecular data from the
 ToxicoSet
 
+\item \code{molecularProfilesSlot}: Get contents of molecularProfiles slot
+
+\item \code{molecularProfilesSlot<-}: Update the molecular profiles slot of a ToxicoSet and
+returns the updated copy
+
 \item \code{featureInfo}: Return the feature info for the given molecular data
 
 \item \code{featureInfo<-}: Replace the gene info for the molecular data
+
+\item \code{sensitivityRaw}: Retrive the raw dose and viability data from an tSet
+
+\item \code{sensitivityRaw<-}: Set the raw dose and viability data for a tSet and return
+and updated copty
+
+\item \code{sensitivitySlot}: Retrieve the contents of the sensitivity slot
 
 \item \code{sensitivityInfo}: Return the drug dose sensitivity experiment info
 
@@ -262,6 +313,9 @@ summaries, for example, whether there are IC50 values available
 
 \item \code{dateCreated}: Return the date the ToxicoSet was created
 
+\item \code{datasetType<-}: Update the dataset type of an tSet and return a copy of
+the updated object
+
 \item \code{pertNumber}: Return the summary of available perturbation
 experiments
 
@@ -273,6 +327,14 @@ experiments
 
 \item \code{sensNumber<-}: Update the summary of available sensitivity
 experiments
+
+\item \code{annotation}: Retrieve the annotations slot form an tSet
+
+\item \code{annotation<-}: Update the annotation slot of a tSet
+
+\item \code{curation}: Retrieve the curation slot form an tSet
+
+\item \code{curation<-}: Update the annotation slot of a tSet
 }}
 
 \section{Slots}{
@@ -333,11 +395,18 @@ molecularProfiles(TGGATESsmall, "rna") <-
   molecularProfiles(TGGATESsmall, "rna")
 
 data(TGGATESsmall)
+molecularProfilesSlot(TGGATESsmall)
+
+data(TGGATESsmall)
+molecularProfilesSlot(TGGATESsmall) <- molecularProfilesSlot(TGGATESsmall)
+
+data(TGGATESsmall)
 featureInfo <- featureInfo(TGGATESsmall, "rna")[seq_len(10),]
 
 data(TGGATESsmall)
 featureInfo(TGGATESsmall, "rna") <- featureInfo(TGGATESsmall, "rna")
 
+data(TGGATESsmall)
 sensInf<- sensitivityInfo(TGGATESsmall)[seq_len(10),]
 
 data(TGGATESsmall)

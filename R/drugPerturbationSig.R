@@ -62,7 +62,10 @@ drugPerturbationSig <- function(
   if ( nthread > availcore) {
     nthread <- availcore
   }
-  options("mc.cores" = nthread)
+  # Set multicore options
+  op <- options()
+  options(mc.cores=nthread)
+  on.exit(options(op))
 
   ## MISSING VALUE HANDLING FOR PARAMETERS
   # Get named list of defualt values for missing parameters
