@@ -954,6 +954,7 @@ setMethod("datasetType", signature("ToxicoSet"), function(object) {
 })
 
 
+
 ##TODO:: Export this to CoreGx
 #' datasetType<- Replacement Generic
 #'
