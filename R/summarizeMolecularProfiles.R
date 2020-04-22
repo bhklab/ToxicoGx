@@ -105,7 +105,6 @@ summarizeMolecularProfiles <-
 
     #vector of experimental conditions requested for each drug
     a <- paste(expand.grid(dose,duration)[,1], expand.grid(dose, duration)[,2], sep = ";")
-    #b <- expand.grid(dose,duration)
 
     ##TODO:: Do we really need this c() wrapper around seq_along()?
     ddt <- dd[,NA][,c(seq_along(a)), drop = FALSE]
@@ -115,10 +114,8 @@ summarizeMolecularProfiles <-
     cnt <- 0
     blank <- ddt[,1,drop = FALSE]
 
-    #lapply(drugs, function(drug){
     for (drug in drugs) {
       cnt <- cnt + 1
-      #lapply(a, function(i){
       for (i in a) {
         if (verbose == TRUE) {
           message(i)
@@ -150,40 +147,36 @@ summarizeMolecularProfiles <-
           ppt <- rbind(ppt,ppr)
         } else if (ncol(dd3) == 0){ #experiment does not exist
           ddt <- cbind(ddt,blank)
-          # ppt <- rbind(ppt,pp3[NA,])
         }
         else{#no replicates
           ddt <- cbind(ddt,dd3)
           ppt <- rbind(ppt,pp3)
         }
-      }#)
+      }
       ddt <- ddt[,-(seq_len(length(a))), drop = FALSE] #ddt contains the final expression matrix for a single drug
       colnames(ddt) <- a
 
       exp.list[[cnt]] <- ddt
-    }#)
+    }
     names(exp.list) <- drugs
     ppf <- pp2[FALSE,]
-    #lapply(unique(ppt[,"dose_level"]), function(i){
     for (i in unique(ppt[,"dose_level"])) {
       if (verbose == TRUE ) {
         message(i)
       }
-      #lapply(unique(ppt[,"duration"]), function(j){
       for (j in unique(ppt[,"duration"])) {
         if (verbose == TRUE) {
           message(j)
         }
         pp4 <- apply(ppt[ppt[,"dose_level"] == i & ppt[,"duration"] == j,,drop = FALSE], 2, function(x) {
           x <- paste(unique(as.character(x[!is.na(x)])), collapse = "///")
-          #if (is.na(x)){x <- paste("Exp ",,sep="")}
           return(x)
         })
         pp4 <- as.data.frame(t(pp4))
         pp4[!is.na(pp4) & pp4 == ""] <- NA
         ppf <- rbind(ppf,pp4)
-      }#)
-    }#)
+      }
+    }
     ppf <- as.data.frame(ppf,stringsAsFactors=FALSE)
     rownames(ppf) <- paste(ppf[,"dose_level"],";",ppf[,"duration"], sep = "")
     vec <- as.vector(colnames(exp.list[[1]]))

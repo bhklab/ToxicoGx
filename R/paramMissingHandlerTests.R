@@ -31,9 +31,7 @@ paramMissingHandlerTests <- function(funName, tSet, mDataType, ...) {
   missingChecks <-
     switch(funName,
            "summarizeMolecularProfiles" =
-             #c(
-             intersectMissingChecks#,
-           #),
+             intersectMissingChecks
     )
 
   # Assigns values for missing parameters and throws messages

@@ -61,56 +61,41 @@ logLogisticRegression <- function(conc,
                                   viability_as_pct = TRUE,
                                   trunc = TRUE,
                                   verbose = FALSE) {
-  # guess <- .logLogisticRegressionRaw(conc, viability, density , step, precision, lower_bounds, upper_bounds, scale, Cauchy_flag, conc_as_log, viability_as_pct, trunc, verbose)
 
-
-  # .logLogisticRegressionRaw <- function(conc,
-  #                                   viability,
-  #                                   density = c(2, 10, 2),
-  #                                   step = .5 / density,
-  #                                   precision = 0.05,
-  #                                   lower_bounds = c(0, 0, -6),
-  #                                   upper_bounds = c(4, 1, 6),
-  #                                   scale = 0.07,
-  #                                   Cauchy_flag = FALSE,
-  #                                   conc_as_log = FALSE,
-  #                                   viability_as_pct = TRUE,
-  #                                   trunc = TRUE,
-  #                                   verbose = FALSE) {
   family <- match.arg(family)
 
   if (prod(is.finite(step)) != 1) {
-    print(step)
+    message(step)
     stop("Step vector contains elements which are not positive real numbers.")
   }
 
   if (prod(is.finite(precision)) != 1) {
-    print(precision)
+    message(precision)
     stop("Precision value is not a real number.")
   }
 
   if (prod(is.finite(lower_bounds)) != 1) {
-    print(lower_bounds)
+    message(lower_bounds)
     stop("Lower bounds vector contains elements which are not real numbers.")
   }
 
   if (prod(is.finite(upper_bounds)) != 1) {
-    print(upper_bounds)
+    message(upper_bounds)
     stop("Upper bounds vector contains elements which are not real numbers.")
   }
 
   if (prod(is.finite(density)) != 1) {
-    print(density)
+    message(density)
     stop("Density vector contains elements which are not real numbers.")
   }
 
   if (is.finite(scale) == FALSE) {
-    print(scale)
+    message(scale)
     stop("Scale is not a real number.")
   }
 
   if (is.character(family) == FALSE) {
-    print(family)
+    message(family)
     stop("Cauchy flag is not a string.")
   }
 
@@ -124,29 +109,29 @@ logLogisticRegression <- function(conc,
 
 
   if (min(upper_bounds - lower_bounds) < 0) {
-    print(rbind(lower_bounds, upper_bounds))
+    message(rbind(lower_bounds, upper_bounds))
     stop("Upper bounds on parameters do not exceed lower bounds.")
   }
 
 
 
   if (min(density) <= 0) {
-    print(density)
+    message(density)
     stop("Lattice point density vector contains negative values.")
   }
 
   if (precision <= 0) {
-    print(precision)
+    message(precision)
     stop("Negative precision value.")
   }
 
   if (min(step) <= 0) {
-    print(step)
+    message(step)
     stop("Step vector contains nonpositive numbers.")
   }
 
   if (scale <= 0) {
-    print(scale)
+    message(scale)
     stop("Scale parameter is a nonpositive number.")
   }
 
@@ -162,7 +147,6 @@ logLogisticRegression <- function(conc,
 
 
   #ATTEMPT TO REFINE GUESS WITH L-BFGS OPTIMIZATION
-  # tryCatch(
   gritty_guess <- c(pmin(pmax(1, lower_bounds[1]), upper_bounds[1]),
                     pmin(pmax(min(viability), lower_bounds[2]), upper_bounds[2]),
                     pmin(pmax(log_conc[which.min(abs(viability - 1/2))], lower_bounds[3]), upper_bounds[3]))
@@ -178,12 +162,10 @@ logLogisticRegression <- function(conc,
                           lower = lower_bounds,
                           upper = upper_bounds,
                           method = "L-BFGS-B",
-                          #control=list(maxit=100000)
-  ),#[[1]],
+  ),
   error = function(e) {
     list("par"=gritty_guess, "convergence"=-1)
   })
-  # if(guess[["convergence"]]!=0)  print(guess[["message"]]); #print(results[["convergence"]])
   failed = guess[["convergence"]]!=0
   guess <- guess[["par"]]
 

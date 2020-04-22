@@ -554,19 +554,25 @@ setReplaceMethod("sensitivityRaw", signature("ToxicoSet", "array"),
 ##TODO:: Migrate this to CoreGx
 #' sensitivitySlot Generic
 #'
-#' @examples
-#' data(TGGATESsmall)
-#' sensitivitySlot(TGGATESsmall)
-#'
 #' @param object A \code{ToxicoSet} to extract the raw sensitivity data from
-#' @param ... A \code{list} to allow new parameters in specific methods
+#' @param ... Allow new parameters to be defined for this generic
 #'
 #' @return A \code{list} of the sensitivity slot contents
 #'
 #' @export
 setGeneric("sensitivitySlot", function(object, ...) standardGeneric("sensitivitySlot"))
-#' @describeIn ToxicoSet Retrieve the contents of the sensitivity slot
-#' @inheritParams sensitivitySlot
+
+#' sensitivitySlot Getter
+#'
+#' @describeIn ToxicoSet Retrieves the contents of the sensitivity slot
+#'
+#' @examples
+#' data(TGGATESsmall)
+#' sensitivitySlot(TGGATESsmall)
+#'
+#' @param object A \code{ToxicoSet} to extract the raw sensitivity data from
+#'
+#'
 #' @export
 setMethod("sensitivitySlot", signature("ToxicoSet"), function(object) {
   object@sensitivity
@@ -575,25 +581,31 @@ setMethod("sensitivitySlot", signature("ToxicoSet"), function(object) {
 ##TODO:: Migrate this to CoreGx
 #' sensitivitySlot<- Replacement Generic
 #'
-#' @examples
-#' data(TGGATESsmall)
-#' sensitivitySlot(TGGATESsmall) <- sensitivitySlot(TGGATESsmall)
-#'
-#' @docType methods
 #' @param object A \code{ToxicoSet} to extract the raw sensitivity data from
-#' @param ... A \code{list} to allow new parameters in specific methods
+#' @param ... Allow new parameters to be defined for this generic
 #' @param value A \code{list} of new sensitivity slot data for the tSet
 #'
 #' @return A copy of the \code{ToxicoSet} containing the updated sensitivty slot
 #'
 #' @export
 setGeneric("sensitivitySlot<-", function(object, ..., value) standardGeneric("sensitivitySlot<-"))
+
+#' sensitivity Slot Setter
+#'
 #' @describeIn ToxcioSet Set the raw dose and viability data for an tSet and return
 #'   and updated copy
-#' @inheritParams sensitivitySlot<-
+#'
+#' @examples
+#' data(TGGATESsmall)
+#' sensitivitySlot(TGGATESsmall) <- sensitivitySlot(TGGATESsmall)
+#'
+#' @param object A \code{ToxicoSet} to extract the raw sensitivity data from
+#' @param ... Allow new parameters to be defined for this generic
+#' @param value A \code{list} of new sensitivity slot data for the tSet
+#'
 #' @export
-setReplaceMethod("sensitivitySlot", signature("ToxicoSet", "list"),
-                 function(object, value) {
+setReplaceMethod("sensitivitySlot", signature(object="ToxicoSet", value="list"),
+                 function(object, ..., value) {
                    ##TODO:: Implement error handinlg for this slot
                    object@sensitivity <- value
                    object
@@ -1845,26 +1857,26 @@ checkTSetStructure <-
 
     if("unique.cellid" %in% colnames(tSet@curation$cell)) {
       if(length(intersect(tSet@curation$cell$unique.cellid, rownames(tSet@cell))) != nrow(tSet@cell)) {
-        print("rownames of cell slot should be curated cell ids")
+        message("rownames of cell slot should be curated cell ids")
       }
     } else {
-      print("unique.cellid which is curated cell id across data set should be a column of cell curation slot")
+      message("unique.cellid which is curated cell id across data set should be a column of cell curation slot")
     }
 
     if(length(intersect(rownames(tSet@curation$cell), rownames(tSet@cell))) != nrow(tSet@cell)) {
-      print("rownames of curation cell slot should be the same as cell slot (curated cell ids)")
+      message("rownames of curation cell slot should be the same as cell slot (curated cell ids)")
     }
 
     if("unique.drugid" %in% colnames(tSet@curation$drug)) {
       if(length(intersect(tSet@curation$drug$unique.drugid, rownames(tSet@drug))) != nrow(tSet@drug)) {
-        print("rownames of drug slot should be curated drug ids")
+        message("rownames of drug slot should be curated drug ids")
       }
     } else {
-      print("unique.drugid which is curated drug id across data set should be a column of drug curation slot")
+      message("unique.drugid which is curated drug id across data set should be a column of drug curation slot")
     }
 
     if(length(intersect(rownames(tSet@curation$cell), rownames(tSet@cell))) != nrow(tSet@cell)) {
-      print("rownames of curation drug slot should be the same as drug slot (curated drug ids)")
+      message("rownames of curation drug slot should be the same as drug slot (curated drug ids)")
     }
 
     if(!is(tSet@cell, "data.frame")) {
@@ -1889,7 +1901,7 @@ checkTSetStructure <-
         drug.ids <- unique(tSet@sensitivity$info[,"drugid"])
         drug.ids <- drug.ids[grep("///",drug.ids, invert=TRUE)]
         if(!all(drug.ids %in% rownames(tSet@drug))) {
-          print("not all the drugs in sensitivity data are in drug slot")
+          message("not all the drugs in sensitivity data are in drug slot")
         }
       }else {
         warning("drugid does not exist in sensitivity info")

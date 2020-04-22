@@ -281,7 +281,7 @@ returns the updated copy
 \item \code{sensitivityRaw<-}: Set the raw dose and viability data for a tSet and return
 and updated copty
 
-\item \code{sensitivitySlot}: Retrieve the contents of the sensitivity slot
+\item \code{sensitivitySlot}: Retrieves the contents of the sensitivity slot
 
 \item \code{sensitivityInfo}: Return the drug dose sensitivity experiment info
 
@@ -405,6 +405,9 @@ featureInfo <- featureInfo(TGGATESsmall, "rna")[seq_len(10),]
 
 data(TGGATESsmall)
 featureInfo(TGGATESsmall, "rna") <- featureInfo(TGGATESsmall, "rna")
+
+data(TGGATESsmall)
+sensitivitySlot(TGGATESsmall)
 
 data(TGGATESsmall)
 sensInf<- sensitivityInfo(TGGATESsmall)[seq_len(10),]

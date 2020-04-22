@@ -10,7 +10,7 @@ author:
 - name: Petr Smirnov
 - name: Benjamin Haibe-Kains
 
-output: distill::distill_article
+output: BiocStyle::html_document
 
 vignette: >
   %\VignetteEngine{knitr::knitr} 
@@ -20,8 +20,6 @@ vignette: >
 ```{r setup, include = FALSE, cache = FALSE, message = FALSE}
 
 library("knitr")
-
-#opts_knit$set(root.dir=normalizePath('../'))
 
 ### Chunk options: see http://yihui.name/knitr/options/ ###
 

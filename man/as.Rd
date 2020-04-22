@@ -13,6 +13,9 @@ as(object, ..., value)
 
 \item{value}{The type to coerce the object to}
 }
+\value{
+The object updated to the new type
+}
 \description{
 This will allow creation of new definitons for object conversions
 }

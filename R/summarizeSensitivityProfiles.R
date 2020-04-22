@@ -70,8 +70,6 @@ summarizeSensitivityProfiles <- function(tSet,
   summary.stat <- match.arg(summary.stat)
 
   pp <- ToxicoGx::sensitivityInfo(tSet)
-  ## TODO:: Determine what this supposed to do?
-  #ppRows <- which(pp$cellid %in% cell_lines & pp$drugid %in% drugs & pp$duration_h %in% duration) ### NEEDED to deal with duplicated rownames!!!!!!!
 
   if (sensitivity.measure != "max.conc") {
     #if the sensitivity.measure specified is not "max.conc"
@@ -95,19 +93,6 @@ summarizeSensitivityProfiles <- function(tSet,
   #specify the row, column names of the result matrix
   rownames(result) <- drugs
   colnames(result) <- cell_lines
-
-
-  ## TODO:: Finish progress bar
-  # if(verbose){
-
-  #   message(sprintf("Summarizing %s sensitivity data for:\t%s", sensitivity.measure, tSet@annotation$name))
-  #   total <- length(drugs)*length(cell_lines)
-  #   # create progress bar
-  #   pb <- utils::txtProgressBar(min=0, max=total, style=3)
-  #   i <- 1
-
-
-  # }
 
   pp_dd <- cbind(pp[,c("cellid", "drugid","duration_h")], "sensitivity.measure" = dd[, sensitivity.measure])
 
@@ -146,9 +131,6 @@ summarizeSensitivityProfiles <- function(tSet,
 
   tt <- reshape2::acast(pp_dd, drugid~cellid, fun.aggregate = summary.function,
                         value.var = "sensitivity.measure")
-  # tt <- tt[drugs, cell_lines]
-
-
 
   result[rownames(tt), colnames(tt)] <- tt
 

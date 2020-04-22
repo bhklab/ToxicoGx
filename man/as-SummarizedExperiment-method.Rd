@@ -11,6 +11,9 @@
 
 \item{value}{A \code{character} vector specifying the type to coerce to}
 }
+\value{
+The object coerced to the specified type
+}
 \description{
 Coerce a SummarizedExperiment object to an ExpressionSet
 }

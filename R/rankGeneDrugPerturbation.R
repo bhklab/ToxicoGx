@@ -31,11 +31,9 @@ rankGeneDrugPerturbation <-
     if (nthread != 1) {
       availcore <- parallel::detectCores()
       if (missing(nthread) || nthread < 1 || nthread > availcore) {
-        # print(paste("available cores",availcore,"allocated"))
         nthread <- availcore
       }
       else{
-        # print(paste("all",nthread,"cores have been allocated"))
       }
     }
 

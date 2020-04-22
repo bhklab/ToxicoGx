@@ -95,10 +95,7 @@ geneDrugSensitivity <- function(x, type, batch, drugpheno, interaction.typexgene
     ff0 <- sprintf("drugpheno.1")
   }
 
-  # ff1 <- sprintf("%s + x", ff0)
-
   dd <- data.frame(drugpheno, "x"=xx)
-  # , "x"=xx, "type"=type[ccix], "batch"=batch[ccix])
 
   ## control for tissue type
   if(length(sort(unique(type))) > 1) {
@@ -108,31 +105,17 @@ geneDrugSensitivity <- function(x, type, batch, drugpheno, interaction.typexgene
   if(length(sort(unique(batch))) > 1) {
         dd <- cbind(dd, batch=batch[ccix])
   }
-  ## control for duration
-  # if(length(sort(unique(duration))) > 1){
-  #   ff0 <- sprintf("%s + duration", ff0)
-  #   ff <- sprintf("%s + duration", ff)
-  # }
 
-  # if(is.factor(drugpheno[,1])){
-
-  #   drugpheno <- drugpheno[,1]
-
-  # } else {
-
-  #   drugpheno <- as.matrix(drugpheno)
-
-  # }
-if(any(unlist(lapply(drugpheno,is.factor)))){
+  if(any(unlist(lapply(drugpheno,is.factor)))){
 
 rr0 <- tryCatch(try(glm(formula(drugpheno.1 ~ . - x), data=dd, model=FALSE, x=FALSE, y=FALSE, family="binomial")),
     warning=function(w) {
       if(verbose) {
         ww <- "Null model did not convrge"
-        print(ww)
+        message(ww)
         if("type" %in% colnames(dd)) {
           tt <- table(dd[,"type"])
-          print(tt)
+          message(tt)
         }
       }
     })
@@ -141,8 +124,8 @@ rr0 <- tryCatch(try(glm(formula(drugpheno.1 ~ . - x), data=dd, model=FALSE, x=FA
       if(verbose) {
         ww <- "Model did not converge"
         tt <- table(dd[,"drugpheno.1"])
-        print(ww)
-        print(tt)
+        message(ww)
+        message(tt)
       }
       return(ww)
     })
@@ -154,10 +137,10 @@ rr0 <- tryCatch(try(lm(formula(paste(ff0, "~ . -x", sep=" ")), data=dd)),
     warning=function(w) {
       if(verbose) {
         ww <- "Null model did not converge"
-        print(ww)
+        message(ww)
         if("type" %in% colnames(dd)) {
           tt <- table(dd[,"type"])
-          print(tt)
+          message(tt)
         }
       }
     })
@@ -166,8 +149,8 @@ rr0 <- tryCatch(try(lm(formula(paste(ff0, "~ . -x", sep=" ")), data=dd)),
       if(verbose) {
         ww <- "Model did not converge"
         tt <- table(dd[,"drugpheno.1"])
-        print(ww)
-        print(tt)
+        message(ww)
+        message(tt)
       }
       return(ww)
     })
@@ -205,26 +188,7 @@ rr0 <- tryCatch(try(lm(formula(paste(ff0, "~ . -x", sep=" ")), data=dd)),
       }
     }
 
-
-#    rest <- c("estimate"=rr$coefficients["x", "Estimate"], "se"=rr$coefficients["x", "Std. Error"], "n"=nn, "tsat"=rr$coefficients["x", "t value"], "fstat"=rrc$F[2], "pvalue"=rrc$'Pr(>F)'[2])
-
-#   names(rest) <- c("estimate", "se", "n", "tstat", "fstat", "pvalue")
-
-## add tissue type/cell line statistics
-#     if(length(sort(unique(type))) > 1) {
-#       rr <- summary(rr0)
-#       ttype <- c("type.fstat"=rr$fstatistic["value"], "type.pvalue"=pf(q=rr$fstatistic["value"], df1=rr$fstatistic["numdf"], df2=rr$fstatistic["dendf"], lower.tail=FALSE))
-#       names(ttype) <- c("type.fstat", "type.pvalue")
-#     } else { ttype <- c("type.fstat"=NA, "type.pvalue"=NA) }
-#     rest <- c(rest, ttype)
-    ## add model
     if(model) { rest <- list("stats"=rest, "model"=rr1) }
   }
   return(rest)
 }
-
-
-
-
-
-## End

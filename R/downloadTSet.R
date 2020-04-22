@@ -38,7 +38,7 @@ availableTSets <- function(saveDir=tempdir(), myfn="availableToxicoSets.csv", ve
 #' \code{PharmacoGx}.
 #'
 #' @examples
-#' if (interactive()){
+#' if (interactive()) {
 #' drugMatrix <- downloadtSet("drugMatrix")
 #' }
 #'
@@ -59,7 +59,8 @@ downloadTSet <- function(name, saveDir = tempdir(), tSetFileName = NULL, verbose
 
   whichx <- match(name, tSetTable[, 1])
   if (is.na(whichx)) {
-    stop('Unknown Dataset. Please use the availabletSets() function for the table of available PharamcoSets.')
+    stop('Unknown Dataset. Please use the availabletSets() function for the
+         table of available PharamcoSets.')
   }
 
   if (!file.exists(saveDir)) {
@@ -70,10 +71,18 @@ downloadTSet <- function(name, saveDir = tempdir(), tSetFileName = NULL, verbose
     tSetFileName <- paste0(tSetTable[whichx,"ToxicoSet.Name"], ".rds")
   }
   if (!file.exists(file.path(saveDir, tSetFileName))) {
-    downloader::download(url = as.character(tSetTable[whichx,"URL"]), destfile = file.path(saveDir, tSetFileName), quiet = !verbose, mode='wb')
+    downloader::download(url = as.character(tSetTable[whichx,"URL"]),
+                         destfile = file.path(saveDir, tSetFileName),
+                         quiet = !verbose, mode='wb')
   }
 
   tSet <- readRDS(file.path(saveDir, tSetFileName))
+
+  ##FIXME:: Remove this conversion once updated tSets are published
+  if (!is(molecularProfilesSlot(tSet)[[1]], 'SummarizedExperiment')) {
+    tSet <- .convertTsetMolecularProfilesToSE(tSet)
+    saveRDS(tSet, file.path(saveDir, tSetFileName))
+  }
   return(tSet)
 }
 

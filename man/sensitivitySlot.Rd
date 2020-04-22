@@ -9,16 +9,11 @@ sensitivitySlot(object, ...)
 \arguments{
 \item{object}{A \code{ToxicoSet} to extract the raw sensitivity data from}
 
-\item{...}{A \code{list} to allow new parameters in specific methods}
+\item{...}{Allow new parameters to be defined for this generic}
 }
 \value{
 A \code{list} of the sensitivity slot contents
 }
 \description{
 sensitivitySlot Generic
-}
-\examples{
-data(TGGATESsmall)
-sensitivitySlot(TGGATESsmall)
-
 }

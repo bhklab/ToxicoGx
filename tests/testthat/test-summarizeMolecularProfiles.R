@@ -164,12 +164,6 @@ test_that("Errors if specified doses are not in the tSet", { expect_error(
     fill.missing = TRUE, verbose=TRUE
     )
   )
-
-  # summary.stat
 })
-
-## TODO:: Add function return validation
-#context("Testing if summarizeMolecularProfiles returns the correct values...")
-
 
 

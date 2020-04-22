@@ -28,7 +28,7 @@ a PharacoSet class, enabling use with all the analysis tools provided in
 \code{PharmacoGx}.
 }
 \examples{
-if (interactive()){
+if (interactive()) {
 drugMatrix <- downloadtSet("drugMatrix")
 }
 

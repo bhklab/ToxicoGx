@@ -12,6 +12,9 @@
 \item{value}{The type to convert to; if not "AnnotatedDataFrame" this
 method falls back to as}
 }
+\value{
+The object coerced to the specfied type
+}
 \description{
 Coerce a DFrame object to an AnnotatedDataFrame
 }

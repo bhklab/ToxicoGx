@@ -3,21 +3,23 @@
 \name{sensitivitySlot<-,ToxicoSet,list-method}
 \alias{sensitivitySlot<-,ToxicoSet,list-method}
 \alias{datasetType,ToxicoSet-method}
-\title{datasetType Getter}
+\title{sensitivity Slot Setter}
 \usage{
-\S4method{sensitivitySlot}{ToxicoSet,list}(object) <- value
+\S4method{sensitivitySlot}{ToxicoSet,list}(object, ...) <- value
 
 \S4method{datasetType}{ToxicoSet}(object)
 }
 \arguments{
 \item{object}{A \code{ToxicoSet} from which to retrieve the dataset type}
 
-\item{value}{A \code{list} of new sensitivity slot data for the tSet}
-
 \item{...}{A \code{list} containing fall through arguments; this allows
 addition of new parameters to methods for this generic}
+
+\item{value}{A \code{list} of new sensitivity slot data for the tSet}
 }
 \description{
+sensitivity Slot Setter
+
 datasetType Getter
 }
 \section{Functions}{
@@ -30,6 +32,9 @@ the updated object
 }}
 
 \examples{
+data(TGGATESsmall)
+sensitivitySlot(TGGATESsmall) <- sensitivitySlot(TGGATESsmall)
+
 data(TGGATESsmall)
 datasetType(TGGATESsmall)
 
