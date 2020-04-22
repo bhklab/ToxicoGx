@@ -75,7 +75,7 @@ by linking in vivo human hepatocarcinoma (HCC) signature geneset with in vitro T
 The HCC signature, already mapped to the gene level, has been included in this package and it can be loaded by calling data(HCC_sig). Once the dataset is loaded, recreate drug signatures for each drug using the function drugPerturbationSig to peform statistical modelling of the transcriptomic response to the application of each drug. We then compare the observed up-regulated and down-regulated genes to HCC signature published in the paper. The output will be the GSEA connectivity score with FDR values that can be used to determine the correlation between the two signatures.
 
 
-```{r, results = 'asis'}
+```{r, results = 'asis', warnings=FALSE}
 library(xtable)
 data("TGGATESsmall")
 # To compute the effect of drug concentration on the molecular profile of the cell

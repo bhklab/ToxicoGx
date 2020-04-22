@@ -1603,9 +1603,9 @@ subsetTo <- function(object, cell_lines = NULL,
   #####
   drugInfo(object) <- drugInfo(object)[drugs , , drop=drop]
   cellInfo(object) <- cellInfo(object)[cell_lines , , drop=drop]
-  curation(object)$drug <- curation(tSet)$drug[drugs , , drop=drop]
-  curation(tSet)$cell <- curation(tSet)$cell[cell_lines , , drop=drop]
-  curation(tSet)$tissue <- curation(tSet)$tissue[cell_lines , , drop=drop]
+  curation(object)$drug <- curation(object)$drug[drugs , , drop=drop]
+  curation(object)$cell <- curation(object)$cell[cell_lines , , drop=drop]
+  curation(object)$tissue <- curation(object)$tissue[cell_lines , , drop=drop]
   return(object)
 }
 
