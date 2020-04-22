@@ -82,7 +82,7 @@ drugGeneResponseCurve <- function(
   }
 
   ## TODO:: Generalize this to work with multiple data types
-  if (missing(mDataTypes)) { mDataTypes <- names(tSet[[1]]@molecularProfiles) }
+  if (missing(mDataTypes)) { mDataTypes <- names(molecularProfilesSlot(tSet[[1]])) }
 
   if (is.null(features)) {
     features <- lapply(tSet, function(tSet) {

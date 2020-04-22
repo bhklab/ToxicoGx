@@ -1,6 +1,6 @@
 #' @importFrom BiocParallel bpvec
 .calculateSensitivitiesStar <-
-  function (pSets = list(), exps=NULL,
+  function (tSets = list(), exps=NULL,
             cap=NA, na.rm=TRUE, area.type=c("Fitted","Actual"), nthread=1) {
 
     # Set multicore options
@@ -14,8 +14,8 @@
     if (is.null(exps)) {
       stop("expriments is empty!")
     }
-    for (study in names(pSets)) {
-      pSets[[study]]@sensitivity$profiles$auc_recomputed_star <- NA
+    for (study in names(tSets)) {
+      sensitivityProfiles(tSets[[study]])$auc_recomputed_star <- NA
     }
     if (!is.na(cap)) {
       trunc <- TRUE
@@ -25,20 +25,20 @@
 
     for(i in seq_len(nrow(exps))) {
       ranges <- list()
-      for (study in names(pSets)) {
-        ranges[[study]] <- as.numeric(pSets[[study]]@sensitivity$raw[exps[i,study], ,"Dose"])
+      for (study in names(tSets)) {
+        ranges[[study]] <- as.numeric(sensitivityRaw(tSets[[study]])[exps[i,study], ,"Dose"])
       }
       ranges <- .getCommonConcentrationRange(ranges)
-      names(ranges) <- names(pSets)
-      for(study in names(pSets)) {
-        myx <- as.numeric(pSets[[study]]@sensitivity$raw[exps[i, study],,"Dose"]) %in% ranges[[study]]
-        pSets[[study]]@sensitivity$raw[exps[i,study],!myx, ] <- NA
+      names(ranges) <- names(tSets)
+      for(study in names(tSets)) {
+        myx <- as.numeric(sensitivityRaw(tSets[[study]])[exps[i, study],,"Dose"]) %in% ranges[[study]]
+        sensitivityRaw(tSets[[study]])[exps[i,study],!myx, ] <- NA
 
       }
     }
-    for(study in names(pSets)){
+    for(study in names(tSets)){
 
-      auc_recomputed_star <- unlist(bpvec(rownames(pSets[[study]]@sensitivity$raw),
+      auc_recomputed_star <- unlist(bpvec(rownames(sensitivityRaw(tSets[[study]])),
                                           function(experiment, exps, study, dataset, area.type){
         if(!experiment %in% exps[,study]){return(NA_real_)}
         return(computeAUC(concentration=as.numeric(dataset[experiment,,1]),
@@ -46,11 +46,11 @@
                           trunc=trunc, conc_as_log=FALSE, viability_as_pct=TRUE, area.type=area.type)/100)
 
 
-      }, exps = exps, study = study, dataset = pSets[[study]]@sensitivity$raw, area.type=area.type))
+      }, exps = exps, study = study, dataset = sensitivityRaw(tSets[[study]]), area.type=area.type))
 
-      pSets[[study]]@sensitivity$profiles$auc_recomputed_star <- auc_recomputed_star
+      sensitivityProfiles(tSets[[study]])$auc_recomputed_star <- auc_recomputed_star
     }
-    return(pSets)
+    return(tSets)
   }
 
 ## This function computes AUC for the whole raw sensitivity data of a pset
@@ -274,7 +274,7 @@
   return(beta1)
 }
 
-updateMaxConc <- function(pSet) {
-  pSet@sensitivity$info$max.conc <- apply(pSet@sensitivity$raw[,,"Dose"], 1, max, na.rm=TRUE)
-  return(pSet)
+updateMaxConc <- function(tSet) {
+  sensitivityInfo(tSet)$max.conc <- apply(sensitivityRaw(tSet)[,,"Dose"], 1, max, na.rm=TRUE)
+  return(tSet)
 }

@@ -1603,9 +1603,9 @@ subsetTo <- function(object, cell_lines = NULL,
   #####
   drugInfo(object) <- drugInfo(object)[drugs , , drop=drop]
   cellInfo(object) <- cellInfo(object)[cell_lines , , drop=drop]
-  object@curation$drug <- object@curation$drug[drugs , , drop=drop]
-  object@curation$cell <- object@curation$cell[cell_lines , , drop=drop]
-  object@curation$tissue <- object@curation$tissue[cell_lines , , drop=drop]
+  curation(object)$drug <- curation(tSet)$drug[drugs , , drop=drop]
+  curation(tSet)$cell <- curation(tSet)$cell[cell_lines , , drop=drop]
+  curation(tSet)$tissue <- curation(tSet)$tissue[cell_lines , , drop=drop]
   return(object)
 }
 
@@ -1652,13 +1652,13 @@ updateDrugId <- function(tSet, new.ids = vector("character")){
     stop("Wrong number of drug identifiers")
   }
 
-  if(tSet@datasetType=="sensitivity" | tSet@datasetType=="both"){
+  if(datasetType(tSet)=="sensitivity" | datasetType(tSet)=="both"){
     myx <- match(sensitivityInfo(tSet)[,"drugid"],rownames(drugInfo(tSet)))
     sensitivityInfo(tSet)[,"drugid"] <- new.ids[myx]
 
   }
-  if(tSet@datasetType=="perturbation"|tSet@datasetType=="both"){
-    tSet@molecularProfiles <- lapply(tSet@molecularProfiles, function(SE){
+  if(datasetType(tSet)=="perturbation"|datasetType(tSet)=="both"){
+    molecularProfilesSlot(tSet) <- lapply(molecularProfilesSlot(tSet), function(SE){
 
       myx <- match(SummarizedExperiment::colData(SE)[["drugid"]],rownames(drugInfo(tSet)))
       SummarizedExperiment::colData(SE)[["drugid"]]  <- new.ids[myx]
@@ -1737,7 +1737,7 @@ updateDrugId <- function(tSet, new.ids = vector("character")){
 
 .summarizeSensitivityNumbers <- function(tSet) {
 
-  if (tSet@datasetType != "sensitivity" && tSet@datasetType != "both") {
+  if (datasetType(tSet) != "sensitivity" && datasetType(tSet) != "both") {
     stop ("Data type must be either sensitivity or both")
   }
 
@@ -1748,8 +1748,8 @@ updateDrugId <- function(tSet, new.ids = vector("character")){
   celln <- rownames(tSet@cell)
 
   sensitivity.info <- matrix(0, nrow=length(celln), ncol=length(drugn), dimnames=list(celln, drugn))
-  drugids <- tSet@sensitivity$info[ , "drugid"]
-  cellids <- tSet@sensitivity$info[ , "cellid"]
+  drugids <- sensitivityInfo(tSet)[ , "drugid"]
+  cellids <- sensitivityInfo(tSet)[ , "cellid"]
   cellids <- cellids[grep("///", drugids, invert=TRUE)]
   drugids <- drugids[grep("///", drugids, invert=TRUE)]
 
@@ -1763,7 +1763,7 @@ updateDrugId <- function(tSet, new.ids = vector("character")){
 
 .summarizePerturbationNumbers <- function(tSet) {
 
-  if (tSet@datasetType != "perturbation" && tSet@datasetType != "both") {
+  if (datasetType(tSet) != "perturbation" && datasetType(tSet) != "both") {
     stop ("Data type must be either perturbation or both")
   }
 
@@ -1773,15 +1773,15 @@ updateDrugId <- function(tSet, new.ids = vector("character")){
   ## consider all cell lines
   celln <- rownames(tSet@cell)
 
-  perturbation.info <- array(0, dim=c(length(celln), length(drugn), length(tSet@molecularProfiles)), dimnames=list(celln, drugn, names((tSet@molecularProfiles))))
+  perturbation.info <- array(0, dim=c(length(celln), length(drugn), length(molecularProfilesSlot(tSet))), dimnames=list(celln, drugn, names((molecularProfilesSlot(tSet)))))
 
-  for (i in seq_along(tSet@molecularProfiles)) {
-    if (nrow(SummarizedExperiment::colData(tSet@molecularProfiles[[i]])) > 0 &&
+  for (i in seq_along(molecularProfilesSlot(tSet))) {
+    if (nrow(SummarizedExperiment::colData(molecularProfilesSlot(tSet)[[i]])) > 0 &&
         all(
           is.element(c("cellid", "drugid"),
-                     colnames(SummarizedExperiment::colData(tSet@molecularProfiles[[i]]))))) {
-      tt <- table(SummarizedExperiment::colData(tSet@molecularProfiles[[i]])[ , "cellid"], SummarizedExperiment::colData(tSet@molecularProfiles[[i]])[ , "drugid"])
-      perturbation.info[rownames(tt), colnames(tt), names(tSet@molecularProfiles)[i]] <- tt
+                     colnames(SummarizedExperiment::colData(molecularProfilesSlot(tSet)[[i]]))))) {
+      tt <- table(SummarizedExperiment::colData(molecularProfilesSlot(tSet)[[i]])[ , "cellid"], SummarizedExperiment::colData(molecularProfilesSlot(tSet)[[i]])[ , "drugid"])
+      perturbation.info[rownames(tt), colnames(tt), names(molecularProfilesSlot(tSet))[i]] <- tt
     }
   }
 
@@ -1809,9 +1809,9 @@ updateDrugId <- function(tSet, new.ids = vector("character")){
 checkTSetStructure <-
   function(tSet, plotDist=FALSE, result.dir=".") {
     if(!file.exists(result.dir) & plotDist) { dir.create(result.dir, showWarnings=FALSE, recursive=TRUE) }
-    for( i in seq_along(tSet@molecularProfiles)) {
-      profile <- tSet@molecularProfiles[[i]]
-      nn <- names(tSet@molecularProfiles)[i]
+    for( i in seq_along(molecularProfilesSlot(tSet))) {
+      profile <- molecularProfilesSlot(tSet)[[i]]
+      nn <- names(molecularProfilesSlot(tSet))[i]
       if((S4Vectors::metadata(profile)$annotation == "rna" | S4Vectors::metadata(profile)$annotation == "rnaseq") & plotDist)
       {
         pdf(file=file.path(result.dir, sprintf("%s.pdf", nn)))
@@ -1885,20 +1885,20 @@ checkTSetStructure <-
     if(!is(tSet@drug, "data.frame")) {
       warning("drug slot class type should be dataframe")
     }
-    if(tSet@datasetType %in% c("sensitivity", "both"))
+    if(datasetType(tSet) %in% c("sensitivity", "both"))
     {
-      if(!is(tSet@sensitivity$info, "data.frame")) {
+      if(!is(sensitivityInfo(tSet), "data.frame")) {
         warning("sensitivity info slot class type should be dataframe")
       }
-      if("cellid" %in% colnames(tSet@sensitivity$info)) {
-        if(!all(tSet@sensitivity$info[,"cellid"] %in% rownames(tSet@cell))) {
+      if("cellid" %in% colnames(sensitivityInfo(tSet))) {
+        if(!all(sensitivityInfo(tSet)[,"cellid"] %in% rownames(tSet@cell))) {
           warning("not all the cell lines in sensitivity data are in cell slot")
         }
       }else {
         warning("cellid does not exist in sensitivity info")
       }
-      if("drugid" %in% colnames(tSet@sensitivity$info)) {
-        drug.ids <- unique(tSet@sensitivity$info[,"drugid"])
+      if("drugid" %in% colnames(sensitivityInfo(tSet))) {
+        drug.ids <- unique(sensitivityInfo(tSet)[,"drugid"])
         drug.ids <- drug.ids[grep("///",drug.ids, invert=TRUE)]
         if(!all(drug.ids %in% rownames(tSet@drug))) {
           message("not all the drugs in sensitivity data are in drug slot")
@@ -1908,11 +1908,11 @@ checkTSetStructure <-
       }
 
       if(any(!is.na(tSet@sensitivity$raw))) {
-        if(!all(dimnames(tSet@sensitivity$raw)[[1]] %in% rownames(tSet@sensitivity$info))) {
+        if(!all(dimnames(tSet@sensitivity$raw)[[1]] %in% rownames(sensitivityInfo(tSet)))) {
           warning("For some experiments there is raw sensitivity data but no experimet information in sensitivity info")
         }
       }
-      if(!all(rownames(tSet@sensitivity$profiles) %in% rownames(tSet@sensitivity$info))) {
+      if(!all(rownames(tSet@sensitivity$profiles) %in% rownames(sensitivityInfo(tSet)))) {
         warning("For some experiments there is sensitivity profiles but no experimet information in sensitivity info")
       }
     }

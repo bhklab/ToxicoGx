@@ -24,7 +24,7 @@ paramMissingHandler <- function(funName, tSet, mDataType, ...) {
   ## Errors if mDataType parameter not passed an argument
   if (missing(mDataType)) {
     if (funName == "summarizeSensitivityProfiles" | funName == "subsetTo") {
-      mDataType <- names(tSet@molecularProfiles)
+      mDataType <- names(molecularProfilesSlot(tSet))
     } else {
       stop(paste0(funName, " requires an mDataType argument!"))
     }
