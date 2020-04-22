@@ -81,7 +81,7 @@ paramErrorChecker <- function(funName, tSet, ...) {
     assign(names(argList)[idx], argList[[idx]])
   }
 
-  if (is.null(mDataType) & !is.null(tSet)) {mDataType <- names(tSet@molecularProfiles)}
+  if (is.null(mDataType) & !is.null(tSet)) {mDataType <- names(molecularProfilesSlot(tSet))}
 
   ## TODO:: Write a cases function that lazily evaluates LHS to replace this switch
   ## TODO:: Benmark for loop vs apply statement for this code
@@ -91,7 +91,7 @@ paramErrorChecker <- function(funName, tSet, ...) {
       switch(
         check,
         # tSet checks
-        "tSetNotIs" = {if (!is(tSet, "ToxicoSet")) { stop(paste0(tSet@annotations$name, " is a ", class(tSet), ", not a ToxicoSet.")) }},
+        "tSetNotIs" = {if (!is(tSet, "ToxicoSet")) { stop(paste0(name(tSet), " is a ", class(tSet), ", not a ToxicoSet.")) }},
         "tSetGt1" = {if (length(tSet) > 1) { stop("You may only pass in one tSet.") }},
         "tSetHasViab" = {if (length(ToxicoGx::sensitivityInfo(tSet) < 1)) { stop(paste0(names(tSet), ' does not contain sensitivity or perturbation data!')) }},
         # tSets checks
@@ -101,31 +101,31 @@ paramErrorChecker <- function(funName, tSet, ...) {
         # mDataType checks
         "mDataTypeGt1" = {if (length(unlist(mDataType)) > 1) { stop("Please only pass in one molecular data type.") }},
         "mDataTypeNotChar" = {if (!is.character(mDataType)) { stop("mDataType must be a string.") }},
-        "mDataTypeNotIn" = {if (!(mDataType %in% mDataNames(tSet))) { stop(paste0("The molecular data type(s) ", paste(mDataType[which(!(mDataType %in% mDataNames(tSet)))], collapse = ", " ), " is/are not present in ", tSet@annotation$name, ".")) }},
+        "mDataTypeNotIn" = {if (!(mDataType %in% mDataNames(tSet))) { stop(paste0("The molecular data type(s) ", paste(mDataType[which(!(mDataType %in% mDataNames(tSet)))], collapse = ", " ), " is/are not present in ", name(tSet), ".")) }},
         # cell_lines checks
         "cell_linesNotChar" = {if (!is.character(unlist(cell_lines))) { stop("cell_lines parameter must contain strings.") }},
-        "cell_linesNotIn" = {if (all(!(cell_lines %in% cellNames(tSet)))) { stop(paste0("The cell line(s) ", paste(cell_lines[which(!(cell_lines %in% cellNames(tSet)))], collapse = ", "), " is/are not present in ", tSet@annotation$name, "with the specified parameters.")) }},
+        "cell_linesNotIn" = {if (all(!(cell_lines %in% cellNames(tSet)))) { stop(paste0("The cell line(s) ", paste(cell_lines[which(!(cell_lines %in% cellNames(tSet)))], collapse = ", "), " is/are not present in ", name(tSet), "with the specified parameters.")) }},
         "cell_linesG" = {if (length(cell_lines) > 2) {stop("This plot currently only supports two cell lines at once!")}},
         # drugs checks
         "drugsNotChar" = {if (!is.character(unlist(drugs))) { stop("drugs parameter must contain strings.") }},
-        "drugsNotIn" = {if (all(!(drugs %in% drugNames(tSet)))) { stop(paste0("The drug(s) ", paste(drugs[which(!(drugs %in% drugNames(tSet)))], collapse = ", "), " is/are not present in ", tSet@annotation$name, ".")) }},
+        "drugsNotIn" = {if (all(!(drugs %in% drugNames(tSet)))) { stop(paste0("The drug(s) ", paste(drugs[which(!(drugs %in% drugNames(tSet)))], collapse = ", "), " is/are not present in ", name(tSet), ".")) }},
         ## TODO:: Test this works correctly once an additional cell line is added to a tSet
         "drugsIntersectsCellLine" = {if (length(drugs) == 1) { if (!(drugs %in% subset(sensitivityInfo(tSet), cellid == cell_lines, select = drugid)))  {stop(paste0("The drug ", drugs, "is not present for cell line(s)", paste0(cell_lines, collapse = ", ")), "!") }}},
         "drugsGt2" = {if (length(drugs) > 2) { stop("This plot only supports two drugs at a time!")  }},
         # features checks
         "featuresLt2" = {if (length(fNames(tSet, mDataType)) < 2) { stop("Must include at least 2 features to calculate summary statistics") }},
         "featuresNotChar" = {if (!is.character(unlist(features))) { stop("features parameter contain strings.") }},
-        "featuresNotIn" = {if (all(!(fNames(tSet, mDataType[1]) %in% features))) { stop(paste0("The feature(s) ", paste(features[which(!(features %in% fNames(tSet, mDataType[1])))], collapse = ", "), " is/are not present in ", tSet@annotation$name, ".")) }},
+        "featuresNotIn" = {if (all(!(fNames(tSet, mDataType[1]) %in% features))) { stop(paste0("The feature(s) ", paste(features[which(!(features %in% fNames(tSet, mDataType[1])))], collapse = ", "), " is/are not present in ", name(tSet), ".")) }},
         # duration checks
         "durationMissing" = {if (is.null(duration)) { stop(paste(funName, "requires an argument be passed to the duration parameter!" )) }},
         "durationGt1" = {if (length(duration) > 1) { stop(paste(funName, "only accepts one duration at a time!" )) }},
         "durationNotChar" = {if (!is.character(unlist(duration))) { stop("duration parameter must contain strings.") }},
-        "durationNotIn" = {if (all(!(duration %in% ToxicoGx::sensitivityInfo(tSet)$duration_h))) { stop(paste0("The duration(s) ", paste(duration[which(!(duration %in% ToxicoGx::sensitivityInfo(tSet)$duration_h))]), collapse = ", ", "is/are not present in ", tSet@annotation$name, ".")) }},
+        "durationNotIn" = {if (all(!(duration %in% ToxicoGx::sensitivityInfo(tSet)$duration_h))) { stop(paste0("The duration(s) ", paste(duration[which(!(duration %in% ToxicoGx::sensitivityInfo(tSet)$duration_h))]), collapse = ", ", "is/are not present in ", name(tSet), ".")) }},
         # dose checks
         "doseLt2" = {if (length(dose) < 2) { stop("To fit a linear model we need at least two dose levels, please add anothor to the dose argument in the function call.") }},
         "doseNoCtl" = {if (!("Control" %in% dose)) { stop("You should not calculate summary statistics without including a control! Please add 'Control' to the dose argument vector.") }},
         "doseNotChar" = {if (!is.character(dose)) { stop("Dose must be a string or character vector.") }},
-        "doseNotIn" = {if (all(!(dose %in% phenoInfo(tSet, mDataType)$dose_level))) { stop(paste0("The dose level(s) ", dose, " is/are not present in ", tSet@annotation$name, " with the specified parameters.")) }},
+        "doseNotIn" = {if (all(!(dose %in% phenoInfo(tSet, mDataType)$dose_level))) { stop(paste0("The dose level(s) ", dose, " is/are not present in ", name(tSet), " with the specified parameters.")) }},
         # summary.stat
         "summary.statNotChar" = {if (!is.character(summary.stat)) { stop("The parameter summary.stat must be a string or character vector.") }},
         "summary.statGt1" = {if (length(summary.stat) > 1)  {stop("Please pick only one summary statistic") }},
@@ -134,7 +134,7 @@ paramErrorChecker <- function(funName, tSet, ...) {
         "sensitivity.measureNotChar" = {if (!is.character(sensitivity.measure)) { stop("The parameter sensitivty.measure must be a string or character vector.") }},
         "sensitivity.measureGt1" = {if (length(sensitivity.measure) > 1)  {stop("Please pick only one sensitivity measure") }},
         "sensitivity.measureNotIn" = {if (!(sensitivity.measure %in% c(colnames(sensitivityProfiles(tSet)), "max_conc"))) {
-          stop(sprintf("Invalid sensitivity measure for %s, choose among: %s", tSet@annotation$name, paste0(colnames(sensitivityProfiles(tSet)), collapse = ", ")))}},
+          stop(sprintf("Invalid sensitivity measure for %s, choose among: %s", name(tSet), paste0(colnames(sensitivityProfiles(tSet)), collapse = ", ")))}},
         # viabilties checks
         "viabilitiesNotNum" = {if (!is.null(viabilities)) { if (!all(vapply(viabilities, function(viability) { is(viability, "numeric") }, FUN.VALUE = logical(1) ))) { stop("Viability values must be numeric.") }}},
         "viabilitiesNotMissing" = {if (!is.null(concentrations)) { if (is.null(viabilities)) { stop("If you pass in an argument for concentrations, you must also pass in an argument for viabilities.")}}},

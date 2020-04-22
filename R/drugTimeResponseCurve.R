@@ -101,7 +101,7 @@ drugTimeResponseCurve <- function(
   # Gather data for the plot
   plotData <- lapply(tSet, function(tSet) {
     sInfo <- sensitivityInfo(tSet)[, seq_len(4)]
-    sValues <- tSet@sensitivity$raw[,,2]
+    sValues <- sensitivityRaw(tSet)[,,2]
     plotData <- cbind(sInfo, sValues)
     cols <- c('Low', 'Middle', 'High')
     colnames(plotData)[which(colnames(plotData) %in% c('doses1', 'doses2', 'doses3'))] <-

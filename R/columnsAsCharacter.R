@@ -4,7 +4,7 @@
 # @importFrom maggitr %<>%
 # @importFrom dplyr mutate_if
 columnsAsCharacter <- function(tSet) {
-    for (mDataType in names(tSet@molecularProfiles)) {
+    for (mDataType in names(molecularProfilesSlot(tSet))) {
         phenoInfo(tSet, mDataType) %<>%
             tibble::rownames_to_column() %>%
             dplyr::mutate_if(is.factor, as.character) %>%
