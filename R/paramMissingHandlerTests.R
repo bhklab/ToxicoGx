@@ -31,9 +31,7 @@ paramMissingHandlerTests <- function(funName, tSet, mDataType, ...) {
   missingChecks <-
     switch(funName,
            "summarizeMolecularProfiles" =
-             #c(
-             intersectMissingChecks#,
-           #),
+             intersectMissingChecks
     )
 
   # Assigns values for missing parameters and throws messages
@@ -54,9 +52,8 @@ paramMissingHandlerTests <- function(funName, tSet, mDataType, ...) {
     assign(names(argList)[idx], argList[[idx]])
   }
 
-  testthat::context(
-    paste("Testing paramMissingHandler returns correct messages for ")
-          )
+
+  message(paste("Testing paramMissingHandler returns correct messages for "))
 
   for (missing in missingChecks) {
     switch(

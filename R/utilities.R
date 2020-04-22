@@ -7,17 +7,18 @@
 #
 # @return \code{S4} A ToxicoSet containing molecular data in a SummarizedExperiments
 #
-#' @importFrom parallel mclapply
 #' @importFrom SummarizedExperiment assay assays assayNames
 #' @importClassesFrom SummarizedExperiment SummarizedExperiment Assays
-#' @importFrom Biobase exprs fData pData annotation protocolData
+#' @importFrom Biobase exprs fData pData annotation protocolData assayData experimentData
 #' @importFrom S4Vectors SimpleList DataFrame
 #' @importFrom stats setNames
+#' @export
+#' @keywords internal
 .convertTsetMolecularProfilesToSE <- function(tSet) {
 
-  eSets <- tSet@molecularProfiles # Extract eSet data
+  eSets <- molecularProfiles(tSet) # Extract eSet data
 
-  tSet@molecularProfiles <-
+  molecularProfiles(tSet) <-
     lapply(eSets,
            function(eSet){
 
@@ -43,9 +44,9 @@
              SummarizedExperiment::assayNames(SE) <- Biobase::assayDataElementNames(eSet)
              # Assign SE to tSet
              mDataType <- Biobase::annotation(eSet)
-             tSet@molecularProfiles[[mDataType]] <- SE
+             molecularProfilesSlot(tSet)[[mDataType]] <- SE
            })
-  setNames(tSet@molecularProfiles, names(eSets))
+  setNames(molecularProfilesSlot(tSet), names(eSets))
   tSet
 }
 
@@ -59,131 +60,106 @@
 #
 # @return \code{message} Any slots which are not the same
 #
-#' @importFrom testthat expect_equal test_that
-#' @import SummarizedExperiment
-#' @import Biobase
-#
-# @export
-# @keywords internal
+#' @importFrom assertthat are_equal
+#' @importFrom SummarizedExperiment SummarizedExperiment Assays assay
+#'   assayNames assayNames<-
+#' @importFrom Biobase exprs fData pData annotation protocolData
+#'   assayDataElementNames experimentData assayData
+#' @keywords internal
 .validateTsetMolecularProfilesToSEConversion <- function(tSet_old, tSet_new) {
 
   # Testing that tSets are in correct order
-  print("Checking is tSet structures are correct")
+  message("Checking is tSet structures are correct")
 
-  testthat::expect_true(
-    all(vapply(tSet_old@molecularProfiles,
-               function(x) { is(x, "ExpressionSet") },
-               FUN.VALUE = logical(1))),
-    info = "Old tSet doesn't contain ExpressionSet objects, maybe argument order is wrong?"
-  )
+  if(!all(vapply(tSet_old@molecularProfiles,
+                 function(x) { is(x, "ExpressionSet") },
+                 FUN.VALUE = logical(1)))
+  ) message("Old tSet doesn't contain ExpressionSet objects, maybe argument
+            order is wrong?")
 
-  testthat::expect_true(
-    all(vapply(tSet_new@molecularProfiles, function(x) { is(x, "SummarizedExperiment") }, FUN.VALUE = logical(1))),
-    info = "New tSet doesn't contain SummarizedExperiment objects, maybe argument order is wrong?"
-  )
+  if(!all(vapply(molecularProfilesSlot(tSet_new),
+                 function(x) { is(x, "SummarizedExperiment") },
+                 FUN.VALUE = logical(1)))
+  ) message("New tSet doesn't contain SummarizedExperiment objects, maybe
+            argument order is wrong?")
 
   # Comparing molecularProfiles slot data
-  print("Checking molecularProfiles slots hold equivalent data.")
+  message("Checking molecularProfiles slots hold equivalent data.")
 
   for (i in seq_len(length(tSet_old@molecularProfiles))) {
-    for (j in seq_along(assays(tSet_new@molecularProfiles[[i]]))) {
-      testthat::expect_true(
-        all(
-          as.list(assayData(tSet_old@molecularProfiles[[i]]))[[j]] ==
-            as.list(assays(tSet_new@molecularProfiles[[i]]))[[j]],
-          na.rm = TRUE
-        ),
-        info = "The assay data is not equivalent"
-      )
+    for (j in seq_along(assays(molecularProfilesSlot(tSet_new)[[i]]))) {
+      if(!all(as.list(assayData(tSet_old@molecularProfiles[[i]]))[[j]] ==
+              as.list(assays(molecularProfilesSlot(tSet_new)[[i]]))[[j]],
+          na.rm = TRUE)
+        ) message("The assay data is not equivalent")
     }
   }
   ## TODO:: Rewrite this as an apply statement
   for (i in seq_len(length(tSet_old@molecularProfiles))) { # Have to compare like this due to NAs in data
     # Checking phenoData
-    testthat::expect_true(
+    if(
       if (nrow(pData(tSet_old@molecularProfiles[[i]])) > 0) {
-        all(
+        !all(
           as(tSet_old@molecularProfiles[[i]]@phenoData, "data.frame") ==
-            as.data.frame(tSet_new@molecularProfiles[[i]]@colData[
-              seq_len(length(tSet_new@molecularProfiles[[i]]@colData) -1)]),
+            as.data.frame(molecularProfilesSlot(tSet_new)[[i]]@colData[
+              seq_len(length(molecularProfilesSlot(tSet_new)[[i]]@colData) - 1)]),
           na.rm = TRUE)
-      } else { TRUE },
-      info = "The phenoData is not equivalent",
-    )
+      } else { FALSE }
+    ) message("The phenoData is not equivalent")
     # Checking featureData
-    testthat::expect_true(
+    if(
       if (nrow(fData(tSet_old@molecularProfiles[[i]])) > 0) {
-        all(
+        !all(
           as(tSet_old@molecularProfiles[[i]]@featureData, "data.frame") ==
-            as.data.frame(tSet_new@molecularProfiles[[i]]@elementMetadata[
-              seq_len(length(tSet_new@molecularProfiles[[i]]@elementMetadata) -1)]),
-          na.rm = TRUE)
-      } else { TRUE },
-      info = "The featureData is not equivalent",
-    )
+            as.data.frame(molecularProfilesSlot(tSet_new)[[i]]@elementMetadata[
+              seq_len(length(molecularProfilesSlot(tSet_new)[[i]]@elementMetadata) - 1)]),
+          na.rm=TRUE)
+      } else { FALSE }
+    ) message("The featureData is not equivalent")
     # Checking protocolData
-    testthat::expect_true(
-      all(
+    if(
+      !all(
         as(tSet_old@molecularProfiles[[i]]@protocolData, "data.frame") ==
-          as(tSet_new@molecularProfiles[[i]]@metadata$protocolData, "data.frame"),
-        na.rm = TRUE),
-      info = "The protocolData is not equivalent"
-    )
+          as(molecularProfilesSlot(tSet_new)[[i]]@metadata$protocolData, "data.frame"),
+        na.rm = TRUE)
+    ) message("The protocolData is not equivalent")
   }
 
-  testthat::expect_equal(
-    lapply(tSet_old@molecularProfiles, function(x) { x@annotation }),
-    lapply(tSet_new@molecularProfiles, function(x) { x@metadata$annotation }),
-    info = "The annotation is not equivalent"
-  )
+  if(!assertthat::are_equal(
+    lapply(tSet_old@molecularProfiles, function(x) { annotation(x) }),
+    lapply(molecularProfilesSlot(tSet_new), function(x) { metadata(x)$annotation }))
+  ) message("The annotation is not equivalent")
 
-  testthat::expect_equal(
-    lapply(tSet_old@molecularProfiles, function(x) { x@experimentData }),
-    lapply(tSet_new@molecularProfiles, function(x) { x@metadata$experimentData }),
-    info = "The experimentData is not equivalent"
-  )
-
-  ##TODO:: Removed .__classVersion__ from SE as it is a property specific to eSet
-  # testthat::expect_equal(
-  #   lapply(tSet_old@molecularProfiles, function(x) { x@.__classVersion__ }),
-  #   lapply(tSet_new@molecularProfiles, function(x) { x@metadata$.__classVersion__}),
-  #   info = "The .__classVersion__ is not equivalent"
-  # )
+  if(!assertthat::are_equal(
+    lapply(tSet_old@molecularProfiles, function(x) { experimentData(x) }),
+    lapply(molecularProfilesSlot(tSet_new), function(x) { metadata(x)$experimentData }))
+  ) message("The experimentData is not equivalent")
 
   # Comparing remainder of tSet slots; should not be affect by conversion
-  print("Comparing remainder of tSet slots")
+  message("Comparing remainder of tSet slots")
 
-  testthat::test_that("Checking tSet@annotation slot is unchanged.", {
-    testthat::expect_equal(tSet_old@annotation, tSet_new@annotation)
-  })
+  if(!assertthat::are_equal(annotation(tSet_old), annotation(tSet_new)))
+    message("The annotation slots are not equivalent!")
 
-  testthat::test_that("Checking tSet@cell slot is unchanged.", {
-    testthat::expect_equal(tSet_old@cell, tSet_new@cell)
-  })
+  if(!assertthat::are_equal(cellInfo(tSet_old), cellInfo(tSet_new)))
+    message("The cell slots are not equivalent!")
 
-  testthat::test_that("Checking tSet@drug slot is unchanged.", {
-    testthat::expect_equal(tSet_old@drug, tSet_new@drug)
-  })
+  if(!assertthat::are_equal(drugInfo(tSet_old), drugInfo(tSet_new)))
+    message("The drug slots are not equivalent!")
 
-  testthat::test_that("Checking tSet@sensitivity slot is unchanged.", {
-    testthat::expect_equal(tSet_old@sensitivity, tSet_new@sensitivity)
-  })
+  if(!assertthat::are_equal(sensitivitySlot(tSet_old), sensitivitySlot(tSet_new)))
+    message("The sensitivity slots are not equivalent!")
 
-  testthat::test_that("Checking tSet@datasetType slot is unchanged.", {
-    testthat::expect_equal(tSet_old@datasetType, tSet_new@datasetType)
-  })
+  if(!assertthat::are_equal(datasetType(tSet_old), datasetType(tSet_new)))
+    message("The datasetType slots are not equivalent!")
 
-  testthat::test_that("Checking tSet@perturbation slot is unchanged.", {
-    testthat::expect_equal(tSet_old@perturbation, tSet_new@perturbation)
-  })
+  if(!assertthat::are_equal(tSet_old@perturbation, tSet_new@perturbation))
+    message("The perturbation slots are not equivalent!")
 
-  testthat::test_that("Checking tSet@curation slot is unchanged.", {
-    testthat::expect_equal(tSet_old@curation, tSet_new@curation)
-  })
-  message("Tests pass!")
+ if(!assertthat::are_equal(curation(tSet_old), curation(tSet_new)))
+   message("The curation slots are not equivalent!")
 }
 
-##TODO:: Determine why CCLEsmall is 3x larger in memory after conversion?
 # Utility function to resave all datasets after modifying converttSetMolecularProfiles
 #
 # Converts all example dastasets specificed as an argument from

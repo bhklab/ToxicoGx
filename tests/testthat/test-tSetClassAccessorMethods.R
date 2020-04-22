@@ -48,7 +48,7 @@ test_that("@molecularProfiles slot accessors produce expected results", {
 
   ## TODO:: Test this with incorrect tSet structure to determine if error messages
   # print in the correct order
-  parallel::mclapply(names(TGGATESsmall@molecularProfiles),
+  BiocParallel::bplapply(names(TGGATESsmall@molecularProfiles),
                      function(name) {
 
                        context("External validation...")
@@ -86,16 +86,6 @@ test_that("@cell slot accessors produce expected results", {
   expect_equal(cellInfo(TGGATESsmall), TGGATESsmall@cell)
   expect_equal(cellNames(TGGATESsmall), TGGATESsmall@cell$cellid)
 })
-
-## TODO:: Implement tests for dataSetType Slot
-## @dataSetType Slot
-#test_that("@dataSetType slot accessors produce expected results", {
-#  data("TGGATESsmall")
-#  context("External validation...")
-#  expect_equal_to_reference(cellInfo(TGGATESsmall), "cell.TGGATESsmall.rds")
-#  context("Internal validation...")
-#  expect_equal(cellInfo(TGGATESsmall), TGGATESsmall@cell)
-#})
 
 # @sensitivty Slot
 test_that("@sensitivity slot accessors produce expected results", {
@@ -145,15 +135,12 @@ test_that("subsetTo() class method produces expected results", {
   ## Tests that subsetting molecularProfiles on duration works
   expect_equal(all(ToxicoGx::sensitivityInfo(ToxicoGx::subsetTo(TGGATESsmall, duration = "2"))$duration_h %in% "2"), TRUE)
   # Tests that relationship between sensitivity experiments and molecularProfiles is preserved (4 molecular Profiles / 1 sensitivity experiment)
-  parallel::mclapply(names(TGGATESsmall@molecularProfiles),
+  BiocParallel::bplapply(names(TGGATESsmall@molecularProfiles),
                      function(name) {
                        context(paste0("Testing subsetTo on molecularProfile for ", name))
                        ## TODO:: Generalize duration arguement so that it uses the first unique duration value in tSet (replace "8" with this)
                        expect_equal(all(SummarizedExperiment::colData(
                          ToxicoGx::subsetTo(TGGATESsmall, duration = "8")@molecularProfiles[[name]])$duration %in% "8"),
                          TRUE)
-                       # Tests that subsetting sensitivity on duration works
-                       #expect_true(
-                       #  all(sensitivityInfo(subsetTo(TGGATESsmall, duration = '24'))$samplename %in% molecularProfiles(subsetTo(TGGATESsmall, duration = '24')))
                       })
 })

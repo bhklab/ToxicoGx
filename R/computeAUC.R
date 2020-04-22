@@ -30,7 +30,6 @@
 #' @return Numeric AUC value
 #' @export
 #' @importFrom caTools trapz
-
 computeAUC <- function (concentration,
                         viability,
                         Hill_fit,
@@ -39,7 +38,6 @@ computeAUC <- function (concentration,
                         trunc = TRUE,
                         area.type = c("Fitted", "Actual"),
                         verbose = TRUE
-                        #, ...
 ) {
 
     if (missing(concentration)){
@@ -85,7 +83,8 @@ computeAUC <- function (concentration,
         concentration <- cleanData[["log_conc"]]
         viability <- cleanData[["viability"]]
     } else if (area.type == "Actual" && missing(viability)){
-        stop("To calculate the actual area using a trapezoid integral, the raw viability values are needed!")
+        stop("To calculate the actual area using a trapezoid integral, the raw
+             viability values are needed!")
     }
     if (length(concentration) < 2) {
         return(NA)
@@ -102,7 +101,9 @@ computeAUC <- function (concentration,
       }else if(pars[1]==0){
           AUC <- (1-pars[2])/2
       } else {
-          AUC <- as.numeric((1 - pars[2]) / (pars[1] * (b - a)) * log10((1 + (10 ^ (b - pars[3])) ^ pars[1]) / (1 + (10 ^ (a - pars[3])) ^ pars[1])))
+          AUC <- as.numeric((1 - pars[2]) / (pars[1] * (b - a)) *
+                              log10((1 + (10 ^ (b - pars[3])) ^ pars[1]) /
+                                      (1 + (10 ^ (a - pars[3])) ^ pars[1])))
       }
     }
     if(viability_as_pct){

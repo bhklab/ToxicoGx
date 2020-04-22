@@ -21,15 +21,16 @@
   # Validate annotation slot is unchanged
   saveRDS(tSet@annotation , file = paste0(path, "annotation.", name, ".rds"))
   # To test name() against
-  saveRDS(tSet@annotation$name, file = paste0(path, "name.", name, ".rds"))
+  saveRDS(name(tSet), file = paste0(path, "name.", name, ".rds"))
 
   # To test mDataNames() against
   saveRDS(names(tSet@molecularProfiles), file = paste0(path, "mDataNames.", name, ".rds"))
   # Save appropriate data for ALL molecularProfiles in tSet
-  parallel::mclapply(names(tSet@molecularProfiles),
-                     function(dataType) {
+  BiocParallel::bplapply(names(tSet@molecularProfiles),
+                         function(dataType) {
                        # To test molecularProfiles() against
-                       saveRDS(SummarizedExperiment::assay(tSet@molecularProfiles[[dataType]], 1) , file = paste0(path, dataType, ".molecularProfiles.", name, ".rds"))
+                       saveRDS(SummarizedExperiment::assay(tSet@molecularProfiles[[dataType]], 1),
+                               file = paste0(path, dataType, ".molecularProfiles.", name, ".rds"))
                        # To test phenoInfo() against
                        saveRDS(SummarizedExperiment::colData(tSet@molecularProfiles[[dataType]]) , file = paste0(path, dataType, ".phenoInfo.", name, ".rds"))
                        # To test fNames() against

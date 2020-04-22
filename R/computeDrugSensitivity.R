@@ -1,7 +1,12 @@
-#' @importFrom parallel makeCluster stopCluster parSapply
+#' @importFrom BiocParallel bpvec
 .calculateSensitivitiesStar <-
   function (pSets = list(), exps=NULL,
             cap=NA, na.rm=TRUE, area.type=c("Fitted","Actual"), nthread=1) {
+
+    # Set multicore options
+    op <- options()
+    options(mc.cores=nthread)
+    on.exit(options(op))
 
     if (missing(area.type)) {
       area.type <- "Fitted"
@@ -31,10 +36,10 @@
 
       }
     }
-    cl <- makeCluster(nthread)
     for(study in names(pSets)){
 
-      auc_recomputed_star <- unlist(parSapply(cl=cl, rownames(pSets[[study]]@sensitivity$raw), function(experiment, exps, study, dataset, area.type){
+      auc_recomputed_star <- unlist(bpvec(rownames(pSets[[study]]@sensitivity$raw),
+                                          function(experiment, exps, study, dataset, area.type){
         if(!experiment %in% exps[,study]){return(NA_real_)}
         return(computeAUC(concentration=as.numeric(dataset[experiment,,1]),
                           viability=as.numeric(dataset[experiment,,2]),
@@ -45,12 +50,18 @@
 
       pSets[[study]]@sensitivity$profiles$auc_recomputed_star <- auc_recomputed_star
     }
-    stopCluster(cl)
     return(pSets)
   }
 
 ## This function computes AUC for the whole raw sensitivity data of a pset
-.calculateFromRaw <- function(raw.sensitivity, cap=NA, nthread=1, family=c("normal", "Cauchy"), scale = 0.07, n = 1){
+.calculateFromRaw <- function(raw.sensitivity, cap=NA, nthread=1,
+                              family=c("normal", "Cauchy"), scale = 0.07,
+                              n = 1) {
+  # Set multicore options
+  op <- options()
+  options(mc.cores=nthread)
+  on.exit(options(op))
+
   family <- match.arg(family)
 
   AUC <- vector(length=dim(raw.sensitivity)[1])
@@ -59,17 +70,14 @@
   IC50 <- vector(length=dim(raw.sensitivity)[1])
   names(IC50) <- dimnames(raw.sensitivity)[[1]]
 
-  #pars <- logLogisticRegression(raw.sensitivity[exp, , "Dose"], raw.sensitivity[exp, , "Viability"], conc_as_log=FALSE, viability_as_pct=TRUE, trunc=trunc)
-
   if (!is.na(cap)) {trunc <- TRUE}else{trunc <- FALSE}
 
-  if (nthread ==1){
+  if (nthread == 1){
     pars <- lapply(names(AUC), function(exp, raw.sensitivity, family, scale, n) {
       if(length(grep("///", raw.sensitivity[exp, , "Dose"])) > 0 | all(is.na(raw.sensitivity[exp, , "Dose"]))) {
         NA
       } else{
         logLogisticRegression(raw.sensitivity[exp, , "Dose"], raw.sensitivity[exp, , "Viability"], trunc=trunc, conc_as_log=FALSE, viability_as_pct=TRUE, family=family, scale=scale, median_n=n)
-        #computeAUC(concentration=raw.sensitivity[exp, , "Dose"], Hill_fit=Hill_fit, trunc=trunc, conc_as_log=FALSE, viability_as_pct=TRUE)
       }
     },raw.sensitivity=raw.sensitivity, family = family, scale = scale, n = n)
     names(pars) <- dimnames(raw.sensitivity)[[1]]
@@ -88,29 +96,28 @@
       }
     }, pars=pars))
   } else {
-    pars <- parallel::mclapply(names(AUC), function(exp, raw.sensitivity, family, scale, n, trunc) {
+    pars <- BiocParallel::bplapply(names(AUC), function(exp, raw.sensitivity, family, scale, n, trunc) {
       if(length(grep("///", raw.sensitivity[exp, , "Dose"])) > 0 | all(is.na(raw.sensitivity[exp, , "Dose"]))) {
         NA
       } else{
         logLogisticRegression(raw.sensitivity[exp, , "Dose"], raw.sensitivity[exp, , "Viability"], trunc=trunc, conc_as_log=FALSE, viability_as_pct=TRUE, family=family, scale=scale, median_n=n)
-        #computeAUC(concentration=raw.sensitivity[exp, , "Dose"], Hill_fit=Hill_fit, trunc=trunc, conc_as_log=FALSE, viability_as_pct=TRUE)
       }
-    },raw.sensitivity=raw.sensitivity, family = family, scale = scale, n = n, trunc = trunc, mc.cores = nthread)
+    },raw.sensitivity=raw.sensitivity, family = family, scale = scale, n = n, trunc = trunc)
     names(pars) <- dimnames(raw.sensitivity)[[1]]
-    AUC <- unlist(parallel::mclapply(names(pars), function(exp, raw.sensitivity, pars, trunc) {
+    AUC <- unlist(BiocParallel::bplapply(names(pars), function(exp, raw.sensitivity, pars, trunc) {
       if(any(is.na(pars[[exp]]))) {
         NA
       } else{
         computeAUC(concentration=raw.sensitivity[exp, , "Dose"], Hill_fit=pars[[exp]], trunc=trunc, conc_as_log=FALSE, viability_as_pct=TRUE)
       }
-    },raw.sensitivity=raw.sensitivity, pars=pars, trunc = trunc, mc.cores = nthread))
-    IC50 <- unlist(parallel::mclapply(names(pars), function(exp, pars, trunc) {
+    },raw.sensitivity=raw.sensitivity, pars=pars, trunc = trunc))
+    IC50 <- unlist(BiocParallel::bplapply(names(pars), function(exp, pars, trunc) {
       if(any(is.na(pars[[exp]]))) {
         NA
       } else{
         computeIC50(Hill_fit=pars[[exp]], trunc=trunc, conc_as_log=FALSE, viability_as_pct=TRUE)
       }
-    }, pars=pars, trunc = trunc, mc.cores = nthread))
+    }, pars=pars, trunc = trunc))
   }
 
   names(AUC) <- dimnames(raw.sensitivity)[[1]]
@@ -154,7 +161,6 @@
   family <- match.arg(family)
   Cauchy_flag = (family == "Cauchy") # Why?!
   if (Cauchy_flag == FALSE) {
-    # return(sum((.Hill(x, pars) - y) ^ 2))
     diffs <- .Hill(x, pars)-y
     if (trunc == FALSE) {
       return(sum(-log(CoreGx::.dmednnormals(diffs, n, scale))))
@@ -173,7 +179,6 @@
   } else {
     diffs <- .Hill(x, pars)-y
     if (trunc == FALSE) {
-      # return(sum(-log(6 * scale / (pi * (scale ^ 2 + diffs ^ 2)) * (1 / 2 + 1 / pi * atan(diffs / scale)) * (1 / 2 - 1 / pi * atan(diffs / scale)))))
       return(sum(-log(CoreGx::.dmedncauchys(diffs, n, scale))))
     } else {
       down_truncated <- abs(y) >= 1
@@ -184,11 +189,6 @@
       # For down_truncated, 1-cdf(diffs) = cdf(-diffs)
 
       return(sum(-log(CoreGx::.dmedncauchys(diffs[!(down_truncated | up_truncated)], n, scale))) + sum(-log(CoreGx::.edmedncauchys(-diffs[up_truncated | down_truncated], n, scale))))
-
-      # return(sum(log(6 * scale / (pi * (scale ^ 2 + diffs ^ 2)) * (1 / 2 + 1 / pi * atan(diffs[setdiff(seq_along(y), union(down_truncated, up_truncated))] / scale))
-      # * (1 / 2 - 1 / pi * atan(diffs[setdiff(seq_alongs(y), union(down_truncated, up_truncated))] / scale))),
-      # -log(1 / 2 - 3 / (2 * pi) * atan((1 - diffs[down_truncated] - y[down_truncated]) / scale) + 2 / pi ^ 3 * (atan((1 - diffs[down_truncated] - y[down_truncated]) / scale)) ^ 3),
-      # -log(-1 / 2 + 3 / (2 * pi) * atan((-diffs[up_truncated] - y[up_truncated]) / scale) - 2 / pi ^ 3 * (atan((- diffs[up_truncated] - y[up_truncated]) / scale)) ^ 3)))
     }
   }
 }
@@ -257,48 +257,6 @@
 #  curve-fitting is performed.
 .computeAUCUnderFittedCurve <- function(concentration, viability, trunc=TRUE, verbose=FALSE) {
 
-  # #CHECK THAT FUNCTION INPUTS ARE APPROPRIATE
-  # if (prod(is.finite(conc)) != 1) {
-  #   print(conc)
-  #   stop("Concentration vector contains elements which are not real numbers.")
-  # }
-
-  # if (prod(is.finite(viability)) != 1) {
-  #   print(viability)
-  #   stop("Viability vector contains elements which are not real numbers.")
-  # }
-
-  # if (is.logical(trunc) == FALSE) {
-  #   print(trunc)
-  #   stop("'trunc' is not a logical.")
-  # }
-
-  # if (length(conc) != length(viability)) {
-  #   print(conc)
-  #   print(viability)
-  #   stop("Concentration vector is not of same length as viability vector.")
-  # }
-
-  # if (min(conc) < 0) {
-  #   stop("Concentration vector contains negative data.")
-  # }
-
-  # if (min(viability) < 0 && verbose) {
-  #   warning("Warning: Negative viability data.")
-  # }
-
-  # if (max(viability) > 100 && verbose) {
-  #   warning("Warning: Viability data exceeds negative control.")
-  # }
-
-  # #CONVERT DOSE-RESPONSE DATA TO APPROPRIATE INTERNAL REPRESENTATION
-  # log_conc <- log10(conc)
-  # viability <- viability / 100
-
-  # if (trunc == TRUE) {
-  #   viability[which(viability < 0)] <- 0
-  #   viability[which(viability > 1)] <- 1
-  # }
   log_conc <- concentration
   #FIT CURVE AND CALCULATE IC50
   pars <- unlist(logLogisticRegression(log_conc,
@@ -316,8 +274,7 @@
   return(beta1)
 }
 
-updateMaxConc <- function(pSet){
-
+updateMaxConc <- function(pSet) {
   pSet@sensitivity$info$max.conc <- apply(pSet@sensitivity$raw[,,"Dose"], 1, max, na.rm=TRUE)
   return(pSet)
 }

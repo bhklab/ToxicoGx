@@ -2,6 +2,7 @@
 #' @importFrom stats complete.cases
 #' @importFrom stats p.adjust
 
+##TODO:: Convert this to roxygen2 format
 #################################################
 ## Rank genes based on drug effect in the Connectivity Map
 ##
@@ -20,13 +21,19 @@
 ## Notes:    duration is not taken into account as only 4 perturbations lasted 12h, the other 6096 lasted 6h
 #################################################
 
-rankGeneDrugSensitivity <- function (data, drugpheno, type, batch, single.type=FALSE, standardize = "SD", nthread=1, verbose=FALSE) {
+rankGeneDrugSensitivity <- function (data, drugpheno, type, batch,
+                                     single.type=FALSE, standardize = "SD",
+                                     nthread=1, verbose=FALSE) {
   if (nthread != 1) {
     availcore <- parallel::detectCores()
     if (missing(nthread) || nthread < 1 || nthread > availcore) {
       nthread <- availcore
     }
   }
+  # Set multicore options
+  op <- options()
+  options(mc.cores=nthread)
+  on.exit(options(op))
 
   if(is.null(dim(drugpheno))){
 
@@ -58,11 +65,9 @@ rankGeneDrugSensitivity <- function (data, drugpheno, type, batch, single.type=F
   res <- NULL
   ccix <- complete.cases(data, type, batch, drugpheno)
   nn <- sum(ccix)
-#  nc <- c("estimate", "se", "n", "tstat", "fstat", "pvalue", "fdr")
-#  nc <- c("estimate", "se", "n", "pvalue", "fdr")
   if(!any(unlist(lapply(drugpheno,is.factor)))){
      if(ncol(drugpheno)>1){
-      ##### FIX NAMES!!!
+      ##FIXME:: NAMES!
       nc <- lapply(seq_len(ncol(drugpheno)), function(i){
 
         est <- paste("estimate", i, sep=".")
@@ -73,7 +78,6 @@ rankGeneDrugSensitivity <- function (data, drugpheno, type, batch, single.type=F
         return(nc)
 
       })
-      #nc <- do.call(c, rest)
       nc  <- c(nc, n=nn, "fstat"=NA, "pvalue"=NA, "fdr")
     } else {
       nc  <- c("estimate", "se", "n", "tstat", "fstat", "pvalue", "df", "fdr")
@@ -86,11 +90,6 @@ rankGeneDrugSensitivity <- function (data, drugpheno, type, batch, single.type=F
 
   for (ll in seq_along(ltype)) {
     iix <- !is.na(type) & is.element(type, ltype[[ll]])
-    # ccix <- complete.cases(data[iix, , drop=FALSE], drugpheno[iix,,drop=FALSE], type[iix], batch[iix]) ### HACK???
-
-    # ccix <- vapply(seq_len(NROW(data[iix,,drop=FALSE])), function(x) {
-    #   return(any(!is.na(data[iix,,drop=FALSE][x,])) && any(!is.na(drugpheno[iix,,drop=FALSE][x,])) && any(!is.na(type[iix][x])) && any(!is.na(batch[iix][x])))
-    # }, FUN.VALUE=logical(1))
 
     data.not.all.na <- apply(data[iix,,drop=FALSE], 1, function(x) {
       any(!is.na(x))
@@ -117,18 +116,15 @@ rankGeneDrugSensitivity <- function (data, drugpheno, type, batch, single.type=F
       splitix <- parallel::splitIndices(nx=ncol(data), ncl=nthread)
       ##TODO:: Can we reimpement this without length?
       splitix <- splitix[vapply(splitix, length, FUN.VALUE=numeric(1)) > 0]
-      mcres <- parallel::mclapply(splitix, function(x, data, type, batch, drugpheno, standardize) {
+      mcres <- BiocParallel::bplapply(splitix, function(x, data, type, batch, drugpheno, standardize) {
         res <- t(apply(data[ , x, drop=FALSE], 2, geneDrugSensitivity, type=type, batch=batch, drugpheno=drugpheno, verbose=verbose, standardize=standardize))
         return(res)
-      }, data=data[iix, , drop=FALSE], type=type[iix], batch=batch[iix], drugpheno=drugpheno[iix,,drop=FALSE], standardize=standardize, mc.cores=nthread)
+      }, data=data[iix, , drop=FALSE], type=type[iix], batch=batch[iix], drugpheno=drugpheno[iix,,drop=FALSE], standardize=standardize)
       rest <- do.call(rbind, mcres)
       rest <- cbind(rest, "fdr"=p.adjust(rest[ , "pvalue"], method="fdr"))
-      # rest <- rest[ , nc, drop=FALSE]
       res <- c(res, list(rest))
     }
   }
   names(res) <- names(ltype)
   return(res)
 }
-
-## End

@@ -9,22 +9,33 @@ utils::globalVariables(c('cellid','drugid','read.csv','samplename','.',
 #'
 #' This will allow creation of new definitons for object conversions
 #'
+#' @param object An object to coerce to a different class
+#' @param ... To allow new parameters for this generc
+#' @param value The type to coerce the object to
+#'
+#' @return The object updated to the new type
+#'
 #' @export
-setGeneric('as', function(object, value) methods::as(object, value, ...))
+setGeneric('as', function(object, ..., value) methods::as(object, ..., value))
 
 #' Coerce a SummarizedExperiment object to an ExpressionSet
 #'
-#' @warning This method assumes that all slots not present a SummarizedExperiment
+#' @section Warning:
+#' This method assumes that all slots not present in a SummarizedExperiment
 #'   were moved into the metadata list from the original ExpressionSet
 #'
+#' @param object An ExpressionSet to coerce to a SummarizedExperiment
+#' @param value A \code{character} vector specifying the type to coerce to
 #'
-#' @importFrom SummarizedExperiment colData rowData assays assay 
+#' @return The object coerced to the specified type
+#'
+#' @importFrom SummarizedExperiment colData rowData assays assay
 #' @importFrom S4Vectors metadata
 #' @export
 setMethod('as',
           signature('SummarizedExperiment'),
           function(object, value) {
-            if (value != 'ExpressionSet') 
+            if (value != 'ExpressionSet')
               as(object, value)
             else
               Biobase::ExpressionSet(
@@ -39,7 +50,13 @@ setMethod('as',
 
 #' Coerce a DFrame object to an AnnotatedDataFrame
 #'
-#' @importFrom S4Vectors AnnotatedDataFrame
+#' @param object A DFrame object to coerce to AnnotatedDataFrame
+#' @param value The type to convert to; if not "AnnotatedDataFrame" this
+#'   method falls back to as
+#'
+#' @return The object coerced to the specfied type
+#'
+#' @importFrom Biobase AnnotatedDataFrame
 #' @export
 setMethod('as',
           signature('DFrame'),
