@@ -39,7 +39,7 @@ availableTSets <- function(saveDir=tempdir(), myfn="availableToxicoSets.csv", ve
 #'
 #' @examples
 #' if (interactive()) {
-#' drugMatrix <- downloadtSet("drugMatrix")
+#' drugMatrix_rat <- downloadtSet("drugMatrix_rat")
 #' }
 #'
 #' @param name \code{Character} string, the name of the PhamracoSet to download.

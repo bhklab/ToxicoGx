@@ -29,7 +29,7 @@ a PharacoSet class, enabling use with all the analysis tools provided in
 }
 \examples{
 if (interactive()) {
-drugMatrix <- downloadtSet("drugMatrix")
+drugMatrix_rat <- downloadtSet("drugMatrix_rat")
 }
 
 }

@@ -77,7 +77,7 @@ drugGeneResponseCurve <- function(
   if (length(dose) > 2) { if (length(features) > 2) { stop("To plot more than one dose level, please specify up to two molecular feature...")}}
 
   # Deal with controls (i.e., treated with DMSO)
-  if (any(vapply(tSet, function(tSet) { name(tSet) == "drugMatrix"}, FUN.VALUE = logical(1)))) {
+  if (any(vapply(tSet, function(tSet) { name(tSet) == "drugMatrix_rat"}, FUN.VALUE = logical(1)))) {
     drug <- c("DMSO", drug)
   }
 

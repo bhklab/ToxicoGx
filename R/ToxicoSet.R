@@ -1382,7 +1382,7 @@ subsetTo <- function(object, cell_lines = NULL,
 
   ##TODO:: Add a value to tSet which indicates the experimental design!
   ##FIXME:: Don't hard code object names!
-  if (name(object) == "drugMatrix") {
+  if (name(object) == "drugMatrix_rat") {
     if (!('DMSO' %in% drugs)) {
       drugs <- c(drugs, 'DMSO')
     }
