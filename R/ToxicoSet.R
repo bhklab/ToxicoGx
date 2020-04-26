@@ -106,6 +106,7 @@ ToxicoSet <-  function(name,
   ##TOOD:: Abstract as much of this contstructor as possible to CoreGx!
   datasetType <- match.arg(datasetType)
 
+
   annotation <- list()
   annotation$name <- as.character(name)
   annotation$dateCreated <- date()
