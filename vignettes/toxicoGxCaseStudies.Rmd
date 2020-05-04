@@ -41,7 +41,12 @@ For plotting the gene expression under same conditions using the package, the fi
 To plot, the function drugGeneResponseCurve has been used wherein mandatory inputs such as dataset, drug name, cell-line, molecular type, gene name, dose and time points should be specified.
 
 ```{r, eval = FALSE, message = FALSE, results = 'hide'}
-install.packages("ToxicoGx")
+# For now
+devtools::install_github("bhklab/ToxicoGx", build_manual=TRUE, 
+                         build_vignettes=TRUE)
+
+# Once accepted, submission in progress
+BiocManager::install("ToxicoGx")
 ```
 
 **Plot time dependent dose response of Carbon tetra chloride on CYP1A1 gene**
@@ -99,7 +104,7 @@ rownames(res) <- c("Connectivity", "P Value")
 res <- t(res)
 res <-  cbind(res,"FDR" = p.adjust(res[,2], method = "fdr"))
 res <- res[order(res[,3]),]
-xtable::xtable(res,
+knitr::kable(res,
        caption = 'Connectivity Score results for HCC and TG-GATEs PHH gene
        signature')
 ```
