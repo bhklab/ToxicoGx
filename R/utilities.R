@@ -178,3 +178,75 @@
     save(list=dataset, file=paste0(dataDir, '/', dataset, '.rda'), compress='xz')
   }
 }
+
+
+.eSetToSE <- function(eSet) {
+    # Build summarized experiment from eSet
+    SE <- SummarizedExperiment::SummarizedExperiment(
+        ## TODO:: Do we want to pass an environment for better memory efficiency?
+        assays=SimpleList(as.list(Biobase::assayData(eSet))
+        ),
+        # Switch rearrange columns so that IDs are first, probes second
+        rowData=S4Vectors::DataFrame(Biobase::fData(eSet),
+                                     rownames=rownames(Biobase::fData(eSet))
+        ),
+        colData=S4Vectors::DataFrame(Biobase::pData(eSet),
+                                     rownames=rownames(Biobase::pData(eSet))
+        ),
+        metadata=list("experimentData" = eSet@experimentData,
+                      "annotation" = Biobase::annotation(eSet),
+                      "protocolData" = Biobase::protocolData(eSet)
+        )
+    )
+    ## TODO:: Determine if this can be done in the SE constructor?
+    # Extract names from expression set
+    SummarizedExperiment::assayNames(SE) <- Biobase::assayDataElementNames(eSet)
+    return(SE)
+}
+
+.validateESetToSEConversions <- function(eSet, SE) {
+        for (j in seq_along(assays(SE))) {
+            if(!all(as.list(assayData(eSet))[[j]] ==
+                    as.list(assays(SE))[[j]],
+                    na.rm = TRUE)
+            ) message("The assay data is not equivalent")
+        }
+    ## TODO:: Rewrite this as an apply statement
+        # Checking phenoData
+        if(
+            if (nrow(pData(eSet)) > 0) {
+                !all(
+                    as(eSet@phenoData, value="data.frame") ==
+                    as.data.frame(SE@colData[
+                        seq_len(length(SE@colData) - 1)]),
+                    na.rm = TRUE)
+            } else { FALSE }
+        ) message("The phenoData is not equivalent")
+        # Checking featureData
+        if(
+            if (nrow(fData(eSet)) > 0) {
+                !all(
+                    as(eSet@featureData, value="data.frame") ==
+                    as.data.frame(SE@elementMetadata[
+                        seq_len(length(SE@elementMetadata) - 1)]),
+                    na.rm=TRUE)
+            } else { FALSE }
+        ) message("The featureData is not equivalent")
+        # Checking protocolData
+        if(
+            !all(
+                as(eSet@protocolData, value="data.frame") ==
+                as(SE@metadata$protocolData, value="data.frame"),
+                na.rm = TRUE)
+        ) message("The protocolData is not equivalent")
+
+    if(!assertthat::are_equal(
+        annotation(eSet),
+        metadata(SE)$annotation
+    )) message("The annotation is not equivalent")
+
+    if(!assertthat::are_equal(
+        experimentData(eSet),
+        metadata(SE)$experimentData
+    )) message("The experimentData is not equivalent")
+}

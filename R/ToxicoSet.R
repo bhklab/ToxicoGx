@@ -1,3 +1,4 @@
+
 #' Class to contain Toxico-genomic Data
 #'
 #' The ToxicoSet (tSet) class was development to contain and organise large
@@ -1808,18 +1809,29 @@ updateDrugId <- function(tSet, new.ids = vector("character")){
 #' @export
 #' @importFrom graphics hist
 #' @importFrom grDevices dev.off pdf
+#' @importFrom S4Vectors metadata
 checkTSetStructure <-
   function(tSet, plotDist=FALSE, result.dir=".") {
-    if(!file.exists(result.dir) & plotDist) { dir.create(result.dir, showWarnings=FALSE, recursive=TRUE) }
+    if(!file.exists(result.dir) && plotDist) { dir.create(result.dir, showWarnings=FALSE, recursive=TRUE) }
     for( i in seq_along(molecularProfilesSlot(tSet))) {
       profile <- molecularProfilesSlot(tSet)[[i]]
+      if (is.null(names(metadata(profile))))
+        stop(paste0("Please ensure all items in the metadata slot of
+             SummarizedExperiments are named. Item ", i, " of molecualrProfiles
+             does not have metadata names."))
+      if (!("annotation" %in% names(metadata(profile))))
+          stop(paste0("At minimum the SummarizedExperiments in molecularProfiles must contain
+                a metadata item names 'annotation' specifying the molecular datatype
+               the SummarizedExperiment contains! Item ", i, " of
+               molecularProfilesis missing annotation metadata."))
       nn <- names(molecularProfilesSlot(tSet))[i]
-      if((S4Vectors::metadata(profile)$annotation == "rna" | S4Vectors::metadata(profile)$annotation == "rnaseq") & plotDist)
-      {
-        pdf(file=file.path(result.dir, sprintf("%s.pdf", nn)))
-        hist(SummarizedExperiment::assay(profile, 1), breaks = 100)
-        dev.off()
-      }
+      if(plotDist) {
+        if (S4Vectors::metadata(profile)$annotation == "rna" || S4Vectors::metadata(profile)$annotation == "rnaseq") {
+            pdf(file=file.path(result.dir, sprintf("%s.pdf", nn)))
+            hist(SummarizedExperiment::assay(profile, 1), breaks = 100)
+            dev.off()
+          }
+        }
       warning(ifelse(nrow(SummarizedExperiment::rowData(profile)) != nrow(SummarizedExperiment::assay(profile, 1)), sprintf("%s: number of features in fData is different from expression slots", nn), sprintf("%s: fData dimension is OK", nn)))
       warning(ifelse(nrow(SummarizedExperiment::colData(profile)) != ncol(SummarizedExperiment::assay(profile, 1)), sprintf("%s: number of cell lines in pData is different from expression slots", nn), sprintf("%s: pData dimension is OK", nn)))
       warning(ifelse("cellid" %in% colnames(SummarizedExperiment::colData(profile)), "", sprintf("%s: cellid does not exist in pData columns", nn)))

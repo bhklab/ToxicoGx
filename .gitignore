@@ -13,3 +13,4 @@ packrat/lib*/
 vignettes/output
 *.Rproj
 scripts
+objects
