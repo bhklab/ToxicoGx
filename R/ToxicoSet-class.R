@@ -41,6 +41,7 @@
                        slots = list(drug="data.frame"),
                        contains="CoreSet")
 
+
 ### -------------------------------------------------------------------------
 ### Constructor -------------------------------------------------------------
 ### -------------------------------------------------------------------------
@@ -59,6 +60,7 @@
 #' methods. For a much more detailed instruction on creating ToxicoSets, please
 #' see the "CreatingToxicoSet" vignette.
 #'
+
 #' @param name A \code{character} string detailing the name of the dataset
 #' @param molecularProfiles A \code{list} of ExpressionSet objects containing
 #'   molecular profiles
