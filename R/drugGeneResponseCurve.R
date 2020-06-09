@@ -151,7 +151,7 @@ drugGeneResponseCurve <- function(
     plot <- ggplot(as_tibble(plotData),
            aes(x = as.numeric(duration),
                y = expression,
-               color = dose_level,
+               color = factor(dose_level, levels=dose),
                linetype = as.factor(individual_id),
                shape = Symbol,
                group = interaction(dose_level, individual_id, Symbol))) +
@@ -159,7 +159,10 @@ drugGeneResponseCurve <- function(
       geom_point(size = point_size)
   } else {
     plotData <- plotData[, expression := mean(expression), by = .(dose_level, duration, Symbol)][individual_id == 1]
-    plot <- ggplot(plotData, aes(as.numeric(duration), expression, color = dose_level,)) +
+    plot <- ggplot(plotData,
+                   aes(as.numeric(duration),
+                       expression,
+                       color = factor(dose_level, levels=c("Control", "Low", "Middle", "High")))) +
       geom_line(aes(linetype = Symbol), size = line_width) +
       geom_point(size = point_size)
   }
