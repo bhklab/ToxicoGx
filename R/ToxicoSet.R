@@ -41,9 +41,11 @@
                        slots = list(drug="data.frame"),
                        contains="CoreSet")
 
+
 ### -------------------------------------------------------------------------
 ### Constructor -------------------------------------------------------------
 ### -------------------------------------------------------------------------
+
 
 # The default constructor above does a poor job of explaining the required
 # structure of a ToxicoSet. The constructor function defined below guides the
@@ -203,7 +205,6 @@ ToxicoSet <-  function(name,
 
   return(sensitivity.info)
 }
-
 
 .summarizePerturbationNumbers <- function(tSet) {
 
