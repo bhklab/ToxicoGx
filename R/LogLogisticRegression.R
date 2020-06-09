@@ -12,7 +12,6 @@
 #' viability <- c("108.67","111","102.16","100.27","90","87","74","57")
 #' computeAUC(dose, viability)
 #'
-#'
 #' @param conc [vector] is a vector of drug concentrations.
 #' @param viability [vector] is a vector whose entries are the viability values observed in the presence of the
 #' drug concentrations whose logarithms are in the corresponding entries of the log_conc, where viability 0
@@ -46,7 +45,6 @@
 #' @return A vector containing estimates for HS, E_inf, and EC50
 #' @export
 #' @importFrom stats optim dcauchy dnorm pcauchy rcauchy rnorm pnorm integrate
-
 logLogisticRegression <- function(conc,
                                   viability,
                                   density = c(2, 10, 2),
@@ -166,7 +164,7 @@ logLogisticRegression <- function(conc,
   error = function(e) {
     list("par"=gritty_guess, "convergence"=-1)
   })
-  failed = guess[["convergence"]]!=0
+  failed = guess[["convergence"]] != 0
   guess <- guess[["par"]]
 
   guess_residual <- .residual(log_conc,
@@ -179,7 +177,6 @@ logLogisticRegression <- function(conc,
 
 
   #GENERATE INITIAL GUESS BY OBJECTIVE FUNCTION EVALUATION AT LATTICE POINTS
-
   gritty_guess_residual <- .residual(log_conc,
                                      viability,
                                      pars = gritty_guess,
