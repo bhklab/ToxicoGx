@@ -88,6 +88,7 @@ drug.perturbation <- ToxicoGx::drugPerturbationSig(tSet = TGGATESsmall,
                                          mDataType = "rna",
                                          cell_lines = "Hepatocyte",
                                          duration = "24",
+                                         features = fNames(TGGATESsmall, "rna"),
                                          dose = c("Control", "Low"),
                                          drugs = c("Omeprazole", "Isoniazid"),
                                          returnValues=c("estimate","tstat", "pvalue", "fdr"),
@@ -96,10 +97,10 @@ data(HCC_sig)
 res <- apply(drug.perturbation[,,c("tstat", "fdr")],
              2, function(x, HCC){
                return(PharmacoGx::connectivityScore(x = x,
-                                        y = HCC[,2,drop = FALSE],
-                                        method = "fgsea", nperm = 100))
+                                        y = HCC[, 2, drop = FALSE],
+                                        method = "fgsea", nperm=100))
              },
-             HCC = HCC_sig[seq_len(199),])
+             HCC = HCC_sig[seq_len(195),])
 rownames(res) <- c("Connectivity", "P Value")
 res <- t(res)
 res <-  cbind(res,"FDR" = p.adjust(res[,2], method = "fdr"))
