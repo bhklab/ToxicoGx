@@ -35,34 +35,6 @@
 #'   ToxicoSet, for proper processing of the data
 #'
 #' @return An object of the ToxicoSet class
-<<<<<<< HEAD
-#'
-#' @importClassesFrom CoreGx CoreSet
-.ToxicoSet <- setClass("ToxicoSet",
-                       slots = list(drug="data.frame"),
-                       contains="CoreSet")
-
-
-### -------------------------------------------------------------------------
-### Constructor -------------------------------------------------------------
-### -------------------------------------------------------------------------
-
-
-# The default constructor above does a poor job of explaining the required
-# structure of a ToxicoSet. The constructor function defined below guides the
-# user into providing the required components of the curation and senstivity
-# lists and hides the annotation slot which the user does not need to manually
-# fill. This also follows the design of the Expression Set class.
-
-#' ToxicoSet constructor
-#'
-#' A constructor that simplifies the process of creating ToxicoSets, as well
-#' as creates empty objects for data not provided to the constructor. Only
-#' objects returned by this constructor are expected to work with the ToxicoSet
-#' methods. For a much more detailed instruction on creating ToxicoSets, please
-#' see the "CreatingToxicoSet" vignette.
-#'
-=======
 #'
 #' @importClassesFrom CoreGx CoreSet
 .ToxicoSet <- setClass("ToxicoSet",
@@ -87,7 +59,7 @@
 #' methods. For a much more detailed instruction on creating ToxicoSets, please
 #' see the "CreatingToxicoSet" vignette.
 #'
->>>>>>> b1d9eafa5e32fdea2970e42e584c178c81af6427
+
 #' @param name A \code{character} string detailing the name of the dataset
 #' @param molecularProfiles A \code{list} of ExpressionSet objects containing
 #'   molecular profiles
