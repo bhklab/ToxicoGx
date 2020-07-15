@@ -45,7 +45,7 @@ setReplaceMethod("sensitivityProfiles",
                                        value="data.frame"),
                  function(object, value)
                  {
-                     callNextMethod(object, value)
+                     callNextMethod(object=object, value=value)
                  })
 #' @describeIn ToxicoSet Update the phenotypic data for the drug dose
 #'   sensitivity
@@ -57,5 +57,5 @@ setReplaceMethod("sensitivityProfiles",
                                        value="matrix"),
                  function(object, value)
                  {
-                     callNextMethod(object, value)
+                     callNextMethod(object=object, value=value)
                  })

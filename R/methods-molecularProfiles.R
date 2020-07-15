@@ -18,8 +18,8 @@
 #' @importFrom CoreGx molecularProfiles
 #' @importFrom methods callNextMethod
 #' @export
-setMethod("molecularProfiles", signature("ToxicoSet"), function(object, mDataType, assay){
-    callNextMethod(object, mDataType, assay)
+setMethod("molecularProfiles", signature("ToxicoSet"), function(object, mDataType, assay) {
+    callNextMethod(object=object, mDataType=mDataType, assay=assay)
 })
 
 #' molecularProfiles<- Setter
@@ -53,7 +53,7 @@ setReplaceMethod("molecularProfiles",
                                        assay="character",
                                        value="matrix"),
                  function(object, mDataType, assay, value){
-                     callNextMethod(object, mDataType, assay, value)
+                     callNextMethod(object=object, mDataType=mDataType, assay=assay, value=value)
                  })
 #' @describeIn ToxicoSet Update the given type of molecular data from the
 #'   ToxicoSet
@@ -64,5 +64,5 @@ setReplaceMethod("molecularProfiles",
                                        assay="missing",
                                        value="matrix"),
                  function(object, mDataType, assay, value){
-                     callNextMethod(object, mDataType, assay, value)
+                     callNextMethod(object=object, mDataType=mDataType, assay=assay, value=value)
                  })

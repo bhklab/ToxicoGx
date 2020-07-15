@@ -43,5 +43,5 @@ setReplaceMethod("cellNames",
                                        value="character"),
                  function(object, value)
                  {
-                     callNextMethod(object, value)
+                     callNextMethod(object=object, value=value)
                  })

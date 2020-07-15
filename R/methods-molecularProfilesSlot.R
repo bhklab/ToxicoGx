@@ -37,5 +37,5 @@ setMethod("molecularProfilesSlot", signature("ToxicoSet"), function(object) {
 #' @export
 setReplaceMethod("molecularProfilesSlot", signature("ToxicoSet"),
                  function(object, value) {
-                     callNextMethod(object, value)
+                     callNextMethod(object=object, value=value)
                  })

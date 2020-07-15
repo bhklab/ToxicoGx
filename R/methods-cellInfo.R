@@ -44,5 +44,5 @@ setReplaceMethod("cellInfo",
                                        value = "data.frame"),
                  function(object, value)
                  {
-                     callNextMethod(object, value)
+                     callNextMethod(object=object, value=value)
                  })

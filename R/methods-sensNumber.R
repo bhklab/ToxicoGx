@@ -48,5 +48,5 @@ setReplaceMethod('sensNumber',
                                        value="matrix"),
                  function(object, value)
                  {
-                     callNextMethod(object, value)
+                     callNextMethod(object=object, value=value)
                  })

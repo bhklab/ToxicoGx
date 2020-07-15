@@ -17,7 +17,7 @@ setMethod("featureInfo",
           signature("ToxicoSet", "character"),
           function(object, mDataType)
           {
-              callNextMethod(object, mDataType)
+              callNextMethod(object=object, mDataType=mDataType)
           })
 
 #' featureInfo<- Setter
@@ -46,5 +46,5 @@ setReplaceMethod("featureInfo",
                                        value="data.frame"),
                  function(object, mDataType, value)
                  {
-                     callNextMethod(object, mDataType, value)
+                     callNextMethod(object=object, mDataType=mDataType, value=value)
                  })

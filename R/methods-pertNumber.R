@@ -47,5 +47,5 @@ setReplaceMethod('pertNumber',
                                        value="array"),
                  function(object, value)
                  {
-                     callNextMethod(object, value)
+                     callNextMethod(object=object, value=value)
                  })

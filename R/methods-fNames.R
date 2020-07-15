@@ -21,7 +21,7 @@ setMethod("fNames",
           signature("ToxicoSet", "character"),
           function(object, mDataType)
           {
-              callNextMethod(object, mDataType)
+              callNextMethod(object=object, mDataType=mDataType)
           })
 
 #' fNames<- Setter
@@ -49,5 +49,5 @@ setReplaceMethod("fNames",
                  signature("ToxicoSet", "character"),
                  function(object, mDataType, value)
                  {
-                     callNextMethod(object, mDataType, value)
+                     callNextMethod(object=object, mDataType=mDataType, value=value)
                  })
