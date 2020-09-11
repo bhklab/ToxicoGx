@@ -13,3 +13,5 @@
 ^\.Rprofile$
 scripts
 object
+^CODE.*md$
+^CONTRIBUTING.md$
