@@ -51,7 +51,7 @@ paramErrorChecker <- function(funName, tSet, ...) {
                "cell_linesGt2"
                ),
            "subsetTo" =
-             c("returnValuesGt1",
+             c(#"returnValuesGt1",
                "tSetGt1", "tSetNotIs", "cell_linesNotChar", "cell_linesNotIn",
                "drugsNotChar", "drugsNotIn", "featuresNotChar", "featuresNotIn"
                ),

@@ -41,6 +41,7 @@
                        slots = list(drug="data.frame"),
                        contains="CoreSet")
 
+## TODO:: implement .intern slot to hold arbitrary metadata about a tSet
 
 ### -------------------------------------------------------------------------
 ### Constructor -------------------------------------------------------------
@@ -82,6 +83,9 @@
 #' @param datasetType A \code{character} string of "sensitivity",
 #'   "perturbation", or both detailing what type of data can be found in the
 #'   ToxicoSet, for proper processing of the data
+# @param sharedControls \code{logical} Do experimental conditions share a single
+#   set of controls or are controls matched to conditions. Defaults to FALSE,
+#   indicating there is a control for each level of the experimental condition.
 #' @param verify \code{boolean} Should the function verify the ToxicoSet and
 #'   print out any errors it finds after construction?
 #'
@@ -108,6 +112,7 @@ ToxicoSet <-  function(name,
                        curationCell = data.frame(),
                        curationTissue = data.frame(),
                        datasetType=c("sensitivity", "perturbation", "both"),
+                       #sharedControls=FALSE,
                        verify = TRUE)
 {
   ##TOOD:: Abstract as much of this contstructor as possible to CoreGx!
@@ -160,6 +165,11 @@ ToxicoSet <-  function(name,
     perturbation$info <- "Not a perturbation dataset."
   }
 
+  #.intern=new.env()
+  #.intern$shareControls <- sharedControl
+  ## Prevent modification of this slot
+  #lockBinding('sharedControl', .intern)
+
   tSet  <- .ToxicoSet(annotation=annotation,
                       molecularProfiles=molecularProfiles,
                       cell=as.data.frame(cell),
@@ -167,7 +177,8 @@ ToxicoSet <-  function(name,
                       datasetType=datasetType,
                       sensitivity=sensitivity,
                       perturbation=perturbation,
-                      curation=curation)
+                      curation=curation,
+                      .intern=.intern)
   if (verify) { checkTSetStructure(tSet)}
   if(length(sensitivityN) == 0 & datasetType %in% c("sensitivity", "both")) {
     sensNumber(tSet) <- .summarizeSensitivityNumbers(tSet)
@@ -447,3 +458,23 @@ setMethod(
 {
   return(c(Cells=length(cellNames(x)), Drugs=length(drugNames(x))))
 })
+
+##' Retrieve a symbol holding metadata about a ToxicoSet object
+##'
+##' @param object The [\code{ToxicoSet}] to retrieve metadata from
+##' @param x The [\code{character}] hashkey of one or more symbols inside the
+##'  object@.intern slot.
+##'
+##' @return Value of x inside .intern if length(x) is 1, otherwise a named
+##'  \code{list} of values for x inside .intern.
+##'
+##' @keywords internal
+##' @export
+##' @noRd
+#setMethod('.getIntern', signature(object='ToxicoSet', x='character')) {
+#    if (length(x) >= 1) {
+#        get(x, envir=object@.intern)
+#    } else {
+#        mget(x, envir=object@.intern)
+#    }
+#})

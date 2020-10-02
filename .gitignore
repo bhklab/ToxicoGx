@@ -14,3 +14,4 @@ vignettes/output
 *.Rproj
 scripts
 objects
+.tSets/*

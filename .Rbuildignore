@@ -15,3 +15,6 @@ scripts
 object
 ^CODE.*md$
 ^CONTRIBUTING.md$
+.idea
+tSets
+scripts/*

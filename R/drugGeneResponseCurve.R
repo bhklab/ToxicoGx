@@ -77,7 +77,7 @@ drugGeneResponseCurve <- function(
   if (length(dose) > 2) { if (length(features) > 2) { stop("To plot more than one dose level, please specify up to two molecular feature...")}}
 
   # Deal with controls (i.e., treated with DMSO)
-  if (any(vapply(tSet, function(tSet) { name(tSet) == "drugMatrix_rat"}, FUN.VALUE = logical(1)))) {
+  if (any(vapply(tSet, function(tSet) { name(tSet) %in% c("drugMatrix_rat", "EMEXP2458")}, FUN.VALUE = logical(1)))) {
     drug <- c("DMSO", drug)
   }
 
@@ -129,8 +129,8 @@ drugGeneResponseCurve <- function(
   pInfo <- plotData[[1]][[1]]$pInfo
   data <- melt.data.table(d, id.vars = 1, variable.factor = FALSE)
   colnames(data) <- c("feature", "samplename", "expression")
-  data[, samplename := as.numeric(samplename)]
-  pInfo[, samplename := as.numeric(samplename)]
+  if (is.numeric(data$samplename)) data[, samplename := as.character(samplename)]
+  if (is.numeric(pInfo$samplename)) pInfo[, samplename := as.character(samplename)]
   fInfo <- data.table(as.data.frame(featureInfo(tSet[[1]], "rna")))
   colnames(fInfo)[2] <- "feature"
 

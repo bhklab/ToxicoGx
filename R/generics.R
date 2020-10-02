@@ -1,3 +1,4 @@
+## FIXME:: Remove this and define as methods on coerce generic instead
 #' Define an S4 Generic for the methods::as function
 #'
 #' This will allow creation of new definitons for object conversions
@@ -10,3 +11,15 @@
 #'
 #' @export
 setGeneric('as', function(object, ..., value) methods::as(object, ..., value))
+
+### FIXME:: Move this into CoreGx
+##' Private getter for .intern environment slot inside an object.
+##'
+##' @param object What to object to retrieve a value from .intern for
+##' @parma ... Allow definition of new parmaters on this generic
+##'
+##' @keywords internal
+##' @exprot
+##' @noRd
+#setGeneric('.getIntern', function(object, ...)
+#    standardGeneric('.getIntern'))
