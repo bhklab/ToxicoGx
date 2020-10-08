@@ -1,6 +1,6 @@
 # *News*
 
-## v1.1.0+
+## v1.1.0
 * Continue to abstract functionality into CoreGx
 * Add additional plotting functions such as grouped boxplots
 * Extend coverage of unit tests to >90%

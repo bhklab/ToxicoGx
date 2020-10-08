@@ -17,7 +17,7 @@
 #' @import limma
 #' @importFrom BiocParallel bplapply
 #' @export
-computeLimmaDifferentalExpression <- function(tSet, buildTable=TRUE) {
+computeLimmaDiffExpr <- function(tSet, buildTable=TRUE) {
 
     ## TODO:: Add messaages to keep track of where the function execution is at
 
