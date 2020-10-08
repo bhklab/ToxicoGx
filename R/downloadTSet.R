@@ -13,9 +13,9 @@
 #' @param myfn \code{character} The filename for the table of tSets
 #' @param verbose \code{bool} Should status messages be printed during download.
 #' @return A data.frame with details about the available ToxicoSet objects
-#' @export
 #' @import downloader
 #' @importFrom utils read.table write.table
+#' @export
 availableTSets <- function(saveDir=tempdir(), myfn="availableToxicoSets.csv", verbose=TRUE){
 
   if (!file.exists(saveDir)) {
@@ -51,8 +51,8 @@ availableTSets <- function(saveDir=tempdir(), myfn="availableToxicoSets.csv", ve
 #' @param verbose \code{bool} Should status messages be printed during download.
 #'   Defaults to TRUE.
 #' @return A tSet object with the dataset, downloaded from our server
-#' @export
 #' @import downloader
+#' @export
 downloadTSet <- function(name, saveDir = tempdir(), tSetFileName = NULL, verbose = TRUE) {
 
   if (missing(saveDir)) {message("Downloading to temporary folder... Use saveDir parameter to save to a specific path")}

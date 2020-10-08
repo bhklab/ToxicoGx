@@ -265,10 +265,10 @@ ToxicoSet <-  function(name,
 #' @param plotDist Should the function also plot the distribution of molecular data?
 #' @param result.dir The path to the directory for saving the plots as a string, defaults to `tempdir()`
 #' @return Prints out messages whenever describing the errors found in the structure of the pset object passed in.
-#' @export
 #' @importFrom graphics hist
 #' @importFrom grDevices dev.off pdf
 #' @importFrom S4Vectors metadata
+#' @export
 checkTSetStructure <-
   function(tSet, plotDist=FALSE, result.dir=".") {
     if(!file.exists(result.dir) && plotDist) { dir.create(result.dir, showWarnings=FALSE, recursive=TRUE) }

@@ -15,6 +15,7 @@
 #' @import data.table
 #' @import Biobase
 #' @import limma
+#' @import stats
 #' @importFrom BiocParallel bplapply
 #' @export
 computeLimmaDiffExpr <- function(tSet, buildTable=TRUE) {
