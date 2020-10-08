@@ -5,18 +5,19 @@
 #' types of data available in the object, and the date of last update.
 #'
 #' @examples
-#' if (interactive()){
-#' availabletSets()
-#' }
+#' availableTSets()
 #'
 #' @param saveDir \code{character} Directory to save the table of tSets
 #' @param myfn \code{character} The filename for the table of tSets
 #' @param verbose \code{bool} Should status messages be printed during download.
+#'
 #' @return A data.frame with details about the available ToxicoSet objects
+#'
 #' @import downloader
 #' @importFrom utils read.table write.table
+#'
 #' @export
-availableTSets <- function(saveDir=tempdir(), myfn="availableToxicoSets.csv", verbose=TRUE){
+availableTSets <- function(saveDir=tempdir(), myfn="availableToxicoSets.csv", verbose=TRUE) {
 
   if (!file.exists(saveDir)) {
     dir.create(saveDir, recursive = TRUE)

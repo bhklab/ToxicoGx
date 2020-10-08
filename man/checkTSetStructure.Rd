@@ -23,7 +23,6 @@ that matching of cells and drugs can be properly done across different types
 of data and with other studies.
 }
 \examples{
-
 checkTSetStructure(TGGATESsmall)
 
 }

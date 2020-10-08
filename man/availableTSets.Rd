@@ -26,8 +26,6 @@ the PharmacoGx server. The table includes the names of the PharamcoSet, the
 types of data available in the object, and the date of last update.
 }
 \examples{
-if (interactive()){
-availabletSets()
-}
+availableTSets()
 
 }

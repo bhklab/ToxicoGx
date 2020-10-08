@@ -41,7 +41,6 @@ ToxicoSig <- function(Data=array(NA, dim=c(0,0,0)), tSetName='', DateCreated=dat
 #' @return Prints the ToxicoGx Signatures object to the output stream, and returns invisible NULL.
 #'
 #' @export
-#'
 setMethod("show", signature=signature(object='ToxicoSig'),
           function(object) {
             cat('ToxicoSet Name: ', attr(object, 'PSetName'), "\n")
@@ -67,7 +66,6 @@ setMethod("show", signature=signature(object='ToxicoSig'),
 #' @return Prints the ToxicoGx Signatures annotations to the output stream, and returns invisible NULL.
 #'
 #' @export
-#'
 showSigAnnot <- function(Sigs){
 
   print(Sigs@Call)

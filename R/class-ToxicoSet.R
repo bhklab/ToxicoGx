@@ -61,7 +61,6 @@
 #' methods. For a much more detailed instruction on creating ToxicoSets, please
 #' see the "CreatingToxicoSet" vignette.
 #'
-
 #' @param name A \code{character} string detailing the name of the dataset
 #' @param molecularProfiles A \code{list} of ExpressionSet objects containing
 #'   molecular profiles
@@ -253,19 +252,20 @@ ToxicoSet <-  function(name,
 #' of data and with other studies.
 #'
 #' @examples
-#'
 #' checkTSetStructure(TGGATESsmall)
 #'
 #' @param tSet A \code{ToxicoSet} object
 #' @param plotDist Should the function also plot the distribution of molecular data?
 #' @param result.dir The path to the directory for saving the plots as a string, defaults to `tempdir()`
+#'
 #' @return Prints out messages whenever describing the errors found in the structure of the pset object passed in.
+#'
 #' @importFrom graphics hist
 #' @importFrom grDevices dev.off pdf
 #' @importFrom S4Vectors metadata
+#'
 #' @export
-checkTSetStructure <-
-  function(tSet, plotDist=FALSE, result.dir=".") {
+checkTSetStructure <- function(tSet, plotDist=FALSE, result.dir=".") {
     if(!file.exists(result.dir) && plotDist) { dir.create(result.dir, showWarnings=FALSE, recursive=TRUE) }
     for( i in seq_along(molecularProfilesSlot(tSet))) {
       profile <- molecularProfilesSlot(tSet)[[i]]

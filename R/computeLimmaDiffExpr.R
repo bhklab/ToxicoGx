@@ -1,22 +1,27 @@
 #' Conduct differential expression analysis using the limma R pacakge
 #'
-#' @section WARNING: This function can take a very long time to compute!
+#' WARNING: This function can take a very long time to compute!
+#'
+#' @examples
+#' data(TGGATESsmall)
+#' analysis <- computeLimmmaDiffExpr(TGGATESsmall)
 #'
 #' @param tSet A [`ToxicoSet`] object with a molecular profile named 'rna'
-#' @param buildtable [`logical`] Should the result of the eBayes function
-#'    from limma be assembled into a data.table containing the result along
-#'    with the gene, compound and durations names. Default it TRUE, otherwise
-#'    this function with return the object produced by eBayes.
+#' @param buildTable [`logical`] Should the result of the eBayes function
+#'  from limma be assembled into a data.table containing the result along
+#'  with the gene, compound and durations names. Default it TRUE, otherwise
+#'  this function with return the object produced by eBayes.
 #'
 #' @return A [`data.table`] containing the results the limma differential
-#'    expression analysis comparing control vs each dose level for each compound
-#'    within each duration.
+#'  expression analysis comparing control vs each dose level for each compound
+#'  within each duration.
 #'
 #' @import data.table
 #' @import Biobase
 #' @import limma
-#' @import stats
+#' @importFrom stats model.matrix model.frame
 #' @importFrom BiocParallel bplapply
+#'
 #' @export
 computeLimmaDiffExpr <- function(tSet, buildTable=TRUE) {
 
