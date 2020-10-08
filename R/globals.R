@@ -3,5 +3,5 @@ utils::globalVariables(c('cellid','drugid','read.csv','samplename','.',
                          'Symbol', 'feature', 'Control', 'Low', 'Middle',
                          'High', 'verbose', 'dose_level', 'individual_id',
                          'duration_h', 'viability', '.SD', 'durations',
-                         'tSetName', '.intern', 'controLevels', 'treatmentLevels',
+                         'tSetName', '.intern', 'controlLevels', 'treatmentLevels',
                          'dose', 'compound', 'duration'))

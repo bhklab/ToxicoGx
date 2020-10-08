@@ -245,11 +245,6 @@ ToxicoSet <-  function(name,
 }
 
 
-### -------------------------------------------------------------------------
-### Class Validity ----------------------------------------------------------
-### -------------------------------------------------------------------------
-
-
 #' A function to verify the structure of a ToxicoSet
 #'
 #' This function checks the structure of a ToxicoSet, ensuring that the
