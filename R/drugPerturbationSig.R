@@ -93,7 +93,7 @@ drugPerturbationSig <- function(
   returnValues <- match.arg(returnValues, several.ok = TRUE)
 
   # Add DMSO for the drugMatrix
-  if (name(tSet) %in% c('drugMatrix_rat', "EMEXP2458")) {
+  if (name(tSet) %in% c('drugMatrix_rat', 'EMEXP2458')) {
     if (!('DMSO' %in% drugs)) {
       drugs <- c('DMSO', drugs)
     }
@@ -113,7 +113,7 @@ drugPerturbationSig <- function(
   mcres <- lapply(drugs[drugs != 'DMSO'], function(x, exprs, sampleinfo) {
 
     # Add DMSO for the drugMatrix since it is the only control
-    if (name(tSet) %in% c('drugMatrix_rat', "EMEXP2458")) {
+    if (name(tSet) %in% c('drugMatrix_rat', 'EMEXP2458')) {
         x <- c('DMSO', x)
     }
     # Subset to correct drugs
