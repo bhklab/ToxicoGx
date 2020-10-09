@@ -3,10 +3,12 @@
 #' WARNING: This function can take a very long time to compute!
 #'
 #' @examples
+#' if (interactive()) {
 #' data(TGGATESsmall)
-#' analysis <- computeLimmmaDiffExpr(TGGATESsmall)
+#' analysis <- computeLimmaDiffExpr(TGGATESsmall)
+#' }
 #'
-#' @param tSet A [`ToxicoSet`] object with a molecular profile named 'rna'
+#' @param object A [`ToxicoSet`] object with a molecular profile named 'rna'
 #' @param buildTable [`logical`] Should the result of the eBayes function
 #'  from limma be assembled into a data.table containing the result along
 #'  with the gene, compound and durations names. Default it TRUE, otherwise
@@ -19,17 +21,18 @@
 #' @import data.table
 #' @import Biobase
 #' @import limma
+#' @import SummarizedExperiment
 #' @importFrom stats model.matrix model.frame
 #' @importFrom BiocParallel bplapply
 #'
 #' @export
-computeLimmaDiffExpr <- function(tSet, buildTable=TRUE) {
+setMethod('computeLimmaDiffExpr', signature(object='ToxicoSet'), function(object, buildTable=TRUE) {
 
     ## TODO:: Add messaages to keep track of where the function execution is at
 
     # ---- 1. Get the required input data
-    SE <- molecularProfilesSlot(tSet)$rna  # Extract the rna expression SummarizedExperiment
-    eset <- as(SE, value='ExpressionSet')  # Coerce to an ExpressionSet
+    SE <- molecularProfilesSlot(object)$rna  # Extract the rna expression SummarizedExperiment
+    eset <- as(SE, 'ExpressionSet')  # Coerce to an ExpressionSet
     eset$drugid <- make.names(eset$drugid)  # Reformat the drug names so they can be valid factor names
 
     # ---- 2. Extract the metadata needed to build the design matrix
@@ -64,7 +67,7 @@ computeLimmaDiffExpr <- function(tSet, buildTable=TRUE) {
     setDT(targets)  # Convert to data.table
 
     columns <- 'duration'
-    hasSharedControls <- name(tSet) %in% c('drugMatrix_rat', 'EMEXP2458')
+    hasSharedControls <- name(object) %in% c('drugMatrix_rat', 'EMEXP2458')
     if (!hasSharedControls)
         columns <- c('compound', columns)
 
@@ -95,8 +98,8 @@ computeLimmaDiffExpr <- function(tSet, buildTable=TRUE) {
     if (!buildTable) return(stats)
 
     # ---- 7. Assemble the results into a data.table object
-    compoundNames <- make.names(drugInfo(tSet)$drugid)
-    compounds <- drugInfo(tSet)$drugid
+    compoundNames <- make.names(drugInfo(object)$drugid)
+    compounds <- drugInfo(object)$drugid
     resultList <- lapply(contrastStrings, function(comparison) {
       # Disassmble contrasts into annotations for this statistical test
       comparisonNoLabels <- gsub('compound|dose|duration', '', comparison)
@@ -130,5 +133,5 @@ computeLimmaDiffExpr <- function(tSet, buildTable=TRUE) {
     colnames(analysis)[5:length(colnames(analysis))] <-
          c("fold_change", "log_odds", "p_value", "fdr", "avg_expr")
     return(analysis)
-}
+})
 
