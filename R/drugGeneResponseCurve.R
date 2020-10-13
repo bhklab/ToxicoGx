@@ -102,7 +102,7 @@ drugGeneResponseCurve <- function(
   # Subsetting the tSet based on parameter arguments
   tSet <- lapply(tSet, function(tSet) {
     suppressWarnings({ToxicoGx::subsetTo(tSet, mDataType = mDataTypes, drugs = drug,
-                       duration = duration, features = unique(unlist(features)))})
+                       duration = duration, features = unique(unlist(features)), cell_lines=unique(cell_lines))})
   })
 
   # Get only the dose levels available for that drug
