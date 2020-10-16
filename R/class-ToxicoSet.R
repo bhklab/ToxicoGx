@@ -176,8 +176,8 @@ ToxicoSet <-  function(name,
                       datasetType=datasetType,
                       sensitivity=sensitivity,
                       perturbation=perturbation,
-                      curation=curation,
-                      .intern=.intern)
+                      curation=curation)#,
+                      #.intern=.intern)
   if (verify) { checkTSetStructure(tSet)}
   if(length(sensitivityN) == 0 & datasetType %in% c("sensitivity", "both")) {
     sensNumber(tSet) <- .summarizeSensitivityNumbers(tSet)

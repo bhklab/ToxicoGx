@@ -21,7 +21,7 @@
 #' @import data.table
 #' @import Biobase
 #' @import limma
-#' @import SummarizedExperiment
+#' @importFrom SummarizedExperiment SummarizedExperiment coerce
 #' @importFrom stats model.matrix model.frame
 #' @importFrom BiocParallel bplapply
 #'
