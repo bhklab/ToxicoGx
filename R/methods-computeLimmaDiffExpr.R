@@ -122,6 +122,8 @@ setMethod('computeLimmaDiffExpr', signature(object='ToxicoSet'), function(object
     # ---- 7. Assemble the results into a data.table object
     compoundNames <- make.names(drugInfo(object)$drugid)
     compounds <- drugInfo(object)$drugid
+    cellNames <- make.names(cellInfo(object)$cellid)
+    cells <- cellInfo(object)$cellid
     ## TODO:: refactor this into muliple lapply statements!
     resultList <- lapply(contrastStrings, function(comparison) {
       # Disassmble contrasts into annotations for this statistical test
@@ -137,6 +139,15 @@ setMethod('computeLimmaDiffExpr', signature(object='ToxicoSet'), function(object
       compound_id <- which(compoundNames %in% annotations[[1]][1])
       compound <- compounds[compound_id]
 
+      # Get the cell_id based on the contrast name then get the cellid
+      if (hasMultipleCells) {
+          ## TODO:: Should I use == instead?
+          cell_id <- which(cellNames %in% annotations[[1]][4])
+          cell <- cells[cell_id]
+      } else {
+          cell <- unique(cells)
+      }
+
       # Get the tests per gene for the given comparison
       statCols <- c("logFC", "B", "P.Value", "adj.P.Val", "AveExpr")
       results <- topTreat(stats, coef=comparison, sort.by="none",
@@ -149,13 +160,9 @@ setMethod('computeLimmaDiffExpr', signature(object='ToxicoSet'), function(object
         "compound" = rep(compound, nrow(results)),
         "dose" = rep(annotations[[1]][2], nrow(results)),
         "duration" = rep(annotations[[1]][3], nrow(results)),
+        "cell" = rep(cell, nrow(results)),
         results
       )
-      if (length(annotations[[1]]) > 3) {
-          DT$cell <- rep(annotations[[1]][4], nrow(results))
-          nonStatCols <- setdiff(colnames(DT), statCols)
-          setcolorder(DT, c(nonStatCols, statCols))
-      }
       return(DT)
     })
     analysis <- rbindlist(resultList)
