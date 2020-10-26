@@ -96,8 +96,10 @@ setMethod('computeLimmaDiffExpr', signature(object='ToxicoSet'), function(object
 
     # fix levels if there is only one cell type
     if (!hasMultipleCells) {
-        controls <- gsub('_cell[^_]*$', '', controls)
-        levels <- gsub('_cell[^_]*$', '', levels)
+        controls$controlLevels <- gsub('_cell[^_]*$', '',
+            controls$controlLevels)
+        levels$treatmentLevels <- gsub('_cell[^_]*$', '',
+            levels$treatmentLevels)
     }
 
     contrastStrings <- unique(controls[levels,
