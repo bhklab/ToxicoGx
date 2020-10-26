@@ -78,13 +78,9 @@ downloadTSet <- function(name, saveDir = tempdir(), tSetFileName = NULL, verbose
                          quiet = !verbose, mode='wb')
   }
 
+  print(file.path(saveDir, tSetFileName))
   tSet <- readRDS(file.path(saveDir, tSetFileName))
 
-  ##FIXME:: Remove this conversion once updated tSets are published
-  if (!is(molecularProfilesSlot(tSet)[[1]], 'SummarizedExperiment')) {
-    tSet <- .convertTsetMolecularProfilesToSE(tSet)
-    saveRDS(tSet, file.path(saveDir, tSetFileName))
-  }
   return(tSet)
 }
 
