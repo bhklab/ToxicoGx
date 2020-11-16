@@ -26,7 +26,8 @@
 #' @importFrom BiocParallel bplapply
 #'
 #' @export
-setMethod('computeLimmaDiffExpr', signature(object='ToxicoSet'), function(object, buildTable=TRUE) {
+setMethod('computeLimmaDiffExpr', signature(object='ToxicoSet'),
+    function(object, buildTable=TRUE) {
 
     ## TODO:: Add messaages to keep track of where the function execution is at
 
