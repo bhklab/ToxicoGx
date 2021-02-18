@@ -1,34 +1,35 @@
 #' Return a table of ToxicoSets available for download
 #'
 #' The function fetches a table of all ToxicoSets available for download from
-#' the PharmacoGx server. The table includes the names of the PharamcoSet, the
+#' the ToxicoGx server. The table includes the names of the ToxicoSet, the
 #' types of data available in the object, and the date of last update.
+#' 
+#' Much more information on the processing of the data and data provenance can be found at:
+#' www.orcestra.ca 
 #'
 #' @examples
-#' availableTSets()
+#' if (interactive()){
+#' availablePSets()
+#' }
 #'
-#' @param saveDir \code{character} Directory to save the table of tSets
-#' @param myfn \code{character} The filename for the table of tSets
-#' @param verbose \code{bool} Should status messages be printed during download.
-#'
+#' @param canonical [`logical`] Should available TSets show only official TSets, or should
+#'   user generated TSets be included?
+#' 
 #' @return A data.frame with details about the available ToxicoSet objects
-#'
-#' @import downloader
-#' @importFrom utils read.table write.table
-#'
 #' @export
-availableTSets <- function(saveDir=tempdir(), myfn="availableToxicoSets.csv", verbose=TRUE) {
-
-  if (!file.exists(saveDir)) {
-    dir.create(saveDir, recursive = TRUE)
+#' @import jsonlite
+availableTSets <- function(canonical=TRUE){
+  require(jsonlite)
+  if (canonical) {
+    avail.tsets <- fromJSON("https://www.orcestra.ca/api/toxicosets/canonical")
+  } else {
+    return("Only canonical TSets are available at the moment")
   }
-
-  downloader::download("https://zenodo.org/record/4024991/files/availableTSets.csv?download=1",
-                       destfile = file.path(saveDir, myfn),
-                       quiet = !verbose,
-                       mode= 'wb')
-
-  tSetTable <- read.csv(file.path(saveDir, myfn), header = TRUE, stringsAsFactors = FALSE)
+  
+  tSetTable <- data.frame("ToxicoSet.Name" = avail.tsets$dataset$name,
+                          "Data.Source" = avail.tsets$dataset$versionInfo$data$rawMicroarrayData,
+                          "Date.Created" = avail.tsets$dateCreated,
+                          "URL" = avail.tsets$downloadLink, stringsAsFactors = FALSE, check.names = FALSE)
   return(tSetTable)
 }
 
@@ -36,8 +37,8 @@ availableTSets <- function(saveDir=tempdir(), myfn="availableToxicoSets.csv", ve
 #'
 #' This function allows you to download a \code{ToxicoSet} object for use with this
 #' package. The \code{ToxicoSets} have been extensively curated and organised within
-#' a PharacoSet class, enabling use with all the analysis tools provided in
-#' \code{PharmacoGx}.
+#' a ToxicoSet class, enabling use with all the analysis tools provided in
+#' \code{ToxicoGx}.
 #'
 #' @examples
 #' if (interactive()) {
@@ -57,12 +58,12 @@ availableTSets <- function(saveDir=tempdir(), myfn="availableToxicoSets.csv", ve
 downloadTSet <- function(name, saveDir = tempdir(), tSetFileName = NULL, verbose = TRUE) {
 
   if (missing(saveDir)) {message("Downloading to temporary folder... Use saveDir parameter to save to a specific path")}
-  tSetTable <- availableTSets(saveDir = saveDir)
+  tSetTable <- availableTSets(canonical=T)
 
   whichx <- match(name, tSetTable[, 1])
   if (is.na(whichx)) {
     stop('Unknown Dataset. Please use the availabletSets() function for the
-         table of available PharamcoSets.')
+         table of available ToxicoSets.')
   }
 
   if (!file.exists(saveDir)) {
@@ -96,7 +97,7 @@ downloadTSet <- function(name, saveDir = tempdir(), tSetFileName = NULL, verbose
   } else {
     newrow <- c(name(tSet), datasetType(tSet), paste(names(molecularProfilesSlot(tSet)), collapse = "/"), annotation(tSet)$dateCreated, NA)
     tSetTable <- t(matrix(newrow))
-    colnames(tSetTable) <- c("ToxicoSet.Name","Description", "Available.Molecular.Profiles","Date.Updated","URL")
+    colnames(tSetTable) <- c("ToxicoSet.Name","Data.Source","Date.Updated","URL")
     rownames(tSetTable) <- tSetTable[,1]
     write.table(tSetTable, file = outfn)
   }
