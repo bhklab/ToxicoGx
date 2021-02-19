@@ -49,7 +49,8 @@ Imports:
     parallel,
     stats,
     utils,
-    limma
+    limma,
+    jsonlite
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr
 Suggests:

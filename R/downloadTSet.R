@@ -19,7 +19,6 @@
 #' @export
 #' @import jsonlite
 availableTSets <- function(canonical=TRUE){
-  require(jsonlite)
   if (canonical) {
     avail.tsets <- fromJSON("https://www.orcestra.ca/api/toxicosets/canonical")
   } else {

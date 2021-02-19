@@ -4,28 +4,27 @@
 \alias{availableTSets}
 \title{Return a table of ToxicoSets available for download}
 \usage{
-availableTSets(
-  saveDir = tempdir(),
-  myfn = "availableToxicoSets.csv",
-  verbose = TRUE
-)
+availableTSets(canonical = TRUE)
 }
 \arguments{
-\item{saveDir}{\code{character} Directory to save the table of tSets}
-
-\item{myfn}{\code{character} The filename for the table of tSets}
-
-\item{verbose}{\code{bool} Should status messages be printed during download.}
+\item{canonical}{[`logical`] Should available TSets show only official TSets, or should
+user generated TSets be included?}
 }
 \value{
 A data.frame with details about the available ToxicoSet objects
 }
 \description{
 The function fetches a table of all ToxicoSets available for download from
-the PharmacoGx server. The table includes the names of the PharamcoSet, the
+the ToxicoGx server. The table includes the names of the ToxicoSet, the
 types of data available in the object, and the date of last update.
 }
+\details{
+Much more information on the processing of the data and data provenance can be found at:
+www.orcestra.ca
+}
 \examples{
-availableTSets()
+if (interactive()){
+availablePSets()
+}
 
 }

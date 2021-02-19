@@ -24,8 +24,8 @@ A tSet object with the dataset, downloaded from our server
 \description{
 This function allows you to download a \code{ToxicoSet} object for use with this
 package. The \code{ToxicoSets} have been extensively curated and organised within
-a PharacoSet class, enabling use with all the analysis tools provided in
-\code{PharmacoGx}.
+a ToxicoSet class, enabling use with all the analysis tools provided in
+\code{ToxicoGx}.
 }
 \examples{
 if (interactive()) {
