@@ -57,7 +57,7 @@ availableTSets <- function(canonical=TRUE){
 downloadTSet <- function(name, saveDir = tempdir(), tSetFileName = NULL, verbose = TRUE) {
 
   if (missing(saveDir)) {message("Downloading to temporary folder... Use saveDir parameter to save to a specific path")}
-  tSetTable <- availableTSets(canonical=T)
+  tSetTable <- availableTSets(canonical=TRUE)
 
   whichx <- match(name, tSetTable[, 1])
   if (is.na(whichx)) {
