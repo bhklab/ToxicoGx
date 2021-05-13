@@ -6,7 +6,6 @@
 ^.*\dose_response_plot.pdf
 ^dose_response_plot.pdf
 ^tests/testthat/.saveTSetAsGroundTruth.R$
-^tests
 ^doc$
 ^Meta$
 ^packrat/

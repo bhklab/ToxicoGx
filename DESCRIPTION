@@ -1,8 +1,8 @@
 Package: ToxicoGx
 Type: Package
 Title: Analysis of Large-Scale Toxico-Genomic Data
-Version: 1.1.2
-Date: 2021-02-18
+Version: 1.1.3
+Date: 2021-05-12
 Authors@R: c(
   person("Sisira","Nair", email = "sisira.nair@uhnresearch.ca",
     role = c("aut")),
@@ -26,7 +26,7 @@ Description: Contains a set of functions to perform large-scale analysis of
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Depends: R (>= 4.0), CoreGx
+Depends: R (>= 4.1), CoreGx
 Imports:
     SummarizedExperiment,
     S4Vectors,
@@ -61,5 +61,6 @@ Suggests:
     tinytex,
     devtools,
     PharmacoGx,
-    xtable
+    xtable,
+    markdown
 biocViews: GeneExpression, Pharmacogenetics, Pharmacogenomics, Software

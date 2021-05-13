@@ -2,7 +2,8 @@
 % Please edit documentation in R/allGenerics.R
 \name{computeLimmaDiffExpr}
 \alias{computeLimmaDiffExpr}
-\title{Private getter for .intern environment slot inside an object.}
+\title{Generic method for performing differential expression analysis on an S4 object
+  using the limma package}
 \usage{
 computeLimmaDiffExpr(object, ...)
 }
@@ -16,6 +17,6 @@ on.}
 To be defined by the method implementation.
 }
 \description{
-Private getter for .intern environment slot inside an object.
+Generic method for performing differential expression analysis on an S4 object
+  using the limma package
 }
-\keyword{internal}
