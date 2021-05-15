@@ -20,16 +20,16 @@ test_that("Errors if given more than one tSet as parameter.", { expect_error(
 
 # mDataTypes
 context("...Checking for correct mDataType param errors...")
-test_that("Errors if given more than one mDataType.", { expect_error(
-  summarizeMolecularProfiles(
-    TGGATESsmall, mDataType = c("rna", "cnv"), cell_lines=cellNames(TGGATESsmall),
-    drugs = head(drugNames(TGGATESsmall)),
-    features = fNames(TGGATESsmall,"rna"), duration = "8",
-    dose = c("Control", "High"), summary.stat = "median",
-    fill.missing = FALSE, verbose=TRUE
-    )
-  )
-})
+# test_that("Errors if given more than one mDataType.", { expect_error(
+#   summarizeMolecularProfiles(
+#     TGGATESsmall, mDataType = c("rna", "cnv"), cell_lines=cellNames(TGGATESsmall),
+#     drugs = head(drugNames(TGGATESsmall)),
+#     features = fNames(TGGATESsmall,"rna"), duration = "8",
+#     dose = c("Control", "High"), summary.stat = "median",
+#     fill.missing = FALSE, verbose=TRUE
+#     )
+#   )
+# })
 test_that("Errors if given mDataType as type other than character.", { expect_error(
   summarizeMolecularProfiles(
     TGGATESsmall, mDataType = 1, cell_lines=cellNames(TGGATESsmall),

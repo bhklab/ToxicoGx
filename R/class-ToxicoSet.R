@@ -263,128 +263,166 @@ ToxicoSet <-  function(name,
 #' @importFrom graphics hist
 #' @importFrom grDevices dev.off pdf
 #' @importFrom S4Vectors metadata
+#' @importFrom CoreGx .message .warning .error
 #'
 #' @export
 checkTSetStructure <- function(tSet, plotDist=FALSE, result.dir=".") {
-    if(!file.exists(result.dir) && plotDist) { dir.create(result.dir, showWarnings=FALSE, recursive=TRUE) }
+    
+    if(!file.exists(result.dir) && plotDist) 
+        dir.create(result.dir, showWarnings=FALSE, recursive=TRUE)
+    
     for( i in seq_along(molecularProfilesSlot(tSet))) {
-      profile <- molecularProfilesSlot(tSet)[[i]]
-      if (is.null(names(metadata(profile))))
-        stop(paste0("Please ensure all items in the metadata slot of
-             SummarizedExperiments are named. Item ", i, " of molecualrProfiles
-             does not have metadata names."))
-      if (!("annotation" %in% names(metadata(profile))))
-        stop(paste0("At minimum the SummarizedExperiments in molecularProfiles must contain
-                a metadata item names 'annotation' specifying the molecular datatype
-               the SummarizedExperiment contains! Item ", i, " of
-               molecularProfilesis missing annotation metadata."))
-      nn <- names(molecularProfilesSlot(tSet))[i]
-      if(plotDist) {
-        if (S4Vectors::metadata(profile)$annotation == "rna" || S4Vectors::metadata(profile)$annotation == "rnaseq") {
-          pdf(file=file.path(result.dir, sprintf("%s.pdf", nn)))
-          hist(SummarizedExperiment::assay(profile, 1), breaks = 100)
-          dev.off()
+        profile <- molecularProfilesSlot(tSet)[[i]]
+        if (is.null(names(metadata(profile))))
+            .error(paste0("Please ensure all items in the metadata slot of
+                 SummarizedExperiments are named. Item ", i, " of molecualrProfiles
+                 does not have metadata names."))
+        if (!("annotation" %in% names(metadata(profile))))
+            .error(paste0("At minimum the SummarizedExperiments in molecularProfiles must contain
+                    a metadata item names 'annotation' specifying the molecular datatype
+                   the SummarizedExperiment contains! Item ", i, " of
+                   molecularProfilesis missing annotation metadata."))
+        nn <- names(molecularProfilesSlot(tSet))[i]
+
+        if(plotDist) {
+            if (S4Vectors::metadata(profile)$annotation == "rna" ||
+                S4Vectors::metadata(profile)$annotation == "rnaseq") 
+            {
+                pdf(file=file.path(result.dir, sprintf("%s.pdf", nn)))
+                hist(SummarizedExperiment::assay(profile, 1), breaks = 100)
+                dev.off()
+            }
         }
-      }
-      warning(ifelse(nrow(SummarizedExperiment::rowData(profile)) != nrow(SummarizedExperiment::assay(profile, 1)), sprintf("%s: number of features in fData is different from expression slots", nn), sprintf("%s: fData dimension is OK", nn)))
-      warning(ifelse(nrow(SummarizedExperiment::colData(profile)) != ncol(SummarizedExperiment::assay(profile, 1)), sprintf("%s: number of cell lines in pData is different from expression slots", nn), sprintf("%s: pData dimension is OK", nn)))
-      warning(ifelse("cellid" %in% colnames(SummarizedExperiment::colData(profile)), "", sprintf("%s: cellid does not exist in pData columns", nn)))
-      warning(ifelse("batchid" %in% colnames(SummarizedExperiment::colData(profile)), "", sprintf("%s: batchid does not exist in pData columns", nn)))
-      if(S4Vectors::metadata(profile)$annotation == "rna" | S4Vectors::metadata(profile)$annotation == "rnaseq")
-      {
-        warning(ifelse("BEST" %in% colnames(SummarizedExperiment::rowData(profile)), "BEST is OK", sprintf("%s: BEST does not exist in fData columns", nn)))
-        warning(ifelse("Symbol" %in% colnames(SummarizedExperiment::rowData(profile)), "Symbol is OK", sprintf("%s: Symbol does not exist in fData columns", nn)))
-      }
-      if("cellid" %in% colnames(SummarizedExperiment::colData(profile))) {
-        if(!all(SummarizedExperiment::colData(profile)[,"cellid"] %in% rownames(tSet@cell))) {
-          warning(sprintf("%s: not all the cell lines in this profile are in cell lines slot", nn))
+        if (nrow(SummarizedExperiment::rowData(profile)) != 
+            nrow(SummarizedExperiment::assay(profile, 1)))
+        {
+            .warning(sprintf("%s: number of features in fData is different from expression slots", nn)) 
+        } else {
+            .message(sprintf("%s: fData dimension is OK", nn))
         }
-      }else {
-        warning(sprintf("%s: cellid does not exist in pData", nn))
-      }
+        if (nrow(SummarizedExperiment::colData(profile)) != ncol(SummarizedExperiment::assay(profile, 1)))
+        {
+            .warning(sprintf("%s: number of cell lines in pData is different from expression slots", nn))
+        } else {
+            .message(sprintf("%s: pData dimension is OK", nn))
+        }
+        
+        if ("cellid" %in% colnames(SummarizedExperiment::colData(profile))) {
+            .message("cellid OK!")
+        } else {
+            .warning(sprintf("%s: cellid does not exist in pData columns", nn))
+        }
+        if ("batchid" %in% colnames(SummarizedExperiment::colData(profile))) {
+            .message("batchid OK!")
+        } else {
+            .warning(sprintf("%s: batchid does not exist in pData columns", nn))
+        }
+        if (S4Vectors::metadata(profile)$annotation == "rna" || 
+            S4Vectors::metadata(profile)$annotation == "rnaseq")
+        {
+            if ("BEST" %in% colnames(SummarizedExperiment::rowData(profile))) {
+                .message("BEST is OK")
+            } else {
+                .warning(sprintf("%s: BEST does not exist in fData columns", nn))
+            }
+            
+            if ("Symbol" %in% colnames(SummarizedExperiment::rowData(profile))) {
+                .message("Symbol is OK")
+            } else {
+                .warning(sprintf("%s: Symbol does not exist in fData columns", nn))
+            }
+        }
+        if ("cellid" %in% colnames(SummarizedExperiment::colData(profile))) {
+            if (!all(SummarizedExperiment::colData(profile)[, "cellid"] %in% rownames(tSet@cell))) {
+                .warning(sprintf("%s: not all the cell lines in this profile are in cell lines slot", nn))
+            }
+        } else {
+            .warning(sprintf("%s: cellid does not exist in pData", nn))
+        }
     }
-    if("tissueid" %in% colnames(tSet@cell)) {
-      if("unique.tissueid" %in% colnames(tSet@curation$tissue))
-      {
-        if(length(intersect(rownames(tSet@curation$tissue), rownames(tSet@cell))) != nrow(tSet@cell)) {
-          message("rownames of curation tissue slot should be the same as cell slot (curated cell ids)")
-        } else{
-          if(length(intersect(tSet@cell$tissueid, tSet@curation$tissue$unique.tissueid)) != length(table(tSet@cell$tissueid))){
-            message("tissueid should be the same as unique tissue id from tissue curation slot")
-          }
+    if ("tissueid" %in% colnames(tSet@cell)) {
+        if ("unique.tissueid" %in% colnames(tSet@curation$tissue)) {
+        if (length(intersect(rownames(tSet@curation$tissue), rownames(tSet@cell))) != nrow(tSet@cell)) {
+            .message("rownames of curation tissue slot should be the same as cell slot (curated cell ids)")
+        } else {
+            if(length(intersect(tSet@cell$tissueid, tSet@curation$tissue$unique.tissueid)) != 
+                length(table(tSet@cell$tissueid)))
+            {
+                .message("tissueid should be the same as unique tissue id from tissue curation slot")
+            }
         }
       } else {
-        message("unique.tissueid which is curated tissue id across data set should be a column of tissue curation slot")
+        .message("unique.tissueid which is curated tissue id across data set should be a column of tissue curation slot")
       }
       if(any(is.na(tSet@cell[,"tissueid"]) | tSet@cell[,"tissueid"] == "", na.rm = TRUE)) {
-        message(sprintf("There is no tissue type for this cell line(s): %s", paste(rownames(tSet@cell)[which(is.na(tSet@cell[,"tissueid"]) | tSet@cell[,"tissueid"] == "")], collapse = " ")))
+        .message(sprintf("There is no tissue type for this cell line(s): %s", paste(rownames(tSet@cell)[which(is.na(tSet@cell[,"tissueid"]) | tSet@cell[,"tissueid"] == "")], collapse = " ")))
       }
     } else {
-      warning("tissueid does not exist in cell slot")
+      .warning("tissueid does not exist in cell slot")
     }
 
     if("unique.cellid" %in% colnames(tSet@curation$cell)) {
-      if(length(intersect(tSet@curation$cell$unique.cellid, rownames(tSet@cell))) != nrow(tSet@cell)) {
-        message("rownames of cell slot should be curated cell ids")
-      }
+        if(length(intersect(tSet@curation$cell$unique.cellid, rownames(tSet@cell))) != nrow(tSet@cell)) {
+            .message("rownames of cell slot should be curated cell ids")
+        }
     } else {
-      message("unique.cellid which is curated cell id across data set should be a column of cell curation slot")
+        .message("unique.cellid which is curated cell id across data set should be a column of cell curation slot")
     }
 
-    if(length(intersect(rownames(tSet@curation$cell), rownames(tSet@cell))) != nrow(tSet@cell)) {
-      message("rownames of curation cell slot should be the same as cell slot (curated cell ids)")
+    if (length(intersect(rownames(tSet@curation$cell), rownames(tSet@cell))) != nrow(tSet@cell)) {
+        .message("rownames of curation cell slot should be the same as cell slot (curated cell ids)")
     }
 
-    if("unique.drugid" %in% colnames(tSet@curation$drug)) {
-      if(length(intersect(tSet@curation$drug$unique.drugid, rownames(tSet@drug))) != nrow(tSet@drug)) {
-        message("rownames of drug slot should be curated drug ids")
-      }
+    if ("unique.drugid" %in% colnames(tSet@curation$drug)) {
+        if(length(intersect(tSet@curation$drug$unique.drugid, rownames(tSet@drug))) != nrow(tSet@drug)) {
+            .message("rownames of drug slot should be curated drug ids")
+        }
     } else {
-      message("unique.drugid which is curated drug id across data set should be a column of drug curation slot")
+        .message("unique.drugid which is curated drug id across data set should be a column of drug curation slot")
     }
 
-    if(length(intersect(rownames(tSet@curation$cell), rownames(tSet@cell))) != nrow(tSet@cell)) {
-      message("rownames of curation drug slot should be the same as drug slot (curated drug ids)")
+    if (length(intersect(rownames(tSet@curation$cell), rownames(tSet@cell))) != nrow(tSet@cell)) {
+        .message("rownames of curation drug slot should be the same as drug slot (curated drug ids)")
     }
 
-    if(!is(tSet@cell, "data.frame")) {
-      warning("cell slot class type should be dataframe")
+    if (!is(tSet@cell, "data.frame")) {
+        .warning("cell slot class type should be dataframe")
     }
-    if(!is(tSet@drug, "data.frame")) {
-      warning("drug slot class type should be dataframe")
+    if (!is(tSet@drug, "data.frame")) {
+        .warning("drug slot class type should be dataframe")
     }
-    if(datasetType(tSet) %in% c("sensitivity", "both"))
+    if (datasetType(tSet) %in% c("sensitivity", "both"))
     {
-      if(!is(sensitivityInfo(tSet), "data.frame")) {
-        warning("sensitivity info slot class type should be dataframe")
-      }
-      if("cellid" %in% colnames(sensitivityInfo(tSet))) {
-        if(!all(sensitivityInfo(tSet)[,"cellid"] %in% rownames(tSet@cell))) {
-          warning("not all the cell lines in sensitivity data are in cell slot")
+        if(!is(sensitivityInfo(tSet), "data.frame")) {
+            .warning("sensitivity info slot class type should be dataframe")
         }
-      }else {
-        warning("cellid does not exist in sensitivity info")
-      }
-      if("drugid" %in% colnames(sensitivityInfo(tSet))) {
-        drug.ids <- unique(sensitivityInfo(tSet)[,"drugid"])
-        drug.ids <- drug.ids[grep("///",drug.ids, invert=TRUE)]
-        if(!all(drug.ids %in% rownames(tSet@drug))) {
-          message("not all the drugs in sensitivity data are in drug slot")
+        if("cellid" %in% colnames(sensitivityInfo(tSet))) {
+            if(!all(sensitivityInfo(tSet)[,"cellid"] %in% rownames(tSet@cell))) {
+                .warning("not all the cell lines in sensitivity data are in cell slot")
+            }
+        } else {
+            .warning("cellid does not exist in sensitivity info")
         }
-      }else {
-        warning("drugid does not exist in sensitivity info")
-      }
+        if ("drugid" %in% colnames(sensitivityInfo(tSet))) {
+            drug.ids <- unique(sensitivityInfo(tSet)[,"drugid"])
+            drug.ids <- drug.ids[grep("///",drug.ids, invert=TRUE)]
+            if (!all(drug.ids %in% rownames(tSet@drug))) {
+                .message("not all the drugs in sensitivity data are in drug slot")
+            }
+        } else {
+            .warning("drugid does not exist in sensitivity info")
+        }
 
-      if(any(!is.na(tSet@sensitivity$raw))) {
-        if(!all(dimnames(tSet@sensitivity$raw)[[1]] %in% rownames(sensitivityInfo(tSet)))) {
-          warning("For some experiments there is raw sensitivity data but no experimet information in sensitivity info")
+        if (any(!is.na(tSet@sensitivity$raw))) {
+            if(!all(dimnames(tSet@sensitivity$raw)[[1]] %in% rownames(sensitivityInfo(tSet)))) {
+                .warning("For some experiments there is raw sensitivity data but no experimet information in sensitivity info")
+            }
         }
-      }
-      if(!all(rownames(tSet@sensitivity$profiles) %in% rownames(sensitivityInfo(tSet)))) {
-        warning("For some experiments there is sensitivity profiles but no experimet information in sensitivity info")
-      }
+        if (!all(rownames(tSet@sensitivity$profiles) %in% rownames(sensitivityInfo(tSet)))) {
+            .warning("For some experiments there is sensitivity profiles but no experimet information in sensitivity info")
+        }
     }
-  }
+}
 
 
 
