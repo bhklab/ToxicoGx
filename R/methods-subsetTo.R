@@ -59,7 +59,7 @@ setMethod(`[`, "ToxicoSet", function(x, i, j, ..., drop = FALSE){
 #'
 #' @return A ToxicoSet with only the selected drugs and cells
 #'
-#' @importFrom CoreGx .unionList
+#' @importFrom CoreGx .unionList .message .warning .error
 #' @export
 ## TODO:: Include dose parmater to subset on
 subsetTo <- function(object, cell_lines = NULL,
@@ -92,15 +92,15 @@ subsetTo <- function(object, cell_lines = NULL,
     if ("dose" %in% names(adArgs)) {
         ## TODO:: Add subsetting on dose
         stop("Due to the structure of tSets, subsetting on dose can only be done on
-      specific slots - not on the entire tSet")
+            specific slots - not on the entire tSet")
     }
 
     ## MISSING VALUE HANDLING FOR PARAMETERS
     # Get named list of default values for missing parameters
     argDefaultList <-
         paramMissingHandler(funName = "subsetTo", tSet = object,
-                            drugs = drugs, cell_lines = cell_lines, features = features,
-                            duration = duration)
+                            drugs = drugs, cell_lines = cell_lines, 
+                            features = features, duration = duration)
     # Assign any missing parameter default values to function environment
     if (length(argDefaultList) > 0) {
         for (idx in seq_along(argDefaultList)) {

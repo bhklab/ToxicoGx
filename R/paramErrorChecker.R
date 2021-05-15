@@ -34,7 +34,8 @@ paramErrorChecker <- function(funName, tSet, ...) {
                "doseNotCtl"
              ),
            "summarizeMolecularProfiles" =
-             c(intersectParamChecks, "mDataTypeNotChar", "mDataTypeNotIn",
+             c(intersectParamChecks, "mDataTypeGt1", "mDataTypeNotChar", 
+               "mDataTypeNotIn",
                "summary.statNotChar", "summary.statNotIn", "summary.statGt1",
                "durationMissing", "durationNotIn", "cell_linesNotIn"
              ),

@@ -13,6 +13,7 @@
 # @return \code{list} A list of all missing parameter argument values, named
 #    with the respective missing parameters,
 #
+#' @importFrom CoreGx .message .warning .error
 #' @keywords internal
 paramMissingHandler <- function(funName, tSet, mDataType, ...) {
 
@@ -58,10 +59,11 @@ paramMissingHandler <- function(funName, tSet, mDataType, ...) {
   # Assigns values for missing parameters and throws warnings
   return(
     .checkParamsForMissing(funName = funName, tSet = tSet, mDataType = mDataType,
-                         missingChecks = missingChecks, ...)
+        missingChecks = missingChecks, ...)
   )
 }
 
+#' @importFrom CoreGx .message
 #' @keywords internal
 .checkParamsForMissing <- function(
   funName = funName, tSet = tSet, missingChecks, mDataType, ...) {
@@ -81,22 +83,22 @@ paramMissingHandler <- function(funName, tSet, mDataType, ...) {
     switch(
       missing,
       "cell_lines" = {if (is.null(cell_lines)) { missingParamValues[[missing]] <- unique(cellNames(tSet));
-        warning(paste0(missing, " parameter not specified, defaults to all cell lines in the given tSet!"))}
+        .message(paste0(missing, " parameter not specified, defaults to all cell lines in the given tSet!"))}
         },
       "drugs" = {if (is.null(drugs)) { missingParamValues[[missing]] <- unique(drugNames(tSet));
-        warning(paste0(missing, " parameter not specified, defaults to all drugs in the given tSet!"))}
+        .message(paste0(missing, " parameter not specified, defaults to all drugs in the given tSet!"))}
         },
       "features" = {if (is.null(features)) {missingParamValues[[missing]] <- unique(fNames(tSet, mDataType[1]));
-        warning(paste0(missing, " parameter not specified, defaults to all features in the given tSet for the specified mDataType!"))}
+        .message(paste0(missing, " parameter not specified, defaults to all features in the given tSet for the specified mDataType!"))}
         },
       "durations" = {if (is.null(duration)) {missingParamValues[[missing]] <- unique(as.character(ToxicoGx::sensitivityInfo(tSet)$duration_h));
-      warning(paste0(missing, " parameter not specified, defaults to all experimental durations in given tSet!"))}
+      .message(paste0(missing, " parameter not specified, defaults to all experimental durations in given tSet!"))}
         },
       "duration" = {if (is.null(duration)) {missingParamValues[[missing]] <- unique(as.character(ToxicoGx::sensitivityInfo(tSet)$duration_h))[1];
-      warning(paste0(missing, " parameter not specified, defaults to ", missingParamValues[[missing]]))}
+      .message(paste0(missing, " parameter not specified, defaults to ", missingParamValues[[missing]]))}
       },
       "dose" = {if (is.null(dose)) {missingParamValues[[missing]] <- unique(phenoInfo(tSet, mDataType)$dose_level);
-      warning(paste0(missing, " parameter not specified, defaults to all dose levels in the given tSet for the specified mDataType!"))}}
+      .message(paste0(missing, " parameter not specified, defaults to all dose levels in the given tSet for the specified mDataType!"))}}
     )
   }
   return(missingParamValues)
