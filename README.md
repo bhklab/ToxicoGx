@@ -1,4 +1,4 @@
-[![R build status](https://github.com/bhklab/PharmacoGx/workflows/R-CMD-check-bioc-devel/badge.svg)](https://github.com/bhklab/ToxicoGx/actions)
+[![R build status](https://github.com/bhklab/ToxicoGx/workflows/R-CMD-check-bioc-devel/badge.svg)](https://github.com/bhklab/ToxicoGx/actions)
 
 **Bioc-Release**: ![Bioconductor RELEASE](http://bioconductor.org/shields/build/release/bioc/ToxicoGx.svg) 
 **Bioc-Devel**: ![Bioconductor DEVEL](http://bioconductor.org/shields/build/devel/bioc/ToxicoGx.svg)
