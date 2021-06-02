@@ -16,3 +16,4 @@ object
 ^tSets
 ^TSets
 ^scripts/.*
+^\.github$
