@@ -1,5 +1,11 @@
 # *News*
 
+## v1.3.1
+- Molecular profile data is now subset in test to keep package size down
+
+## v1.3.0
+- Spring 2021 Bioconductor release!
+
 ## v1.1.0
 * Continue to abstract functionality into CoreGx
 * Add additional plotting functions such as grouped boxplots

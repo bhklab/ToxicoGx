@@ -41,11 +41,6 @@ For plotting the gene expression under same conditions using the package, the fi
 To plot, the function drugGeneResponseCurve has been used wherein mandatory inputs such as dataset, drug name, cell-line, molecular type, gene name, dose and time points should be specified.
 
 ```{r, eval = FALSE, message = FALSE, results = 'hide'}
-# For now
-devtools::install_github("bhklab/ToxicoGx", build_manual=TRUE, 
-                         build_vignettes=TRUE)
-
-# Once accepted, submission in progress
 BiocManager::install("ToxicoGx")
 ```
 
