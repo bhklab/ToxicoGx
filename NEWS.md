@@ -1,5 +1,12 @@
 # *News*
 
+## v1.2.1
+* Fix a bug in computeLimmaDiffExpr where subsetting a ToxicoSet doesn't subset the protocolData of a SummarizedExperiment, causing coercing to an ExpressionSet inside the function to fail
+* For now just deleting protocolData from the metadata of the SummarizedExperiment, but will eventually need to be fixed upstream in ORCESTRA
+
+## v1.2.0
+* Spring Bioconductor release!
+
 ## v1.1.0
 * Continue to abstract functionality into CoreGx
 * Add additional plotting functions such as grouped boxplots
