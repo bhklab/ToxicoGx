@@ -1,5 +1,12 @@
 # *News*
 
+## v1.3.2
+- Fix a bug in computeLimmaDiffExpr where subsetting a ToxicoSet doesn't subset
+the protocolData of a SummarizedExperiment, causing coercing to an ExpressionSet
+inside the function to fail
+- For now just deleting protocolData from the metadata of the SummarizedExperiment,
+but will eventually need to be fixed upstream in ORCESTRA
+
 ## v1.3.1
 - Molecular profile data is now subset in test to keep package size down
 
