@@ -24,8 +24,8 @@ WARNING: This function can take a very long time to compute!
 }
 \examples{
 if (interactive()) {
-data(TGGATESsmall)
-analysis <- computeLimmaDiffExpr(TGGATESsmall)
+  data(TGGATESsmall)
+  analysis <- computeLimmaDiffExpr(TGGATESsmall)
 }
 
 }
