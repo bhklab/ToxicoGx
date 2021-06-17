@@ -52,13 +52,13 @@ test_that("@molecularProfiles slot accessors produce expected results", {
                      function(name) {
 
                        context("External validation...")
-                       expect_equal_to_reference(molecularProfiles(TGGATESsmall, name),
+                       expect_equal_to_reference(molecularProfiles(TGGATESsmall, name)[, 1:100],
                                                  paste0(name, ".molecularProfiles.TGGATESsmall.rds"))
                        expect_equal_to_reference(featureInfo(TGGATESsmall, name),
                                                  paste0(name, ".featureInfoa.TGGATESsmall.rds"))
                        expect_equal_to_reference(fNames(TGGATESsmall, name),
                                                  paste0(name, ".fNames.TGGATESsmall.rds"))
-                       expect_equal_to_reference(phenoInfo(TGGATESsmall, name),
+                       expect_equal_to_reference(phenoInfo(TGGATESsmall, name)[1:100, ],
                                                  paste0(name, ".phenoData.TGGATESsmall.rds"))
 
 

@@ -4,8 +4,8 @@
 #'
 #' @examples
 #' if (interactive()) {
-#' data(TGGATESsmall)
-#' analysis <- computeLimmaDiffExpr(TGGATESsmall)
+#'   data(TGGATESsmall)
+#'   analysis <- computeLimmaDiffExpr(TGGATESsmall)
 #' }
 #'
 #' @param object A [`ToxicoSet`] object with a molecular profile named 'rna'
@@ -29,10 +29,14 @@
 setMethod('computeLimmaDiffExpr', signature(object='ToxicoSet'),
     function(object, buildTable=TRUE) {
 
-    ## TODO:: Add messaages to keep track of where the function execution is at
+    ## TODO:: Add messages to keep track of where the function execution is at
+    ## TODO:: Error if any of the model factors don't have enough levels
 
     # ---- 1. Get the required input data
     SE <- molecularProfilesSlot(object)$rna  # Extract the rna expression SummarizedExperiment
+    # work around to fix error when coercing to ESet, since protocolData is not
+    #>subset with the SummarizedExperiment in subsetTo
+    metadata(SE)$protocolData <- NULL
     eset <- as(SE, 'ExpressionSet')  # Coerce to an ExpressionSet
     eset$drugid <- make.names(eset$drugid)
     eset$cellid <- make.names(eset$cellid)
