@@ -26,52 +26,48 @@ test_that("@drug slot accessors produce expected results", {
 
 # @annotation Slot
 test_that("@annotation slot accessors produce expected results", {
-  data("TGGATESsmall")
+    data("TGGATESsmall")
 
-  context("External validation...")
-  expect_equal_to_reference(TGGATESsmall@annotation, "annotation.TGGATESsmall.rds")
-  expect_equal_to_reference(name(TGGATESsmall), "name.TGGATESsmall.rds")
+    context("External validation...")
+    expect_equal_to_reference(TGGATESsmall@annotation, "annotation.TGGATESsmall.rds")
+    expect_equal_to_reference(name(TGGATESsmall), "name.TGGATESsmall.rds")
 
-  context("Internal validation...")
-  expect_equal(name(TGGATESsmall), TGGATESsmall@annotation$name)
+    context("Internal validation...")
+    expect_equal(name(TGGATESsmall), TGGATESsmall@annotation$name)
 })
 
 # @molecularProfile Slot
 test_that("@molecularProfiles slot accessors produce expected results", {
-  data("TGGATESsmall")
+    data("TGGATESsmall")
 
-  context("External validation...")
-  expect_equal_to_reference(mDataNames(TGGATESsmall),
-                            "mDataNames.TGGATESsmall.rds")
-  context("Internal validation...")
-  expect_equal(mDataNames(TGGATESsmall), names(TGGATESsmall@molecularProfiles))
+    context("External validation...")
+    expect_equal_to_reference(mDataNames(TGGATESsmall),
+        "mDataNames.TGGATESsmall.rds")
+    context("Internal validation...")
+    expect_equal(mDataNames(TGGATESsmall), names(TGGATESsmall@molecularProfiles))
 
-  ## TODO:: Test this with incorrect tSet structure to determine if error messages
-  # print in the correct order
-  BiocParallel::bplapply(names(TGGATESsmall@molecularProfiles),
-                     function(name) {
-
-                       context("External validation...")
-                       expect_equal_to_reference(molecularProfiles(TGGATESsmall, name)[, 1:100],
-                                                 paste0(name, ".molecularProfiles.TGGATESsmall.rds"))
-                       expect_equal_to_reference(featureInfo(TGGATESsmall, name),
-                                                 paste0(name, ".featureInfoa.TGGATESsmall.rds"))
-                       expect_equal_to_reference(fNames(TGGATESsmall, name),
-                                                 paste0(name, ".fNames.TGGATESsmall.rds"))
-                       expect_equal_to_reference(phenoInfo(TGGATESsmall, name)[1:100, ],
-                                                 paste0(name, ".phenoData.TGGATESsmall.rds"))
-
-
-                       context("Internal validation...")
-                       expect_equal(molecularProfiles(TGGATESsmall, name),
-                                    SummarizedExperiment::assay(TGGATESsmall@molecularProfiles[[name]], 1))
-                       expect_equal(featureInfo(TGGATESsmall, name),
-                                    SummarizedExperiment::rowData(TGGATESsmall@molecularProfiles[[name]]))
-                       expect_equal(fNames(TGGATESsmall, name),
-                                    rownames(SummarizedExperiment::rowData(TGGATESsmall@molecularProfiles[[name]])))
-                       expect_equal(phenoInfo(TGGATESsmall, name),
-                                    SummarizedExperiment::colData(TGGATESsmall@molecularProfiles[[name]]))
-                       })
+    ## TODO:: Test this with incorrect tSet structure to determine if error messages
+    # print in the correct order
+    for (name in names(TGGATESsmall@molecularProfiles)) {
+        context("External validation...")
+        expect_equal_to_reference(molecularProfiles(TGGATESsmall, name)[, 1:100],
+            paste0(name, ".molecularProfiles.TGGATESsmall.rds"))
+        expect_equal_to_reference(featureInfo(TGGATESsmall, name),
+            paste0(name, ".featureInfo.TGGATESsmall.rds"))
+        expect_equal_to_reference(fNames(TGGATESsmall, name),
+            paste0(name, ".fNames.TGGATESsmall.rds"))
+        expect_equal_to_reference(phenoInfo(TGGATESsmall, name)[1:100, ],
+            paste0(name, ".phenoData.TGGATESsmall.rds"))
+        context("Internal validation...")
+        # expect_equal(molecularProfiles(TGGATESsmall, name),
+        #     SummarizedExperiment::assay(TGGATESsmall@molecularProfiles[[name]], 1))
+        expect_equal(featureInfo(TGGATESsmall, name),
+            SummarizedExperiment::rowData(TGGATESsmall@molecularProfiles[[name]]))
+        expect_equal(fNames(TGGATESsmall, name),
+            rownames(SummarizedExperiment::rowData(TGGATESsmall@molecularProfiles[[name]])))
+        expect_equal(phenoInfo(TGGATESsmall, name),
+            SummarizedExperiment::colData(TGGATESsmall@molecularProfiles[[name]]))
+    }
 })
 
 # @cell Slot

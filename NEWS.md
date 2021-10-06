@@ -1,5 +1,7 @@
 # *News*
 
+## v1.3.3
+- Debugging BioC build ERROR caused by updates to CoreGx
 ## v1.3.2
 - Fix a bug in computeLimmaDiffExpr where subsetting a ToxicoSet doesn't subset
 the protocolData of a SummarizedExperiment, causing coercing to an ExpressionSet
