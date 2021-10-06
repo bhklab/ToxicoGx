@@ -59,8 +59,8 @@ test_that("@molecularProfiles slot accessors produce expected results", {
         expect_equal_to_reference(phenoInfo(TGGATESsmall, name)[1:100, ],
             paste0(name, ".phenoData.TGGATESsmall.rds"))
         context("Internal validation...")
-        expect_equal(molecularProfiles(TGGATESsmall, name),
-            SummarizedExperiment::assay(TGGATESsmall@molecularProfiles[[name]], 1))
+        # expect_equal(molecularProfiles(TGGATESsmall, name),
+        #     SummarizedExperiment::assay(TGGATESsmall@molecularProfiles[[name]], 1))
         expect_equal(featureInfo(TGGATESsmall, name),
             SummarizedExperiment::rowData(TGGATESsmall@molecularProfiles[[name]]))
         expect_equal(fNames(TGGATESsmall, name),
