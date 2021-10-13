@@ -1,7 +1,12 @@
 # *News*
 
+## v1.3.4
+- Fix bug in tests when run on Windows due to uninherited namespace imports
+for testthat::context and testthat::expect_equal inside a bplapply call
+
 ## v1.3.3
 - Debugging BioC build ERROR caused by updates to CoreGx
+
 ## v1.3.2
 - Fix a bug in computeLimmaDiffExpr where subsetting a ToxicoSet doesn't subset
 the protocolData of a SummarizedExperiment, causing coercing to an ExpressionSet
