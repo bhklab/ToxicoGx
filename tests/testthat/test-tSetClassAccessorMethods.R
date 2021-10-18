@@ -154,7 +154,7 @@ test_that("subsetTo() class method produces expected results", {
     # Tests that relationship between sensitivity experiments and
     #>molecularProfiles is preserved 
     #>(4 molecular Profiles / 1 sensitivity experiment)
-    for (name in TGGATESsmall@molecularProfiles) {
+    for (name in names(molecularProfilesSlot(TGGATESsmall))) {
         testthat::context(paste0("Testing subsetTo on molecularProfile for ",
             name))
         ## TODO:: Generalize duration arguement so that it uses the first
