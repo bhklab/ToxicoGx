@@ -138,7 +138,7 @@ test_that("subsetTo() class method produces expected results", {
     data("TGGATESsmall")
 
     ## TODO:: Add unit tests for `[` subset operator
-    ## TODO:: Change context() messages to be more informative when 
+    ## TODO:: Change context() messages to be more informative when
     ##>running devtools::test()
     context("External validation...")
     expect_equal_to_reference(
@@ -154,8 +154,7 @@ test_that("subsetTo() class method produces expected results", {
     # Tests that relationship between sensitivity experiments and
     #>molecularProfiles is preserved 
     #>(4 molecular Profiles / 1 sensitivity experiment)
-    BiocParallel::bplapply(names(TGGATESsmall@molecularProfiles),
-            function(name) {
+    for (name in names(molecularProfilesSlot(TGGATESsmall))) {
         testthat::context(paste0("Testing subsetTo on molecularProfile for ",
             name))
         ## TODO:: Generalize duration arguement so that it uses the first
@@ -165,5 +164,5 @@ test_that("subsetTo() class method produces expected results", {
                 ToxicoGx::subsetTo(TGGATESsmall, duration = "8"
                     )@molecularProfiles[[name]])$duration %in% "8"),
             TRUE)
-    })
+    }
 })
