@@ -129,7 +129,7 @@ summarizeSensitivityProfiles <- function(tSet,
 
     ]
 
-  tt <- reshape2::acast(pp_dd, drugid~cellid, fun.aggregate = summary.function,
+  tt <- reshape2::acast(pp_dd, treatmentid ~ sampleid, fun.aggregate = summary.function,
                         value.var = "sensitivity.measure")
 
   result[rownames(tt), colnames(tt)] <- tt

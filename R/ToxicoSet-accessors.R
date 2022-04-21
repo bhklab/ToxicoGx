@@ -145,7 +145,7 @@ setMethod('name', signature("ToxicoSet"), function(object) {
 #' @eval CoreGx:::.docs_CoreSet_set_name(class_=.local_class, data_=.local_data)
 #' @importMethodsFrom CoreGx name<-
 setReplaceMethod('name', signature("ToxicoSet"), function(object, value) {
-    object <- callNextMethod(object, value)
+    object <- callNextMethod(object, value=value)
     return(invsible(object))
 })
 

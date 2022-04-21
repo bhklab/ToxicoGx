@@ -29,6 +29,7 @@ LazyData: true
 Depends: R (>= 4.1), CoreGx
 Imports:
     SummarizedExperiment,
+    BiocGenerics,
     S4Vectors,
     Biobase,
     BiocParallel,
@@ -65,7 +66,7 @@ Suggests:
     xtable,
     markdown
 biocViews: GeneExpression, Pharmacogenetics, Pharmacogenomics, Software
-Collate: 
+Collate:
     'LogLogisticRegression.R'
     'SanityCheck.R'
     'allGenerics.R'

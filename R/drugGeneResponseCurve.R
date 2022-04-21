@@ -135,7 +135,7 @@ drugGeneResponseCurve <- function(
   colnames(fInfo)[2] <- "feature"
 
   plotData <- merge(data, pInfo[, .(samplename, individual_id,
-                                    drugid, dose_level, duration)],
+                                    treatmentid, dose_level, duration)],
                     by = "samplename")
   plotData <- merge(plotData, fInfo[, .(Symbol, feature)], by = "feature")
   plotData[, dose_level := as.factor(dose_level)]

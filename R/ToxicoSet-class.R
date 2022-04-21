@@ -393,12 +393,12 @@ checkTSetStructure <- function(tSet, plotDist=FALSE, result.dir=".") {
         .message("rownames of curation cell slot should be the same as cell slot (curated cell ids)")
     }
 
-    if ("unique.drugid" %in% colnames(curation(tSet)$treatment)) {
-        if(length(intersect(curation(tSet)$treatment$unique.drugid, drugNames(tSet))) != nrow(treatmentInfo(tSet))) {
+    if ("unique.treatmentid" %in% colnames(curation(tSet)$treatment)) {
+        if(length(intersect(curation(tSet)$treatment$unique.treatmentid, drugNames(tSet))) != nrow(treatmentInfo(tSet))) {
             .message("rownames of drug slot should be curated drug ids")
         }
     } else {
-        .message("unique.drugid which is curated drug id across data set should be a column of drug curation slot")
+        .message("unique.treatmentid which is curated drug id across data set should be a column of drug curation slot")
     }
 
     if (length(intersect(rownames(curation(tSet)$cell), rownames(sampleInfo(tSet)))) != nrow(sampleInfo(tSet))) {
@@ -430,7 +430,7 @@ checkTSetStructure <- function(tSet, plotDist=FALSE, result.dir=".") {
                 .message("not all the drugs in sensitivity data are in drug slot")
             }
         } else {
-            .warning("drugid does not exist in sensitivity info")
+            .warning("treatmentid does not exist in sensitivity info")
         }
 
         if (any(!is.na(sensitivityRaw(tSet)))) {
