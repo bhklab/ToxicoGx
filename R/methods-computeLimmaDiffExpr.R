@@ -59,7 +59,7 @@ setMethod('computeLimmaDiffExpr', signature(object='ToxicoSet'),
     # Construct the design matrix with an intercept at 0
     # This follows the make the simplest design matrix possible strategy outlined
     # on page 37 of the limma user guide.
-    hasMultipleCells <- length(unique(targets$cell)) > 1
+    hasMultipleCells <- length(unique(targets$sample)) > 1
     if (hasMultipleCells) {
         design <- model.matrix(~0 + compound:dose:duration:cell,
             data=model.frame(targets))
@@ -128,10 +128,10 @@ setMethod('computeLimmaDiffExpr', signature(object='ToxicoSet'),
     if (!buildTable) return(stats)
 
     # ---- 7. Assemble the results into a data.table object
-    compoundNames <- make.names(drugInfo(object)$treatmentid)
-    compounds <- drugInfo(object)$treatmentid
-    cellNames <- make.names(cellInfo(object)$sampleid)
-    cells <- cellInfo(object)$sampleid
+    compoundNames <- make.names(treatmentInfo(object)$treatmentid)
+    compounds <- treatmentInfo(object)$treatmentid
+    cellNames <- make.names(sampleInfo(object)$sampleid)
+    cells <- sampleInfo(object)$sampleid
     ## TODO:: refactor this into muliple lapply statements!
     resultList <- lapply(contrastStrings, function(comparison) {
       # Disassmble contrasts into annotations for this statistical test
@@ -147,7 +147,7 @@ setMethod('computeLimmaDiffExpr', signature(object='ToxicoSet'),
       compound_id <- which(compoundNames %in% annotations[[1]][1])
       compound <- compounds[compound_id]
 
-      # Get the sample_id based on the contrast name then get the cellid
+      # Get the sample_id based on the contrast name then get the sampleid
       if (hasMultipleCells) {
           ## TODO:: Should I use == instead?
           sample_id <- which(cellNames %in% annotations[[1]][4])

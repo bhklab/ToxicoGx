@@ -62,14 +62,14 @@ one Assay corresponding to a requested drug.
 data(TGGATESsmall)
 summMP <- ToxicoGx::summarizeMolecularProfiles(
   tSet = TGGATESsmall, mDataType = "rna",
-  cell_lines=cellNames(TGGATESsmall), drugs = head(drugNames(TGGATESsmall)),
+  cell_lines=sampleNames(TGGATESsmall), drugs = head(treatmentNames(TGGATESsmall)),
   features = fNames(TGGATESsmall,"rna")[seq_len(100)], duration = "8",
   dose = c("Control", "High"), summary.stat = "median",
   fill.missing = TRUE, verbose=TRUE
   )
 
 #subset into expression matrix for a requested drug
-assays <- SummarizedExperiment::assays(summMP)[[drugNames(TGGATESsmall)[1]]]
+assays <- SummarizedExperiment::assays(summMP)[[treatmentNames(TGGATESsmall)[1]]]
 #summarization of phenoData for requested experiments
 phenoData <- SummarizedExperiment::colData(summMP)
 #summarization of phenoData for requested experiments

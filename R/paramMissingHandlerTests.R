@@ -61,7 +61,7 @@ paramMissingHandlerTests <- function(funName, tSet, mDataType, ...) {
       "cell_lines" = {
       message(paste0(missing, " parameter not specified, defaults to all cell lines in the given tSet!"))
       },
-      "drugs" = {if (is.null(drugs)) { missingParamValues[[missing]] <- unique(drugNames(tSet));
+      "drugs" = {if (is.null(drugs)) { missingParamValues[[missing]] <- unique(treatmentNames(tSet));
       message(paste0(missing, " parameter not specified, defaults to all drugs in the given tSet!"))}
       },
       "features" = {if (is.null(features)) {missingParamValues[[missing]] <- unique(fNames(tSet, mDataType));

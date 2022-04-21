@@ -51,8 +51,8 @@ all the experiments for a radiation or cell of interest, as well removes the nee
 to keep track of all the metadata conventions between different datasets.
 }
 \examples{
-TGGATESDrugNames  <- drugNames(TGGATESsmall)
-TGGATESCells <- cellNames(TGGATESsmall)
+TGGATESDrugNames  <- treatmentNames(TGGATESsmall)
+TGGATESCells <- sampleNames(TGGATESsmall)
 tSet <- subsetTo(TGGATESsmall,drugs = TGGATESDrugNames[1],
   cells = TGGATESCells[1], duration = "2")
 

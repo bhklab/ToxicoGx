@@ -142,10 +142,10 @@
 #  if(!assertthat::are_equal(annotation(tSet_old), annotation(tSet_new)))
 #    message("The annotation slots are not equivalent!")
 #
-#  if(!assertthat::are_equal(cellInfo(tSet_old), cellInfo(tSet_new)))
+#  if(!assertthat::are_equal(sampleInfo(tSet_old), sampleInfo(tSet_new)))
 #    message("The cell slots are not equivalent!")
 #
-#  if(!assertthat::are_equal(drugInfo(tSet_old), drugInfo(tSet_new)))
+#  if(!assertthat::are_equal(treatmentInfo(tSet_old), treatmentInfo(tSet_new)))
 #    message("The drug slots are not equivalent!")
 #
 #  if(!assertthat::are_equal(sensitivitySlot(tSet_old), sensitivitySlot(tSet_new)))

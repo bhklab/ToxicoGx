@@ -24,6 +24,6 @@ Returns the subsetted tSet
 \code{[}
 }
 \examples{
-tSet <- TGGATESsmall[cellNames(TGGATESsmall), drugNames(TGGATESsmall)[seq_len(3)]]
+tSet <- TGGATESsmall[sampleNames(TGGATESsmall), treatmentNames(TGGATESsmall)[seq_len(3)]]
 
 }

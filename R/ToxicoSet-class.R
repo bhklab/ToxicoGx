@@ -217,7 +217,7 @@ ToxicoSet <-  function(name,
   }
 
   ## consider all drugs
-  drugn <- drugNames(tSet)
+  drugn <- treatmentNames(tSet)
 
   ## consider all cell lines
   celln <- rownames(sampleInfo(tSet))
@@ -243,7 +243,7 @@ ToxicoSet <-  function(name,
   }
 
   ## consider all drugs
-  drugn <- drugNames(tSet)
+  drugn <- treatmentNames(tSet)
 
   ## consider all cell lines
   celln <- rownames(sampleInfo(tSet))
@@ -328,9 +328,9 @@ checkTSetStructure <- function(tSet, plotDist=FALSE, result.dir=".") {
         }
 
         if ("sampleid" %in% colnames(SummarizedExperiment::colData(profile))) {
-            .message("cellid OK!")
+            .message("sampleid OK!")
         } else {
-            .warning(sprintf("%s: cellid does not exist in pData columns", nn))
+            .warning(sprintf("%s: sampleid does not exist in pData columns", nn))
         }
         if ("batchid" %in% colnames(SummarizedExperiment::colData(profile))) {
             .message("batchid OK!")
@@ -357,7 +357,7 @@ checkTSetStructure <- function(tSet, plotDist=FALSE, result.dir=".") {
                 .warning(sprintf("%s: not all the cell lines in this profile are in cell lines slot", nn))
             }
         } else {
-            .warning(sprintf("%s: cellid does not exist in pData", nn))
+            .warning(sprintf("%s: sampleid does not exist in pData", nn))
         }
     }
     if ("tissueid" %in% colnames(sampleInfo(tSet))) {
@@ -381,12 +381,12 @@ checkTSetStructure <- function(tSet, plotDist=FALSE, result.dir=".") {
         .warning("tissueid does not exist in cell slot")
     }
 
-    if ("unique.cellid" %in% colnames(curation(tSet)$cell)) {
-        if(length(intersect(curation(tSet)$cell$unique.cellid, rownames(sampleInfo(tSet)))) != nrow(sampleInfo(tSet))) {
+    if ("unique.sampleid" %in% colnames(curation(tSet)$cell)) {
+        if(length(intersect(curation(tSet)$cell$unique.sampleid, rownames(sampleInfo(tSet)))) != nrow(sampleInfo(tSet))) {
             .message("rownames of cell slot should be curated cell ids")
         }
     } else {
-        .message("unique.cellid which is curated cell id across data set should be a column of cell curation slot")
+        .message("unique.sampleid which is curated cell id across data set should be a column of cell curation slot")
     }
 
     if (length(intersect(rownames(curation(tSet)$cell), rownames(sampleInfo(tSet)))) != nrow(sampleInfo(tSet))) {
@@ -394,7 +394,7 @@ checkTSetStructure <- function(tSet, plotDist=FALSE, result.dir=".") {
     }
 
     if ("unique.treatmentid" %in% colnames(curation(tSet)$treatment)) {
-        if(length(intersect(curation(tSet)$treatment$unique.treatmentid, drugNames(tSet))) != nrow(treatmentInfo(tSet))) {
+        if(length(intersect(curation(tSet)$treatment$unique.treatmentid, treatmentNames(tSet))) != nrow(treatmentInfo(tSet))) {
             .message("rownames of drug slot should be curated drug ids")
         }
     } else {
@@ -421,12 +421,12 @@ checkTSetStructure <- function(tSet, plotDist=FALSE, result.dir=".") {
                 .warning("not all the cell lines in sensitivity data are in cell slot")
             }
         } else {
-            .warning("cellid does not exist in sensitivity info")
+            .warning("sampleid does not exist in sensitivity info")
         }
         if ("treatmentid" %in% colnames(sensitivityInfo(tSet))) {
             drug.ids <- unique(sensitivityInfo(tSet)[, "treatmentid"])
             drug.ids <- drug.ids[grep("///",drug.ids, invert=TRUE)]
-            if (!all(drug.ids %in% drugNames(tSet))) {
+            if (!all(drug.ids %in% treatmentNames(tSet))) {
                 .message("not all the drugs in sensitivity data are in drug slot")
             }
         } else {
@@ -479,7 +479,7 @@ setMethod("show", signature=signature(object="ToxicoSet"), function(object) {
 #' @return A named vector with the number of Cells and Drugs in the ToxicoSet
 #' @export
 setMethod("dim", signature("ToxicoSet"), function(x) {
-    return(c(Cells=length(cellNames(x)), Drugs=length(drugNames(x))))
+    return(c(Cells=length(sampleNames(x)), Drugs=length(treatmentNames(x))))
 })
 
 ##' Retrieve a symbol holding metadata about a ToxicoSet object

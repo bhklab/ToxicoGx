@@ -19,7 +19,7 @@ for the session in which the computation was done. Useful for determining the ex
 \examples{
 data(TGGATESsmall)
 drug.perturbation <- drugPerturbationSig(TGGATESsmall, mDataType="rna", nthread=1, duration = "2",
-     drugs = head(drugNames(TGGATESsmall)), features = fNames(TGGATESsmall, "rna")[seq_len(2)])
+     drugs = head(treatmentNames(TGGATESsmall)), features = fNames(TGGATESsmall, "rna")[seq_len(2)])
 showSigAnnot(drug.perturbation)
 
 }

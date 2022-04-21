@@ -33,7 +33,7 @@ ToxicoSig <- function(Data=array(NA, dim=c(0,0,0)), tSetName='', DateCreated=dat
 #' @examples
 #' data(TGGATESsmall)
 #' drug.perturbation <- drugPerturbationSig(TGGATESsmall, mDataType="rna", nthread = 1, duration = "2",
-#'      drugs = head(drugNames(TGGATESsmall)), features = fNames(TGGATESsmall, "rna")[seq_len(2)])
+#'      drugs = head(treatmentNames(TGGATESsmall)), features = fNames(TGGATESsmall, "rna")[seq_len(2)])
 #' drug.perturbation
 #'
 #' @param object \code{ToxicoSig}
@@ -58,7 +58,7 @@ setMethod("show", signature=signature(object='ToxicoSig'),
 #' @examples
 #' data(TGGATESsmall)
 #' drug.perturbation <- drugPerturbationSig(TGGATESsmall, mDataType="rna", nthread=1, duration = "2",
-#'      drugs = head(drugNames(TGGATESsmall)), features = fNames(TGGATESsmall, "rna")[seq_len(2)])
+#'      drugs = head(treatmentNames(TGGATESsmall)), features = fNames(TGGATESsmall, "rna")[seq_len(2)])
 #' showSigAnnot(drug.perturbation)
 #'
 #' @param Sigs An object of the \code{ToxicoSig} Class, as returned by \code{drugPerturbationSig}

@@ -34,7 +34,7 @@ paramErrorChecker <- function(funName, tSet, ...) {
                "doseNotCtl"
              ),
            "summarizeMolecularProfiles" =
-             c(intersectParamChecks, "mDataTypeGt1", "mDataTypeNotChar", 
+             c(intersectParamChecks, "mDataTypeGt1", "mDataTypeNotChar",
                "mDataTypeNotIn",
                "summary.statNotChar", "summary.statNotIn", "summary.statGt1",
                "durationMissing", "durationNotIn", "cell_linesNotIn"
@@ -105,13 +105,13 @@ paramErrorChecker <- function(funName, tSet, ...) {
         "mDataTypeNotIn" = {if (!(mDataType %in% mDataNames(tSet))) { stop(paste0("The molecular data type(s) ", paste(mDataType[which(!(mDataType %in% mDataNames(tSet)))], collapse = ", " ), " is/are not present in ", name(tSet), ".")) }},
         # cell_lines checks
         "cell_linesNotChar" = {if (!is.character(unlist(cell_lines))) { stop("cell_lines parameter must contain strings.") }},
-        "cell_linesNotIn" = {if (all(!(cell_lines %in% cellNames(tSet)))) { stop(paste0("The cell line(s) ", paste(cell_lines[which(!(cell_lines %in% cellNames(tSet)))], collapse = ", "), " is/are not present in ", name(tSet), "with the specified parameters.")) }},
+        "cell_linesNotIn" = {if (all(!(cell_lines %in% sampleNames(tSet)))) { stop(paste0("The cell line(s) ", paste(cell_lines[which(!(cell_lines %in% sampleNames(tSet)))], collapse = ", "), " is/are not present in ", name(tSet), "with the specified parameters.")) }},
         "cell_linesG" = {if (length(cell_lines) > 2) {stop("This plot currently only supports two cell lines at once!")}},
         # drugs checks
         "drugsNotChar" = {if (!is.character(unlist(drugs))) { stop("drugs parameter must contain strings.") }},
-        "drugsNotIn" = {if (all(!(drugs %in% drugNames(tSet)))) { stop(paste0("The drug(s) ", paste(drugs[which(!(drugs %in% drugNames(tSet)))], collapse = ", "), " is/are not present in ", name(tSet), ".")) }},
+        "drugsNotIn" = {if (all(!(drugs %in% treatmentNames(tSet)))) { stop(paste0("The drug(s) ", paste(drugs[which(!(drugs %in% treatmentNames(tSet)))], collapse = ", "), " is/are not present in ", name(tSet), ".")) }},
         ## TODO:: Test this works correctly once an additional cell line is added to a tSet
-        "drugsIntersectsCellLine" = {if (length(drugs) == 1) { if (!(drugs %in% subset(sensitivityInfo(tSet), cellid == cell_lines, select = drugid)))  {stop(paste0("The drug ", drugs, "is not present for cell line(s)", paste0(cell_lines, collapse = ", ")), "!") }}},
+        "drugsIntersectsCellLine" = {if (length(drugs) == 1) { if (!(drugs %in% subset(sensitivityInfo(tSet), sampleid == cell_lines, select = treatmentid)))  {stop(paste0("The drug ", drugs, "is not present for cell line(s)", paste0(cell_lines, collapse = ", ")), "!") }}},
         "drugsGt2" = {if (length(drugs) > 2) { stop("This plot only supports two drugs at a time!")  }},
         # features checks
         "featuresLt2" = {if (length(fNames(tSet, mDataType)) < 2) { stop("Must include at least 2 features to calculate summary statistics") }},
