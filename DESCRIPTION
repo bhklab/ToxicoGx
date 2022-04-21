@@ -1,27 +1,27 @@
 Package: ToxicoGx
 Type: Package
 Title: Analysis of Large-Scale Toxico-Genomic Data
-Version: 1.5.0
-Date: 2021-10-18
+Version: 1.5.1
+Date: 2022-04-21
 Authors@R: c(
   person("Sisira","Nair", email = "sisira.nair@uhnresearch.ca",
     role = c("aut")),
-  person("Esther","Yoo", email = "yk.yoo@mail.utoronto.ca", 
+  person("Esther","Yoo", email = "yk.yoo@mail.utoronto.ca",
     role = c("aut")),
   person("Christopher","Eeles", email = "christopher.eeles@uhnresearch.ca",
     role = c("aut")),
-  person("Amy", "Tang", email = "amy.tang@queensu.ca", 
+  person("Amy", "Tang", email = "amy.tang@queensu.ca",
     role = c("aut")),
   person("Nehme", "El-Hachem", email = "hachemn@gmail.com",
     role = c("aut")),
-  person("Petr","Smirnov", email = "petr.smirnov@uhnresearch.ca", 
+  person("Petr","Smirnov", email = "petr.smirnov@uhnresearch.ca",
     role = c("aut")),
   person("Benjamin","Haibe-Kains", email = "benjamin.haibe.kains@utoronto.ca",
     role = c("aut","cre"))
   )
-Description: Contains a set of functions to perform large-scale analysis of 
-  toxicogenomic data, providing a standardized data structure to hold 
-  information relevant to annotation, visualization and statistical analysis of 
+Description: Contains a set of functions to perform large-scale analysis of
+  toxicogenomic data, providing a standardized data structure to hold
+  information relevant to annotation, visualization and statistical analysis of
   toxicogenomic data.
 License: MIT + file LICENSE
 Encoding: UTF-8
@@ -52,6 +52,7 @@ Imports:
     limma,
     jsonlite
 RoxygenNote: 7.1.2
+Roxygen: list(markdown=TRUE, r6=FALSE)
 VignetteBuilder: knitr
 Suggests:
     rmarkdown,
@@ -64,3 +65,35 @@ Suggests:
     xtable,
     markdown
 biocViews: GeneExpression, Pharmacogenetics, Pharmacogenomics, Software
+Collate: 
+    'LogLogisticRegression.R'
+    'SanityCheck.R'
+    'allGenerics.R'
+    'ToxicoSet-class.R'
+    'ToxicoSet-accessors.R'
+    'class-signature.R'
+    'columnsAsCharacter.R'
+    'computeAUC.R'
+    'computeDrugSensitivity.R'
+    'computeIC50.R'
+    'computeICn.R'
+    'dataset.R'
+    'downloadTSet.R'
+    'drugGeneResponseCurve.R'
+    'drugPerturbationSig.R'
+    'drugTimeResponseCurve.R'
+    'geneDrugPerturbation.R'
+    'geneDrugSensitivity.R'
+    'globals.R'
+    'methods-computeLimmaDiffExpr.R'
+    'methods-subsetTo.R'
+    'paramErrorChecker.R'
+    'paramMissingHandler.R'
+    'paramMissingHandlerTests.R'
+    'rankGeneDrugPerturbation.R'
+    'rankGeneDrugSensitivity.R'
+    'summarizeMolecularProfiles.R'
+    'summarizeSensitivityProfiles.R'
+    'updateObject-methods.R'
+    'utilities.R'
+    'zzz.R'

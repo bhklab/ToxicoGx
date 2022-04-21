@@ -7,20 +7,20 @@
 geneDrugPerturbation(x, concentration, type, batch, duration, model = FALSE)
 }
 \arguments{
-\item{x}{[numeric] Vector of gene expression values}
+\item{x}{\link{numeric} Vector of gene expression values}
 
-\item{concentration}{[numeric] Vector with drug concentrations/doses}
+\item{concentration}{\link{numeric} Vector with drug concentrations/doses}
 
-\item{type}{[factor] Vector of factors specifying the cell lines or type types}
+\item{type}{\link{factor} Vector of factors specifying the cell lines or type types}
 
-\item{batch}{[factor] Vector of factors specifying the batch}
+\item{batch}{\link{factor} Vector of factors specifying the batch}
 
-\item{duration}{[character] Vector of measurement times (in hours)}
+\item{duration}{\link{character} Vector of measurement times (in hours)}
 
-\item{model}{[logical] Should the full linear model be returned? Default set to FALSE}
+\item{model}{\link{logical} Should the full linear model be returned? Default set to FALSE}
 }
 \value{
-[numeric] Vector reporting the effect size (estimateof the coefficient of drug concentration), standard error (se), sample size (n), t statistic, and F statistics and its corresponding p-value
+\link{numeric} Vector reporting the effect size (estimateof the coefficient of drug concentration), standard error (se), sample size (n), t statistic, and F statistics and its corresponding p-value
 }
 \description{
 Function computing gene-drug associations from perturbation data

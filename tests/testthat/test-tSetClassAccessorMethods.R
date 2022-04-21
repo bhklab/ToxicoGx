@@ -12,8 +12,8 @@ test_that("TGGATESsmall tSet has correct structure", {
 #### tSet Acessor methods ####
 context("Testing tSet Class Accessor Methods...")
 
-# @drug Slot
-test_that("@drug slot accessors produce expected results", {
+# @treatment Slot
+test_that("@treatment slot accessors produce expected results", {
     data("TGGATESsmall")
     context("External validation...")
     expect_equal_to_reference(drugInfo(TGGATESsmall),
@@ -22,8 +22,8 @@ test_that("@drug slot accessors produce expected results", {
         "drugNames.TGGATESsmall.rds")
 
     context("Internal validation...")
-    expect_equal(drugInfo(TGGATESsmall), TGGATESsmall@drug)
-    expect_equal(drugNames(TGGATESsmall), TGGATESsmall@drug$drugid)
+    expect_equal(drugInfo(TGGATESsmall), TGGATESsmall@treatment)
+    expect_equal(drugNames(TGGATESsmall), TGGATESsmall@treatment$treatmentid)
 })
 
 # @annotation Slot
@@ -31,7 +31,7 @@ test_that("@annotation slot accessors produce expected results", {
     data("TGGATESsmall")
 
     context("External validation...")
-    expect_equal_to_reference(TGGATESsmall@annotation, 
+    expect_equal_to_reference(TGGATESsmall@annotation,
         "annotation.TGGATESsmall.rds")
     expect_equal_to_reference(name(TGGATESsmall), "name.TGGATESsmall.rds")
 
@@ -47,7 +47,7 @@ test_that("@molecularProfiles slot accessors produce expected results", {
     expect_equal_to_reference(mDataNames(TGGATESsmall),
         "mDataNames.TGGATESsmall.rds")
     context("Internal validation...")
-    expect_equal(mDataNames(TGGATESsmall), 
+    expect_equal(mDataNames(TGGATESsmall),
         names(TGGATESsmall@molecularProfiles))
 
     ## TODO:: Test this with incorrect tSet structure to determine if error
@@ -76,8 +76,8 @@ test_that("@molecularProfiles slot accessors produce expected results", {
     }
 })
 
-# @cell Slot
-test_that("@cell slot accessors produce expected results", {
+# @sample Slot
+test_that("@sample slot accessors produce expected results", {
     data("TGGATESsmall")
 
     context("External validation...")
@@ -87,8 +87,8 @@ test_that("@cell slot accessors produce expected results", {
         "cellNames.TGGATESsmall.rds")
 
     context("Internal validation...")
-    expect_equal(cellInfo(TGGATESsmall), TGGATESsmall@cell)
-    expect_equal(cellNames(TGGATESsmall), TGGATESsmall@cell$cellid)
+    expect_equal(cellInfo(TGGATESsmall), TGGATESsmall@sample)
+    expect_equal(cellNames(TGGATESsmall), TGGATESsmall@sample$sampleid)
 })
 
 # @sensitivty Slot
@@ -102,13 +102,13 @@ test_that("@sensitivity slot accessors produce expected results", {
         "sensitivitProfiles.TGGATESsmall.rds")
     expect_equal_to_reference(sensitivityMeasures(TGGATESsmall),
         "sensitivityMeasures.TGGATESsmall.rds")
-    expect_equal_to_reference(sensNumber(TGGATESsmall), 
-        "sensNumber.TGGATESsmall.rds")  
+    expect_equal_to_reference(sensNumber(TGGATESsmall),
+        "sensNumber.TGGATESsmall.rds")
     context("Internal validation...")
     expect_equal(sensitivityInfo(TGGATESsmall), TGGATESsmall@sensitivity$info)
-    expect_equal(sensitivityProfiles(TGGATESsmall), 
+    expect_equal(sensitivityProfiles(TGGATESsmall),
         TGGATESsmall@sensitivity$profiles)
-    expect_equal(sensitivityMeasures(TGGATESsmall), 
+    expect_equal(sensitivityMeasures(TGGATESsmall),
         colnames(TGGATESsmall@sensitivity$profiles))
     expect_equal(sensNumber(TGGATESsmall), TGGATESsmall@sensitivity$n)
 })
@@ -129,7 +129,7 @@ test_that("@perturbation slot accessors produce expected results", {
 test_that("@curation slot accessors produce expected results", {
     data("TGGATESsmall")
     context("External validation...")
-    expect_equal_to_reference(TGGATESsmall@curation, 
+    expect_equal_to_reference(TGGATESsmall@curation,
         "curation.TGGATESsmall.rds")
 })
 
@@ -152,7 +152,7 @@ test_that("subsetTo() class method produces expected results", {
             %in% "2"),
         TRUE)
     # Tests that relationship between sensitivity experiments and
-    #>molecularProfiles is preserved 
+    #>molecularProfiles is preserved
     #>(4 molecular Profiles / 1 sensitivity experiment)
     for (name in names(molecularProfilesSlot(TGGATESsmall))) {
         testthat::context(paste0("Testing subsetTo on molecularProfile for ",

@@ -3,7 +3,7 @@
 \name{drugGeneResponseCurve}
 \alias{drugGeneResponseCurve}
 \title{Compares gene expression for a specificed set of features over specific
-  drug dosages vs time}
+drug dosages vs time}
 \usage{
 drugGeneResponseCurve(
   tSet,
@@ -68,8 +68,8 @@ Plot of the viabilities for each drug vs time of exposure
 }
 \description{
 This function generates a plot visualizing the relationship between gene
-  expression, time and dose level for the selected tSet. The plot is generated
-  with ggplot2 and can be customized using ggplot plot + function() syntax.
+expression, time and dose level for the selected tSet. The plot is generated
+with ggplot2 and can be customized using ggplot plot + function() syntax.
 }
 \examples{
 

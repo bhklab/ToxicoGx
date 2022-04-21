@@ -3,18 +3,18 @@
 #' The function fetches a table of all ToxicoSets available for download from
 #' the ToxicoGx server. The table includes the names of the ToxicoSet, the
 #' types of data available in the object, and the date of last update.
-#' 
+#'
 #' Much more information on the processing of the data and data provenance can be found at:
-#' www.orcestra.ca 
+#' www.orcestra.ca
 #'
 #' @examples
 #' if (interactive()){
-#' availablePSets()
+#' availableTSets()
 #' }
 #'
 #' @param canonical [`logical`] Should available TSets show only official TSets, or should
 #'   user generated TSets be included?
-#' 
+#'
 #' @return A data.frame with details about the available ToxicoSet objects
 #' @export
 #' @import jsonlite
@@ -24,7 +24,7 @@ availableTSets <- function(canonical=TRUE){
   } else {
     return("Only canonical TSets are available at the moment")
   }
-  
+
   tSetTable <- data.frame("ToxicoSet.Name" = avail.tsets$dataset$name,
                           "Data.Source" = avail.tsets$dataset$versionInfo$data$rawMicroarrayData,
                           "Date.Created" = avail.tsets$dateCreated,
@@ -41,7 +41,7 @@ availableTSets <- function(canonical=TRUE){
 #'
 #' @examples
 #' if (interactive()) {
-#' drugMatrix_rat <- downloadtSet("drugMatrix_rat")
+#' drugMatrix_rat <- downloadTSet("DrugMatrix Rat")
 #' }
 #'
 #' @param name \code{Character} string, the name of the PhamracoSet to download.
@@ -51,17 +51,26 @@ availableTSets <- function(canonical=TRUE){
 #' @param tSetFileName \code{character} string, the file name to save the dataset under
 #' @param verbose \code{bool} Should status messages be printed during download.
 #'   Defaults to TRUE.
+#' @param timeout `numeric(1)` How long to wait before the download times out,
+#' in seconds. Default is 600 seconds (10 minutes).
+#'
 #' @return A tSet object with the dataset, downloaded from our server
-#' @import downloader
+#'
+#' @importFrom downloader download
 #' @export
-downloadTSet <- function(name, saveDir = tempdir(), tSetFileName = NULL, verbose = TRUE) {
+downloadTSet <- function(name, saveDir = tempdir(), tSetFileName = NULL, verbose = TRUE, timeout=600) {
+
+  # change the download timeout since the files are big
+  opts <- options()
+  options(timeout=timeout)
+  on.exit(options(opts))
 
   if (missing(saveDir)) {message("Downloading to temporary folder... Use saveDir parameter to save to a specific path")}
   tSetTable <- availableTSets(canonical=TRUE)
 
   whichx <- match(name, tSetTable[, 1])
   if (is.na(whichx)) {
-    stop('Unknown Dataset. Please use the availabletSets() function for the
+    stop('Unknown Dataset. Please use the availableTSets() function for the
          table of available ToxicoSets.')
   }
 
@@ -73,13 +82,14 @@ downloadTSet <- function(name, saveDir = tempdir(), tSetFileName = NULL, verbose
     tSetFileName <- paste0(tSetTable[whichx,"ToxicoSet.Name"], ".rds")
   }
   if (!file.exists(file.path(saveDir, tSetFileName))) {
-    downloader::download(url = as.character(tSetTable[whichx,"URL"]),
+    downloader::download(url = as.character(tSetTable[whichx, "URL"]),
                          destfile = file.path(saveDir, tSetFileName),
                          quiet = !verbose, mode='wb')
   }
 
   print(file.path(saveDir, tSetFileName))
   tSet <- readRDS(file.path(saveDir, tSetFileName))
+  tSet <- updateObject(tSet)
 
   return(tSet)
 }

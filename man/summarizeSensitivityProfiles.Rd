@@ -42,7 +42,7 @@ molecular data object be filled in with missing values?}
 }
 \value{
 \code{matrix} A matrix with drugs going down the rows, cell lines across
-  the columns, with the selected sensitivity statistic for each pair.
+the columns, with the selected sensitivity statistic for each pair.
 }
 \description{
 This function creates a table with drug as rows and cell lines as columns,

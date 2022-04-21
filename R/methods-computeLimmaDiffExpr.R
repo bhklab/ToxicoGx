@@ -1,3 +1,6 @@
+#' @include ToxicoSet-accessors.R
+NULL
+
 #' Conduct differential expression analysis using the limma R pacakge
 #'
 #' WARNING: This function can take a very long time to compute!
@@ -38,14 +41,14 @@ setMethod('computeLimmaDiffExpr', signature(object='ToxicoSet'),
     #>subset with the SummarizedExperiment in subsetTo
     metadata(SE)$protocolData <- NULL
     eset <- as(SE, 'ExpressionSet')  # Coerce to an ExpressionSet
-    eset$drugid <- make.names(eset$drugid)
-    eset$cellid <- make.names(eset$cellid)
+    eset$treatmentid <- make.names(eset$treatmentid)
+    eset$sampleid <- make.names(eset$sampleid)
 
     # ---- 2. Extract the metadata needed to build the design matrix
 
     # Get the sample name, drug, dose and duration and cell type from the
     #   experiments phenotypic data
-    targets <- as.data.frame(pData(eset)[, c("samplename", "cellid", "drugid",
+    targets <- as.data.frame(pData(eset)[, c("samplename", "sampleid", "treatmentid",
                                              "dose_level", "duration")])
     colnames(targets) <- c('sample', 'cell', 'compound', 'dose', 'duration')
     # to prevent dropping numeric columns when converting to factors
@@ -125,10 +128,10 @@ setMethod('computeLimmaDiffExpr', signature(object='ToxicoSet'),
     if (!buildTable) return(stats)
 
     # ---- 7. Assemble the results into a data.table object
-    compoundNames <- make.names(drugInfo(object)$drugid)
-    compounds <- drugInfo(object)$drugid
-    cellNames <- make.names(cellInfo(object)$cellid)
-    cells <- cellInfo(object)$cellid
+    compoundNames <- make.names(drugInfo(object)$treatmentid)
+    compounds <- drugInfo(object)$treatmentid
+    cellNames <- make.names(cellInfo(object)$sampleid)
+    cells <- cellInfo(object)$sampleid
     ## TODO:: refactor this into muliple lapply statements!
     resultList <- lapply(contrastStrings, function(comparison) {
       # Disassmble contrasts into annotations for this statistical test
@@ -144,11 +147,11 @@ setMethod('computeLimmaDiffExpr', signature(object='ToxicoSet'),
       compound_id <- which(compoundNames %in% annotations[[1]][1])
       compound <- compounds[compound_id]
 
-      # Get the cell_id based on the contrast name then get the cellid
+      # Get the sample_id based on the contrast name then get the cellid
       if (hasMultipleCells) {
           ## TODO:: Should I use == instead?
-          cell_id <- which(cellNames %in% annotations[[1]][4])
-          cell <- cells[cell_id]
+          sample_id <- which(cellNames %in% annotations[[1]][4])
+          cell <- cells[sample_id]
       } else {
           cell <- unique(cells)
       }
@@ -177,4 +180,3 @@ setMethod('computeLimmaDiffExpr', signature(object='ToxicoSet'),
     # --- 8. Annotate and return the results
     return(analysis)
 })
-

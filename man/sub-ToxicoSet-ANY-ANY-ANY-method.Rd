@@ -2,7 +2,7 @@
 % Please edit documentation in R/methods-subsetTo.R
 \name{[,ToxicoSet,ANY,ANY,ANY-method}
 \alias{[,ToxicoSet,ANY,ANY,ANY-method}
-\title{`[`}
+\title{\code{[}}
 \usage{
 \S4method{[}{ToxicoSet,ANY,ANY,ANY}(x, i, j, ..., drop = FALSE)
 }
@@ -21,7 +21,7 @@
 Returns the subsetted tSet
 }
 \description{
-`[`
+\code{[}
 }
 \examples{
 tSet <- TGGATESsmall[cellNames(TGGATESsmall), drugNames(TGGATESsmall)[seq_len(3)]]

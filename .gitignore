@@ -16,3 +16,5 @@ scripts
 objects
 .tSets/*
 local_data/*
+.local_data
+.scripts

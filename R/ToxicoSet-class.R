@@ -1,3 +1,6 @@
+#' @include allGenerics.R
+NULL
+
 #' Class to contain Toxico-genomic Data
 #'
 #' The ToxicoSet (tSet) class was development to contain and organise large
@@ -15,9 +18,9 @@
 #'   type object for holding data for RNA, DNA, SNP and CNV
 #'   measurements, with associated \code{fData} and \code{pData}
 #'   containing the row and column metadata
-#' @slot cell A \code{data.frame} containing the annotations for all the cell
+#' @slot sample A \code{data.frame} containing the annotations for all the cell
 #'   lines profiled in the data set, across all data types
-#' @slot drug A \code{data.frame} containg the annotations for all the drugs
+#' @slot treatment A \code{data.frame} containg the annotations for all the drugs
 #'   profiled in the data set, across all data types
 #' @slot sensitivity A \code{list} containing all the data for the sensitivity
 #'   experiments, including \code{$info}, a \code{data.frame} containing the
@@ -27,8 +30,8 @@
 #'   experiments for each cell-drug pair
 #' @slot perturbation A \code{list} containting \code{$n}, a \code{data.frame}
 #'   summarizing the available perturbation data,
-#' @slot curation A \code{list} containing mappings for \code{$drug},
-#'   \code{cell}, \code{tissue} names  used in the data set to universal
+#' @slot curation A \code{list} containing mappings for \code{$treatment},
+#'   \code{sample}, \code{tissue} names  used in the data set to universal
 #'   identifiers used between different ToxicoSet objects
 #' @slot datasetType A \code{character} string of 'sensitivity',
 #'   'perturbation', or both detailing what type of data can be found in the
@@ -37,11 +40,28 @@
 #' @return An object of the ToxicoSet class
 #'
 #' @importClassesFrom CoreGx CoreSet
-.ToxicoSet <- setClass("ToxicoSet",
-                       slots = list(drug="data.frame"),
-                       contains="CoreSet")
+.ToxicoSet <- setClass("ToxicoSet", contains="CoreSet")
 
 ## TODO:: implement .intern slot to hold arbitrary metadata about a tSet
+
+## Variables for dynamic inheritted roxygen2 docs
+
+.local_class="ToxicoSet"
+.local_data="TGGATESsmall"
+.local_sample="cell"
+
+#### CoreGx inherited methods
+####
+#### Note: The raw documentation lives in CoreGx, see the functions called
+#### in @eval tags for the content of the metaprogrammed roxygen2 docs.
+####
+#### See .parseToRoxygen method in utils-messages.R file of CoreGx to
+#### create similar metaprogrammed docs.
+####
+#### Warning: for dynamic docs to work, you must set
+#### Roxygen: list(markdown = TRUE, r6=FALSE)
+#### in the DESCRPTION file!
+
 
 ### -------------------------------------------------------------------------
 ### Constructor -------------------------------------------------------------
@@ -150,7 +170,7 @@ ToxicoSet <-  function(name,
   ### the radiation and cell line matrices
   curation <- list()
   curation$cell <- as.data.frame(curationCell, stringsAsFactors = FALSE)
-  curation$drug <- as.data.frame(curationDrug, stringsAsFactors = FALSE)
+  curation$treatment <- as.data.frame(curationDrug, stringsAsFactors = FALSE)
   curation$tissue <- as.data.frame(curationTissue, stringsAsFactors = FALSE)
 
   perturbation <- list()
@@ -179,10 +199,10 @@ ToxicoSet <-  function(name,
                       curation=curation)#,
                       #.intern=.intern)
   if (verify) { checkTSetStructure(tSet)}
-  if(length(sensitivityN) == 0 & datasetType %in% c("sensitivity", "both")) {
+  if (length(sensitivityN) == 0 & datasetType %in% c("sensitivity", "both")) {
     sensNumber(tSet) <- .summarizeSensitivityNumbers(tSet)
   }
-  if(length(perturbationN) == 0  & datasetType %in% c("perturbation", "both")) {
+  if (length(perturbationN) == 0  & datasetType %in% c("perturbation", "both")) {
     pertNumber(tSet) <- .summarizePerturbationNumbers(tSet)
   }
   return(tSet)
@@ -197,15 +217,15 @@ ToxicoSet <-  function(name,
   }
 
   ## consider all drugs
-  drugn <- rownames(tSet@drug)
+  drugn <- drugNames(tSet)
 
   ## consider all cell lines
-  celln <- rownames(tSet@cell)
+  celln <- rownames(sampleInfo(tSet))
 
   sensitivity.info <- matrix(0, nrow=length(celln), ncol=length(drugn),
                              dimnames=list(celln, drugn))
-  drugids <- sensitivityInfo(tSet)[ , "drugid"]
-  cellids <- sensitivityInfo(tSet)[ , "cellid"]
+  drugids <- sensitivityInfo(tSet)[, "treatmentid"]
+  cellids <- sensitivityInfo(tSet)[, "sampleid"]
   cellids <- cellids[grep("///", drugids, invert=TRUE)]
   drugids <- drugids[grep("///", drugids, invert=TRUE)]
 
@@ -223,19 +243,19 @@ ToxicoSet <-  function(name,
   }
 
   ## consider all drugs
-  drugn <- rownames(tSet@drug)
+  drugn <- drugNames(tSet)
 
   ## consider all cell lines
-  celln <- rownames(tSet@cell)
+  celln <- rownames(sampleInfo(tSet))
 
   perturbation.info <- array(0, dim=c(length(celln), length(drugn), length(molecularProfilesSlot(tSet))), dimnames=list(celln, drugn, names((molecularProfilesSlot(tSet)))))
 
   for (i in seq_along(molecularProfilesSlot(tSet))) {
     if (nrow(SummarizedExperiment::colData(molecularProfilesSlot(tSet)[[i]])) > 0 &&
         all(
-          is.element(c("cellid", "drugid"),
+          is.element(c("sampleid", "treatmentid"),
                      colnames(SummarizedExperiment::colData(molecularProfilesSlot(tSet)[[i]]))))) {
-      tt <- table(SummarizedExperiment::colData(molecularProfilesSlot(tSet)[[i]])[ , "cellid"], SummarizedExperiment::colData(molecularProfilesSlot(tSet)[[i]])[ , "drugid"])
+      tt <- table(SummarizedExperiment::colData(molecularProfilesSlot(tSet)[[i]])[ , "sampleid"], SummarizedExperiment::colData(molecularProfilesSlot(tSet)[[i]])[ , "treatmentid"])
       perturbation.info[rownames(tt), colnames(tt), names(molecularProfilesSlot(tSet))[i]] <- tt
     }
   }
@@ -267,10 +287,10 @@ ToxicoSet <-  function(name,
 #'
 #' @export
 checkTSetStructure <- function(tSet, plotDist=FALSE, result.dir=".") {
-    
-    if(!file.exists(result.dir) && plotDist) 
+
+    if(!file.exists(result.dir) && plotDist)
         dir.create(result.dir, showWarnings=FALSE, recursive=TRUE)
-    
+
     for( i in seq_along(molecularProfilesSlot(tSet))) {
         profile <- molecularProfilesSlot(tSet)[[i]]
         if (is.null(names(metadata(profile))))
@@ -286,17 +306,17 @@ checkTSetStructure <- function(tSet, plotDist=FALSE, result.dir=".") {
 
         if(plotDist) {
             if (S4Vectors::metadata(profile)$annotation == "rna" ||
-                S4Vectors::metadata(profile)$annotation == "rnaseq") 
+                S4Vectors::metadata(profile)$annotation == "rnaseq")
             {
                 pdf(file=file.path(result.dir, sprintf("%s.pdf", nn)))
                 hist(SummarizedExperiment::assay(profile, 1), breaks = 100)
                 dev.off()
             }
         }
-        if (nrow(SummarizedExperiment::rowData(profile)) != 
+        if (nrow(SummarizedExperiment::rowData(profile)) !=
             nrow(SummarizedExperiment::assay(profile, 1)))
         {
-            .warning(sprintf("%s: number of features in fData is different from expression slots", nn)) 
+            .warning(sprintf("%s: number of features in fData is different from expression slots", nn))
         } else {
             .message(sprintf("%s: fData dimension is OK", nn))
         }
@@ -306,8 +326,8 @@ checkTSetStructure <- function(tSet, plotDist=FALSE, result.dir=".") {
         } else {
             .message(sprintf("%s: pData dimension is OK", nn))
         }
-        
-        if ("cellid" %in% colnames(SummarizedExperiment::colData(profile))) {
+
+        if ("sampleid" %in% colnames(SummarizedExperiment::colData(profile))) {
             .message("cellid OK!")
         } else {
             .warning(sprintf("%s: cellid does not exist in pData columns", nn))
@@ -317,7 +337,7 @@ checkTSetStructure <- function(tSet, plotDist=FALSE, result.dir=".") {
         } else {
             .warning(sprintf("%s: batchid does not exist in pData columns", nn))
         }
-        if (S4Vectors::metadata(profile)$annotation == "rna" || 
+        if (S4Vectors::metadata(profile)$annotation == "rna" ||
             S4Vectors::metadata(profile)$annotation == "rnaseq")
         {
             if ("BEST" %in% colnames(SummarizedExperiment::rowData(profile))) {
@@ -325,70 +345,70 @@ checkTSetStructure <- function(tSet, plotDist=FALSE, result.dir=".") {
             } else {
                 .warning(sprintf("%s: BEST does not exist in fData columns", nn))
             }
-            
+
             if ("Symbol" %in% colnames(SummarizedExperiment::rowData(profile))) {
                 .message("Symbol is OK")
             } else {
                 .warning(sprintf("%s: Symbol does not exist in fData columns", nn))
             }
         }
-        if ("cellid" %in% colnames(SummarizedExperiment::colData(profile))) {
-            if (!all(SummarizedExperiment::colData(profile)[, "cellid"] %in% rownames(tSet@cell))) {
+        if ("sampleid" %in% colnames(SummarizedExperiment::colData(profile))) {
+            if (!all(SummarizedExperiment::colData(profile)[, "sampleid"] %in% rownames(sampleInfo(tSet)))) {
                 .warning(sprintf("%s: not all the cell lines in this profile are in cell lines slot", nn))
             }
         } else {
             .warning(sprintf("%s: cellid does not exist in pData", nn))
         }
     }
-    if ("tissueid" %in% colnames(tSet@cell)) {
-        if ("unique.tissueid" %in% colnames(tSet@curation$tissue)) {
-        if (length(intersect(rownames(tSet@curation$tissue), rownames(tSet@cell))) != nrow(tSet@cell)) {
+    if ("tissueid" %in% colnames(sampleInfo(tSet))) {
+        if ("unique.tissueid" %in% colnames(curation(tSet)$tissue)) {
+        if (length(intersect(rownames(curation(tSet)$tissue), rownames(sampleInfo(tSet)))) != nrow(sampleInfo(tSet))) {
             .message("rownames of curation tissue slot should be the same as cell slot (curated cell ids)")
         } else {
-            if(length(intersect(tSet@cell$tissueid, tSet@curation$tissue$unique.tissueid)) != 
-                length(table(tSet@cell$tissueid)))
+            if(length(intersect(sampleInfo(tSet)$tissueid, curation(tSet)$tissue$unique.tissueid)) !=
+                length(table(sampleInfo(tSet)$tissueid)))
             {
                 .message("tissueid should be the same as unique tissue id from tissue curation slot")
             }
         }
-      } else {
-        .message("unique.tissueid which is curated tissue id across data set should be a column of tissue curation slot")
-      }
-      if(any(is.na(tSet@cell[,"tissueid"]) | tSet@cell[,"tissueid"] == "", na.rm = TRUE)) {
-        .message(sprintf("There is no tissue type for this cell line(s): %s", paste(rownames(tSet@cell)[which(is.na(tSet@cell[,"tissueid"]) | tSet@cell[,"tissueid"] == "")], collapse = " ")))
-      }
+        } else {
+            .message("unique.tissueid which is curated tissue id across data set should be a column of tissue curation slot")
+        }
+        if(any(is.na(sampleInfo(tSet)[,"tissueid"]) | sampleInfo(tSet)[,"tissueid"] == "", na.rm = TRUE)) {
+            .message(sprintf("There is no tissue type for this cell line(s): %s", paste(rownames(sampleInfo(tSet))[which(is.na(sampleInfo(tSet)[,"tissueid"]) | sampleInfo(tSet)[,"tissueid"] == "")], collapse = " ")))
+        }
     } else {
-      .warning("tissueid does not exist in cell slot")
+        .warning("tissueid does not exist in cell slot")
     }
 
-    if("unique.cellid" %in% colnames(tSet@curation$cell)) {
-        if(length(intersect(tSet@curation$cell$unique.cellid, rownames(tSet@cell))) != nrow(tSet@cell)) {
+    if ("unique.cellid" %in% colnames(curation(tSet)$cell)) {
+        if(length(intersect(curation(tSet)$cell$unique.cellid, rownames(sampleInfo(tSet)))) != nrow(sampleInfo(tSet))) {
             .message("rownames of cell slot should be curated cell ids")
         }
     } else {
         .message("unique.cellid which is curated cell id across data set should be a column of cell curation slot")
     }
 
-    if (length(intersect(rownames(tSet@curation$cell), rownames(tSet@cell))) != nrow(tSet@cell)) {
+    if (length(intersect(rownames(curation(tSet)$cell), rownames(sampleInfo(tSet)))) != nrow(sampleInfo(tSet))) {
         .message("rownames of curation cell slot should be the same as cell slot (curated cell ids)")
     }
 
-    if ("unique.drugid" %in% colnames(tSet@curation$drug)) {
-        if(length(intersect(tSet@curation$drug$unique.drugid, rownames(tSet@drug))) != nrow(tSet@drug)) {
+    if ("unique.drugid" %in% colnames(curation(tSet)$treatment)) {
+        if(length(intersect(curation(tSet)$treatment$unique.drugid, drugNames(tSet))) != nrow(treatmentInfo(tSet))) {
             .message("rownames of drug slot should be curated drug ids")
         }
     } else {
         .message("unique.drugid which is curated drug id across data set should be a column of drug curation slot")
     }
 
-    if (length(intersect(rownames(tSet@curation$cell), rownames(tSet@cell))) != nrow(tSet@cell)) {
+    if (length(intersect(rownames(curation(tSet)$cell), rownames(sampleInfo(tSet)))) != nrow(sampleInfo(tSet))) {
         .message("rownames of curation drug slot should be the same as drug slot (curated drug ids)")
     }
 
-    if (!is(tSet@cell, "data.frame")) {
+    if (!is(sampleInfo(tSet), "data.frame")) {
         .warning("cell slot class type should be dataframe")
     }
-    if (!is(tSet@drug, "data.frame")) {
+    if (!is(treatmentInfo(tSet), "data.frame")) {
         .warning("drug slot class type should be dataframe")
     }
     if (datasetType(tSet) %in% c("sensitivity", "both"))
@@ -396,29 +416,29 @@ checkTSetStructure <- function(tSet, plotDist=FALSE, result.dir=".") {
         if(!is(sensitivityInfo(tSet), "data.frame")) {
             .warning("sensitivity info slot class type should be dataframe")
         }
-        if("cellid" %in% colnames(sensitivityInfo(tSet))) {
-            if(!all(sensitivityInfo(tSet)[,"cellid"] %in% rownames(tSet@cell))) {
+        if("sampleid" %in% colnames(sensitivityInfo(tSet))) {
+            if(!all(sensitivityInfo(tSet)[,"sampleid"] %in% rownames(sampleInfo(tSet)))) {
                 .warning("not all the cell lines in sensitivity data are in cell slot")
             }
         } else {
             .warning("cellid does not exist in sensitivity info")
         }
-        if ("drugid" %in% colnames(sensitivityInfo(tSet))) {
-            drug.ids <- unique(sensitivityInfo(tSet)[,"drugid"])
+        if ("treatmentid" %in% colnames(sensitivityInfo(tSet))) {
+            drug.ids <- unique(sensitivityInfo(tSet)[, "treatmentid"])
             drug.ids <- drug.ids[grep("///",drug.ids, invert=TRUE)]
-            if (!all(drug.ids %in% rownames(tSet@drug))) {
+            if (!all(drug.ids %in% drugNames(tSet))) {
                 .message("not all the drugs in sensitivity data are in drug slot")
             }
         } else {
             .warning("drugid does not exist in sensitivity info")
         }
 
-        if (any(!is.na(tSet@sensitivity$raw))) {
-            if(!all(dimnames(tSet@sensitivity$raw)[[1]] %in% rownames(sensitivityInfo(tSet)))) {
+        if (any(!is.na(sensitivityRaw(tSet)))) {
+            if(!all(dimnames(sensitivityRaw(tSet))[[1]] %in% rownames(sensitivityInfo(tSet)))) {
                 .warning("For some experiments there is raw sensitivity data but no experimet information in sensitivity info")
             }
         }
-        if (!all(rownames(tSet@sensitivity$profiles) %in% rownames(sensitivityInfo(tSet)))) {
+        if (!all(rownames(sensitivityProfiles(tSet)) %in% rownames(sensitivityInfo(tSet)))) {
             .warning("For some experiments there is sensitivity profiles but no experimet information in sensitivity info")
         }
     }
@@ -431,7 +451,6 @@ checkTSetStructure <- function(tSet, plotDist=FALSE, result.dir=".") {
 # -------------------------------------------------------------------------
 
 
-##TODO:: Implement a limited show method in CoreGx which can be extended
 ##  here
 #' Show a ToxicoSet
 #'
@@ -443,36 +462,11 @@ checkTSetStructure <- function(tSet, plotDist=FALSE, result.dir=".") {
 #' @return Prints the ToxicoSet object to the output stream, and returns
 #'   invisible NULL.
 #'
+#' @importMethodsFrom CoreGx show
 #' @export
-setMethod("show", signature=signature(object="ToxicoSet"),
-          function(object) {
-            cat("Name: ", name(object), "\n")
-            cat("Date Created: ", dateCreated(object), "\n")
-            cat("Number of cell lines: ", nrow(cellInfo(object)), "\n")
-            cat("Number of drugs: ", nrow(drugInfo(object)), "\n")
-            if("dna" %in% names(molecularProfilesSlot(object))){cat("DNA: \n");
-              cat("\tDim: ", dim(molecularProfiles(object, mDataType="dna")),
-                "\n")}
-            if("rna" %in% names(molecularProfilesSlot(object))){cat("RNA: \n");
-              cat("\tDim: ", dim(molecularProfiles(object, mDataType="rna")),
-                "\n")}
-            if("rnaseq" %in% names(molecularProfilesSlot(object))){cat("RNASeq: \n");
-              cat("\tDim: ", dim(molecularProfiles(object, mDataType="rnaseq")),
-                "\n")}
-            if("snp" %in% names(molecularProfilesSlot(object))){cat("SNP: \n");
-              cat("\tDim: ", dim(molecularProfiles(object, mDataType="snp")),
-                "\n")}
-            if("cnv" %in% names(molecularProfilesSlot(object))){cat("CNV: \n");
-              cat("\tDim: ", dim(molecularProfiles(object, mDataType="cnv")),
-                "\n")}
-            cat("Drug pertubation: \n")
-            cat("\tPlease look at pertNumber(tSet) to determine number of
-              experiments for each drug-cell combination.\n")
-            cat("Drug sensitivity: \n")
-            cat("\tNumber of Experiments: ",nrow(sensitivityInfo(object)),"\n")
-            cat("\tPlease look at sensNumber(tSet) to determine number of
-              experiments for each drug-cell combination.\n")
-          })
+setMethod("show", signature=signature(object="ToxicoSet"), function(object) {
+    callNextMethod(object)
+})
 
 
 #' Get the dimensions of a ToxicoSet
@@ -484,12 +478,8 @@ setMethod("show", signature=signature(object="ToxicoSet"),
 #' @param x ToxicoSet
 #' @return A named vector with the number of Cells and Drugs in the ToxicoSet
 #' @export
-setMethod(
-  "dim",
-  signature("ToxicoSet"),
-  function(x)
-{
-  return(c(Cells=length(cellNames(x)), Drugs=length(drugNames(x))))
+setMethod("dim", signature("ToxicoSet"), function(x) {
+    return(c(Cells=length(cellNames(x)), Drugs=length(drugNames(x))))
 })
 
 ##' Retrieve a symbol holding metadata about a ToxicoSet object
@@ -511,3 +501,18 @@ setMethod(
 #        mget(x, envir=object@.intern)
 #    }
 #})
+
+
+#' @importFrom CoreGx updateSampleId
+#' @aliases updateCellId
+#' @export
+updateSampleId <- updateCellId <- function(object, new.ids=vector('character')) {
+    CoreGx::updateSampleId(object, new.ids)
+}
+
+#' @importFrom CoreGx updateTreatmentId
+#' @aliases updateDrugId
+#' @export
+updateTreatmentId <- updateDrugId <- function(object, new.ids=vector('character')) {
+    CoreGx::updateTreamentId(object, new.ids)
+}

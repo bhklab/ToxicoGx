@@ -117,8 +117,8 @@ drugPerturbationSig <- function(
         x <- c('DMSO', x)
     }
     # Subset to correct drugs
-    exprs <- exprs[which(sampleinfo[ , "drugid"] %in% x),]
-    sampleinfo <- sampleinfo[which(sampleinfo[ , "drugid"] %in% x),]
+    exprs <- exprs[which(sampleinfo[ , "treatmentid"] %in% x),]
+    sampleinfo <- sampleinfo[which(sampleinfo[ , "treatmentid"] %in% x),]
 
     # Warning that rankGeneDrugPerturbation will return a matrix of NAs for this drug
     if (length(unique(as.character(sampleinfo[, "xptype"]))) < 2) {
@@ -132,9 +132,9 @@ drugPerturbationSig <- function(
 
     ## using a linear model (x ~ concentration + cell + batch + duration)
     res <- rankGeneDrugPerturbation(
-      data = exprs, drug = x, drug.id = as.character(sampleinfo[ , "drugid"]),
+      data = exprs, drug = x, drug.id = as.character(sampleinfo[ , "treatmentid"]),
       drug.concentration = as.numeric(sampleinfo[ , "concentration"]),
-      type = as.character(sampleinfo[ , "cellid"]),
+      type = as.character(sampleinfo[ , "sampleid"]),
       xp = as.character(sampleinfo[ , "xptype"]),
       batch = as.character(sampleinfo[ , "batchid"]),
       duration = as.character(sampleinfo[ , "duration"]) ,

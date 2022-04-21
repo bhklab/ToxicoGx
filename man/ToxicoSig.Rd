@@ -15,25 +15,25 @@ ToxicoSig(
 )
 }
 \arguments{
-\item{Data}{[array] An array contiaining the data for constructing the ToxicoSig object}
+\item{Data}{\link{array} An array contiaining the data for constructing the ToxicoSig object}
 
-\item{tSetName}{[string] The name of the tSet used in the constructor}
+\item{tSetName}{\link{string} The name of the tSet used in the constructor}
 
-\item{DateCreated}{[date] The data at time of running the constructor}
+\item{DateCreated}{\link{date} The data at time of running the constructor}
 
-\item{SigType}{[character] A string of the experiment type}
+\item{SigType}{\link{character} A string of the experiment type}
 
-\item{SessionInfo}{[sessionInfo] The current session info}
+\item{SessionInfo}{\link{sessionInfo} The current session info}
 
-\item{Call}{[character] A string}
+\item{Call}{\link{character} A string}
 
-\item{Arguments}{[list] A list of arguments passed to the constructor}
+\item{Arguments}{\link{list} A list of arguments passed to the constructor}
 }
 \value{
-[object] A new ToxicoSig object
+\link{object} A new ToxicoSig object
 }
 \description{
 A user friendly constructor to create ToxicoSig class objects. This function
-  is implemented as an internal and should only be called for development purposes
+is implemented as an internal and should only be called for development purposes
 }
 \keyword{internal}

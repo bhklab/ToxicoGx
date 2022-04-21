@@ -57,8 +57,8 @@ Plot of the viabilities for each drugs vs time of exposure
 }
 \description{
 This function generates a plot visualizing the relationship between gene
-  expression, time and dose level for the selected tSet. The plot is generated
-  with ggplot2 and can be customized using ggplot plot + function() syntax.
+expression, time and dose level for the selected tSet. The plot is generated
+with ggplot2 and can be customized using ggplot plot + function() syntax.
 }
 \examples{
   library(ggplot2)

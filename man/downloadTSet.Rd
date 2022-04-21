@@ -4,7 +4,13 @@
 \alias{downloadTSet}
 \title{Download a ToxicoSet object}
 \usage{
-downloadTSet(name, saveDir = tempdir(), tSetFileName = NULL, verbose = TRUE)
+downloadTSet(
+  name,
+  saveDir = tempdir(),
+  tSetFileName = NULL,
+  verbose = TRUE,
+  timeout = 600
+)
 }
 \arguments{
 \item{name}{\code{Character} string, the name of the PhamracoSet to download.}
@@ -17,6 +23,9 @@ directory if it does not exist.}
 
 \item{verbose}{\code{bool} Should status messages be printed during download.
 Defaults to TRUE.}
+
+\item{timeout}{\code{numeric(1)} How long to wait before the download times out,
+in seconds. Default is 600 seconds (10 minutes).}
 }
 \value{
 A tSet object with the dataset, downloaded from our server
@@ -29,7 +38,7 @@ a ToxicoSet class, enabling use with all the analysis tools provided in
 }
 \examples{
 if (interactive()) {
-drugMatrix_rat <- downloadtSet("drugMatrix_rat")
+drugMatrix_rat <- downloadTSet("DrugMatrix Rat")
 }
 
 }

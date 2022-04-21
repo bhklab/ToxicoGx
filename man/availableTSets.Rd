@@ -7,7 +7,7 @@
 availableTSets(canonical = TRUE)
 }
 \arguments{
-\item{canonical}{[`logical`] Should available TSets show only official TSets, or should
+\item{canonical}{\code{\link{logical}} Should available TSets show only official TSets, or should
 user generated TSets be included?}
 }
 \value{
@@ -24,7 +24,7 @@ www.orcestra.ca
 }
 \examples{
 if (interactive()){
-availablePSets()
+availableTSets()
 }
 
 }

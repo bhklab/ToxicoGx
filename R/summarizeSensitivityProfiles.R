@@ -94,7 +94,7 @@ summarizeSensitivityProfiles <- function(tSet,
   rownames(result) <- drugs
   colnames(result) <- cell_lines
 
-  pp_dd <- cbind(pp[,c("cellid", "drugid","duration_h")], "sensitivity.measure" = dd[, sensitivity.measure])
+  pp_dd <- cbind(pp[,c("sampleid", "treatmentid","duration_h")], "sensitivity.measure" = dd[, sensitivity.measure])
 
   summary.function <- function(x) {
     if (all(is.na(x))) {
@@ -123,8 +123,8 @@ summarizeSensitivityProfiles <- function(tSet,
   }
 
   pp_dd <- pp_dd[
-    pp_dd[,"cellid"] %in% cell_lines &
-    pp_dd[,"drugid"] %in% drugs &
+    pp_dd[,"sampleid"] %in% cell_lines &
+    pp_dd[,"treatmentid"] %in% drugs &
     pp_dd[,"duration_h"] %in% duration,
 
     ]

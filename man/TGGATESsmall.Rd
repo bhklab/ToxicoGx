@@ -17,6 +17,6 @@ usage in the roxygen2 documentation for ToxicoGx.
 }
 \references{
 Lamb et al. The Connectivity Map: using gene-expression signatures to connect
-  small molecules, genes, and disease. Science, 2006.
+small molecules, genes, and disease. Science, 2006.
 }
 \keyword{datasets}

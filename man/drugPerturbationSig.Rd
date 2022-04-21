@@ -47,7 +47,7 @@ should the function return for each gene drug pair}
 }
 \value{
 \code{ToxicoSig} An object composed of a 3D array with genes in the
-  first dimension, drugs in the second, and return values in the third.
+first dimension, drugs in the second, and return values in the third.
 }
 \description{
 Creates a signature representing gene expression (or other molecular profile)

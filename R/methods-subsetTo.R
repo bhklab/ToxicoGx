@@ -1,3 +1,6 @@
+#' @include ToxicoSet-accessors.R
+NULL
+
 #'`[`
 #'
 #' @examples
@@ -99,7 +102,7 @@ subsetTo <- function(object, cell_lines = NULL,
     # Get named list of default values for missing parameters
     argDefaultList <-
         paramMissingHandler(funName = "subsetTo", tSet = object,
-                            drugs = drugs, cell_lines = cell_lines, 
+                            drugs = drugs, cell_lines = cell_lines,
                             features = features, duration = duration)
     # Assign any missing parameter default values to function environment
     if (length(argDefaultList) > 0) {
@@ -165,7 +168,7 @@ subsetTo <- function(object, cell_lines = NULL,
           in the ToxicoSet. Please ensure you are using cell names as
           returned by the cellNames function")
                        }
-                       cell_line_index <- which(SummarizedExperiment::colData(SE)[["cellid"]] %in% cell_lines)
+                       cell_line_index <- which(SummarizedExperiment::colData(SE)[["sampleid"]] %in% cell_lines)
                    }
 
                    # Selecting indexes which match drugs arguement
@@ -175,7 +178,7 @@ subsetTo <- function(object, cell_lines = NULL,
                            if (!all(drugs %in% drugNames(object))){
                                stop("Some of the drug names passed to function did not match to names in the ToxicoSet Please ensure you are using drug names as returned by the drugNames function")
                            }
-                           drugs_index <- which(SummarizedExperiment::colData(SE)[["drugid"]] %in% drugs)
+                           drugs_index <- which(SummarizedExperiment::colData(SE)[["treatmentid"]] %in% drugs)
                        }
                    }
 
@@ -249,8 +252,8 @@ subsetTo <- function(object, cell_lines = NULL,
         (length(drugs) != 0 | length(cell_lines) != 0 | !is.null(duration) )
     ) {
 
-        drugs_index <- which(sensitivityInfo(object)[, "drugid"] %in% drugs)
-        cell_line_index <- which(sensitivityInfo(object)[,"cellid"] %in% cell_lines)
+        drugs_index <- which(sensitivityInfo(object)[, "treatmentid"] %in% drugs)
+        cell_line_index <- which(sensitivityInfo(object)[,"sampleid"] %in% cell_lines)
         if (length(drugs_index) !=0 & length(cell_line_index) !=0 ) {
             if (length(intersect(drugs_index, cell_line_index)) == 0) {
                 stop("This Drug - Cell Line combination was not tested together.")
@@ -317,10 +320,10 @@ subsetTo <- function(object, cell_lines = NULL,
     #####
     if (length(drugs) == 0) {
         if (datasetType(object) == "sensitivity" | datasetType(object) == "both"){
-            drugs <- unique(sensitivityInfo(object)[["drugid"]])
+            drugs <- unique(sensitivityInfo(object)[["treatmentid"]])
         }
         if(datasetType(object) == "perturbation" | datasetType(object) == "both"){
-            drugs <- union(drugs, na.omit(.unionList(lapply(molecularProfilesSlot(object), function(SE){unique(SummarizedExperiment::colData(SE)[["drugid"]])}))))
+            drugs <- union(drugs, na.omit(.unionList(lapply(molecularProfilesSlot(object), function(SE){unique(SummarizedExperiment::colData(SE)[["treatmentid"]])}))))
         }
     }
 
@@ -328,9 +331,9 @@ subsetTo <- function(object, cell_lines = NULL,
     # SUBSET CELLS SLOT
     #####
     if (length(cell_lines) == 0) {
-        cell_lines <- union(cell_lines, na.omit(.unionList(lapply(molecularProfilesSlot(object), function(SE){unique(SummarizedExperiment::colData(SE)[["cellid"]])}))))
+        cell_lines <- union(cell_lines, na.omit(.unionList(lapply(molecularProfilesSlot(object), function(SE){unique(SummarizedExperiment::colData(SE)[["sampleid"]])}))))
         if (datasetType(object) == "sensitivity" | datasetType(object) == "both"){
-            cell_lines <- union(cell_lines, sensitivityInfo(object)[["cellid"]])
+            cell_lines <- union(cell_lines, sensitivityInfo(object)[["sampleid"]])
         }
     }
     #####
@@ -338,7 +341,7 @@ subsetTo <- function(object, cell_lines = NULL,
     #####
     drugInfo(object) <- drugInfo(object)[drugs , , drop=drop]
     cellInfo(object) <- cellInfo(object)[cell_lines , , drop=drop]
-    curation(object)$drug <- curation(object)$drug[drugs , , drop=drop]
+    curation(object)$treatment <- curation(object)$treatment[drugs , , drop=drop]
     curation(object)$cell <- curation(object)$cell[cell_lines , , drop=drop]
     curation(object)$tissue <- curation(object)$tissue[cell_lines , , drop=drop]
     return(object)

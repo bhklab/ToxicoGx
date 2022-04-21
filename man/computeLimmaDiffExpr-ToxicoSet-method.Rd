@@ -7,17 +7,17 @@
 \S4method{computeLimmaDiffExpr}{ToxicoSet}(object, buildTable = TRUE)
 }
 \arguments{
-\item{object}{A [`ToxicoSet`] object with a molecular profile named 'rna'}
+\item{object}{A \code{\link{ToxicoSet}} object with a molecular profile named 'rna'}
 
-\item{buildTable}{[`logical`] Should the result of the eBayes function
+\item{buildTable}{\code{\link{logical}} Should the result of the eBayes function
 from limma be assembled into a data.table containing the result along
 with the gene, compound and durations names. Default it TRUE, otherwise
 this function with return the object produced by eBayes.}
 }
 \value{
-A [`data.table`] containing the results the limma differential
- expression analysis comparing control vs each dose level for each compound
- within each duration.
+A \code{\link{data.table}} containing the results the limma differential
+expression analysis comparing control vs each dose level for each compound
+within each duration.
 }
 \description{
 WARNING: This function can take a very long time to compute!

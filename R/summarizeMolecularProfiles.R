@@ -99,7 +99,7 @@ summarizeMolecularProfiles <-
 
     unique.cells <- unique(cell_lines) #unique cell types (row names of the result)
     #subset phenoData to include only the experiments requested
-    pp2 <- pp[(pp[,"cellid"] %in% unique.cells & pp[,"drugid"] %in% drugs
+    pp2 <- pp[(pp[,"sampleid"] %in% unique.cells & pp[,"treatmentid"] %in% drugs
                & pp[,"duration"] %in% duration & pp[,"dose_level"] %in% dose), , drop = FALSE] #only the phenoData that is relevant to the request input
     dd2 <- dd[features,rownames(pp2), drop = FALSE] #only the gene expression data that is relevant to the request input
 
@@ -126,7 +126,7 @@ summarizeMolecularProfiles <-
 
         pp3 <- pp2[(pp2[,"dose_level"] == curr_dose
                     & pp2[,"duration"] == curr_dur
-                    & pp2[,"drugid"] == drug), , drop = FALSE]
+                    & pp2[,"treatmentid"] == drug), , drop = FALSE]
         dd3 <- dd2[features,rownames(pp3), drop = FALSE]
 
         if (ncol(dd3) > 1){ #if there are replicates

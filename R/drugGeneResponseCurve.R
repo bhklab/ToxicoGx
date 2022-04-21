@@ -90,7 +90,7 @@ drugGeneResponseCurve <- function(
     })
   }
 
-  if (missing(cell_lines)) {cell_lines <- unique(phenoInfo(tSet[[1]], mDataTypes[1])$cellid)}
+  if (missing(cell_lines)) {cell_lines <- unique(phenoInfo(tSet[[1]], mDataTypes[1])$sampleid)}
   if (length(cell_lines) > 1) { stop("Only one cell type per plot is currently supported...")}
 
   # Places features in list if not already

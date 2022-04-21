@@ -50,7 +50,7 @@ returns the data unchanged as a ExpressionSet}
 }
 \value{
 \code{SummarizedExperiment} A SummarizedExperiment object with the molecular data summarized
-  per cell line.
+per cell line.
 }
 \description{
 Given a ToxicoSet with molecular data, this function will summarize
