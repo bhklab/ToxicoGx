@@ -161,7 +161,7 @@ setReplaceMethod('name', signature("ToxicoSet"), function(object, value) {
 #' @eval CoreGx:::.docs_CoreSet_get_sampleInfo(class_=.local_class,
 #' sample_=.local_sample)
 #' @importMethodsFrom CoreGx sampleInfo
-#' @importFrom CoreGx sampleInfo
+#' @importFrom CoreGx cellInfo
 #' @export
 setMethod("sampleInfo", "ToxicoSet", function(object) {
     callNextMethod(object)
