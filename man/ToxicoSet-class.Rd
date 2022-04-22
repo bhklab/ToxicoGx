@@ -35,7 +35,7 @@ lines profiled in the data set, across all data types}
 \item{\code{treatment}}{A \code{data.frame} containg the annotations for all the drugs
 profiled in the data set, across all data types}
 
-\item{\code{sensitivity}}{A \code{list} containing all the data for the sensitivity
+\item{\code{treatmentResponse}}{A \code{list} containing all the data for the sensitivity
 experiments, including \code{$info}, a \code{data.frame} containing the
 experimental info,\code{$raw} a 3D \code{array} containing raw data,
 \code{$profiles}, a \code{data.frame} containing sensitivity profiles

@@ -15,22 +15,22 @@ ToxicoSig(
 )
 }
 \arguments{
-\item{Data}{\link{array} An array contiaining the data for constructing the ToxicoSig object}
+\item{Data}{`array`` An array contiaining the data for constructing the ToxicoSig object}
 
-\item{tSetName}{\link{string} The name of the tSet used in the constructor}
+\item{tSetName}{\code{character(1)} The name of the tSet used in the constructor}
 
-\item{DateCreated}{\link{date} The data at time of running the constructor}
+\item{DateCreated}{\code{date} The data at time of running the constructor}
 
-\item{SigType}{\link{character} A string of the experiment type}
+\item{SigType}{\code{character}A string of the experiment type}
 
-\item{SessionInfo}{\link{sessionInfo} The current session info}
+\item{SessionInfo}{\code{sessionInfo}The current session info}
 
-\item{Call}{\link{character} A string}
+\item{Call}{\code{character(1)} A string}
 
-\item{Arguments}{\link{list} A list of arguments passed to the constructor}
+\item{Arguments}{\code{list} A list of arguments passed to the constructor}
 }
 \value{
-\link{object} A new ToxicoSig object
+\code{object} A new ToxicoSig object
 }
 \description{
 A user friendly constructor to create ToxicoSig class objects. This function

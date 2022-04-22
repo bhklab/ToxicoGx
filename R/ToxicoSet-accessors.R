@@ -160,6 +160,7 @@ setReplaceMethod('name', signature("ToxicoSet"), function(object, value) {
 #' @rdname ToxicoSet-accessors
 #' @eval CoreGx:::.docs_CoreSet_get_sampleInfo(class_=.local_class,
 #' sample_=.local_sample)
+#' @importMethodsFrom CoreGx sampleInfo
 #' @importFrom CoreGx sampleInfo
 #' @export
 setMethod("sampleInfo", "ToxicoSet", function(object) {
@@ -170,6 +171,7 @@ setMethod("sampleInfo", "ToxicoSet", function(object) {
 #' @rdname ToxicoSet-accessors
 #' @eval CoreGx:::.docs_CoreSet_set_sampleInfo(class_=.local_class,
 #' data_=.local_data, sample_="cell")
+#' @importMethodsFrom CoreGx sampleInfo<-
 #' @importFrom CoreGx cellInfo<-
 #' @export
 setReplaceMethod("sampleInfo", signature(object="ToxicoSet",

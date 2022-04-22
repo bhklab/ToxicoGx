@@ -92,7 +92,7 @@ test_that("@sample slot accessors produce expected results", {
 })
 
 # @sensitivty Slot
-test_that("@sensitivity slot accessors produce expected results", {
+test_that("@treatmentResponse slot accessors produce expected results", {
     data("TGGATESsmall")
 
     context("External validation...")
@@ -105,12 +105,12 @@ test_that("@sensitivity slot accessors produce expected results", {
     expect_equal_to_reference(sensNumber(TGGATESsmall),
         "sensNumber.TGGATESsmall.rds")
     context("Internal validation...")
-    expect_equal(sensitivityInfo(TGGATESsmall), TGGATESsmall@sensitivity$info)
+    expect_equal(sensitivityInfo(TGGATESsmall), TGGATESsmall@treatmentResponse$info)
     expect_equal(sensitivityProfiles(TGGATESsmall),
-        TGGATESsmall@sensitivity$profiles)
+        TGGATESsmall@treatmentResponse$profiles)
     expect_equal(sensitivityMeasures(TGGATESsmall),
-        colnames(TGGATESsmall@sensitivity$profiles))
-    expect_equal(sensNumber(TGGATESsmall), TGGATESsmall@sensitivity$n)
+        colnames(TGGATESsmall@treatmentResponse$profiles))
+    expect_equal(sensNumber(TGGATESsmall), TGGATESsmall@treatmentResponse$n)
 })
 
 # @perturbation Slot

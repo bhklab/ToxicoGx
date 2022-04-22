@@ -13,15 +13,15 @@ setOldClass('sessionInfo', sessionInfo)
 #' A user friendly constructor to create ToxicoSig class objects. This function
 #'   is implemented as an internal and should only be called for development purposes
 #'
-#' @param Data [array] An array contiaining the data for constructing the ToxicoSig object
-#' @param tSetName [string] The name of the tSet used in the constructor
-#' @param DateCreated [date] The data at time of running the constructor
-#' @param SigType [character] A string of the experiment type
-#' @param SessionInfo [sessionInfo] The current session info
-#' @param Call [character] A string
-#' @param Arguments [list] A list of arguments passed to the constructor
+#' @param Data `array`` An array contiaining the data for constructing the ToxicoSig object
+#' @param tSetName `character(1)` The name of the tSet used in the constructor
+#' @param DateCreated `date` The data at time of running the constructor
+#' @param SigType `character`A string of the experiment type
+#' @param SessionInfo `sessionInfo`The current session info
+#' @param Call `character(1)` A string
+#' @param Arguments `list` A list of arguments passed to the constructor
 #'
-#' @return [object] A new ToxicoSig object
+#' @return `object` A new ToxicoSig object
 #'
 #' @keywords internal
 #' @export
