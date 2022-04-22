@@ -428,7 +428,7 @@ setMethod("dim", signature("ToxicoSet"), function(x) {
 #' @importFrom CoreGx updateSampleId
 #' @aliases updateCellId
 updateSampleId <- updateCellId <- function(object, new.ids=vector('character')) {
-    CoreGx::updateSampleId(object, new.ids)
+    CoreGx:::updateSampleId(object, new.ids)
 }
 
 #' @importFrom CoreGx updateTreatmentId
