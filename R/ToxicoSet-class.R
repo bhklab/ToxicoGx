@@ -22,7 +22,7 @@ NULL
 #'   lines profiled in the data set, across all data types
 #' @slot treatment A \code{data.frame} containg the annotations for all the drugs
 #'   profiled in the data set, across all data types
-#' @slot sensitivity A \code{list} containing all the data for the sensitivity
+#' @slot treatmentResponse A \code{list} containing all the data for the sensitivity
 #'   experiments, including \code{$info}, a \code{data.frame} containing the
 #'   experimental info,\code{$raw} a 3D \code{array} containing raw data,
 #'   \code{$profiles}, a \code{data.frame} containing sensitivity profiles
@@ -81,32 +81,7 @@ NULL
 #' methods. For a much more detailed instruction on creating ToxicoSets, please
 #' see the "CreatingToxicoSet" vignette.
 #'
-#' @param name A \code{character} string detailing the name of the dataset
-#' @param molecularProfiles A \code{list} of ExpressionSet objects containing
-#'   molecular profiles
-#' @param cell A \code{data.frame} containing the annotations for all the cell
-#'   lines profiled in the data set, across all data types
-#' @param drug A \code{data.frame} containing the annotations for all the drugs
-#'   profiled in the data set, across all data types
-#' @param sensitivityInfo A \code{data.frame} containing the information for the
-#'   sensitivity experiments
-#' @param sensitivityRaw A 3 Dimensional \code{array} contaning the raw drug
-#'   dose – response data for the sensitivity experiments
-#' @param sensitivityProfiles \code{data.frame} containing drug sensitivity profile
-#'   statistics such as IC50 and AUC
-#' @param sensitivityN,perturbationN A \code{data.frame} summarizing the
-#'   available sensitivity/perturbation data
-#' @param curationCell,curationDrug,curationTissue A \code{data.frame} mapping
-#'   the names for cells, drugs, and tissues used in the data set to universal
-#'   identifiers used between different ToxicoSet objects
-#' @param datasetType A \code{character} string of "sensitivity",
-#'   "perturbation", or both detailing what type of data can be found in the
-#'   ToxicoSet, for proper processing of the data
-# @param sharedControls \code{logical} Do experimental conditions share a single
-#   set of controls or are controls matched to conditions. Defaults to FALSE,
-#   indicating there is a control for each level of the experimental condition.
-#' @param verify \code{boolean} Should the function verify the ToxicoSet and
-#'   print out any errors it finds after construction?
+#' @inheritParams CoreGx::CoreSet
 #'
 #' @return An object of class \code{ToxicoSet}
 #'
@@ -120,92 +95,59 @@ NULL
 #' @export
 ToxicoSet <-  function(name,
                        molecularProfiles=list(),
-                       cell=data.frame(),
-                       drug=data.frame(),
+                       sample=data.frame(),
+                       treatment=data.frame(),
                        sensitivityInfo=data.frame(),
                        sensitivityRaw=array(dim = c(0,0,0)),
                        sensitivityProfiles=matrix(),
                        sensitivityN=matrix(nrow = 0, ncol=0),
                        perturbationN=array(NA, dim = c(0,0,0)),
-                       curationDrug=data.frame(),
-                       curationCell = data.frame(),
+                       curationTreatment=data.frame(),
+                       curationSample = data.frame(),
                        curationTissue = data.frame(),
                        datasetType=c("sensitivity", "perturbation", "both"),
                        #sharedControls=FALSE,
                        verify = TRUE)
 {
-  ##TOOD:: Abstract as much of this contstructor as possible to CoreGx!
-  datasetType <- match.arg(datasetType)
+    # .Deprecated("ToxicoSet2", package=packageName(), msg="The ToxicoSet class is
+    #     being redesigned. Please use the new constructor to ensure forwards
+    #     compatibility with future releases! Old objects can be updated with
+    #     the updateObject method.", old="ToxicoSet")
 
-  annotation <- list()
-  annotation$name <- as.character(name)
-  annotation$dateCreated <- date()
-  annotation$sessionInfo <- sessionInfo()
-  annotation$call <- match.call()
+    cSet <- CoreGx::CoreSet(
+        name=name,
+        sample=sample,
+        treatment=treatment,
+        sensitivityInfo=sensitivityInfo,
+        sensitivityRaw=sensitivityRaw,
+        sensitivityProfiles=sensitivityProfiles,
+        sensitivityN=sensitivityN,
+        perturbationN=perturbationN,
+        curationTreatment=curationTreatment,
+        curationSample=curationSample,
+        curationTissue=curationTissue,
+        datasetType=datasetType,
+        verify=verify
+    )
 
-    for (i in seq_len(length(molecularProfiles))){
-        if (!is(molecularProfiles[[i]], "SummarizedExperiment")) {
-            stop(sprintf("Please provide the %s data as a SummarizedExperiment", names(molecularProfiles[i])))
-        } else {
-          rowData(molecularProfiles[[i]]) <-
-            rowData(molecularProfiles[[i]])[rownames(assays(molecularProfiles[[i]])[[1]]), , drop=FALSE]
-          colData(molecularProfiles[[i]]) <-
-            colData(molecularProfiles[[i]])[colnames(assays(molecularProfiles[[i]])[[1]]), , drop=FALSE]
-        }
+    tSet  <- .ToxicoSet(
+        annotation=cSet@annotation,
+        molecularProfiles=cSet@olecularProfiles,
+        sample=cSet@sample,
+        treatment=cSet@treatment,
+        datasetType=cSet@datasetTypes,
+        treatmentResponse=cSet@treatmentResponse,
+        perturbation=cSet@perturbation,
+        curation=cSet@curation
+    )
+    if (verify) { checkTSetStructure(tSet)}
+    if (length(sensitivityN) == 0 & datasetType %in% c("sensitivity", "both")) {
+        sensNumber(tSet) <- .summarizeSensitivityNumbers(tSet)
     }
-
-  sensitivity <- list()
-
-  if (!all(rownames(sensitivityInfo) == rownames(sensitivityProfiles) &
-           rownames(sensitivityInfo) == dimnames(sensitivityRaw)[[1]])) {
-    stop("Please ensure all the row names match between the sensitivity data.")
-  }
-
-  sensitivity$info <- as.data.frame(sensitivityInfo, stringsAsFactors=FALSE)
-  sensitivity$raw <- sensitivityRaw
-  sensitivity$profiles <- as.data.frame(sensitivityProfiles, stringsAsFactors=FALSE)
-  sensitivity$n <- sensitivityN
-
-  ### TODO:: Make sure to fix the curation to check for matching row names to
-  ### the radiation and cell line matrices
-  curation <- list()
-  curation$cell <- as.data.frame(curationCell, stringsAsFactors = FALSE)
-  curation$treatment <- as.data.frame(curationDrug, stringsAsFactors = FALSE)
-  curation$tissue <- as.data.frame(curationTissue, stringsAsFactors = FALSE)
-
-  perturbation <- list()
-  perturbation$n <- perturbationN
-  if (datasetType == "perturbation" || datasetType == "both") {
-    perturbation$info <- "The metadata for the perturbation experiments is
-      available for each molecular type by calling the appropriate info function.
-      \n For example, for RNA transcriptome perturbations, the metadata can be
-      accessed using rnaInfo(tSet)."
-  } else {
-    perturbation$info <- "Not a perturbation dataset."
-  }
-
-  #.intern=new.env()
-  #.intern$shareControls <- sharedControl
-  ## Prevent modification of this slot
-  #lockBinding('sharedControl', .intern)
-
-  tSet  <- .ToxicoSet(annotation=annotation,
-                      molecularProfiles=molecularProfiles,
-                      cell=as.data.frame(cell),
-                      drug=as.data.frame(drug),
-                      datasetType=datasetType,
-                      sensitivity=sensitivity,
-                      perturbation=perturbation,
-                      curation=curation)#,
-                      #.intern=.intern)
-  if (verify) { checkTSetStructure(tSet)}
-  if (length(sensitivityN) == 0 & datasetType %in% c("sensitivity", "both")) {
-    sensNumber(tSet) <- .summarizeSensitivityNumbers(tSet)
-  }
-  if (length(perturbationN) == 0  & datasetType %in% c("perturbation", "both")) {
-    pertNumber(tSet) <- .summarizePerturbationNumbers(tSet)
-  }
-  return(tSet)
+    if (length(perturbationN) == 0  & datasetType %in% c("perturbation", "both")) {
+        pertNumber(tSet) <- .summarizePerturbationNumbers(tSet)
+    }
+    return(tSet)
 }
 
 # Helper Functions --------------------------------------------------------
@@ -217,7 +159,7 @@ ToxicoSet <-  function(name,
   }
 
   ## consider all drugs
-  drugn <- drugNames(tSet)
+  drugn <- treatmentNames(tSet)
 
   ## consider all cell lines
   celln <- rownames(sampleInfo(tSet))
@@ -243,7 +185,7 @@ ToxicoSet <-  function(name,
   }
 
   ## consider all drugs
-  drugn <- drugNames(tSet)
+  drugn <- treatmentNames(tSet)
 
   ## consider all cell lines
   celln <- rownames(sampleInfo(tSet))
@@ -328,9 +270,9 @@ checkTSetStructure <- function(tSet, plotDist=FALSE, result.dir=".") {
         }
 
         if ("sampleid" %in% colnames(SummarizedExperiment::colData(profile))) {
-            .message("cellid OK!")
+            .message("sampleid OK!")
         } else {
-            .warning(sprintf("%s: cellid does not exist in pData columns", nn))
+            .warning(sprintf("%s: sampleid does not exist in pData columns", nn))
         }
         if ("batchid" %in% colnames(SummarizedExperiment::colData(profile))) {
             .message("batchid OK!")
@@ -357,7 +299,7 @@ checkTSetStructure <- function(tSet, plotDist=FALSE, result.dir=".") {
                 .warning(sprintf("%s: not all the cell lines in this profile are in cell lines slot", nn))
             }
         } else {
-            .warning(sprintf("%s: cellid does not exist in pData", nn))
+            .warning(sprintf("%s: sampleid does not exist in pData", nn))
         }
     }
     if ("tissueid" %in% colnames(sampleInfo(tSet))) {
@@ -381,12 +323,12 @@ checkTSetStructure <- function(tSet, plotDist=FALSE, result.dir=".") {
         .warning("tissueid does not exist in cell slot")
     }
 
-    if ("unique.cellid" %in% colnames(curation(tSet)$cell)) {
-        if(length(intersect(curation(tSet)$cell$unique.cellid, rownames(sampleInfo(tSet)))) != nrow(sampleInfo(tSet))) {
+    if ("unique.sampleid" %in% colnames(curation(tSet)$cell)) {
+        if(length(intersect(curation(tSet)$cell$unique.sampleid, rownames(sampleInfo(tSet)))) != nrow(sampleInfo(tSet))) {
             .message("rownames of cell slot should be curated cell ids")
         }
     } else {
-        .message("unique.cellid which is curated cell id across data set should be a column of cell curation slot")
+        .message("unique.sampleid which is curated cell id across data set should be a column of cell curation slot")
     }
 
     if (length(intersect(rownames(curation(tSet)$cell), rownames(sampleInfo(tSet)))) != nrow(sampleInfo(tSet))) {
@@ -394,7 +336,7 @@ checkTSetStructure <- function(tSet, plotDist=FALSE, result.dir=".") {
     }
 
     if ("unique.treatmentid" %in% colnames(curation(tSet)$treatment)) {
-        if(length(intersect(curation(tSet)$treatment$unique.treatmentid, drugNames(tSet))) != nrow(treatmentInfo(tSet))) {
+        if(length(intersect(curation(tSet)$treatment$unique.treatmentid, treatmentNames(tSet))) != nrow(treatmentInfo(tSet))) {
             .message("rownames of drug slot should be curated drug ids")
         }
     } else {
@@ -421,12 +363,12 @@ checkTSetStructure <- function(tSet, plotDist=FALSE, result.dir=".") {
                 .warning("not all the cell lines in sensitivity data are in cell slot")
             }
         } else {
-            .warning("cellid does not exist in sensitivity info")
+            .warning("sampleid does not exist in sensitivity info")
         }
         if ("treatmentid" %in% colnames(sensitivityInfo(tSet))) {
             drug.ids <- unique(sensitivityInfo(tSet)[, "treatmentid"])
             drug.ids <- drug.ids[grep("///",drug.ids, invert=TRUE)]
-            if (!all(drug.ids %in% drugNames(tSet))) {
+            if (!all(drug.ids %in% treatmentNames(tSet))) {
                 .message("not all the drugs in sensitivity data are in drug slot")
             }
         } else {
@@ -479,40 +421,18 @@ setMethod("show", signature=signature(object="ToxicoSet"), function(object) {
 #' @return A named vector with the number of Cells and Drugs in the ToxicoSet
 #' @export
 setMethod("dim", signature("ToxicoSet"), function(x) {
-    return(c(Cells=length(cellNames(x)), Drugs=length(drugNames(x))))
+    return(c(Cells=length(sampleNames(x)), Drugs=length(treatmentNames(x))))
 })
-
-##' Retrieve a symbol holding metadata about a ToxicoSet object
-##'
-##' @param object The [\code{ToxicoSet}] to retrieve metadata from
-##' @param x The [\code{character}] hashkey of one or more symbols inside the
-##'  object@.intern slot.
-##'
-##' @return Value of x inside .intern if length(x) is 1, otherwise a named
-##'  \code{list} of values for x inside .intern.
-##'
-##' @keywords internal
-##' @export
-##' @noRd
-#setMethod('.getIntern', signature(object='ToxicoSet', x='character')) {
-#    if (length(x) >= 1) {
-#        get(x, envir=object@.intern)
-#    } else {
-#        mget(x, envir=object@.intern)
-#    }
-#})
 
 
 #' @importFrom CoreGx updateSampleId
 #' @aliases updateCellId
-#' @export
 updateSampleId <- updateCellId <- function(object, new.ids=vector('character')) {
-    CoreGx::updateSampleId(object, new.ids)
+    CoreGx:::updateSampleId(object, new.ids)
 }
 
 #' @importFrom CoreGx updateTreatmentId
 #' @aliases updateDrugId
-#' @export
 updateTreatmentId <- updateDrugId <- function(object, new.ids=vector('character')) {
-    CoreGx::updateTreamentId(object, new.ids)
+    CoreGx:::updateTreamentId(object, new.ids)
 }

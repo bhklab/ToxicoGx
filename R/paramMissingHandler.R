@@ -82,10 +82,10 @@ paramMissingHandler <- function(funName, tSet, mDataType, ...) {
   for (missing in missingChecks) {
     switch(
       missing,
-      "cell_lines" = {if (is.null(cell_lines)) { missingParamValues[[missing]] <- unique(cellNames(tSet));
+      "cell_lines" = {if (is.null(cell_lines)) { missingParamValues[[missing]] <- unique(sampleNames(tSet));
         .message(paste0(missing, " parameter not specified, defaults to all cell lines in the given tSet!"))}
         },
-      "drugs" = {if (is.null(drugs)) { missingParamValues[[missing]] <- unique(drugNames(tSet));
+      "drugs" = {if (is.null(drugs)) { missingParamValues[[missing]] <- unique(treatmentNames(tSet));
         .message(paste0(missing, " parameter not specified, defaults to all drugs in the given tSet!"))}
         },
       "features" = {if (is.null(features)) {missingParamValues[[missing]] <- unique(fNames(tSet, mDataType[1]));
@@ -103,4 +103,3 @@ paramMissingHandler <- function(funName, tSet, mDataType, ...) {
   }
   return(missingParamValues)
 }
-

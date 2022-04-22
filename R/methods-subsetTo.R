@@ -4,7 +4,7 @@ NULL
 #'`[`
 #'
 #' @examples
-#' tSet <- TGGATESsmall[cellNames(TGGATESsmall), drugNames(TGGATESsmall)[seq_len(3)]]
+#' tSet <- TGGATESsmall[sampleNames(TGGATESsmall), treatmentNames(TGGATESsmall)[seq_len(3)]]
 #'
 #'@param x tSet
 #'@param i Cell lines to keep in tSet
@@ -19,8 +19,8 @@ setMethod(`[`, "ToxicoSet", function(x, i, j, ..., drop = FALSE){
     }
     else if(is.numeric(i) && is.numeric(j) &&
             (as.integer(i)==i) && (as.integer(j)==j)) {
-        return(subsetTo(x, cells=cellNames(x)[i], drugs=drugNames(x)[j],
-                        molecular.data.cells=cellNames(x)[i]))
+        return(subsetTo(x, cells=sampleNames(x)[i], drugs=treatmentNames(x)[j],
+                        molecular.data.cells=sampleNames(x)[i]))
     }
 })
 
@@ -38,8 +38,8 @@ setMethod(`[`, "ToxicoSet", function(x, i, j, ..., drop = FALSE){
 #' to keep track of all the metadata conventions between different datasets.
 #'
 #' @examples
-#' TGGATESDrugNames  <- drugNames(TGGATESsmall)
-#' TGGATESCells <- cellNames(TGGATESsmall)
+#' TGGATESDrugNames  <- treatmentNames(TGGATESsmall)
+#' TGGATESCells <- sampleNames(TGGATESsmall)
 #' tSet <- subsetTo(TGGATESsmall,drugs = TGGATESDrugNames[1],
 #'   cells = TGGATESCells[1], duration = "2")
 #'
@@ -163,7 +163,7 @@ subsetTo <- function(object, cell_lines = NULL,
                    # Selecting indices which match the cells argument
                    cell_line_index <- NULL
                    if (length(cell_lines) != 0) {
-                       if (!all(cell_lines %in% cellNames(object))) {
+                       if (!all(cell_lines %in% sampleNames(object))) {
                            stop("Some of the cell names passed to function did not match to names
           in the ToxicoSet. Please ensure you are using cell names as
           returned by the cellNames function")
@@ -175,7 +175,7 @@ subsetTo <- function(object, cell_lines = NULL,
                    drugs_index <- NULL
                    if (datasetType(object) == "perturbation" || datasetType(object) == "both") {
                        if (length(drugs) != 0) {
-                           if (!all(drugs %in% drugNames(object))){
+                           if (!all(drugs %in% treatmentNames(object))){
                                stop("Some of the drug names passed to function did not match to names in the ToxicoSet Please ensure you are using drug names as returned by the drugNames function")
                            }
                            drugs_index <- which(SummarizedExperiment::colData(SE)[["treatmentid"]] %in% drugs)
@@ -339,10 +339,10 @@ subsetTo <- function(object, cell_lines = NULL,
     #####
     # ASSIGN SUBSETS BACK TO TOXICOSET OBJECT
     #####
-    drugInfo(object) <- drugInfo(object)[drugs , , drop=drop]
-    cellInfo(object) <- cellInfo(object)[cell_lines , , drop=drop]
+    treatmentInfo(object) <- treatmentInfo(object)[drugs , , drop=drop]
+    sampleInfo(object) <- sampleInfo(object)[cell_lines , , drop=drop]
     curation(object)$treatment <- curation(object)$treatment[drugs , , drop=drop]
-    curation(object)$cell <- curation(object)$cell[cell_lines , , drop=drop]
+    curation(object)$sample <- curation(object)$sample[cell_lines , , drop=drop]
     curation(object)$tissue <- curation(object)$tissue[cell_lines , , drop=drop]
     return(object)
 }

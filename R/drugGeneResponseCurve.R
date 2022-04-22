@@ -9,7 +9,7 @@
 #'
 #' if (interactive()) {
 #'   drugGeneResponseCurve(TGGATESsmall, dose = c("Control", "Low", "Middle"),
-#'   mDataTypes="rna", drug = drugNames(TGGATESsmall)[1],
+#'   mDataTypes="rna", drug = treatmentNames(TGGATESsmall)[1],
 #'   duration = c("2", "8", "24"), features = "ENSG00000002726_at")
 #' }
 #'
@@ -26,7 +26,7 @@
 #'   plot. If you specify more than two dose levels, you may only pass in up to
 #'   two features.
 #' @param drug \code{character} A drug name to include in this plot.
-#'   See drugNames(tSet) for a list of options.
+#'   See treatmentNames(tSet) for a list of options.
 #' @param duration \code{character} A vector of durations to include in the plot.
 #' @param summarize_replicates \code{logical} If TRUE will average viability
 #'   across replicates for each unique drug-dose-duration combination.

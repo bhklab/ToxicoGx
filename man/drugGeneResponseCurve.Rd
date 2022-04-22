@@ -43,7 +43,7 @@ plot. Default to include all dose levels available for a drug. If you specify
 more than two features you may only pass in up to two dose levels.}
 
 \item{drug}{\code{character} A drug name to include in this plot.
-See drugNames(tSet) for a list of options.}
+See treatmentNames(tSet) for a list of options.}
 
 \item{summarize_replicates}{\code{logical} If TRUE will average viability
 across replicates for each unique drug-dose-duration combination.}
@@ -75,7 +75,7 @@ with ggplot2 and can be customized using ggplot plot + function() syntax.
 
 if (interactive()) {
   drugGeneResponseCurve(TGGATESsmall, dose = c("Control", "Low", "Middle"),
-  mDataTypes="rna", drug = drugNames(TGGATESsmall)[1],
+  mDataTypes="rna", drug = treatmentNames(TGGATESsmall)[1],
   duration = c("2", "8", "24"), features = "ENSG00000002726_at")
 }
 

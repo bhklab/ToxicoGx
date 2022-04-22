@@ -21,12 +21,12 @@ columnsAsCharacter <- function(tSet) {
             dplyr::mutate_if(is.factor, as.character) %>%
             tibble::column_to_rownames()
     }
-    cellInfo(tSet) %<>%
+    sampleInfo(tSet) %<>%
         tibble::rownames_to_column() %>%
         dplyr::mutate_if(is.factor, as.character) %>%
         tibble::column_to_rownames()
 
-    drugInfo(tSet) %<>%
+    treatmentInfo(tSet) %<>%
         tibble::rownames_to_column() %>%
         dplyr::mutate_if(is.factor, as.character) %>%
         tibble::column_to_rownames()

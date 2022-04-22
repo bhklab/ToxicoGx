@@ -16,14 +16,14 @@ context("Testing tSet Class Accessor Methods...")
 test_that("@treatment slot accessors produce expected results", {
     data("TGGATESsmall")
     context("External validation...")
-    expect_equal_to_reference(drugInfo(TGGATESsmall),
+    expect_equal_to_reference(treatmentInfo(TGGATESsmall),
         "drugInfo.TGGATESsmall.rds")
-    expect_equal_to_reference(drugNames(TGGATESsmall),
+    expect_equal_to_reference(treatmentNames(TGGATESsmall),
         "drugNames.TGGATESsmall.rds")
 
     context("Internal validation...")
-    expect_equal(drugInfo(TGGATESsmall), TGGATESsmall@treatment)
-    expect_equal(drugNames(TGGATESsmall), TGGATESsmall@treatment$treatmentid)
+    expect_equal(treatmentInfo(TGGATESsmall), TGGATESsmall@treatment)
+    expect_equal(treatmentNames(TGGATESsmall), TGGATESsmall@treatment$treatmentid)
 })
 
 # @annotation Slot
@@ -81,18 +81,18 @@ test_that("@sample slot accessors produce expected results", {
     data("TGGATESsmall")
 
     context("External validation...")
-    expect_equal_to_reference(cellInfo(TGGATESsmall),
+    expect_equal_to_reference(sampleInfo(TGGATESsmall),
         "cellInfo.TGGATESsmall.rds")
-    expect_equal_to_reference(cellNames(TGGATESsmall),
+    expect_equal_to_reference(sampleNames(TGGATESsmall),
         "cellNames.TGGATESsmall.rds")
 
     context("Internal validation...")
-    expect_equal(cellInfo(TGGATESsmall), TGGATESsmall@sample)
-    expect_equal(cellNames(TGGATESsmall), TGGATESsmall@sample$sampleid)
+    expect_equal(sampleInfo(TGGATESsmall), TGGATESsmall@sample)
+    expect_equal(sampleNames(TGGATESsmall), TGGATESsmall@sample$sampleid)
 })
 
 # @sensitivty Slot
-test_that("@sensitivity slot accessors produce expected results", {
+test_that("@treatmentResponse slot accessors produce expected results", {
     data("TGGATESsmall")
 
     context("External validation...")
@@ -105,12 +105,12 @@ test_that("@sensitivity slot accessors produce expected results", {
     expect_equal_to_reference(sensNumber(TGGATESsmall),
         "sensNumber.TGGATESsmall.rds")
     context("Internal validation...")
-    expect_equal(sensitivityInfo(TGGATESsmall), TGGATESsmall@sensitivity$info)
+    expect_equal(sensitivityInfo(TGGATESsmall), TGGATESsmall@treatmentResponse$info)
     expect_equal(sensitivityProfiles(TGGATESsmall),
-        TGGATESsmall@sensitivity$profiles)
+        TGGATESsmall@treatmentResponse$profiles)
     expect_equal(sensitivityMeasures(TGGATESsmall),
-        colnames(TGGATESsmall@sensitivity$profiles))
-    expect_equal(sensNumber(TGGATESsmall), TGGATESsmall@sensitivity$n)
+        colnames(TGGATESsmall@treatmentResponse$profiles))
+    expect_equal(sensNumber(TGGATESsmall), TGGATESsmall@treatmentResponse$n)
 })
 
 # @perturbation Slot
@@ -142,8 +142,8 @@ test_that("subsetTo() class method produces expected results", {
     ##>running devtools::test()
     context("External validation...")
     expect_equal_to_reference(
-        subsetTo(TGGATESsmall, drugs = drugNames(TGGATESsmall)[1],
-            cell_lines=cellNames(TGGATESsmall)[1]),
+        subsetTo(TGGATESsmall, drugs = treatmentNames(TGGATESsmall)[1],
+            cell_lines=sampleNames(TGGATESsmall)[1]),
         "subsetTo.TGGATESsmall.rds")
     context("Internal validation...")
     ## Tests that subsetting molecularProfiles on duration works

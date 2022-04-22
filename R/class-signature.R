@@ -13,15 +13,15 @@ setOldClass('sessionInfo', sessionInfo)
 #' A user friendly constructor to create ToxicoSig class objects. This function
 #'   is implemented as an internal and should only be called for development purposes
 #'
-#' @param Data [array] An array contiaining the data for constructing the ToxicoSig object
-#' @param tSetName [string] The name of the tSet used in the constructor
-#' @param DateCreated [date] The data at time of running the constructor
-#' @param SigType [character] A string of the experiment type
-#' @param SessionInfo [sessionInfo] The current session info
-#' @param Call [character] A string
-#' @param Arguments [list] A list of arguments passed to the constructor
+#' @param Data `array`` An array contiaining the data for constructing the ToxicoSig object
+#' @param tSetName `character(1)` The name of the tSet used in the constructor
+#' @param DateCreated `date` The data at time of running the constructor
+#' @param SigType `character`A string of the experiment type
+#' @param SessionInfo `sessionInfo`The current session info
+#' @param Call `character(1)` A string
+#' @param Arguments `list` A list of arguments passed to the constructor
 #'
-#' @return [object] A new ToxicoSig object
+#' @return `object` A new ToxicoSig object
 #'
 #' @keywords internal
 #' @export
@@ -33,7 +33,7 @@ ToxicoSig <- function(Data=array(NA, dim=c(0,0,0)), tSetName='', DateCreated=dat
 #' @examples
 #' data(TGGATESsmall)
 #' drug.perturbation <- drugPerturbationSig(TGGATESsmall, mDataType="rna", nthread = 1, duration = "2",
-#'      drugs = head(drugNames(TGGATESsmall)), features = fNames(TGGATESsmall, "rna")[seq_len(2)])
+#'      drugs = head(treatmentNames(TGGATESsmall)), features = fNames(TGGATESsmall, "rna")[seq_len(2)])
 #' drug.perturbation
 #'
 #' @param object \code{ToxicoSig}
@@ -58,7 +58,7 @@ setMethod("show", signature=signature(object='ToxicoSig'),
 #' @examples
 #' data(TGGATESsmall)
 #' drug.perturbation <- drugPerturbationSig(TGGATESsmall, mDataType="rna", nthread=1, duration = "2",
-#'      drugs = head(drugNames(TGGATESsmall)), features = fNames(TGGATESsmall, "rna")[seq_len(2)])
+#'      drugs = head(treatmentNames(TGGATESsmall)), features = fNames(TGGATESsmall, "rna")[seq_len(2)])
 #' showSigAnnot(drug.perturbation)
 #'
 #' @param Sigs An object of the \code{ToxicoSig} Class, as returned by \code{drugPerturbationSig}

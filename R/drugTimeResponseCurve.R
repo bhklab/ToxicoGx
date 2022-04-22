@@ -9,7 +9,7 @@
 #'
 #'   # Default settings
 #'   plot <- drugTimeResponseCurve(TGGATESsmall, cell_lines = "Hepatocyte",
-#'   dose = c("Control", "Low", "Middle"), drugs = drugNames(TGGATESsmall)[6],
+#'   dose = c("Control", "Low", "Middle"), drugs = treatmentNames(TGGATESsmall)[6],
 #'   duration = c("2", "8", "24"))
 #'
 #'   # Customize title, x/y labels, x/y limits, colour palette and define
@@ -24,7 +24,7 @@
 #'    if(interactive()) {
 #'       drugTimeResponseCurve(TGGATESsmall, cell_lines = "Hepatocyte",
 #'         dose = c("Control", "Low", "Middle"),
-#'         drugs = drugNames(TGGATESsmall)[6], duration = c("2", "8", "24"),
+#'         drugs = treatmentNames(TGGATESsmall)[6], duration = c("2", "8", "24"),
 #'         ggplot_args = customizations)
 #'    }
 #'
