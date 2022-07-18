@@ -529,24 +529,24 @@ setReplaceMethod('sensitivityRaw', signature("ToxicoSet", "array"),
 
 
 #
-# == sensitivitySlot
+# == treatmentResponse
 
 
 #' @rdname ToxicoSet-accessors
-#' @eval CoreGx:::.docs_CoreSet_get_sensitivitySlot(class_=.local_class,
+#' @eval CoreGx:::.docs_CoreSet_get_treatmentResponse(class_=.local_class,
 #'   data_=.local_data)
-#' @importMethodsFrom CoreGx sensitivitySlot
-setMethod("sensitivitySlot", signature("ToxicoSet"), function(object) {
+#' @importMethodsFrom CoreGx treatmentResponse
+setMethod("treatmentResponse", signature("ToxicoSet"), function(object) {
     callNextMethod(object=object)
 })
 
 
 
 #' @rdname ToxicoSet-accessors
-#' @importMethodsFrom CoreGx sensitivitySlot<-
-#' @eval CoreGx:::.docs_CoreSet_set_sensitivitySlot(class_=.local_class,
+#' @importMethodsFrom CoreGx treatmentResponse<-
+#' @eval CoreGx:::.docs_CoreSet_set_treatmentResponse(class_=.local_class,
 #' data_=.local_data)
-setReplaceMethod('sensitivitySlot', signature(object='ToxicoSet',
+setReplaceMethod('treatmentResponse', signature(object='ToxicoSet',
     value='list_OR_LongTable'), function(object, value)
 {
     callNextMethod(object=object, value=value)

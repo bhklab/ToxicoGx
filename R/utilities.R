@@ -148,7 +148,7 @@
 #  if(!assertthat::are_equal(treatmentInfo(tSet_old), treatmentInfo(tSet_new)))
 #    message("The drug slots are not equivalent!")
 #
-#  if(!assertthat::are_equal(sensitivitySlot(tSet_old), sensitivitySlot(tSet_new)))
+#  if(!assertthat::are_equal(treatmentResponse(tSet_old), treatmentResponse(tSet_new)))
 #    message("The sensitivity slots are not equivalent!")
 #
 #  if(!assertthat::are_equal(datasetType(tSet_old), datasetType(tSet_new)))

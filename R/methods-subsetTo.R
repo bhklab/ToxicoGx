@@ -291,11 +291,11 @@ subsetTo <- function(object, cell_lines = NULL,
             duration_indices <- which(sensitivityInfo(object)$duration_h %in% duration)
             row_indices <- intersect(row_indices, duration_indices)
         }
-        sensItemNames <- names(sensitivitySlot(object))
+        sensItemNames <- names(treatmentResponse(object))
         sensitivityVals <-
             lapply(sensItemNames, function(sensItemName, drop){
                 if (sensItemName == "n") {
-                    sensItem <- sensitivitySlot(object)[[sensItemName]]
+                    sensItem <- treatmentResponse(object)[[sensItemName]]
                     if (!is.null(cell_lines)) {
                         sensItem[which(rownames(sensItem) %in% cell_lines),
                                  which(colnames(sensItem) %in% drugs), drop = drop]
@@ -303,7 +303,7 @@ subsetTo <- function(object, cell_lines = NULL,
                         sensItem[ , which(colnames(sensItem) %in% drugs), drop = drop]
                     }
                 } else {
-                    sensItem <- sensitivitySlot(object)[[sensItemName]]
+                    sensItem <- treatmentResponse(object)[[sensItemName]]
                     if (length(dim(sensItem)) == 3) {
                         sensItem[row_indices, , , drop = drop]
                     } else {
@@ -312,7 +312,7 @@ subsetTo <- function(object, cell_lines = NULL,
                 }
             }, drop = drop)
         names(sensitivityVals) <- sensItemNames
-        sensitivitySlot(object) <- sensitivityVals
+        treatmentResponse(object) <- sensitivityVals
     }
 
     #####
