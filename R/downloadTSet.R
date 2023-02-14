@@ -26,9 +26,11 @@ availableTSets <- function(canonical=TRUE){
   }
 
   tSetTable <- data.frame("ToxicoSet.Name" = avail.tsets$dataset$name,
-                          "Data.Source" = avail.tsets$dataset$versionInfo$data$rawMicroarrayData,
                           "Date.Created" = avail.tsets$dateCreated,
-                          "URL" = avail.tsets$downloadLink, stringsAsFactors = FALSE, check.names = FALSE)
+                          "URL" = avail.tsets$downloadLink,
+                          stringsAsFactors = FALSE,
+                          check.names = FALSE
+  )
   return(tSetTable)
 }
 

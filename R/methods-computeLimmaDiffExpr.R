@@ -56,10 +56,11 @@ setMethod('computeLimmaDiffExpr', signature(object='ToxicoSet'),
 
     # ---- 3. Create the design matrix
 
+
     # Construct the design matrix with an intercept at 0
     # This follows the make the simplest design matrix possible strategy outlined
     # on page 37 of the limma user guide.
-    hasMultipleCells <- length(unique(targets$sample)) > 1
+    hasMultipleCells <- length(unique(targets$cell)) > 1
     if (hasMultipleCells) {
         design <- model.matrix(~0 + compound:dose:duration:cell,
             data=model.frame(targets))
