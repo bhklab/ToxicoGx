@@ -118,6 +118,7 @@ ToxicoSet <-  function(name,
         name=name,
         sample=sample,
         treatment=treatment,
+        molecularProfiles=molecularProfiles,
         sensitivityInfo=sensitivityInfo,
         sensitivityRaw=sensitivityRaw,
         sensitivityProfiles=sensitivityProfiles,
@@ -132,19 +133,19 @@ ToxicoSet <-  function(name,
 
     tSet  <- .ToxicoSet(
         annotation=cSet@annotation,
-        molecularProfiles=cSet@olecularProfiles,
+        molecularProfiles=cSet@molecularProfiles,
         sample=cSet@sample,
         treatment=cSet@treatment,
-        datasetType=cSet@datasetTypes,
+        datasetType=cSet@datasetType,
         treatmentResponse=cSet@treatmentResponse,
         perturbation=cSet@perturbation,
         curation=cSet@curation
     )
     if (verify) { checkTSetStructure(tSet)}
-    if (length(sensitivityN) == 0 & datasetType %in% c("sensitivity", "both")) {
+    if (length(sensitivityN) == 0 && datasetType %in% c("sensitivity", "both")) {
         sensNumber(tSet) <- .summarizeSensitivityNumbers(tSet)
     }
-    if (length(perturbationN) == 0  & datasetType %in% c("perturbation", "both")) {
+    if (length(perturbationN) == 0  && datasetType %in% c("perturbation", "both")) {
         pertNumber(tSet) <- .summarizePerturbationNumbers(tSet)
     }
     return(tSet)
