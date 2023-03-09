@@ -1,7 +1,7 @@
 Package: ToxicoGx
 Type: Package
 Title: Analysis of Large-Scale Toxico-Genomic Data
-Version: 2.3.2
+Version: 2.3.3
 Date: 2023-03-08
 Authors@R: c(
   person("Sisira","Nair", email = "sisira.nair@uhnresearch.ca",
